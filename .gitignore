@@ -1,0 +1,5 @@
+cupcc
+*.dSYM
+*.vscode
+*.idea
+*.DS_Store
