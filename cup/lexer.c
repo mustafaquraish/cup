@@ -93,6 +93,8 @@ Token Lexer_next(Lexer *lexer)
         case ';': return Lexer_make_token(lexer, TOKEN_SEMICOLON, 1);
         case ':': return Lexer_make_token(lexer, TOKEN_COLON, 1);
         case '&': return Lexer_make_token(lexer, TOKEN_AMPERSAND, 1);
+        case '~': return Lexer_make_token(lexer, TOKEN_TILDE, 1);
+        case '!': return Lexer_make_token(lexer, TOKEN_EXCLAMATION, 1);
 
         case '<': {
             if (peek(lexer, 1) == '=')
@@ -176,7 +178,7 @@ Token Lexer_next(Lexer *lexer)
             }
 
 
-            printf("Shouldn't have gotten here... char is '%c'\n", lexer->src[lexer->pos]);
+            die_location(Lexer_loc(lexer), ": ERROR: Unexpected character '%c'\n", lexer->src[lexer->pos]);
             advance(lexer, 1);
         }
         }

@@ -3,6 +3,9 @@
 #include <stdbool.h>
 
 #define ENUM_AST_TYPES(F)                                                      \
+  F(OP_NEG, "neg")                                                             \
+  F(OP_NOT, "!")                                                               \
+  F(OP_BWINV, "~")                                                             \
   F(OP_PLUS, "+")                                                              \
   F(OP_MINUS, "-")                                                             \
   F(OP_MUL, "*")                                                               \

@@ -16,6 +16,7 @@ typedef int64_t i64;
   F(TOKEN_COLON, ":")                                                          \
   F(TOKEN_EOF, "EOF")                                                          \
   F(TOKEN_EQ, "==")                                                            \
+  F(TOKEN_EXCLAMATION, "!")                                                    \
   F(TOKEN_FN, "fn")                                                            \
   F(TOKEN_GEQ, ">=")                                                           \
   F(TOKEN_GT, ">")                                                             \
@@ -43,6 +44,7 @@ typedef int64_t i64;
   F(TOKEN_SLASH, "/")                                                          \
   F(TOKEN_STAR, "*")                                                           \
   F(TOKEN_STRINGLIT, "string literal")                                         \
+  F(TOKEN_TILDE, "~")                                                          \
   F(TOKEN_XOR, "^")
 
 typedef enum {
@@ -53,8 +55,7 @@ typedef enum {
 
 typedef struct {
   char *filename;
-  int line;
-  int col;
+  int line, col;
 } Location;
 
 void Location_print(FILE *f, Location loc);

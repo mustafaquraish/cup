@@ -3,6 +3,7 @@
 #include <string.h>
 #include "lexer.h"
 #include "parser.h"
+#include "generator.h"
 #include "unistd.h"
 
 int main(int argc, char**argv) {
@@ -21,7 +22,12 @@ int main(int argc, char**argv) {
     // Lexer
     Lexer lexer = Lexer_new(filename, source, fsize);
     Node *ast = parse_program(&lexer);
-    print_ast(ast);
+    
+     print_ast(ast);
+
+    FILE *f = fopen("output.nasm", "w");
+    generate_asm(ast, f);
+
     // Token token;
     // while ( (token = Lexer_next(&lexer)).type != TOKEN_EOF) {
     //     Token_print(stdout, &token);

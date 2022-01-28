@@ -50,15 +50,36 @@ Type parse_type(Lexer *lexer)
     return type;
 }
 
-Node *parse_expression(Lexer *lexer)
+Node *parse_literal(Lexer *lexer)
 {
-    // TODO: Parse more complicated things
-    Token token;
     Node *node = Node_new(AST_LITERAL);
-    token = assert_token(Lexer_next(lexer), TOKEN_INTLIT);
+    Token token = assert_token(Lexer_next(lexer), TOKEN_INTLIT);
     node->literal.type = (Type) {.type = TYPE_INT};
     node->literal.as_int = token.value.as_int;
     return node;
+}
+
+Node *parse_expression(Lexer *lexer)
+{
+    // TODO: Parse more complicated things
+    Token token = Lexer_peek(lexer);
+    Node *expr;
+    if (token.type == TOKEN_MINUS) {
+        Lexer_next(lexer);
+        expr = Node_new(OP_NEG);
+        expr->unary_expr = parse_expression(lexer);
+    } else if (token.type == TOKEN_TILDE) {
+        Lexer_next(lexer);
+        expr = Node_new(OP_BWINV);
+        expr->unary_expr = parse_expression(lexer);
+    } else if (token.type == TOKEN_EXCLAMATION) {
+        Lexer_next(lexer);
+        expr = Node_new(OP_NOT);
+        expr->unary_expr = parse_expression(lexer);
+    } else {
+        return parse_literal(lexer);
+    }
+    return expr;
 }
 
 Node *parse_statement(Lexer *lexer)

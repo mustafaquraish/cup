@@ -59,6 +59,15 @@ static void do_print_ast(Node *node, int depth)
     } else if (node->type == AST_RETURN) {
         printf("return\n");
         do_print_ast(node->unary_expr, depth + 1);
+    } else if (node->type == OP_NEG) {
+        printf("-\n");
+        do_print_ast(node->unary_expr, depth + 1);
+    } else if (node->type == OP_NOT) {
+        printf("!\n");
+        do_print_ast(node->unary_expr, depth + 1);
+    } else if (node->type == OP_BWINV) {
+        printf("~\n");
+        do_print_ast(node->unary_expr, depth + 1);
     } else {
         printf("(unknown)\n");
     }
