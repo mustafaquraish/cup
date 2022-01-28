@@ -14,7 +14,6 @@ typedef struct {
 } Lexer;
 
 Lexer Lexer_new(char *filename, char *src, i64 len);
-Location Lexer_loc(Lexer *lexer);
 
-Token Lexer_get_next_token(Lexer *lexer);
-Token Lexer_peek_next_token(Lexer *lexer);
+Token Lexer_next(Lexer *lexer);
+Token Lexer_peek(Lexer *lexer);

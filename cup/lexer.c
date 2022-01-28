@@ -14,7 +14,7 @@ Lexer Lexer_new(char *filename, char *src, i64 len)
     return self;
 }
 
-Location Lexer_loc(Lexer *lexer)
+static Location Lexer_loc(Lexer *lexer)
 {
     Location loc = {0};
     loc.filename = lexer->filename;
@@ -79,7 +79,7 @@ static Token Lexer_make_token(Lexer *lexer, TokenType type, int inc_amount)
     return token;
 }
 
-Token Lexer_get_next_token(Lexer *lexer)
+Token Lexer_next(Lexer *lexer)
 {
     while (lexer->pos < lexer->len) {
         switch (lexer->src[lexer->pos])
@@ -115,12 +115,16 @@ Token Lexer_get_next_token(Lexer *lexer)
         case '+': {
             if (peek(lexer, 1) == '+')
                 return Lexer_make_token(lexer, TOKEN_PLUSPLUS, 2);
+            if (peek(lexer, 1) == '=')
+                return Lexer_make_token(lexer, TOKEN_PLUSEQUALS, 2);
             return Lexer_make_token(lexer, TOKEN_PLUS, 1);
         }
 
         case '-': {
             if (peek(lexer, 1) == '-')
                 return Lexer_make_token(lexer, TOKEN_MINUSMINUS, 2);
+            if (peek(lexer, 1) == '=')
+                return Lexer_make_token(lexer, TOKEN_MINUSEQUALS, 2);
             return Lexer_make_token(lexer, TOKEN_MINUS, 1);
         }
 
@@ -181,10 +185,10 @@ Token Lexer_get_next_token(Lexer *lexer)
     return Token_from_type(TOKEN_EOF, Lexer_loc(lexer));
 }
 
-Token Lexer_peek_next_token(Lexer *lexer)
+Token Lexer_peek(Lexer *lexer)
 {
     i64 pos = lexer->pos;
-    Token token = Lexer_get_next_token(lexer);
+    Token token = Lexer_next(lexer);
     lexer->pos = pos;
     return token;
 }
