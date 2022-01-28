@@ -129,9 +129,18 @@ Token Lexer_next(Lexer *lexer)
                 return Lexer_make_token(lexer, TOKEN_MINUSEQUALS, 2);
             return Lexer_make_token(lexer, TOKEN_MINUS, 1);
         }
+        
+        case '/': {
+            if (peek(lexer, 1) == '/') {
+                lexer->pos += 2;    // skip the '//'
+                while (lexer->pos < lexer->len && lexer->src[lexer->pos] != '\n')
+                    lexer->pos++;
+                continue;
+            }
+            return Lexer_make_token(lexer, TOKEN_SLASH, 1);
+        }
 
         case '*': return Lexer_make_token(lexer, TOKEN_STAR, 1);
-        case '/': return Lexer_make_token(lexer, TOKEN_SLASH, 1);
         case '%': return Lexer_make_token(lexer, TOKEN_PERCENT, 1);
 
 
