@@ -7,4 +7,3 @@ SRCS=cup/*.c
 set -xe
 
 $CC $CFLAGS $SRCS -o cupcc
-./cupcc $@
