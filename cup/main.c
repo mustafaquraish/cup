@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "lexer.h"
+#include "parser.h"
 #include "unistd.h"
 
 int main(int argc, char**argv) {
@@ -19,11 +20,13 @@ int main(int argc, char**argv) {
 
     // Lexer
     Lexer lexer = Lexer_new(filename, source, fsize);
-    Token token;
-    while ( (token = Lexer_get_next_token(&lexer)).type != TOKEN_EOF) {
-        Token_print(stdout, &token);
-        printf("\n");
-    }
+    Node *ast = parse_program(&lexer);
+    print_ast(ast);
+    // Token token;
+    // while ( (token = Lexer_next(&lexer)).type != TOKEN_EOF) {
+    //     Token_print(stdout, &token);
+    //     printf("\n");
+    // }
     
     free(source);
     return 0;
