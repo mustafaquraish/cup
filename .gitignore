@@ -3,3 +3,7 @@ cupcc
 *.vscode
 *.idea
 *.DS_Store
+
+*.nasm
+*.o
+*.out
