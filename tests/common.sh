@@ -25,3 +25,23 @@ function assert_exit_status() {
     set -e
     echo -n "."
 }
+
+function assert_exit_status_stdin() {
+    ./cupcc -
+    assemble
+
+    set +e
+    ./a.out
+    res=$?
+    if [ $res -ne $1 ]
+    then
+        echo ""
+        echo "----------------------------------" 
+        echo "Test failed: expected $2, got $res"
+        echo "- Input was:"
+        echo "     \`$1\`"
+        exit 1
+    fi
+    set -e
+    echo -n "."
+}
