@@ -167,11 +167,27 @@ void generate_expr_into_rax(Node *expr, FILE *out)
         fprintf(out, ".and_end_%d:\n", label_counter);
         label_counter++;
 
+    }  else if (expr->type == AST_CONDITIONAL) {
+        generate_expr_into_rax(expr->conditional.cond, out);
+        // If left is false, we can short-circuit
+        fprintf(out, "    cmp rax, 0\n");
+        fprintf(out, "    je .cond_else_%d\n", label_counter);
+        generate_expr_into_rax(expr->conditional.do_then, out);
+        fprintf(out, "    jmp .cond_end_%d\n", label_counter);
+        fprintf(out, ".cond_else_%d:\n", label_counter);
+        generate_expr_into_rax(expr->binary.right, out);
+        // Booleanize the result
+        generate_expr_into_rax(expr->conditional.do_else, out);
+        fprintf(out, ".cond_end_%d:\n", label_counter);
+        label_counter++;
+
     } else {
         fprintf(stderr, "Unsupported expression type in generate_expr: `%s`\n", node_type_to_str(expr->type));
         exit(1);
     }
 }
+
+void generate_block(Node *block, FILE *out);
 
 void generate_statement(Node *stmt, FILE *out)
 {
@@ -186,7 +202,35 @@ void generate_statement(Node *stmt, FILE *out)
             generate_expr_into_rax(stmt->var_decl.value, out);
             i64 offset = stmt->var_decl.var.offset;
             fprintf(out, "    mov [rbp-%lld], rax\n", offset);
+        } else {
+            // Initialize to 0
+            i64 offset = stmt->var_decl.var.offset;
+            // TODO: Use correct size for the type
+            fprintf(out, "    mov qword [rbp-%lld], 0\n", offset);
         }
+    } else if (stmt->type == AST_IF) {
+        assert(stmt->conditional.cond);
+        assert(stmt->conditional.do_then);
+        generate_expr_into_rax(stmt->conditional.cond, out);
+        
+        // If we don't have an `else` clause, we can simplify
+        if (!stmt->conditional.do_else) {
+            fprintf(out, "    cmp rax, 0\n");
+            fprintf(out, "    je .if_end_%d\n", label_counter);
+            generate_statement(stmt->conditional.do_then, out);
+            fprintf(out, ".if_end_%d:\n", label_counter);
+        } else {
+            fprintf(out, "    cmp rax, 0\n");
+            fprintf(out, "    je .if_else_%d\n", label_counter);
+            generate_statement(stmt->conditional.do_then, out);
+            fprintf(out, "    jmp .if_end_%d\n", label_counter);
+            fprintf(out, ".if_else_%d:\n", label_counter);
+            generate_statement(stmt->conditional.do_else, out);
+            fprintf(out, ".if_end_%d:\n", label_counter);
+        }
+        label_counter++;
+    } else if (stmt->type == AST_BLOCK) { 
+        generate_block(stmt, out);
     } else {
         // Once again, default to an expression here...
         generate_expr_into_rax(stmt, out);
@@ -208,7 +252,8 @@ void generate_function_header(Node *func, FILE *out)
     // TODO: Only do this if we have local variables
     fprintf(out, "    push rbp\n");
     fprintf(out, "    mov rbp, rsp\n");
-    fprintf(out, "    sub rsp, %d\n", func->func.cur_stack_offset);
+    // FIXME: Also account for arguments
+    fprintf(out, "    sub rsp, %lld\n", func->func.max_locals_size);
 }
 
 void generate_function(Node *func, FILE *out)

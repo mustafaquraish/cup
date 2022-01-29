@@ -93,6 +93,8 @@ Token Lexer_next(Lexer *lexer)
         case ';': return Lexer_make_token(lexer, TOKEN_SEMICOLON, 1);
         case ':': return Lexer_make_token(lexer, TOKEN_COLON, 1);
         case '~': return Lexer_make_token(lexer, TOKEN_TILDE, 1);
+        case '?': return Lexer_make_token(lexer, TOKEN_QUESTION, 1);
+        case ',': return Lexer_make_token(lexer, TOKEN_COMMA, 1);
         
         case '&': {
             if (peek(lexer, 1) == '&')

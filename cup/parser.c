@@ -6,6 +6,12 @@
 
 static Node *current_function = NULL;
 
+#define BLOCK_STACK_SIZE 64
+static Node *block_stack[BLOCK_STACK_SIZE];
+static i64 block_stack_count = 0;
+static i64 cur_stack_offset = 0;
+
+
 Token do_assert_token(Token token, TokenType type, char *filename, int line)
 {
     if (token.type != type) {
@@ -48,15 +54,74 @@ NodeType binary_token_to_op(TokenType type)
     }
 }
 
+void block_stack_push(Node *block)
+{
+    assert(block_stack_count < BLOCK_STACK_SIZE);
+    assert(current_function);
+    block_stack[block_stack_count++] = block;
+}
+
+void block_stack_pop()
+{
+    assert(block_stack_count > 0);
+    assert(current_function);
+    Node *block = block_stack[--block_stack_count];
+    cur_stack_offset -= block->block.locals_size;
+    assert(cur_stack_offset >= 0);
+}
+
+void dump_block_stack()
+{
+    for (i64 i = 0; i < block_stack_count; i++) {
+        Node *block = block_stack[i];
+        for (int i = 0; i < block->block.num_locals; i++) {
+            printf("%s: offset: %lld\n", block->block.locals[i]->name, block->block.locals[i]->offset);
+        }
+        printf("\n");
+    }
+}
+
 Variable *find_local_variable(Token *token)
 {
     assert_token(*token, TOKEN_IDENTIFIER);
-    for (int i = 0; i < current_function->func.num_locals; i++) {
-        if (strcmp(current_function->func.locals[i]->name, token->value.as_string) == 0) {
-            return current_function->func.locals[i];
+    for (i64 i = block_stack_count - 1; i >= 0; --i) {
+        Node *block = block_stack[i];
+        for (int i = 0; i < block->block.num_locals; i++) {
+            if (strcmp(block->block.locals[i]->name, token->value.as_string) == 0) {
+                return block->block.locals[i];
+            }
         }
     }
     return NULL;
+}
+
+// TODO: rename this, it's ugly
+void add_variable_to_current_block(Variable *var)
+{
+    // Set offset for variable
+    Node *cur_block = block_stack[block_stack_count - 1];
+    var->offset = cur_stack_offset;
+
+    int new_len = (cur_block->block.num_locals + 1);
+    int var_size = 8; // TODO: Compute sizes based on different types
+    
+    // Add to the block
+    // FIXME: Use a map here
+    cur_block->block.locals = realloc(cur_block->block.locals, sizeof(Variable *) * new_len);
+    cur_block->block.locals[cur_block->block.num_locals] = var;
+    cur_block->block.num_locals++;
+
+    assert(current_function);
+    // Update current stack offset (w.r.t function stack frame) and block size
+    cur_stack_offset += var_size;
+    block_stack[block_stack_count-1]->block.locals_size += var_size;
+    
+    // Update function's max locals size
+    i64 max_offset = i64max(current_function->func.max_locals_size, cur_stack_offset);
+    current_function->func.max_locals_size = max_offset;
+
+    assert(cur_stack_offset >= 0);
+    assert(block_stack_count > 0);
 }
 
 void Node_add_child(Node *parent, Node *child)
@@ -112,23 +177,20 @@ Node *parse_var_declaration(Lexer *lexer)
         die_location(token.loc, "Variable declaration outside of function");
     
     token = assert_token(Lexer_next(lexer), TOKEN_IDENTIFIER);
+    // NOTE: We don't allow shadowing of variables in the any blocks, 
+    //       this is by design since it's a common mistake.
     if (find_local_variable(&token) != NULL)
         die_location(token.loc, "Variable `%s` already declared", token.value.as_string);
     
     Node *node = Node_new(AST_VARDECL);
     node->var_decl.var.name = token.value.as_string;
-    assert_token(Lexer_next(lexer), TOKEN_COLON);
+
+    token = Lexer_next(lexer);
+    if (token.type != TOKEN_COLON)
+        die_location(token.loc, "Missing type specifier for variable `%s`", node->var_decl.var.name);
     node->var_decl.var.type = parse_type(lexer);
 
-    // Set offset for variable
-    node->var_decl.var.offset = current_function->func.cur_stack_offset;
-
-    int new_len = (current_function->func.num_locals + 1);
-    int var_size = 8; // TODO: Compute sizes based on different types
-    current_function->func.locals = realloc(current_function->func.locals, sizeof(Variable *) * new_len);
-    current_function->func.locals[current_function->func.num_locals] = &node->var_decl.var;
-    current_function->func.num_locals++;
-    current_function->func.cur_stack_offset += var_size;
+    add_variable_to_current_block(&node->var_decl.var);
 
     token = Lexer_next(lexer);
     if (token.type == TOKEN_ASSIGN) {
@@ -210,9 +272,27 @@ Node *parse_logical_and(Lexer *lexer) { BINOP_PARSER(parse_equality, is_logical_
 bool is_logical_or_token(TokenType type) { return type == TOKEN_OR; }
 Node *parse_logical_or(Lexer *lexer) { BINOP_PARSER(parse_logical_and, is_logical_or_token); }
 
+Node *parse_conditional_exp(Lexer *lexer)
+{
+    Node *expr = parse_logical_or(lexer);
+    Token token = Lexer_peek(lexer);
+    if (token.type == TOKEN_QUESTION) {
+        Lexer_next(lexer);
+        Node *then_expr = parse_expression(lexer);
+        assert_token(Lexer_next(lexer), TOKEN_COLON);
+        Node *else_expr = parse_expression(lexer);
+        Node *conditional = Node_new(AST_CONDITIONAL);
+        conditional->conditional.cond = expr;
+        conditional->conditional.do_then = then_expr;
+        conditional->conditional.do_else = else_expr;
+        expr = conditional;
+    }
+    return expr;
+}
+
 Node *parse_expression(Lexer *lexer)
 {
-    Node *node = parse_logical_or(lexer);
+    Node *node = parse_conditional_exp(lexer);
     // FIXME: This is a hack to handle assignment expressions
     //        and can probably be done properly.
     if (node->type == AST_VAR) {
@@ -228,6 +308,8 @@ Node *parse_expression(Lexer *lexer)
     return node;
 }
 
+Node *parse_block(Lexer *lexer);
+
 Node *parse_statement(Lexer *lexer)
 {
     Node *node;
@@ -238,8 +320,22 @@ Node *parse_statement(Lexer *lexer)
         node = Node_new(AST_RETURN);
         node->unary_expr = parse_expression(lexer);
         assert_token(Lexer_next(lexer), TOKEN_SEMICOLON);
-    } else if (token.type == TOKEN_LET) {
-        return parse_var_declaration(lexer);
+    } else if (token.type == TOKEN_IF) {
+        Lexer_next(lexer);
+        node = Node_new(AST_IF);
+        assert_token(Lexer_next(lexer), TOKEN_OPEN_PAREN);
+        node->conditional.cond = parse_expression(lexer);
+        assert_token(Lexer_next(lexer), TOKEN_CLOSE_PAREN);
+        // TODO: Allow blocks in here once implemented, currently
+        //       we can onle have a single statement in the if/else
+        node->conditional.do_then = parse_statement(lexer);
+        token = Lexer_peek(lexer);
+        if (token.type == TOKEN_ELSE) {
+            Lexer_next(lexer);
+            node->conditional.do_else = parse_statement(lexer);
+        }
+    } else if (token.type == TOKEN_OPEN_BRACE) {
+        node = parse_block(lexer);
     } else {
         // Default to trying to handle it as an expression
         node = parse_expression(lexer);
@@ -251,14 +347,28 @@ Node *parse_statement(Lexer *lexer)
 
 Node *parse_block(Lexer *lexer)
 {
-    Node *block = Node_new(AST_BLOCK);
-    block->block.num_children = 0;
-    Token token;
+    assert_token(Lexer_next(lexer), TOKEN_OPEN_BRACE);
 
-    while ((token = Lexer_peek(lexer)).type != TOKEN_CLOSE_BRACE) {
-        Node_add_child(block, parse_statement(lexer));
+    Node *block = Node_new(AST_BLOCK);
+    Token token = Lexer_peek(lexer);
+
+    block_stack_push(block);
+
+    while (token.type != TOKEN_CLOSE_BRACE) {
+        Node *block_item;
+        if (token.type == TOKEN_LET) {
+            block_item = parse_var_declaration(lexer);
+        } else {
+            // Default to a statement
+            block_item = parse_statement(lexer);
+        }
+        Node_add_child(block, block_item);
+        token = Lexer_peek(lexer);
     }
 
+    block_stack_pop();
+
+    assert_token(Lexer_next(lexer), TOKEN_CLOSE_BRACE);
     return block;
 }
 
@@ -286,9 +396,11 @@ Node *parse_func(Lexer *lexer)
         // No return type, void fn.
         func->func.return_type = (Type){.type = TYPE_NONE};
     }
-    assert_token(Lexer_next(lexer), TOKEN_OPEN_BRACE);
+
+    // Make sure there's no funny business with the stack offet
+    assert(cur_stack_offset == 0);
     func->func.body = parse_block(lexer);
-    assert_token(Lexer_next(lexer), TOKEN_CLOSE_BRACE);
+    assert(cur_stack_offset == 0);
 
     return func;
 }

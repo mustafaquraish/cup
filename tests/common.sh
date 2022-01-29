@@ -13,6 +13,7 @@ function assert_exit_status() {
     set +e
     ./a.out
     res=$?
+    set -e
     if [ $res -ne $2 ]
     then
         echo ""
@@ -22,11 +23,28 @@ function assert_exit_status() {
         echo "$1"
         exit 1
     fi
-    set -e
     echo -n "."
 }
 
 function assert_exit_status_stdin() {
     code=$(</dev/stdin)
     assert_exit_status "$code" $1
+}
+
+function assert_compile_failure_stdin() {
+    code=$(</dev/stdin)
+    set +e
+    ./cupcc -c "$code" >/dev/null 2>&1
+    res=$?
+    set -e
+    if [ $res -eq 0 ]
+    then
+        echo ""
+        echo "----------------------------------------------" 
+        echo "Test failed: expected compilation, got success"
+        echo "----------------------------------------------"
+        echo "$code"
+        exit 1
+    fi
+    echo -n "."
 }

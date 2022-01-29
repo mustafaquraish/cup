@@ -29,7 +29,6 @@ EOF
 echo " OK"
 
 echo -n "- Multiple variable: "
-
 assert_exit_status_stdin 2 <<EOF
 fn main() { 
     let x: int = 1;
@@ -59,4 +58,46 @@ fn main() {
 }
 EOF
 
+assert_exit_status_stdin 18 <<EOF
+fn main() { 
+    let x: int = 5;
+    let y: int;
+    let z: int = (y = x + 3) + 2;
+    return z + y;
+}
+EOF
+echo " OK"
+
+echo -n "- Short-circuiting assignments: "
+assert_exit_status_stdin 5 <<EOF
+fn main() { 
+    let x: int = 5;
+    let y: int = (1 || (x = 10));
+    return x;  
+}
+EOF
+
+assert_exit_status_stdin 10 <<EOF
+fn main() { 
+    let x: int = 5;
+    let y: int = (0 || (x = 10));
+    return x;  
+}
+EOF
+
+assert_exit_status_stdin 5 <<EOF
+fn main() { 
+    let x: int = 5;
+    let y: int = (0 && (x = 10));
+    return x;  
+}
+EOF
+
+assert_exit_status_stdin 10 <<EOF
+fn main() { 
+    let x: int = 5;
+    let y: int = (1 && (x = 10));
+    return x;  
+}
+EOF
 echo " OK"

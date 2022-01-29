@@ -24,6 +24,8 @@
   F(OP_GEQ, ">=")                                                              \
   F(OP_ASSIGN, "=")                                                            \
   F(AST_LITERAL, "literal")                                                    \
+  F(AST_CONDITIONAL, "conditional expression")                                 \
+  F(AST_IF, "if statement")                                                    \
   F(AST_VARDECL, "variable decl")                                              \
   F(AST_VAR, "variable")                                                       \
   F(AST_RETURN, "return")                                                      \
@@ -82,10 +84,9 @@ typedef struct ast_node {
             Type return_type;
             Node *body;
 
-            Variable **locals;
-            int num_locals;
-
-            int cur_stack_offset;
+            // TODO: Should we just dynamically allocate space on the
+            //       stack for each block instead of storing this?
+            i64 max_locals_size;
             // TODO: Arguments / etc?
         } func;
 
@@ -93,6 +94,10 @@ typedef struct ast_node {
         struct {
             Node **children;
             int num_children;
+
+            Variable **locals;
+            int num_locals;
+            i64 locals_size;
         } block;
 
         struct {
@@ -111,6 +116,12 @@ typedef struct ast_node {
             Variable *var;
             Node *value;
         } assign;
+
+        struct {
+            Node *cond;
+            Node *do_then;
+            Node *do_else;
+        } conditional;
 
         Variable *variable;
     };

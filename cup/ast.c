@@ -135,14 +135,6 @@ void dump_func(Node *node, int depth)
         printf(" -> ");
         print_type_to_file(stdout, node->func.return_type);
     }
-    if (node->func.num_locals > 0) {
-        printf("\n locals: \n");
-        for (int i = 0; i < node->func.num_locals; i++) {
-            printf(" - `%s`, offset: %lld (", node->func.locals[i]->name, node->func.locals[i]->offset);
-            print_type_to_file(stdout, node->func.locals[i]->type);
-            printf(")\n");
-        }
-    }
     do_print_ast(node->func.body, depth + 1);
 }
 
