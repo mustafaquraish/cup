@@ -1,5 +1,7 @@
 #!/bin/bash
 
+./compile.sh
+
 for i in `ls tests/*.sh | grep -v common.sh`
 do
     echo "Running $i"

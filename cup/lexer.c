@@ -92,10 +92,20 @@ Token Lexer_next(Lexer *lexer)
         case '}': return Lexer_make_token(lexer, TOKEN_CLOSE_BRACE, 1);
         case ';': return Lexer_make_token(lexer, TOKEN_SEMICOLON, 1);
         case ':': return Lexer_make_token(lexer, TOKEN_COLON, 1);
-        case '&': return Lexer_make_token(lexer, TOKEN_AMPERSAND, 1);
         case '~': return Lexer_make_token(lexer, TOKEN_TILDE, 1);
-        case '!': return Lexer_make_token(lexer, TOKEN_EXCLAMATION, 1);
-
+        
+        case '&': {
+            if (peek(lexer, 1) == '&')
+                return Lexer_make_token(lexer, TOKEN_AND, 2);
+            return Lexer_make_token(lexer, TOKEN_AMPERSAND, 1);
+        }
+        
+        case '!': {
+            if (peek(lexer, 1) == '=')
+                return Lexer_make_token(lexer, TOKEN_NEQ, 2);
+            return Lexer_make_token(lexer, TOKEN_EXCLAMATION, 1);
+        }
+        
         case '<': {
             if (peek(lexer, 1) == '=')
                 return Lexer_make_token(lexer, TOKEN_LEQ, 2);
@@ -113,6 +123,13 @@ Token Lexer_next(Lexer *lexer)
                 return Lexer_make_token(lexer, TOKEN_EQ, 2);
             return Lexer_make_token(lexer, TOKEN_ASSIGN, 1);
         }
+
+        case '|': {
+            if (peek(lexer, 1) == '|')
+                return Lexer_make_token(lexer, TOKEN_OR, 2);
+            return Lexer_make_token(lexer, TOKEN_BAR, 1);
+        }
+
 
         case '+': {
             if (peek(lexer, 1) == '+')

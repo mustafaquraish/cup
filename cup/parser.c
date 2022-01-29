@@ -122,41 +122,37 @@ Node *parse_factor(Lexer *lexer)
     return expr;
 }
 
-Node *parse_term(Lexer *lexer)
-{
-    Node *expr = parse_factor(lexer);
-    Token token = Lexer_peek(lexer);
-    while (token.type == TOKEN_STAR || 
-           token.type == TOKEN_SLASH || 
-           token.type == TOKEN_PERCENT) {
-        Lexer_next(lexer);
-        Node *op = Node_new(binary_token_to_op(token.type));
-        Node *right = parse_factor(lexer);
-        op->binary.left = expr;
-        op->binary.right = right;
-        expr = op;
-        token = Lexer_peek(lexer);
-    }
-    return expr;
-}
+#define BINOP_PARSER(next_parser, predicate)                                   \
+  Node *expr = next_parser(lexer);                                             \
+  Token token = Lexer_peek(lexer);                                             \
+  while (predicate(token.type)) {                                              \
+    Lexer_next(lexer);                                                         \
+    Node *op = Node_new(binary_token_to_op(token.type));                       \
+    Node *right = next_parser(lexer);                                          \
+    op->binary.left = expr;                                                    \
+    op->binary.right = right;                                                  \
+    expr = op;                                                                 \
+    token = Lexer_peek(lexer);                                                 \
+  }                                                                            \
+  return expr;
 
+bool is_term_token(TokenType type) { return type == TOKEN_STAR ||  type == TOKEN_SLASH ||  type == TOKEN_PERCENT; }
+Node *parse_term(Lexer *lexer) { BINOP_PARSER(parse_factor, is_term_token); }
 
-Node *parse_expression(Lexer *lexer)
-{
-    Node *expr = parse_term(lexer);
-    Token token = Lexer_peek(lexer);
-    while (token.type == TOKEN_PLUS || 
-           token.type == TOKEN_MINUS) {
-        Lexer_next(lexer);
-        Node *op = Node_new(binary_token_to_op(token.type));
-        Node *right = parse_term(lexer);
-        op->binary.left = expr;
-        op->binary.right = right;
-        expr = op;
-        token = Lexer_peek(lexer);
-    }
-    return expr;
-}
+bool is_additive_token(TokenType type) { return type == TOKEN_PLUS || type == TOKEN_MINUS; }
+Node *parse_additive(Lexer *lexer) { BINOP_PARSER(parse_term, is_additive_token); }
+
+bool is_relational_token(TokenType type) { return type == TOKEN_LT || type == TOKEN_LEQ || type == TOKEN_GT || type == TOKEN_GEQ; }
+Node *parse_relational(Lexer *lexer) { BINOP_PARSER(parse_additive, is_relational_token); }
+
+bool is_equality_token(TokenType type) { return type == TOKEN_EQ || type == TOKEN_NEQ; }
+Node *parse_equality(Lexer *lexer) { BINOP_PARSER(parse_relational, is_equality_token); }
+
+bool is_logical_and_token(TokenType type) { return type == TOKEN_AND; }
+Node *parse_logical_and(Lexer *lexer) { BINOP_PARSER(parse_equality, is_logical_and_token); }
+
+bool is_logical_or_token(TokenType type) { return type == TOKEN_OR; }
+Node *parse_expression(Lexer *lexer) { BINOP_PARSER(parse_logical_and, is_logical_or_token); }
 
 Node *parse_statement(Lexer *lexer)
 {

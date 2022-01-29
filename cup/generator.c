@@ -7,10 +7,12 @@
 #include <string.h>
 #include <assert.h>
 
+static int label_counter = 0;
 
 // The evaluated expression is stored into `rax`
 void generate_expr_into_rax(Node *expr, FILE *out)
 {
+    // TODO: Different sized output for different types?
     if (expr->type == AST_LITERAL) {
         // TODO: More literal types
         assert(expr->literal.type.type == TYPE_INT);
@@ -22,6 +24,7 @@ void generate_expr_into_rax(Node *expr, FILE *out)
 
     } else if (expr->type == OP_NOT) {
         generate_expr_into_rax(expr->unary_expr, out);
+        // Booleanize
         fprintf(out, "    cmp rax, 0\n");
         fprintf(out, "    sete al\n");
         fprintf(out, "    movzx rax, al\n");
@@ -31,38 +34,131 @@ void generate_expr_into_rax(Node *expr, FILE *out)
         fprintf(out, "    not rax\n");
         
     } else if (expr->type == OP_PLUS) {
-        generate_expr_into_rax(expr->binary.left, out);
-        fprintf(out, "    push rax\n");
         generate_expr_into_rax(expr->binary.right, out);
+        fprintf(out, "    push rax\n");
+        generate_expr_into_rax(expr->binary.left, out);
         fprintf(out, "    pop rbx\n");
         fprintf(out, "    add rax, rbx\n");
 
     } else if (expr->type == OP_MINUS) {
-        generate_expr_into_rax(expr->binary.left, out);
-        fprintf(out, "    push rax\n");
         generate_expr_into_rax(expr->binary.right, out);
-        fprintf(out, "    mov rbx, rax\n");
-        fprintf(out, "    pop rax\n");
+        fprintf(out, "    push rax\n");
+        generate_expr_into_rax(expr->binary.left, out);
+        fprintf(out, "    pop rbx\n");
         fprintf(out, "    sub rax, rbx\n");
 
     } else if (expr->type == OP_DIV) {
-        generate_expr_into_rax(expr->binary.left, out);
-        fprintf(out, "    push rax\n");
         generate_expr_into_rax(expr->binary.right, out);
-        fprintf(out, "    mov rbx, rax\n");
-        fprintf(out, "    pop rax\n");
+        fprintf(out, "    push rax\n");
+        generate_expr_into_rax(expr->binary.left, out);
+        fprintf(out, "    pop rbx\n");
         fprintf(out, "    cqo\n");
         fprintf(out, "    idiv rbx\n");
 
     } else if (expr->type == OP_MUL) {
-        generate_expr_into_rax(expr->binary.left, out);
-        fprintf(out, "    push rax\n");
         generate_expr_into_rax(expr->binary.right, out);
+        fprintf(out, "    push rax\n");
+        generate_expr_into_rax(expr->binary.left, out);
         fprintf(out, "    pop rbx\n");
         fprintf(out, "    imul rbx\n");
 
+    // TODO: Compress these, there's barely any differences
+    } else if (expr->type == OP_EQ) {
+        generate_expr_into_rax(expr->binary.right, out);
+        fprintf(out, "    push rax\n");
+        generate_expr_into_rax(expr->binary.left, out);
+        fprintf(out, "    pop rbx\n");
+        fprintf(out, "    cmp rax, rbx\n");
+        fprintf(out, "    sete al\n");
+        fprintf(out, "    movzx rax, al\n");
+
+    } else if (expr->type == OP_NEQ) {
+        generate_expr_into_rax(expr->binary.right, out);
+        fprintf(out, "    push rax\n");
+        generate_expr_into_rax(expr->binary.left, out);
+        fprintf(out, "    pop rbx\n");
+        fprintf(out, "    cmp rax, rbx\n");
+        fprintf(out, "    setne al\n");
+        fprintf(out, "    movzx rax, al\n");
+
+    } else if (expr->type == OP_LT) {
+        generate_expr_into_rax(expr->binary.right, out);
+        fprintf(out, "    push rax\n");
+        generate_expr_into_rax(expr->binary.left, out);
+        fprintf(out, "    pop rbx\n");
+        fprintf(out, "    cmp rax, rbx\n");
+        fprintf(out, "    setl al\n");
+        fprintf(out, "    movzx rax, al\n");
+
+    }  else if (expr->type == OP_LEQ) {
+        generate_expr_into_rax(expr->binary.right, out);
+        fprintf(out, "    push rax\n");
+        generate_expr_into_rax(expr->binary.left, out);
+        fprintf(out, "    pop rbx\n");
+        fprintf(out, "    cmp rax, rbx\n");
+        fprintf(out, "    setle al\n");
+        fprintf(out, "    movzx rax, al\n");
+
+    }  else if (expr->type == OP_GT) {
+        generate_expr_into_rax(expr->binary.right, out);
+        fprintf(out, "    push rax\n");
+        generate_expr_into_rax(expr->binary.left, out);
+        fprintf(out, "    pop rbx\n");
+        fprintf(out, "    cmp rax, rbx\n");
+        fprintf(out, "    setg al\n");
+        fprintf(out, "    movzx rax, al\n");
+
+    }  else if (expr->type == OP_GEQ) {
+        generate_expr_into_rax(expr->binary.right, out);
+        fprintf(out, "    push rax\n");
+        generate_expr_into_rax(expr->binary.left, out);
+        fprintf(out, "    pop rbx\n");
+        fprintf(out, "    cmp rax, rbx\n");
+        fprintf(out, "    setge al\n");
+        fprintf(out, "    movzx rax, al\n");
+
+    } else if (expr->type == OP_GEQ) {
+        generate_expr_into_rax(expr->binary.right, out);
+        fprintf(out, "    push rax\n");
+        generate_expr_into_rax(expr->binary.left, out);
+        fprintf(out, "    pop rbx\n");
+        fprintf(out, "    cmp rax, rbx\n");
+        fprintf(out, "    setge al\n");
+        fprintf(out, "    movzx rax, al\n");
+
+    // Note: These are different because of short-circuit evaluation!
+    } else if (expr->type == OP_OR) {
+        generate_expr_into_rax(expr->binary.left, out);
+        // If left is true, we can short-circuit
+        fprintf(out, "    cmp rax, 0\n");
+        fprintf(out, "    je .or_right_%d\n", label_counter);
+        fprintf(out, "    mov rax, 1\n");
+        fprintf(out, "    jmp .or_end_%d\n", label_counter);
+        fprintf(out, ".or_right_%d:\n", label_counter);
+        generate_expr_into_rax(expr->binary.right, out);
+        // Booleanize the result
+        fprintf(out, "    cmp rax, 0\n");
+        fprintf(out, "    setne al\n");
+        fprintf(out, ".or_end_%d:\n", label_counter);
+        label_counter++;
+
+    } else if (expr->type == OP_AND) {
+        generate_expr_into_rax(expr->binary.left, out);
+        // If left is true, we can short-circuit
+        fprintf(out, "    cmp rax, 0\n");
+        fprintf(out, "    jne .and_right_%d\n", label_counter);
+        fprintf(out, "    mov rax, 0\n");
+        fprintf(out, "    jmp .and_end_%d\n", label_counter);
+        fprintf(out, ".and_right_%d:\n", label_counter);
+        generate_expr_into_rax(expr->binary.right, out);
+        // Booleanize the result
+        fprintf(out, "    cmp rax, 0\n");
+        fprintf(out, "    setne al\n");
+        fprintf(out, ".and_end_%d:\n", label_counter);
+        label_counter++;
+
     } else {
-        fprintf(stderr, "Unsupported expression type in generate_expr: %d\n", expr->type);
+        fprintf(stderr, "Unsupported expression type in generate_expr: `%s`\n", node_type_to_str(expr->type));
         exit(1);
     }
 }
