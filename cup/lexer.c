@@ -84,8 +84,8 @@ Token Lexer_next(Lexer *lexer)
     while (lexer->pos < lexer->len) {
         switch (lexer->src[lexer->pos])
         {
-        case ' ': case '\t': case '\r': advance(lexer, 1); break;
-        case '\n': lexer->line++; lexer->col = 0; lexer->pos ++; break;
+        case ' ': case '\t': case '\r': advance(lexer, 1); continue;
+        case '\n': lexer->line++; lexer->col = 0; lexer->pos++; continue;
         case '(': return Lexer_make_token(lexer, TOKEN_OPEN_PAREN, 1);
         case ')': return Lexer_make_token(lexer, TOKEN_CLOSE_PAREN, 1);
         case '{': return Lexer_make_token(lexer, TOKEN_OPEN_BRACE, 1);
@@ -163,10 +163,11 @@ Token Lexer_next(Lexer *lexer)
                 i64 pos = lexer->pos;
                 while (pos < lexer->len && (isalnum(lexer->src[pos]) || lexer->src[pos] == '_'))
                     pos++;
-                char *str = calloc(pos - lexer->pos + 1, 1);
-                strncpy(str, lexer->src + lexer->pos, pos - lexer->pos);
+                int str_len = pos - lexer->pos;
+                char *str = calloc(str_len + 1, 1);
+                strncpy(str, lexer->src + lexer->pos, str_len);
                 Token token = Token_from_identifier(str, Lexer_loc(lexer));
-                advance(lexer, pos - lexer->pos);
+                advance(lexer, str_len);
                 return token;
             }
 
