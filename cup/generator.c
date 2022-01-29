@@ -8,6 +8,7 @@
 #include <assert.h>
 
 static int label_counter = 0;
+static Node *current_function = NULL;
 
 // The evaluated expression is stored into `rax`
 void generate_expr_into_rax(Node *expr, FILE *out)
@@ -18,7 +19,11 @@ void generate_expr_into_rax(Node *expr, FILE *out)
         assert(expr->literal.type.type == TYPE_INT);
         fprintf(out, "    mov rax, %d\n", expr->literal.as_int);
 
-    } else if (expr->type == OP_NEG) {
+    } else if (expr->type == AST_VAR) {
+        i64 offset = expr->variable->offset;    
+        fprintf(out, "    mov rax, [rbp-%lld]\n", offset);
+
+    }  else if (expr->type == OP_NEG) {
         generate_expr_into_rax(expr->unary_expr, out);
         fprintf(out, "    neg rax\n");
 
@@ -167,7 +172,16 @@ void generate_statement(Node *stmt, FILE *out)
 {
     if (stmt->type == AST_RETURN) {
         generate_expr_into_rax(stmt->unary_expr, out);
+        // TODO: Only do this if we have local variables
+        fprintf(out, "    mov rsp, rbp\n");
+        fprintf(out, "    pop rbp\n");
         fprintf(out, "    ret\n");
+    } else if (stmt->type == AST_VARDECL) {
+        if (stmt->var_decl.value) {
+            generate_expr_into_rax(stmt->var_decl.value, out);
+            i64 offset = stmt->var_decl.var.offset;
+            fprintf(out, "    mov [rbp-%lld], rax\n", offset);
+        }
     } else {
         fprintf(stderr, "Unsupported statement type in generate_statement: %s\n", node_type_to_str(stmt->type));
         exit(1);
@@ -181,14 +195,24 @@ void generate_block(Node *block, FILE *out)
         generate_statement(block->block.children[i], out);
 }
 
-void generate_function(Node *func, FILE *out)
+void generate_function_header(Node *func, FILE *out)
 {
     assert(func->type == AST_FUNC);
     fprintf(out, "global %s\n", func->func.name);
     fprintf(out, "%s:\n", func->func.name);
-    generate_block(func->func.body, out);
+    // TODO: Only do this if we have local variables
+    fprintf(out, "    push rbp\n");
+    fprintf(out, "    mov rbp, rsp\n");
+    fprintf(out, "    sub rsp, %d\n", func->func.cur_stack_offset);
 }
 
+void generate_function(Node *func, FILE *out)
+{
+    assert(func->type == AST_FUNC);
+    current_function = func;
+    generate_function_header(func, out);
+    generate_block(func->func.body, out);
+}
 
 void generate_asm(Node *root, FILE *out)
 {

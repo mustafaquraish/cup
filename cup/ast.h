@@ -25,6 +25,7 @@
   F(OP_ASSIGN, "=")                                                            \
   F(AST_LITERAL, "literal")                                                    \
   F(AST_VARDECL, "variable decl")                                              \
+  F(AST_VAR, "variable")                                                       \
   F(AST_RETURN, "return")                                                      \
   F(AST_FUNC, "func")                                                          \
   F(AST_PROGRAM, "program")                                                    \
@@ -81,7 +82,7 @@ typedef struct ast_node {
             Type return_type;
             Node *body;
 
-            Variable *locals;
+            Variable **locals;
             int num_locals;
 
             int cur_stack_offset;
@@ -101,11 +102,13 @@ typedef struct ast_node {
             };
         } literal;
 
+        // FIXME: Different struct for assignment?
         struct {
-            char *name;
-            Type type;
+            Variable var;
             Node *value;
-        } var;
+        } var_decl;
+
+        Variable *variable;
     };
 } Node;
 

@@ -1,0 +1,8 @@
+
+
+fn main() {
+    let x: int = 5 * 10;
+    let y: int = x + x;
+    let z: int = y - x / 2;
+    return z;
+}

@@ -1,6 +1,7 @@
 #include "parser.h"
 #include "utils.h"
 #include <stdlib.h>
+#include <string.h>
 #include <assert.h>
 
 static Node *current_function = NULL;
@@ -47,7 +48,16 @@ NodeType binary_token_to_op(TokenType type)
     }
 }
 
-
+Variable *find_local_variable(Token *token)
+{
+    assert_token(*token, TOKEN_IDENTIFIER);
+    for (int i = 0; i < current_function->func.num_locals; i++) {
+        if (strcmp(current_function->func.locals[i]->name, token->value.as_string) == 0) {
+            return current_function->func.locals[i];
+        }
+    }
+    return NULL;
+}
 
 void Node_add_child(Node *parent, Node *child)
 {
@@ -97,26 +107,29 @@ Node *parse_expression(Lexer *);
 Node *parse_var_declaration(Lexer *lexer)
 {
     Token token = assert_token(Lexer_next(lexer), TOKEN_LET);
-    Node *node = Node_new(AST_VARDECL);
-    node->var.name = assert_token(Lexer_next(lexer), TOKEN_IDENTIFIER).value.as_string;
-    assert_token(Lexer_next(lexer), TOKEN_COLON);
-    node->var.type = parse_type(lexer);
-    assert_token(Lexer_next(lexer), TOKEN_ASSIGN);
-    node->var.value = parse_expression(lexer);
-    assert_token(Lexer_next(lexer), TOKEN_SEMICOLON);
-
-    // Add variable to current function
+    // TODO: Reuse this for globals? Or maybe just make a new function?
     if (!current_function || current_function->type != AST_FUNC)
         die_location(token.loc, "Variable declaration outside of function");
+    
+    token = assert_token(Lexer_next(lexer), TOKEN_IDENTIFIER);
+    if (find_local_variable(&token) != NULL)
+        die_location(token.loc, "Variable `%s` already declared", token.value.as_string);
+    
+    Node *node = Node_new(AST_VARDECL);
+    node->var_decl.var.name = token.value.as_string;
+    assert_token(Lexer_next(lexer), TOKEN_COLON);
+    node->var_decl.var.type = parse_type(lexer);
+    assert_token(Lexer_next(lexer), TOKEN_ASSIGN);
+    node->var_decl.value = parse_expression(lexer);
+    assert_token(Lexer_next(lexer), TOKEN_SEMICOLON);
+
+    // Set offset for variable
+    node->var_decl.var.offset = current_function->func.cur_stack_offset;
 
     int new_len = (current_function->func.num_locals + 1);
     int var_size = 8; // TODO: Compute sizes based on different types
-    current_function->func.locals = realloc(current_function->func.locals, sizeof(Variable) * new_len);
-    current_function->func.locals[current_function->func.num_locals] = (Variable) {
-        .name = node->var.name,
-        .type = node->var.type,
-        .offset = current_function->func.cur_stack_offset,
-    };
+    current_function->func.locals = realloc(current_function->func.locals, sizeof(Variable *) * new_len);
+    current_function->func.locals[current_function->func.num_locals] = &node->var_decl.var;
     current_function->func.num_locals++;
     current_function->func.cur_stack_offset += var_size;
 
@@ -146,6 +159,13 @@ Node *parse_factor(Lexer *lexer)
         assert_token(Lexer_next(lexer), TOKEN_CLOSE_PAREN);
     } else if (token.type == TOKEN_INTLIT) {
         expr = parse_literal(lexer);
+    } else if (token.type == TOKEN_IDENTIFIER) {
+        Lexer_next(lexer);
+        Variable *var = find_local_variable(&token); 
+        if (var == NULL)
+            die_location(token.loc, "Could not find variable `%s`", token.value.as_string);
+        expr = Node_new(AST_VAR);
+        expr->variable = var;
     } else {
         die_location(token.loc, ": Expected token found in parse_factor: `%s`", token_type_to_str(token.type));
         exit(1);

@@ -15,8 +15,7 @@ char *data_type_to_str(DataType type)
 void print_type_to_file(FILE *out, Type type)
 {
     fprintf(out, "%s", data_type_to_str(type.type));
-    for (int i = 0; i < type.indirection; i++)
-    {
+    for (int i = 0; i < type.indirection; i++) {
         fprintf(out, "*");
     }
 }
@@ -99,7 +98,7 @@ static void do_print_ast(Node *node, int depth)
     } else if (node->type == AST_FUNC) {
         dump_func(node, depth);
     } else if (node->type == AST_LITERAL) {
-        printf("(literal %d)\n", node->literal.as_int);
+        printf("%d\n", node->literal.as_int);
     } else if (node->type == AST_RETURN) {
         printf("return\n");
         do_print_ast(node->unary_expr, depth + 1);
@@ -110,13 +109,16 @@ static void do_print_ast(Node *node, int depth)
         printf("%s\n", node_type_to_str(node->type));
         do_print_ast(node->binary.left, depth + 1);
         do_print_ast(node->binary.right, depth + 1);
+    } else if (node->type == AST_VAR) {
+        assert(node->variable && node->variable->name);
+        printf("%s\n", node->variable->name);
     } else if (node->type == AST_VARDECL) {
-        printf("var %s (", node->var.name);
-        print_type_to_file(stdout, node->var.type);
+        printf("var %s (", node->var_decl.var.name);
+        print_type_to_file(stdout, node->var_decl.var.type);
         printf(")");
-        if (node->var.value != NULL) {
+        if (node->var_decl.value != NULL) {
             printf(" = \n");
-            do_print_ast(node->var.value, depth + 1);
+            do_print_ast(node->var_decl.value, depth + 1);
         } else {
             printf("\n");
         }
@@ -136,8 +138,8 @@ void dump_func(Node *node, int depth)
     if (node->func.num_locals > 0) {
         printf("\n locals: \n");
         for (int i = 0; i < node->func.num_locals; i++) {
-            printf(" - `%s`, offset: %lld (", node->func.locals[i].name, node->func.locals[i].offset);
-            print_type_to_file(stdout, node->func.locals[i].type);
+            printf(" - `%s`, offset: %lld (", node->func.locals[i]->name, node->func.locals[i]->offset);
+            print_type_to_file(stdout, node->func.locals[i]->type);
             printf(")\n");
         }
     }
