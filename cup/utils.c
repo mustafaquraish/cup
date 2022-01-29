@@ -25,3 +25,6 @@ void _die_location(char *file, int line, Location loc, const char *fmt, ...)
     fprintf(stderr, "NOTE: Error occurred in %s:%d\n", file, line);
     exit(1);
 }
+
+i64 i64max(i64 a, i64 b) { return a > b ? a : b; }
+i64 i64min(i64 a, i64 b) { return a < b ? a : b; }
