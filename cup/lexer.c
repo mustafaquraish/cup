@@ -218,7 +218,11 @@ Token Lexer_next(Lexer *lexer)
 Token Lexer_peek(Lexer *lexer)
 {
     i64 pos = lexer->pos;
+    i64 col = lexer->col;
+    i64 line = lexer->line;
     Token token = Lexer_next(lexer);
     lexer->pos = pos;
+    lexer->col = col;
+    lexer->line = line;
     return token;
 }
