@@ -17,6 +17,7 @@
   F(TOKEN_EQ, "==")                                                            \
   F(TOKEN_EXCLAMATION, "!")                                                    \
   F(TOKEN_FN, "fn")                                                            \
+  F(TOKEN_FOR, "for")                                                          \
   F(TOKEN_GEQ, ">=")                                                           \
   F(TOKEN_GT, ">")                                                             \
   F(TOKEN_IDENTIFIER, "identifier")                                            \
@@ -46,6 +47,7 @@
   F(TOKEN_STAR, "*")                                                           \
   F(TOKEN_STRINGLIT, "string literal")                                         \
   F(TOKEN_TILDE, "~")                                                          \
+  F(TOKEN_WHILE, "while")                                                      \
   F(TOKEN_XOR, "^")
 
 typedef enum {

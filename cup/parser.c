@@ -334,6 +334,35 @@ Node *parse_statement(Lexer *lexer)
             Lexer_next(lexer);
             node->conditional.do_else = parse_statement(lexer);
         }
+    } else if (token.type == TOKEN_WHILE) {
+        Lexer_next(lexer);
+        node = Node_new(AST_WHILE);
+        assert_token(Lexer_next(lexer), TOKEN_OPEN_PAREN);
+        node->loop.cond = parse_expression(lexer);
+        assert_token(Lexer_next(lexer), TOKEN_CLOSE_PAREN);
+        node->loop.body = parse_statement(lexer);
+    }  else if (token.type == TOKEN_FOR) {
+        Lexer_next(lexer);
+        node = Node_new(AST_FOR);
+        assert_token(Lexer_next(lexer), TOKEN_OPEN_PAREN);
+        
+        // All of the expressions in the for loop are optional
+
+        // TODO: Allow this to be a declaration, need to inject
+        //       the variable into the symbol table for the block
+        if (Lexer_peek(lexer).type != TOKEN_SEMICOLON)
+            node->loop.init = parse_expression(lexer);
+        assert_token(Lexer_next(lexer), TOKEN_SEMICOLON);
+
+        if (Lexer_peek(lexer).type != TOKEN_SEMICOLON)
+            node->loop.cond = parse_expression(lexer);
+        assert_token(Lexer_next(lexer), TOKEN_SEMICOLON);
+
+        if (Lexer_peek(lexer).type != TOKEN_CLOSE_PAREN)
+            node->loop.step = parse_expression(lexer);
+        assert_token(Lexer_next(lexer), TOKEN_CLOSE_PAREN);
+
+        node->loop.body = parse_statement(lexer);
     } else if (token.type == TOKEN_OPEN_BRACE) {
         node = parse_block(lexer);
     } else {

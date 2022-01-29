@@ -26,6 +26,8 @@
   F(AST_LITERAL, "literal")                                                    \
   F(AST_CONDITIONAL, "conditional expression")                                 \
   F(AST_IF, "if statement")                                                    \
+  F(AST_WHILE, "while statement")                                              \
+  F(AST_FOR, "for statement")                                                  \
   F(AST_VARDECL, "variable decl")                                              \
   F(AST_VAR, "variable")                                                       \
   F(AST_RETURN, "return")                                                      \
@@ -122,6 +124,14 @@ typedef struct ast_node {
             Node *do_then;
             Node *do_else;
         } conditional;
+
+        // Used for all loops
+        struct {
+            Node *cond;
+            Node *init;
+            Node *step;
+            Node *body;
+        } loop;
 
         Variable *variable;
     };

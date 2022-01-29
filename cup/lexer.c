@@ -79,6 +79,9 @@ static Token Lexer_make_token(Lexer *lexer, TokenType type, int inc_amount)
     return token;
 }
 
+#define LEX_KEYWORD(str, token_type) \
+    if (Lexer_starts_with(lexer, str)) return Lexer_make_token(lexer, token_type, strlen(str));
+
 Token Lexer_next(Lexer *lexer)
 {
     while (lexer->pos < lexer->len) {
@@ -165,12 +168,14 @@ Token Lexer_next(Lexer *lexer)
 
         default: {
             // Handle keywords explicitly
-            if (Lexer_starts_with(lexer, "fn"))     return Lexer_make_token(lexer, TOKEN_FN,     2);
-            if (Lexer_starts_with(lexer, "if"))     return Lexer_make_token(lexer, TOKEN_IF,     2);
-            if (Lexer_starts_with(lexer, "else"))   return Lexer_make_token(lexer, TOKEN_ELSE,   4);
-            if (Lexer_starts_with(lexer, "return")) return Lexer_make_token(lexer, TOKEN_RETURN, 6);
-            if (Lexer_starts_with(lexer, "int"))    return Lexer_make_token(lexer, TOKEN_INT,    3);
-            if (Lexer_starts_with(lexer, "let"))    return Lexer_make_token(lexer, TOKEN_LET,    3);
+            LEX_KEYWORD("fn", TOKEN_FN);
+            LEX_KEYWORD("if", TOKEN_IF);
+            LEX_KEYWORD("int", TOKEN_INT);
+            LEX_KEYWORD("let", TOKEN_LET);
+            LEX_KEYWORD("for", TOKEN_FOR);
+            LEX_KEYWORD("else", TOKEN_ELSE);
+            LEX_KEYWORD("while", TOKEN_WHILE);
+            LEX_KEYWORD("return", TOKEN_RETURN);
 
             if (isdigit(lexer->src[lexer->pos])) {
                 // TODO: Parse hex and octal numbers

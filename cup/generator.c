@@ -211,24 +211,54 @@ void generate_statement(Node *stmt, FILE *out)
     } else if (stmt->type == AST_IF) {
         assert(stmt->conditional.cond);
         assert(stmt->conditional.do_then);
-        generate_expr_into_rax(stmt->conditional.cond, out);
+        int cur_label = label_counter++;
         
+        generate_expr_into_rax(stmt->conditional.cond, out);
         // If we don't have an `else` clause, we can simplify
         if (!stmt->conditional.do_else) {
             fprintf(out, "    cmp rax, 0\n");
-            fprintf(out, "    je .if_end_%d\n", label_counter);
+            fprintf(out, "    je .if_end_%d\n", cur_label);
             generate_statement(stmt->conditional.do_then, out);
-            fprintf(out, ".if_end_%d:\n", label_counter);
+            fprintf(out, ".if_end_%d:\n", cur_label);
         } else {
             fprintf(out, "    cmp rax, 0\n");
-            fprintf(out, "    je .if_else_%d\n", label_counter);
+            fprintf(out, "    je .if_else_%d\n", cur_label);
             generate_statement(stmt->conditional.do_then, out);
-            fprintf(out, "    jmp .if_end_%d\n", label_counter);
-            fprintf(out, ".if_else_%d:\n", label_counter);
+            fprintf(out, "    jmp .if_end_%d\n", cur_label);
+            fprintf(out, ".if_else_%d:\n", cur_label);
             generate_statement(stmt->conditional.do_else, out);
-            fprintf(out, ".if_end_%d:\n", label_counter);
+            fprintf(out, ".if_end_%d:\n", cur_label);
         }
-        label_counter++;
+    } else if (stmt->type == AST_WHILE) { 
+        int cur_label = label_counter++;
+        fprintf(out, ".loop_start_%d:\n", cur_label);
+        fprintf(out, ".loop_continue_%d:\n", cur_label);
+        generate_expr_into_rax(stmt->loop.cond, out);
+        fprintf(out, "    cmp rax, 0\n");
+        fprintf(out, "    je .loop_end_%d\n", cur_label);
+        generate_statement(stmt->loop.body, out);
+        fprintf(out, "    jmp .loop_start_%d\n", cur_label);
+        fprintf(out, ".loop_end_%d:\n", cur_label);
+
+    }  else if (stmt->type == AST_FOR) { 
+        int cur_label = label_counter++;
+        if (stmt->loop.init) {
+            generate_statement(stmt->loop.init, out);
+        }
+        fprintf(out, ".loop_start_%d:\n", cur_label);
+        if (stmt->loop.cond) {
+            generate_expr_into_rax(stmt->loop.cond, out);
+            fprintf(out, "    cmp rax, 0\n");
+            fprintf(out, "    je .loop_end_%d\n", cur_label);
+        }
+        generate_statement(stmt->loop.body, out);
+        fprintf(out, ".loop_continue_%d:\n", cur_label);
+        if (stmt->loop.step) {
+            generate_expr_into_rax(stmt->loop.step, out);
+        }
+        fprintf(out, "    jmp .loop_start_%d\n", cur_label);
+        fprintf(out, ".loop_end_%d:\n", cur_label);
+
     } else if (stmt->type == AST_BLOCK) { 
         generate_block(stmt, out);
     } else {
