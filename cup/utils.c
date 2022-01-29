@@ -16,6 +16,7 @@ void die(const char *fmt, ...)
 void _die_location(char *file, int line, Location loc, const char *fmt, ...)
 {
     Location_print(stderr, loc);
+    fprintf(stderr, ": ");
     va_list args;
     va_start(args, fmt);
     vfprintf(stderr, fmt, args);
