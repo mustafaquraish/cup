@@ -11,6 +11,8 @@
   F(TOKEN_CLOSE_BRACE, "}")                                                    \
   F(TOKEN_CLOSE_PAREN, ")")                                                    \
   F(TOKEN_COLON, ":")                                                          \
+  F(TOKEN_COMMA, ",")                                                          \
+  F(TOKEN_ELSE, "else")                                                        \
   F(TOKEN_EOF, "EOF")                                                          \
   F(TOKEN_EQ, "==")                                                            \
   F(TOKEN_EXCLAMATION, "!")                                                    \
@@ -18,6 +20,7 @@
   F(TOKEN_GEQ, ">=")                                                           \
   F(TOKEN_GT, ">")                                                             \
   F(TOKEN_IDENTIFIER, "identifier")                                            \
+  F(TOKEN_IF, "if")                                                            \
   F(TOKEN_INT, "int")                                                          \
   F(TOKEN_INTLIT, "integer literal")                                           \
   F(TOKEN_LEQ, "<=")                                                           \

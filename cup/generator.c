@@ -20,10 +20,15 @@ void generate_expr_into_rax(Node *expr, FILE *out)
         fprintf(out, "    mov rax, %d\n", expr->literal.as_int);
 
     } else if (expr->type == AST_VAR) {
-        i64 offset = expr->variable->offset;    
+        i64 offset = expr->variable->offset;
         fprintf(out, "    mov rax, [rbp-%lld]\n", offset);
 
-    }  else if (expr->type == OP_NEG) {
+    } else if (expr->type == OP_ASSIGN) {
+        i64 offset = expr->assign.var->offset;
+        generate_expr_into_rax(expr->assign.value, out);
+        fprintf(out, "    mov [rbp-%lld], rax\n", offset);
+
+    } else if (expr->type == OP_NEG) {
         generate_expr_into_rax(expr->unary_expr, out);
         fprintf(out, "    neg rax\n");
 
@@ -37,7 +42,7 @@ void generate_expr_into_rax(Node *expr, FILE *out)
     } else if (expr->type == OP_BWINV) {
         generate_expr_into_rax(expr->unary_expr, out);
         fprintf(out, "    not rax\n");
-        
+
     } else if (expr->type == OP_PLUS) {
         generate_expr_into_rax(expr->binary.right, out);
         fprintf(out, "    push rax\n");
@@ -183,8 +188,8 @@ void generate_statement(Node *stmt, FILE *out)
             fprintf(out, "    mov [rbp-%lld], rax\n", offset);
         }
     } else {
-        fprintf(stderr, "Unsupported statement type in generate_statement: %s\n", node_type_to_str(stmt->type));
-        exit(1);
+        // Once again, default to an expression here...
+        generate_expr_into_rax(stmt, out);
     }
 }
 

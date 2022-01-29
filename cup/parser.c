@@ -119,9 +119,6 @@ Node *parse_var_declaration(Lexer *lexer)
     node->var_decl.var.name = token.value.as_string;
     assert_token(Lexer_next(lexer), TOKEN_COLON);
     node->var_decl.var.type = parse_type(lexer);
-    assert_token(Lexer_next(lexer), TOKEN_ASSIGN);
-    node->var_decl.value = parse_expression(lexer);
-    assert_token(Lexer_next(lexer), TOKEN_SEMICOLON);
 
     // Set offset for variable
     node->var_decl.var.offset = current_function->func.cur_stack_offset;
@@ -132,6 +129,14 @@ Node *parse_var_declaration(Lexer *lexer)
     current_function->func.locals[current_function->func.num_locals] = &node->var_decl.var;
     current_function->func.num_locals++;
     current_function->func.cur_stack_offset += var_size;
+
+    token = Lexer_next(lexer);
+    if (token.type == TOKEN_ASSIGN) {
+        node->var_decl.value = parse_expression(lexer);
+        assert_token(Lexer_next(lexer), TOKEN_SEMICOLON);
+    } else {
+        assert_token(token, TOKEN_SEMICOLON);
+    }
 
     return node;
 }
@@ -203,7 +208,25 @@ bool is_logical_and_token(TokenType type) { return type == TOKEN_AND; }
 Node *parse_logical_and(Lexer *lexer) { BINOP_PARSER(parse_equality, is_logical_and_token); }
 
 bool is_logical_or_token(TokenType type) { return type == TOKEN_OR; }
-Node *parse_expression(Lexer *lexer) { BINOP_PARSER(parse_logical_and, is_logical_or_token); }
+Node *parse_logical_or(Lexer *lexer) { BINOP_PARSER(parse_logical_and, is_logical_or_token); }
+
+Node *parse_expression(Lexer *lexer)
+{
+    Node *node = parse_logical_or(lexer);
+    // FIXME: This is a hack to handle assignment expressions
+    //        and can probably be done properly.
+    if (node->type == AST_VAR) {
+        Token token = Lexer_peek(lexer);
+        if (token.type == TOKEN_ASSIGN) {
+            Lexer_next(lexer);
+            Variable *var = node->variable;
+            node->type = OP_ASSIGN;
+            node->assign.var = var;
+            node->assign.value = parse_expression(lexer);
+        }
+    }
+    return node;
+}
 
 Node *parse_statement(Lexer *lexer)
 {
@@ -218,8 +241,9 @@ Node *parse_statement(Lexer *lexer)
     } else if (token.type == TOKEN_LET) {
         return parse_var_declaration(lexer);
     } else {
-        die_location(token.loc, ": Unexpected token in parse_statement: %s\n", token_type_to_str(token.type));
-        exit(1);
+        // Default to trying to handle it as an expression
+        node = parse_expression(lexer);
+        assert_token(Lexer_next(lexer), TOKEN_SEMICOLON);
     }
 
     return node;

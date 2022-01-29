@@ -102,11 +102,15 @@ typedef struct ast_node {
             };
         } literal;
 
-        // FIXME: Different struct for assignment?
         struct {
             Variable var;
             Node *value;
         } var_decl;
+
+        struct {
+            Variable *var;
+            Node *value;
+        } assign;
 
         Variable *variable;
     };

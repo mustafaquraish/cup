@@ -162,7 +162,10 @@ Token Lexer_next(Lexer *lexer)
 
 
         default: {
+            // Handle keywords explicitly
             if (Lexer_starts_with(lexer, "fn"))     return Lexer_make_token(lexer, TOKEN_FN,     2);
+            if (Lexer_starts_with(lexer, "if"))     return Lexer_make_token(lexer, TOKEN_IF,     2);
+            if (Lexer_starts_with(lexer, "else"))   return Lexer_make_token(lexer, TOKEN_ELSE,   4);
             if (Lexer_starts_with(lexer, "return")) return Lexer_make_token(lexer, TOKEN_RETURN, 6);
             if (Lexer_starts_with(lexer, "int"))    return Lexer_make_token(lexer, TOKEN_INT,    3);
             if (Lexer_starts_with(lexer, "let"))    return Lexer_make_token(lexer, TOKEN_LET,    3);
