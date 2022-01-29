@@ -1,6 +1,6 @@
 #pragma once
 
-#include <stdbool.h>
+#include "common.h"
 
 #define ENUM_AST_TYPES(F)                                                      \
   F(OP_NEG, "neg")                                                             \
@@ -22,7 +22,9 @@
   F(OP_LEQ, "<=")                                                              \
   F(OP_GT, ">")                                                                \
   F(OP_GEQ, ">=")                                                              \
+  F(OP_ASSIGN, "=")                                                            \
   F(AST_LITERAL, "literal")                                                    \
+  F(AST_VARDECL, "variable decl")                                              \
   F(AST_RETURN, "return")                                                      \
   F(AST_FUNC, "func")                                                          \
   F(AST_PROGRAM, "program")                                                    \
@@ -53,6 +55,12 @@ typedef struct {
     int indirection;
 } Type;
 
+typedef struct {
+    char *name;
+    Type type;
+    i64 offset;
+} Variable;
+
 typedef struct ast_node Node;
 typedef struct ast_node {
     NodeType type;
@@ -63,26 +71,41 @@ typedef struct ast_node {
             Node *left;
             Node *right;
         } binary;
+
         // Unary expr
         Node *unary_expr;
+
         // Function definition
         struct {
             char *name;
             Type return_type;
             Node *body;
+
+            Variable *locals;
+            int num_locals;
+
+            int cur_stack_offset;
             // TODO: Arguments / etc?
         } func;
+
         // Block of statements
         struct {
             Node **children;
             int num_children;
         } block;
+
         struct {
             Type type;
             union {
                 int as_int;
             };
         } literal;
+
+        struct {
+            char *name;
+            Type type;
+            Node *value;
+        } var;
     };
 } Node;
 

@@ -1,10 +1,7 @@
 #pragma once
 
-#include <stdbool.h>
-#include <stdint.h>
+#include "common.h"
 #include <stdio.h>
-
-typedef int64_t i64;
 
 #define ENUM_TOKENS(F)                                                         \
   F(TOKEN_AMPERSAND, "&")                                                      \
@@ -25,6 +22,7 @@ typedef int64_t i64;
   F(TOKEN_INTLIT, "integer literal")                                           \
   F(TOKEN_LEQ, "<=")                                                           \
   F(TOKEN_LSHIFT, "<<")                                                        \
+  F(TOKEN_LET, "let")                                                          \
   F(TOKEN_LT, "<")                                                             \
   F(TOKEN_MINUS, "-")                                                          \
   F(TOKEN_MINUSEQUALS, "-=")                                                   \

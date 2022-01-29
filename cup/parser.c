@@ -3,6 +3,8 @@
 #include <stdlib.h>
 #include <assert.h>
 
+static Node *current_function = NULL;
+
 Token do_assert_token(Token token, TokenType type, char *filename, int line)
 {
     if (token.type != type) {
@@ -92,6 +94,35 @@ Node *parse_literal(Lexer *lexer)
 
 Node *parse_expression(Lexer *);
 
+Node *parse_var_declaration(Lexer *lexer)
+{
+    Token token = assert_token(Lexer_next(lexer), TOKEN_LET);
+    Node *node = Node_new(AST_VARDECL);
+    node->var.name = assert_token(Lexer_next(lexer), TOKEN_IDENTIFIER).value.as_string;
+    assert_token(Lexer_next(lexer), TOKEN_COLON);
+    node->var.type = parse_type(lexer);
+    assert_token(Lexer_next(lexer), TOKEN_ASSIGN);
+    node->var.value = parse_expression(lexer);
+    assert_token(Lexer_next(lexer), TOKEN_SEMICOLON);
+
+    // Add variable to current function
+    if (!current_function || current_function->type != AST_FUNC)
+        die_location(token.loc, "Variable declaration outside of function");
+
+    int new_len = (current_function->func.num_locals + 1);
+    int var_size = 8; // TODO: Compute sizes based on different types
+    current_function->func.locals = realloc(current_function->func.locals, sizeof(Variable) * new_len);
+    current_function->func.locals[current_function->func.num_locals] = (Variable) {
+        .name = node->var.name,
+        .type = node->var.type,
+        .offset = current_function->func.cur_stack_offset,
+    };
+    current_function->func.num_locals++;
+    current_function->func.cur_stack_offset += var_size;
+
+    return node;
+}
+
 Node *parse_factor(Lexer *lexer)
 {
     // TODO: Parse more complicated things
@@ -116,7 +147,7 @@ Node *parse_factor(Lexer *lexer)
     } else if (token.type == TOKEN_INTLIT) {
         expr = parse_literal(lexer);
     } else {
-        die_location(token.loc, "Expected token found in parse_factor: `%s`", token_type_to_str(token.type));
+        die_location(token.loc, ": Expected token found in parse_factor: `%s`", token_type_to_str(token.type));
         exit(1);
     }
     return expr;
@@ -164,6 +195,8 @@ Node *parse_statement(Lexer *lexer)
         node = Node_new(AST_RETURN);
         node->unary_expr = parse_expression(lexer);
         assert_token(Lexer_next(lexer), TOKEN_SEMICOLON);
+    } else if (token.type == TOKEN_LET) {
+        return parse_var_declaration(lexer);
     } else {
         die_location(token.loc, ": Unexpected token in parse_statement: %s\n", token_type_to_str(token.type));
         exit(1);
@@ -187,10 +220,12 @@ Node *parse_block(Lexer *lexer)
 
 Node *parse_func(Lexer *lexer)
 {
-    Node *func = Node_new(AST_FUNC);
     Token token;
-
     token = assert_token(Lexer_next(lexer), TOKEN_FN);
+
+    Node *func = Node_new(AST_FUNC);
+    current_function = func;
+
     token = assert_token(Lexer_next(lexer), TOKEN_IDENTIFIER);
 
     func->func.name = token.value.as_string;

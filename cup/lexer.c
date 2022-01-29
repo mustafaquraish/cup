@@ -165,6 +165,7 @@ Token Lexer_next(Lexer *lexer)
             if (Lexer_starts_with(lexer, "fn"))     return Lexer_make_token(lexer, TOKEN_FN,     2);
             if (Lexer_starts_with(lexer, "return")) return Lexer_make_token(lexer, TOKEN_RETURN, 6);
             if (Lexer_starts_with(lexer, "int"))    return Lexer_make_token(lexer, TOKEN_INT,    3);
+            if (Lexer_starts_with(lexer, "let"))    return Lexer_make_token(lexer, TOKEN_LET,    3);
 
             if (isdigit(lexer->src[lexer->pos])) {
                 // TODO: Parse hex and octal numbers

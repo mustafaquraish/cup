@@ -12,6 +12,15 @@ char *data_type_to_str(DataType type)
     }
 }
 
+void print_type_to_file(FILE *out, Type type)
+{
+    fprintf(out, "%s", data_type_to_str(type.type));
+    for (int i = 0; i < type.indirection; i++)
+    {
+        fprintf(out, "*");
+    }
+}
+
 char *node_type_to_str(NodeType type)
 {
     switch (type)
@@ -67,6 +76,8 @@ bool is_expression(NodeType type)
     return type == AST_LITERAL;
 }
 
+void dump_func(Node *, int);
+
 static void do_print_ast(Node *node, int depth)
 {
     for (int i = 0; i < depth; i++) {
@@ -86,18 +97,7 @@ static void do_print_ast(Node *node, int depth)
         }
         printf("}\n");
     } else if (node->type == AST_FUNC) {
-        printf("fn %s()", node->func.name);
-        if (node->func.return_type.type != TYPE_NONE) {
-            // FIXME: Print return type properly
-            Type t = node->func.return_type;
-            printf(" -> %s", data_type_to_str(t.type));
-            for (int i = 0; i < t.indirection; i++) {
-                printf("*");
-            }
-
-        }
-        printf("\n");
-        do_print_ast(node->func.body, depth + 1);
+        dump_func(node, depth);
     } else if (node->type == AST_LITERAL) {
         printf("(literal %d)\n", node->literal.as_int);
     } else if (node->type == AST_RETURN) {
@@ -110,11 +110,39 @@ static void do_print_ast(Node *node, int depth)
         printf("%s\n", node_type_to_str(node->type));
         do_print_ast(node->binary.left, depth + 1);
         do_print_ast(node->binary.right, depth + 1);
+    } else if (node->type == AST_VARDECL) {
+        printf("var %s (", node->var.name);
+        print_type_to_file(stdout, node->var.type);
+        printf(")");
+        if (node->var.value != NULL) {
+            printf(" = \n");
+            do_print_ast(node->var.value, depth + 1);
+        } else {
+            printf("\n");
+        }
     } else {
-        printf("Don't know how to handle: `%s`\n", node_type_to_str(node->type));
+        printf("{{ %s }}\n", node_type_to_str(node->type));
     }
 }
 
+void dump_func(Node *node, int depth)
+{
+    printf("fn %s()", node->func.name);
+    if (node->func.return_type.type != TYPE_NONE) {
+        // FIXME: Print return type properly
+        printf(" -> ");
+        print_type_to_file(stdout, node->func.return_type);
+    }
+    if (node->func.num_locals > 0) {
+        printf("\n locals: \n");
+        for (int i = 0; i < node->func.num_locals; i++) {
+            printf(" - `%s`, offset: %lld (", node->func.locals[i].name, node->func.locals[i].offset);
+            print_type_to_file(stdout, node->func.locals[i].type);
+            printf(")\n");
+        }
+    }
+    do_print_ast(node->func.body, depth + 1);
+}
 
 void print_ast(Node *node)
 {

@@ -144,7 +144,7 @@ void generate_expr_into_rax(Node *expr, FILE *out)
 
     } else if (expr->type == OP_AND) {
         generate_expr_into_rax(expr->binary.left, out);
-        // If left is true, we can short-circuit
+        // If left is false, we can short-circuit
         fprintf(out, "    cmp rax, 0\n");
         fprintf(out, "    jne .and_right_%d\n", label_counter);
         fprintf(out, "    mov rax, 0\n");

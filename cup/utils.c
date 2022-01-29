@@ -13,12 +13,14 @@ void die(const char *fmt, ...)
     exit(1);
 }
 
-void die_location(Location loc, const char *fmt, ...)
+void _die_location(char *file, int line, Location loc, const char *fmt, ...)
 {
     Location_print(stderr, loc);
     va_list args;
     va_start(args, fmt);
     vfprintf(stderr, fmt, args);
     va_end(args);
+    fprintf(stderr, "\n");
+    fprintf(stderr, "NOTE: Error occurred in %s:%d\n", file, line);
     exit(1);
 }
