@@ -16,6 +16,37 @@ Token do_assert_token(Token token, TokenType type, char *filename, int line)
 
 #define assert_token(token, type) do_assert_token(token, type, __FILE__, __LINE__)
 
+/******
+ * Some helpers
+ */
+
+NodeType binary_token_to_op(TokenType type)
+{
+    switch (type)
+    {
+        case TOKEN_PLUS:    return OP_PLUS;
+        case TOKEN_MINUS:   return OP_MINUS;
+        case TOKEN_STAR:    return OP_MUL;
+        case TOKEN_SLASH:   return OP_DIV;
+        case TOKEN_PERCENT: return OP_MOD;
+        case TOKEN_LSHIFT:  return OP_LSHIFT;
+        case TOKEN_RSHIFT:  return OP_RSHIFT;
+        case TOKEN_AND:     return OP_AND;
+        case TOKEN_OR:      return OP_OR;
+        case TOKEN_XOR:     return OP_XOR;
+        case TOKEN_EQ:      return OP_EQ;
+        case TOKEN_NEQ:     return OP_NEQ;
+        case TOKEN_LT:      return OP_LT;
+        case TOKEN_LEQ:     return OP_LEQ;
+        case TOKEN_GT:      return OP_GT;
+        case TOKEN_GEQ:     return OP_GEQ;
+        
+        default: assert(false && "binary_token_to_op called with invalid token type");
+    }
+}
+
+
+
 void Node_add_child(Node *parent, Node *child)
 {
     // TODO, use a vector
@@ -59,7 +90,9 @@ Node *parse_literal(Lexer *lexer)
     return node;
 }
 
-Node *parse_expression(Lexer *lexer)
+Node *parse_expression(Lexer *);
+
+Node *parse_factor(Lexer *lexer)
 {
     // TODO: Parse more complicated things
     Token token = Lexer_peek(lexer);
@@ -67,17 +100,60 @@ Node *parse_expression(Lexer *lexer)
     if (token.type == TOKEN_MINUS) {
         Lexer_next(lexer);
         expr = Node_new(OP_NEG);
-        expr->unary_expr = parse_expression(lexer);
+        expr->unary_expr = parse_factor(lexer);
     } else if (token.type == TOKEN_TILDE) {
         Lexer_next(lexer);
         expr = Node_new(OP_BWINV);
-        expr->unary_expr = parse_expression(lexer);
+        expr->unary_expr = parse_factor(lexer);
     } else if (token.type == TOKEN_EXCLAMATION) {
         Lexer_next(lexer);
         expr = Node_new(OP_NOT);
-        expr->unary_expr = parse_expression(lexer);
+        expr->unary_expr = parse_factor(lexer);
+    } else if (token.type == TOKEN_OPEN_PAREN) {
+        Lexer_next(lexer);
+        expr = parse_expression(lexer);
+        assert_token(Lexer_next(lexer), TOKEN_CLOSE_PAREN);
+    } else if (token.type == TOKEN_INTLIT) {
+        expr = parse_literal(lexer);
     } else {
-        return parse_literal(lexer);
+        die_location(token.loc, "Expected token found in parse_factor: `%s`", token_type_to_str(token.type));
+        exit(1);
+    }
+    return expr;
+}
+
+Node *parse_term(Lexer *lexer)
+{
+    Node *expr = parse_factor(lexer);
+    Token token = Lexer_peek(lexer);
+    while (token.type == TOKEN_STAR || 
+           token.type == TOKEN_SLASH || 
+           token.type == TOKEN_PERCENT) {
+        Lexer_next(lexer);
+        Node *op = Node_new(binary_token_to_op(token.type));
+        Node *right = parse_factor(lexer);
+        op->binary.left = expr;
+        op->binary.right = right;
+        expr = op;
+        token = Lexer_peek(lexer);
+    }
+    return expr;
+}
+
+
+Node *parse_expression(Lexer *lexer)
+{
+    Node *expr = parse_term(lexer);
+    Token token = Lexer_peek(lexer);
+    while (token.type == TOKEN_PLUS || 
+           token.type == TOKEN_MINUS) {
+        Lexer_next(lexer);
+        Node *op = Node_new(binary_token_to_op(token.type));
+        Node *right = parse_term(lexer);
+        op->binary.left = expr;
+        op->binary.right = right;
+        expr = op;
+        token = Lexer_peek(lexer);
     }
     return expr;
 }
@@ -93,9 +169,7 @@ Node *parse_statement(Lexer *lexer)
         node->unary_expr = parse_expression(lexer);
         assert_token(Lexer_next(lexer), TOKEN_SEMICOLON);
     } else {
-        printf("Unexpected token in parse_statement: ");
-        Token_print(stdout, &token);
-        printf("\n");
+        die_location(token.loc, ": Unexpected token in parse_statement: %s\n", token_type_to_str(token.type));
         exit(1);
     }
 

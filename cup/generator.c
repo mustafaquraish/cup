@@ -30,6 +30,37 @@ void generate_expr_into_rax(Node *expr, FILE *out)
         generate_expr_into_rax(expr->unary_expr, out);
         fprintf(out, "    not rax\n");
         
+    } else if (expr->type == OP_PLUS) {
+        generate_expr_into_rax(expr->binary.left, out);
+        fprintf(out, "    push rax\n");
+        generate_expr_into_rax(expr->binary.right, out);
+        fprintf(out, "    pop rbx\n");
+        fprintf(out, "    add rax, rbx\n");
+
+    } else if (expr->type == OP_MINUS) {
+        generate_expr_into_rax(expr->binary.left, out);
+        fprintf(out, "    push rax\n");
+        generate_expr_into_rax(expr->binary.right, out);
+        fprintf(out, "    mov rbx, rax\n");
+        fprintf(out, "    pop rax\n");
+        fprintf(out, "    sub rax, rbx\n");
+
+    } else if (expr->type == OP_DIV) {
+        generate_expr_into_rax(expr->binary.left, out);
+        fprintf(out, "    push rax\n");
+        generate_expr_into_rax(expr->binary.right, out);
+        fprintf(out, "    mov rbx, rax\n");
+        fprintf(out, "    pop rax\n");
+        fprintf(out, "    cqo\n");
+        fprintf(out, "    idiv rbx\n");
+
+    } else if (expr->type == OP_MUL) {
+        generate_expr_into_rax(expr->binary.left, out);
+        fprintf(out, "    push rax\n");
+        generate_expr_into_rax(expr->binary.right, out);
+        fprintf(out, "    pop rbx\n");
+        fprintf(out, "    imul rbx\n");
+
     } else {
         fprintf(stderr, "Unsupported expression type in generate_expr: %d\n", expr->type);
         exit(1);

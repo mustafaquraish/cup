@@ -23,6 +23,50 @@ char *node_type_to_str(NodeType type)
     }
 }
 
+bool is_binary_op(NodeType type)
+{
+    switch (type)
+    {
+    case OP_PLUS:
+    case OP_MINUS:
+    case OP_MUL:
+    case OP_DIV:
+    case OP_MOD:
+    case OP_LSHIFT:
+    case OP_RSHIFT:
+    case OP_AND:
+    case OP_OR:
+    case OP_XOR:
+    case OP_EQ:
+    case OP_NEQ:
+    case OP_LT:
+    case OP_LEQ:
+    case OP_GT:
+    case OP_GEQ: 
+        return true;
+    default: return false;
+    }
+}
+
+bool is_unary_op(NodeType type)
+{
+    switch (type)
+    {
+    case OP_NEG:
+    case OP_NOT:
+    case OP_BWINV:
+        return true;
+    default: return false;
+    }
+}
+
+bool is_expression(NodeType type)
+{
+    if (is_unary_op(type) || is_binary_op(type))
+        return true;
+    return type == AST_LITERAL;
+}
+
 static void do_print_ast(Node *node, int depth)
 {
     for (int i = 0; i < depth; i++) {
@@ -59,17 +103,15 @@ static void do_print_ast(Node *node, int depth)
     } else if (node->type == AST_RETURN) {
         printf("return\n");
         do_print_ast(node->unary_expr, depth + 1);
-    } else if (node->type == OP_NEG) {
-        printf("-\n");
+    } else if (is_unary_op(node->type)) {
+        printf("%s\n", node_type_to_str(node->type));
         do_print_ast(node->unary_expr, depth + 1);
-    } else if (node->type == OP_NOT) {
-        printf("!\n");
-        do_print_ast(node->unary_expr, depth + 1);
-    } else if (node->type == OP_BWINV) {
-        printf("~\n");
-        do_print_ast(node->unary_expr, depth + 1);
+    } else if (is_binary_op(node->type)) {
+        printf("%s\n", node_type_to_str(node->type));
+        do_print_ast(node->binary.left, depth + 1);
+        do_print_ast(node->binary.right, depth + 1);
     } else {
-        printf("(unknown)\n");
+        printf("Don't know how to handle: `%s`\n", node_type_to_str(node->type));
     }
 }
 
