@@ -79,9 +79,6 @@ static Token Lexer_make_token(Lexer *lexer, TokenType type, int inc_amount)
     return token;
 }
 
-#define LEX_KEYWORD(str, token_type) \
-    if (Lexer_starts_with(lexer, str)) return Lexer_make_token(lexer, token_type, strlen(str));
-
 Token Lexer_next(Lexer *lexer)
 {
     while (lexer->pos < lexer->len) {
@@ -98,6 +95,8 @@ Token Lexer_next(Lexer *lexer)
         case '~': return Lexer_make_token(lexer, TOKEN_TILDE, 1);
         case '?': return Lexer_make_token(lexer, TOKEN_QUESTION, 1);
         case ',': return Lexer_make_token(lexer, TOKEN_COMMA, 1);
+        case '*': return Lexer_make_token(lexer, TOKEN_STAR, 1);
+        case '%': return Lexer_make_token(lexer, TOKEN_PERCENT, 1);
         
         case '&': {
             if (peek(lexer, 1) == '&')
@@ -162,20 +161,12 @@ Token Lexer_next(Lexer *lexer)
             return Lexer_make_token(lexer, TOKEN_SLASH, 1);
         }
 
-        case '*': return Lexer_make_token(lexer, TOKEN_STAR, 1);
-        case '%': return Lexer_make_token(lexer, TOKEN_PERCENT, 1);
-
 
         default: {
             // Handle keywords explicitly
-            LEX_KEYWORD("fn", TOKEN_FN);
-            LEX_KEYWORD("if", TOKEN_IF);
-            LEX_KEYWORD("int", TOKEN_INT);
-            LEX_KEYWORD("let", TOKEN_LET);
-            LEX_KEYWORD("for", TOKEN_FOR);
-            LEX_KEYWORD("else", TOKEN_ELSE);
-            LEX_KEYWORD("while", TOKEN_WHILE);
-            LEX_KEYWORD("return", TOKEN_RETURN);
+            #define LEX_KEYWORD(token_type, str) if (Lexer_starts_with(lexer, str)) return Lexer_make_token(lexer, token_type, strlen(str));
+            ENUM_KEYWORDS(LEX_KEYWORD)
+            #undef LEX_KEYWORD
 
             if (isdigit(lexer->src[lexer->pos])) {
                 // TODO: Parse hex and octal numbers

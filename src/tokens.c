@@ -47,9 +47,10 @@ char *token_type_to_str(TokenType type)
     // Otherwise, just print the token type
     switch (type)
     {
-    #define ENUM_TOKEN(name, str) case name: return str;
-        ENUM_TOKENS(ENUM_TOKEN)
-    #undef ENUM_TOKEN
+    #define HANDLE_ITEM(name, str) case name: return str;
+        ENUM_TOKENS(HANDLE_ITEM)
+        ENUM_KEYWORDS(HANDLE_ITEM)
+    #undef HANDLE_ITEM
     default: assert(false && "Unreachable");
     }
 }

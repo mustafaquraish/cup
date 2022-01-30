@@ -12,21 +12,15 @@
   F(TOKEN_CLOSE_PAREN, ")")                                                    \
   F(TOKEN_COLON, ":")                                                          \
   F(TOKEN_COMMA, ",")                                                          \
-  F(TOKEN_ELSE, "else")                                                        \
   F(TOKEN_EOF, "EOF")                                                          \
   F(TOKEN_EQ, "==")                                                            \
   F(TOKEN_EXCLAMATION, "!")                                                    \
-  F(TOKEN_FN, "fn")                                                            \
-  F(TOKEN_FOR, "for")                                                          \
   F(TOKEN_GEQ, ">=")                                                           \
   F(TOKEN_GT, ">")                                                             \
   F(TOKEN_IDENTIFIER, "identifier")                                            \
-  F(TOKEN_IF, "if")                                                            \
-  F(TOKEN_INT, "int")                                                          \
   F(TOKEN_INTLIT, "integer literal")                                           \
   F(TOKEN_LEQ, "<=")                                                           \
   F(TOKEN_LSHIFT, "<<")                                                        \
-  F(TOKEN_LET, "let")                                                          \
   F(TOKEN_LT, "<")                                                             \
   F(TOKEN_MINUS, "-")                                                          \
   F(TOKEN_MINUSEQUALS, "-=")                                                   \
@@ -40,20 +34,30 @@
   F(TOKEN_PLUSEQUALS, "+=")                                                    \
   F(TOKEN_PLUSPLUS, "++")                                                      \
   F(TOKEN_QUESTION, "?")                                                       \
-  F(TOKEN_RETURN, "return")                                                    \
   F(TOKEN_RSHIFT, ">>")                                                        \
   F(TOKEN_SEMICOLON, ";")                                                      \
   F(TOKEN_SLASH, "/")                                                          \
   F(TOKEN_STAR, "*")                                                           \
   F(TOKEN_STRINGLIT, "string literal")                                         \
   F(TOKEN_TILDE, "~")                                                          \
-  F(TOKEN_WHILE, "while")                                                      \
   F(TOKEN_XOR, "^")
 
+#define ENUM_KEYWORDS(F)                                                       \
+  F(TOKEN_ELSE, "else")                                                        \
+  F(TOKEN_FN, "fn")                                                            \
+  F(TOKEN_FOR, "for")                                                          \
+  F(TOKEN_IF, "if")                                                            \
+  F(TOKEN_INT, "int")                                                          \
+  F(TOKEN_LET, "let")                                                          \
+  F(TOKEN_RETURN, "return")                                                    \
+  F(TOKEN_WHILE, "while")                                                      \
+
+
 typedef enum {
-#define ENUM_TOKEN(name, str) name,
-  ENUM_TOKENS(ENUM_TOKEN)
-#undef ENUM_TOKEN
+#define HANDLE_ITEM(name, str) name,
+  ENUM_TOKENS(HANDLE_ITEM)
+  ENUM_KEYWORDS(HANDLE_ITEM)
+#undef HANDLE_ITEM
 } TokenType;
 
 typedef struct {

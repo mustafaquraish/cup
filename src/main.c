@@ -5,11 +5,14 @@
 #include "parser.h"
 #include "generator.h"
 #include "unistd.h"
+#include <errno.h>
 
 char *filename = NULL;
 char *source = NULL;
 i64 source_len = 0;
 bool dump_ast = false;
+
+char *output_file = "build/output.nasm";
 
 #define MAX_STDIN_SOURCE_LEN 2048
 
@@ -19,6 +22,7 @@ void usage(int exit_status)
     printf("Options:\n");
     printf("  -c <code>  Code to compile\n");
     printf("  -h         Show this help\n");
+    printf("  -o <file>  Output file\n");
     printf("  -d         Dump AST to stdout\n");
     printf("Output file will be named `output.nasm`\n");
     exit(exit_status);
@@ -37,6 +41,9 @@ void parse_args(int argc, char **argv)
             usage(0);
         } else if (strcmp(argv[i], "-d") == 0) {
             dump_ast = true;
+        } else if (strcmp(argv[i], "-o") == 0) {
+            i++;
+            output_file = argv[i];
         } else if (filename == NULL) {
             if (strcmp(argv[i], "-") == 0) {
                 filename = "stdin";
@@ -73,9 +80,12 @@ int main(int argc, char**argv) {
     if (dump_ast)
         print_ast(ast);
 
-    FILE *f = fopen("output.nasm", "w");
+    FILE *f = fopen(output_file, "w");
+    if (f == NULL) {
+        fprintf(stderr, "Could not open output file: %s\n", strerror(errno));
+        exit(1);
+    }
     generate_asm(ast, f);
-
 
     free(source);
     return 0;
