@@ -3,4 +3,4 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-typedef int64_t i64;
+typedef long long int i64;

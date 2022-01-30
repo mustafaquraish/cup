@@ -7,8 +7,29 @@
 #include <string.h>
 #include <assert.h>
 
+#include <sys/syscall.h>
+
 static int label_counter = 0;
 static Node *current_function = NULL;
+
+void generate_expr_into_rax(Node *expr, FILE *out);
+
+void generate_func_call(Node *node, FILE *out)
+{
+    assert(node->type == AST_FUNCCALL);
+    // FIXME: This seems like a big hack
+    i64 total_size = 0;
+    for (int i = node->call.num_args - 1; i >= 0; i--) {
+        Node *arg = node->call.args[i];
+        generate_expr_into_rax(arg, out);
+        fprintf(out, "    push rax\n");
+        // TODO: Compute this for different types
+        // TODO: Also make sure of padding and stuff?
+        total_size += 8;
+    }
+    fprintf(out, "    call %s\n", node->call.func->func.name);
+    fprintf(out, "    add rsp, %lld\n", total_size);
+}
 
 // The evaluated expression is stored into `rax`
 void generate_expr_into_rax(Node *expr, FILE *out)
@@ -19,9 +40,15 @@ void generate_expr_into_rax(Node *expr, FILE *out)
         assert(expr->literal.type.type == TYPE_INT);
         fprintf(out, "    mov rax, %d\n", expr->literal.as_int);
 
+    } else if (expr->type == AST_FUNCCALL) {
+        generate_func_call(expr, out);
+
     } else if (expr->type == AST_VAR) {
         i64 offset = expr->variable->offset;
-        fprintf(out, "    mov rax, [rbp-%lld]\n", offset);
+        if (offset > 0)
+            fprintf(out, "    mov rax, [rbp-%lld]\n", offset);
+        else
+            fprintf(out, "    mov rax, [rbp+%lld]\n", -offset);
 
     } else if (expr->type == OP_ASSIGN) {
         i64 offset = expr->assign.var->offset;
@@ -212,7 +239,7 @@ void generate_statement(Node *stmt, FILE *out)
         assert(stmt->conditional.cond);
         assert(stmt->conditional.do_then);
         int cur_label = label_counter++;
-        
+
         generate_expr_into_rax(stmt->conditional.cond, out);
         // If we don't have an `else` clause, we can simplify
         if (!stmt->conditional.do_else) {
@@ -229,7 +256,7 @@ void generate_statement(Node *stmt, FILE *out)
             generate_statement(stmt->conditional.do_else, out);
             fprintf(out, ".if_end_%d:\n", cur_label);
         }
-    } else if (stmt->type == AST_WHILE) { 
+    } else if (stmt->type == AST_WHILE) {
         int cur_label = label_counter++;
         fprintf(out, ".loop_start_%d:\n", cur_label);
         fprintf(out, ".loop_continue_%d:\n", cur_label);
@@ -240,7 +267,7 @@ void generate_statement(Node *stmt, FILE *out)
         fprintf(out, "    jmp .loop_start_%d\n", cur_label);
         fprintf(out, ".loop_end_%d:\n", cur_label);
 
-    }  else if (stmt->type == AST_FOR) { 
+    }  else if (stmt->type == AST_FOR) {
         int cur_label = label_counter++;
         if (stmt->loop.init) {
             generate_statement(stmt->loop.init, out);
@@ -259,7 +286,7 @@ void generate_statement(Node *stmt, FILE *out)
         fprintf(out, "    jmp .loop_start_%d\n", cur_label);
         fprintf(out, ".loop_end_%d:\n", cur_label);
 
-    } else if (stmt->type == AST_BLOCK) { 
+    } else if (stmt->type == AST_BLOCK) {
         generate_block(stmt, out);
     } else {
         // Once again, default to an expression here...

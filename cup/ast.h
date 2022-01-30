@@ -24,6 +24,7 @@
   F(OP_GEQ, ">=")                                                              \
   F(OP_ASSIGN, "=")                                                            \
   F(AST_LITERAL, "literal")                                                    \
+  F(AST_FUNCCALL, "Function call")                                             \
   F(AST_CONDITIONAL, "conditional expression")                                 \
   F(AST_IF, "if statement")                                                    \
   F(AST_WHILE, "while statement")                                              \
@@ -89,7 +90,10 @@ typedef struct ast_node {
             // TODO: Should we just dynamically allocate space on the
             //       stack for each block instead of storing this?
             i64 max_locals_size;
+
             // TODO: Arguments / etc?
+            Variable *args;
+            int num_args;
         } func;
 
         // Block of statements
@@ -134,6 +138,12 @@ typedef struct ast_node {
         } loop;
 
         Variable *variable;
+
+        struct {
+            Node *func;
+            Node **args;
+            int num_args;
+        } call;
     };
 } Node;
 

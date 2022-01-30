@@ -1,0 +1,13 @@
+fn rec_sum(n: int, accum: int): int {
+    if (n == 0)
+        return accum;
+    return rec_sum(n - 1, accum + n);
+}
+
+fn sum(n: int): int {
+    return rec_sum(n, 0);
+}
+
+fn main() {
+    return sum(10);
+}

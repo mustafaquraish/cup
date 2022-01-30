@@ -4,6 +4,10 @@
 #include <string.h>
 #include <assert.h>
 
+#define MAX_FUNCTION_COUNT 1024
+static Node *all_functions[MAX_FUNCTION_COUNT];
+static i64 function_count = 0;
+
 static Node *current_function = NULL;
 
 #define BLOCK_STACK_SIZE 64
@@ -90,6 +94,24 @@ Variable *find_local_variable(Token *token)
             if (strcmp(block->block.locals[i]->name, token->value.as_string) == 0) {
                 return block->block.locals[i];
             }
+        }
+    }
+    Node *func = current_function;
+    for (int i = 0; i < func->func.num_args; i++) {
+        if (strcmp(func->func.args[i].name, token->value.as_string) == 0) {
+            return &func->func.args[i];
+        }
+    }
+    return NULL;
+}
+
+Node *find_function_definition(Token *token)
+{
+    assert_token(*token, TOKEN_IDENTIFIER);
+    for (i64 i = 0; i < function_count; i++) {
+        Node *function = all_functions[i];
+        if (strcmp(function->func.name, token->value.as_string) == 0) {
+            return function;
         }
     }
     return NULL;
@@ -203,6 +225,38 @@ Node *parse_var_declaration(Lexer *lexer)
     return node;
 }
 
+Node *parse_function_call_args(Lexer *lexer, Node *func)
+{
+    Token identifier = assert_token(Lexer_next(lexer), TOKEN_IDENTIFIER);
+    Node *call = Node_new(AST_FUNCCALL);
+    call->call.func = func;
+    assert_token(Lexer_next(lexer), TOKEN_OPEN_PAREN);
+    Token token = Lexer_peek(lexer);
+
+    while (token.type != TOKEN_CLOSE_PAREN) {
+        Node *arg = parse_expression(lexer);
+
+        int new_size = call->call.num_args + 1;
+        call->call.args = realloc(call->call.args, sizeof(Node *) * new_size);
+        call->call.args[call->call.num_args++] = arg;
+        
+        if (new_size > func->func.num_args)
+            die_location(identifier.loc, "Too many arguments to function `%s`", func->func.name);
+
+        token = Lexer_peek(lexer);
+        if (token.type == TOKEN_COMMA) {
+            Lexer_next(lexer);
+            token = Lexer_peek(lexer);
+        }
+    }
+
+    if (call->call.num_args != func->func.num_args)
+        die_location(identifier.loc, "Too few arguments to function `%s`", func->func.name);
+
+    assert_token(Lexer_next(lexer), TOKEN_CLOSE_PAREN);
+    return call;
+}
+
 Node *parse_factor(Lexer *lexer)
 {
     // TODO: Parse more complicated things
@@ -226,13 +280,24 @@ Node *parse_factor(Lexer *lexer)
         assert_token(Lexer_next(lexer), TOKEN_CLOSE_PAREN);
     } else if (token.type == TOKEN_INTLIT) {
         expr = parse_literal(lexer);
-    } else if (token.type == TOKEN_IDENTIFIER) {
-        Lexer_next(lexer);
+    } else if (token.type == TOKEN_IDENTIFIER) {   
+        // TODO: Check for global variables when added
+
         Variable *var = find_local_variable(&token); 
-        if (var == NULL)
-            die_location(token.loc, "Could not find variable `%s`", token.value.as_string);
-        expr = Node_new(AST_VAR);
-        expr->variable = var;
+        if (var != NULL) {
+            Lexer_next(lexer);
+            expr = Node_new(AST_VAR);
+            expr->variable = var;
+            return expr;
+        }
+        
+        Node *func = find_function_definition(&token);
+        if (func != NULL) {
+            return parse_function_call_args(lexer, func);
+        }
+
+        die_location(token.loc, "Unknown identifier `%s`", token.value.as_string);
+        expr = NULL;
     } else {
         die_location(token.loc, ": Expected token found in parse_factor: `%s`", token_type_to_str(token.type));
         exit(1);
@@ -401,20 +466,63 @@ Node *parse_block(Lexer *lexer)
     return block;
 }
 
+void push_new_function(Node *func)
+{
+    assert(func->type == AST_FUNC);
+    assert(function_count < MAX_FUNCTION_COUNT);
+    all_functions[function_count++] = func;
+    current_function = func;
+}
+
+void parse_func_args(Lexer *lexer, Node *func)
+{
+    assert_token(Lexer_next(lexer), TOKEN_OPEN_PAREN);
+    Token token = Lexer_peek(lexer);
+    while (token.type != TOKEN_CLOSE_PAREN) {
+        token = assert_token(Lexer_next(lexer), TOKEN_IDENTIFIER);
+        // TODO: Check for shadowing with globals
+        assert_token(Lexer_next(lexer), TOKEN_COLON);
+        Type type = parse_type(lexer);    
+
+        i64 new_count = func->func.num_args + 1;
+        func->func.args = realloc(func->func.args, sizeof(Variable) * new_count);
+        Variable *var = &func->func.args[func->func.num_args++];
+        var->name = token.value.as_string;
+        var->type = type;
+
+        token = Lexer_peek(lexer);
+        if (token.type == TOKEN_COMMA) {
+            Lexer_next(lexer);
+            token = Lexer_peek(lexer);
+        }
+    }
+    assert_token(Lexer_next(lexer), TOKEN_CLOSE_PAREN);
+
+    // Set the offsets for the arguments
+    
+    // IMPORTANT: We want to skip the saved ret_addr+old_rbp that we
+    //            pushed on the stack. Each of these is 8 bytes.
+    int offset = -16; 
+    for (int i = 0; i < func->func.num_args; i++) {
+        Variable *var = &func->func.args[i];
+        var->offset = offset;
+        // TODO: Compute this for different types
+        int var_size = 8;
+        offset -= var_size;
+    }
+}
+
 Node *parse_func(Lexer *lexer)
 {
     Token token;
     token = assert_token(Lexer_next(lexer), TOKEN_FN);
 
     Node *func = Node_new(AST_FUNC);
-    current_function = func;
+    push_new_function(func);
 
     token = assert_token(Lexer_next(lexer), TOKEN_IDENTIFIER);
-
     func->func.name = token.value.as_string;
-    assert_token(Lexer_next(lexer), TOKEN_OPEN_PAREN);
-    // TODO: Parse parameters
-    assert_token(Lexer_next(lexer), TOKEN_CLOSE_PAREN);
+    parse_func_args(lexer, func);
 
     token = Lexer_peek(lexer);
     if (token.type == TOKEN_COLON) {
@@ -426,9 +534,11 @@ Node *parse_func(Lexer *lexer)
         func->func.return_type = (Type){.type = TYPE_NONE};
     }
 
-    // Make sure there's no funny business with the stack offet
+    // Make sure there's no funny business with the stack offset
     assert(cur_stack_offset == 0);
+    assert(block_stack_count == 0);
     func->func.body = parse_block(lexer);
+    assert(block_stack_count == 0);
     assert(cur_stack_offset == 0);
 
     return func;

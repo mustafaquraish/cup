@@ -122,6 +122,15 @@ static void do_print_ast(Node *node, int depth)
         } else {
             printf("\n");
         }
+    } else if (node->type == AST_FUNCCALL) {
+        printf("CALL %s(\n", node->call.func->func.name);
+        for (int i = 0; i < node->call.num_args; i++) {
+            do_print_ast(node->call.args[i], depth + 1);
+        }
+        for (int i = 0; i < depth; i++) {
+            printf("  ");
+        }
+        printf(")\n");
     } else {
         printf("{{ %s }}\n", node_type_to_str(node->type));
     }
@@ -129,12 +138,20 @@ static void do_print_ast(Node *node, int depth)
 
 void dump_func(Node *node, int depth)
 {
-    printf("fn %s()", node->func.name);
+    printf("fn %s(", node->func.name);
+    for (int i = 0; i < node->func.num_args; i++) {
+        if (i > 0) printf(", ");
+        printf("%s: ", node->func.args[i].name);
+        print_type_to_file(stdout, node->func.args[i].type);
+        printf("[[%lld]]", node->func.args[i].offset);
+    }
+    printf(")");
     if (node->func.return_type.type != TYPE_NONE) {
         // FIXME: Print return type properly
         printf(" -> ");
         print_type_to_file(stdout, node->func.return_type);
     }
+
     do_print_ast(node->func.body, depth + 1);
 }
 
