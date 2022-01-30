@@ -1,28 +1,11 @@
 #!/bin/bash
 
-function assemble() {
-    case "$(uname -s)" in
-        Darwin)
-                set -e
-                nasm -f macho64 -o output.nasm.o output.nasm
-                ld -lSystem output.nasm.o
-                set +e
-                ;;
-        Linux)
-                set -e
-                nasm -f elf64 -o output.nasm.o output.nasm
-                ld output.nasm.o
-                set +e
-                ;;
-    esac
-}
-
 function assert_exit_status() {
-    ./cupcc -c "$1"
-    assemble
+    build/cupcc -c "$1" -o build/test.nasm
+    make build/test.out -s
 
     set +e
-    ./a.out
+    build/test.out
     res=$?
     set -e
     if [ $res -ne $2 ]
@@ -45,7 +28,7 @@ function assert_exit_status_stdin() {
 function assert_compile_failure_stdin() {
     code=$(</dev/stdin)
     set +e
-    ./cupcc -c "$code" >/dev/null 2>&1
+    build/cupcc -c "$code" -o build/test.nasm >/dev/null 2>&1
     res=$?
     set -e
     if [ $res -eq 0 ]

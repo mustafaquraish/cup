@@ -7,3 +7,5 @@ cupcc
 *.nasm
 *.o
 *.out
+
+build
