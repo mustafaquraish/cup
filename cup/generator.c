@@ -307,10 +307,22 @@ void generate_asm(Node *root, FILE *out)
     }
 
     // Call `main` from `_main` and return
+#if __APPLE__
     fprintf(out, "global _main\n");
     fprintf(out, "_main:\n");
+#else
+    fprintf(out, "global _start\n");
+    fprintf(out, "_start:\n");
+#endif
     fprintf(out, "    call main\n");
+
+#if __APPLE__
     fprintf(out, "    ret\n");
+#else
+    fprintf(out, "    mov rdi, rax\n");
+    fprintf(out, "    mov rax, %d\n", SYS_exit);
+    fprintf(out, "    syscall\n");
+#endif
 
     // TODO: Add implementations of some primitives?
 }

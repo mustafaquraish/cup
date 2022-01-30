@@ -1,9 +1,20 @@
 #!/bin/bash
 
 function assemble() {
-    # Note: macOS only for now, abstract this out later
-    nasm -f macho64 -o output.o output.nasm
-    ld -lSystem output.o
+    case "$(uname -s)" in
+        Darwin)
+                set -e
+                nasm -f macho64 -o output.nasm.o output.nasm
+                ld -lSystem output.nasm.o
+                set +e
+                ;;
+        Linux)
+                set -e
+                nasm -f elf64 -o output.nasm.o output.nasm
+                ld output.nasm.o
+                set +e
+                ;;
+    esac
 }
 
 function assert_exit_status() {
