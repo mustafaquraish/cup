@@ -2,7 +2,7 @@
 
 CC=gcc
 CFLAGS="-Wall -Wextra -Werror -ggdb3"
-SRCS=cup/*.c
+SRCS=src/*.c
 
 set -xe
 
