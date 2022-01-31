@@ -5,12 +5,12 @@
 #include <stdio.h>
 #include "utils.h"
 
-Lexer Lexer_new(char *filename, char *src, i64 len)
+Lexer *Lexer_new(char *filename, char *src, i64 len)
 {
-    Lexer self = {0};
-    self.src = src;
-    self.len = len;
-    self.filename = filename;
+    Lexer *self = calloc(1, sizeof(Lexer));
+    self->src = src;
+    self->len = len;
+    self->filename = filename;
     return self;
 }
 

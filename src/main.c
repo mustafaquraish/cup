@@ -74,8 +74,8 @@ void parse_args(int argc, char **argv)
 int main(int argc, char**argv) {
     parse_args(argc, argv);
 
-    Lexer lexer = Lexer_new(filename, source, source_len);
-    Node *ast = parse_program(&lexer);
+    Lexer *lexer = Lexer_new(filename, source, source_len);
+    Node *ast = parse_program(lexer);
 
     if (dump_ast)
         print_ast(ast);
