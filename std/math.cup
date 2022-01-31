@@ -7,7 +7,7 @@ fn max(a: int, b: int): int {
 }
 
 fn sign(a: int): int {
-    return a > 0 ? 1 : a < 0 ? -1 : 0;
+    return a > 0 ? 1 : a == 0 ? 0 : -1;
 }
 
 fn abs(a: int): int {
