@@ -164,7 +164,6 @@ void add_variable_to_current_block(Variable *var)
 {
     // Set offset for variable
     Node *cur_block = block_stack[block_stack_count - 1];
-    var->offset = cur_stack_offset;
 
     int new_len = (cur_block->block.num_locals + 1);
     int var_size = 8; // TODO: Compute sizes based on different types
@@ -179,6 +178,7 @@ void add_variable_to_current_block(Variable *var)
     // Update current stack offset (w.r.t function stack frame) and block size
     cur_stack_offset += var_size;
     block_stack[block_stack_count-1]->block.locals_size += var_size;
+    var->offset = cur_stack_offset;
 
     // Update function's max locals size
     i64 max_offset = i64max(current_function->func.max_locals_size, cur_stack_offset);
