@@ -15,6 +15,10 @@ static Node *block_stack[BLOCK_STACK_SIZE];
 static i64 block_stack_count = 0;
 static i64 cur_stack_offset = 0;
 
+#define LEXER_STACK_SIZE 64
+static Lexer *lexer_stack[LEXER_STACK_SIZE];
+static i64 lexer_stack_count = 0;
+
 
 Token do_assert_token(Token token, TokenType type, char *filename, int line)
 {
@@ -576,19 +580,53 @@ Node *parse_func(Lexer *lexer)
     return func;
 }
 
+void push_new_lexer(Lexer *lexer)
+{
+    assert(lexer_stack_count < LEXER_STACK_SIZE);
+    lexer_stack[lexer_stack_count++] = lexer;
+}
+
+Lexer *remove_lexer()
+{
+    assert(lexer_stack_count > 0);
+    free(lexer_stack[--lexer_stack_count]);
+    if (lexer_stack_count == 0)
+        return NULL;
+    return lexer_stack[lexer_stack_count - 1];
+}
+
 Node *parse_program(Lexer *lexer)
 {
     initialize_builtins();
     Node *program = Node_new(AST_PROGRAM);
-    Token token;
-    while ((token = Lexer_peek(lexer)).type != TOKEN_EOF) {
+    
+    push_new_lexer(lexer);
+    
+    Token token = Lexer_peek(lexer);
+    while (token.type != TOKEN_EOF) {
         if (token.type == TOKEN_FN) {
             Node *func = parse_func(lexer);
             Node_add_child(program, func);
+        } else if (token.type == TOKEN_IMPORT) {
+            // TODO: Handle circular imports
+            // TODO: Handle complex import graphs (#pragma once)
+            // TODO: Validation of imports
+            // TODO: Have default directories to search for imports
+            Lexer_next(lexer);
+            token = assert_token(Lexer_next(lexer), TOKEN_STRINGLIT);
+            char *filename = token.value.as_string;
+            lexer = Lexer_new_open_file(filename);
+            push_new_lexer(lexer);
         } else {
             die_location(token.loc, "Unexpected token in parse_program: `%s`\n", token_type_to_str(token.type));
             exit(1);
             break;
+        }
+
+        token = Lexer_peek(lexer);
+        while (token.type == TOKEN_EOF && lexer_stack_count > 1) {
+            lexer = remove_lexer();
+            token = Lexer_peek(lexer);
         }
     }
     return program;

@@ -14,6 +14,25 @@ Lexer *Lexer_new(char *filename, char *src, i64 len)
     return self;
 }
 
+Lexer *Lexer_new_open_file(char *filename)
+{
+    FILE *fp = fopen(filename, "r");
+    fseek(fp, 0, SEEK_END);
+    i64 source_len = ftell(fp);
+    fseek(fp, 0, SEEK_SET);
+    char *source = malloc(source_len + 1);
+    fread(source, source_len, 1, fp);
+    source[source_len] = 0;
+    fclose(fp);
+
+    Lexer *self = calloc(1, sizeof(Lexer));
+    self->filename = filename;
+    self->src = source;
+    self->len = source_len;
+
+    return self;
+}
+
 static Location Lexer_loc(Lexer *lexer)
 {
     Location loc = {0};
@@ -201,7 +220,7 @@ Token Lexer_next(Lexer *lexer)
                 // Careful with indexing here, because we want to skip opening and closing quotes
                 char *str = calloc(pos - lexer->pos, 1);
                 strncpy(str, lexer->src + lexer->pos + 1, pos - lexer->pos - 1);
-                Token token = Token_from_identifier(str, Lexer_loc(lexer));
+                Token token = Token_from_string(str, Lexer_loc(lexer));
                 advance(lexer, pos - lexer->pos + 1);
                 return token;
             }
