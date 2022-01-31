@@ -23,6 +23,11 @@ fn main() { return test(2, 3); }
 EOF
 
 assert_exit_status_stdin 5 <<EOF
+fn test(a: int, b: int) { let n: int = a + b; return n; }
+fn main() { return test(2, 3); }
+EOF
+
+assert_exit_status_stdin 5 <<EOF
 fn test(a: int, b: int, c: int, d: int, e: int) { return a+b+c+d+e; }
 fn main() { return test(1,1,1,1,1); }
 EOF
