@@ -1,0 +1,22 @@
+fn min(a: int, b: int): int {
+    return a < b ? a : b;
+}
+
+fn max(a: int, b: int): int {
+    return a > b ? a : b;
+}
+
+fn sign(a: int): int {
+    return a > 0 ? 1 : a < 0 ? -1 : 0;
+}
+
+fn abs(a: int): int {
+    return a * sign(a);
+}
+
+fn factorial(n: int): int {
+    let res: int = 1;
+    for (;n > 0; n = n - 1)
+        res = res * n;
+    return res;
+}
