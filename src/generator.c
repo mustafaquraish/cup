@@ -35,7 +35,7 @@ void generate_func_call(Node *node, FILE *out)
         // TODO: Also make sure of padding and stuff?
         total_size += 8;
     }
-    fprintf(out, "    call %s\n", node->call.func->func.name);
+    fprintf(out, "    call func_%s\n", node->call.func->func.name);
     fprintf(out, "    add rsp, %lld\n", total_size);
 }
 
@@ -203,18 +203,18 @@ void generate_expr_into_rax(Node *expr, FILE *out)
         label_counter++;
 
     }  else if (expr->type == AST_CONDITIONAL) {
+        int cur_label = label_counter++;
         generate_expr_into_rax(expr->conditional.cond, out);
         // If left is false, we can short-circuit
         fprintf(out, "    cmp rax, 0\n");
-        fprintf(out, "    je .cond_else_%d\n", label_counter);
+        fprintf(out, "    je .cond_else_%d\n", cur_label);
         generate_expr_into_rax(expr->conditional.do_then, out);
-        fprintf(out, "    jmp .cond_end_%d\n", label_counter);
-        fprintf(out, ".cond_else_%d:\n", label_counter);
+        fprintf(out, "    jmp .cond_end_%d\n", cur_label);
+        fprintf(out, ".cond_else_%d:\n", cur_label);
         generate_expr_into_rax(expr->binary.right, out);
         // Booleanize the result
         generate_expr_into_rax(expr->conditional.do_else, out);
-        fprintf(out, ".cond_end_%d:\n", label_counter);
-        label_counter++;
+        fprintf(out, ".cond_end_%d:\n", cur_label);
 
     } else {
         fprintf(stderr, "Unsupported expression type in generate_expr: `%s`\n", node_type_to_str(expr->type));
@@ -312,8 +312,8 @@ void generate_block(Node *block, FILE *out)
 void generate_function_header(Node *func, FILE *out)
 {
     assert(func->type == AST_FUNC);
-    fprintf(out, "global %s\n", func->func.name);
-    fprintf(out, "%s:\n", func->func.name);
+    fprintf(out, "global func_%s\n", func->func.name);
+    fprintf(out, "func_%s:\n", func->func.name);
     // TODO: Only do this if we have local variables
     fprintf(out, "    push rbp\n");
     fprintf(out, "    mov rbp, rsp\n");
@@ -358,7 +358,7 @@ void generate_asm(Node *root, FILE *out)
     fprintf(out, "global _start\n");
     fprintf(out, "_start:\n");
 #endif
-    fprintf(out, "    call main\n");
+    fprintf(out, "    call func_main\n");
 
     fprintf(out, "    mov rdi, rax\n");
     make_syscall(SYS_exit, out);
@@ -372,7 +372,7 @@ void generate_builtins(FILE *out)
     // Stolen shamelessly from tsoding/porth:
     // https://gitlab.com/tsoding/porth
     fprintf(out,
-        "print:\n"
+        "func_print:\n"
         "    mov rdi, [rsp+8]\n"
         "    mov r9, -3689348814741910323\n"
         "    sub rsp, 40\n"
@@ -433,7 +433,7 @@ void generate_builtins(FILE *out)
 
     // Print out a single character
     fprintf(out,
-        "putc:\n"
+        "func_putc:\n"
         "    mov rdi, 1\n"   // stdout
         "    mov rsi, rsp\n"
         "    add rsi, 8\n"
