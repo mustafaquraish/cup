@@ -33,6 +33,7 @@
   F(AST_VAR, "variable")                                                       \
   F(AST_RETURN, "return")                                                      \
   F(AST_FUNC, "func")                                                          \
+  F(AST_BUILTIN, "builtin")                                                    \
   F(AST_PROGRAM, "program")                                                    \
   F(AST_BLOCK, "block statements")
 

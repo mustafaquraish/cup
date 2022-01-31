@@ -12,6 +12,14 @@
 static int label_counter = 0;
 static Node *current_function = NULL;
 
+void make_syscall(i64 syscall_no, FILE *out) {
+#if __APPLE__
+    syscall_no += 0x2000000;
+#endif
+    fprintf(out, "    mov rax, %lld\n", syscall_no);
+    fprintf(out, "    syscall\n");
+}
+
 void generate_expr_into_rax(Node *expr, FILE *out);
 
 void generate_func_call(Node *node, FILE *out)
@@ -319,7 +327,16 @@ void generate_function(Node *func, FILE *out)
     current_function = func;
     generate_function_header(func, out);
     generate_block(func->func.body, out);
+    // TODO: This is a hack, we should make sure a function contains a return statement
+    //       if it says it's going to return something
+    fprintf(out, "    mov rsp, rbp\n");
+    fprintf(out, "    pop rbp\n");
+    // Return 0 by default if we don't have a return statement
+    fprintf(out, "    mov qword rax, 0\n");
+    fprintf(out, "    ret\n");
 }
+
+void generate_builtins(FILE *out);
 
 void generate_asm(Node *root, FILE *out)
 {
@@ -343,13 +360,85 @@ void generate_asm(Node *root, FILE *out)
 #endif
     fprintf(out, "    call main\n");
 
-#if __APPLE__
-    fprintf(out, "    ret\n");
-#else
     fprintf(out, "    mov rdi, rax\n");
-    fprintf(out, "    mov rax, %d\n", SYS_exit);
-    fprintf(out, "    syscall\n");
-#endif
+    make_syscall(SYS_exit, out);
 
     // TODO: Add implementations of some primitives?
+    generate_builtins(out);
+}
+
+void generate_builtins(FILE *out)
+{
+    // Stolen shamelessly from tsoding/porth:
+    // https://gitlab.com/tsoding/porth
+    fprintf(out,
+        "print:\n"
+        "    mov rdi, [rsp+8]\n"
+        "    mov r9, -3689348814741910323\n"
+        "    sub rsp, 40\n"
+        "    mov BYTE [rsp+31], 10\n"
+        "    lea rcx, [rsp+30]\n"
+        "    mov qword rbx, 0\n"
+
+        // Check if < 0, and set rbx=0, negate value
+        // "    cmp rdi, 0\n"
+        // "    jge .L2\n"
+        // "    mov qword rbx, 1\n"
+        // "    neg rdi\n"
+        // "    sub rcx, 1\n"
+
+        ".L2:\n"
+        "    mov rax, rdi\n"
+        "    lea r8, [rsp+32]\n"
+        "    mul r9\n"
+        "    mov rax, rdi\n"
+        "    sub r8, rcx\n"
+        "    shr rdx, 3\n"
+        "    lea rsi, [rdx+rdx*4]\n"
+        "    add rsi, rsi\n"
+        "    sub rax, rsi\n"
+        "    add eax, 48\n"
+        "    mov BYTE [rcx], al\n"
+        "    mov rax, rdi\n"
+        "    mov rdi, rdx\n"
+        "    mov rdx, rcx\n"
+        "    sub rcx, 1\n"
+        "    cmp rax, 9\n"
+        "    ja .L2\n"
+
+        // If rbx=1, then we need to add a minus sign, not sure how
+        // the above code works so there's probably a nicer way.
+        // "    cmp rbx, 0\n"
+        // "    je .end_neg_sign\n"
+        // "    add eax, 48\n"
+        // "    mov BYTE [rcx], 45\n"
+        // "    mov rax, rdi\n"
+        // "    mov rdi, rdx\n"
+        // "    mov rdx, rcx\n"
+        // "    sub rcx, 1\n"
+        // ".end_neg_sign:\n"
+
+        "    lea rax, [rsp+32]\n"
+        "    mov edi, 1\n"
+        "    sub rdx, rax\n"
+        "    xor eax, eax\n"
+        "    lea rsi, [rsp+32+rdx]\n"
+        "    mov rdx, r8\n"
+    );
+    make_syscall(SYS_write, out);
+    fprintf(out, "    add rsp, 40\n");
+    fprintf(out, "    ret\n");
+
+    /////////////////////////////////////////////////////////////////
+
+    // Print out a single character
+    fprintf(out,
+        "putc:\n"
+        "    mov rdi, 1\n"   // stdout
+        "    mov rsi, rsp\n"
+        "    add rsi, 8\n"
+        "    mov rdx, 1\n" // 1 byte
+    );
+    make_syscall(SYS_write, out);
+    fprintf(out, "    ret\n");
 }

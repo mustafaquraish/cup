@@ -33,6 +33,21 @@ Token do_assert_token(Token token, TokenType type, char *filename, int line)
  * Some helpers
  */
 
+void Node_add_child(Node *parent, Node *child)
+{
+    // TODO, use a vector
+    parent->block.children = realloc(parent->block.children, sizeof(Node *) * (parent->block.num_children + 1));
+    parent->block.children[parent->block.num_children] = child;
+    parent->block.num_children++;
+}
+
+Node *Node_new(NodeType type)
+{
+    Node *self = calloc(sizeof(Node), 1);
+    self->type = type;
+    return self;
+}
+
 NodeType binary_token_to_op(TokenType type)
 {
     switch (type)
@@ -53,7 +68,7 @@ NodeType binary_token_to_op(TokenType type)
         case TOKEN_LEQ:     return OP_LEQ;
         case TOKEN_GT:      return OP_GT;
         case TOKEN_GEQ:     return OP_GEQ;
-        
+
         default: assert(false && "binary_token_to_op called with invalid token type");
     }
 }
@@ -83,6 +98,33 @@ void dump_block_stack()
         }
         printf("\n");
     }
+}
+
+Node *builtin_print;
+Node *builtin_putc;
+
+void initialize_builtins()
+{
+    builtin_print = Node_new(AST_BUILTIN);
+    builtin_print->func.name = "print";
+    builtin_print->func.return_type = (Type){TYPE_INT,0};
+    builtin_print->func.num_args = 1;
+    builtin_print->func.args = (Variable *)calloc(sizeof(Variable), 1);
+    builtin_print->func.args[0] = (Variable){"val", (Type){TYPE_INT,0}, 0};
+
+    builtin_putc = Node_new(AST_BUILTIN);
+    builtin_putc->func.name = "putc";
+    builtin_putc->func.return_type = (Type){TYPE_INT,0};
+    builtin_putc->func.num_args = 1;
+    builtin_putc->func.args = (Variable *)calloc(sizeof(Variable), 2);
+    builtin_putc->func.args[0] = (Variable){"arg", (Type){TYPE_INT,0}, 0};
+}
+
+Node *find_builtin_function(Token *token)
+{
+    if (strcmp(token->value.as_string, "putc") == 0) { return builtin_putc; }
+    if (strcmp(token->value.as_string, "print") == 0) { return builtin_print; }
+    return NULL;
 }
 
 Variable *find_local_variable(Token *token)
@@ -126,7 +168,7 @@ void add_variable_to_current_block(Variable *var)
 
     int new_len = (cur_block->block.num_locals + 1);
     int var_size = 8; // TODO: Compute sizes based on different types
-    
+
     // Add to the block
     // FIXME: Use a map here
     cur_block->block.locals = realloc(cur_block->block.locals, sizeof(Variable *) * new_len);
@@ -137,28 +179,13 @@ void add_variable_to_current_block(Variable *var)
     // Update current stack offset (w.r.t function stack frame) and block size
     cur_stack_offset += var_size;
     block_stack[block_stack_count-1]->block.locals_size += var_size;
-    
+
     // Update function's max locals size
     i64 max_offset = i64max(current_function->func.max_locals_size, cur_stack_offset);
     current_function->func.max_locals_size = max_offset;
 
     assert(cur_stack_offset >= 0);
     assert(block_stack_count > 0);
-}
-
-void Node_add_child(Node *parent, Node *child)
-{
-    // TODO, use a vector
-    parent->block.children = realloc(parent->block.children, sizeof(Node *) * (parent->block.num_children + 1));
-    parent->block.children[parent->block.num_children] = child;
-    parent->block.num_children++;
-}
-
-Node *Node_new(NodeType type)
-{
-    Node *self = calloc(sizeof(Node), 1);
-    self->type = type;
-    return self;
 }
 
 Type parse_type(Lexer *lexer)
@@ -197,13 +224,13 @@ Node *parse_var_declaration(Lexer *lexer)
     // TODO: Reuse this for globals? Or maybe just make a new function?
     if (!current_function || current_function->type != AST_FUNC)
         die_location(token.loc, "Variable declaration outside of function");
-    
+
     token = assert_token(Lexer_next(lexer), TOKEN_IDENTIFIER);
-    // NOTE: We don't allow shadowing of variables in the any blocks, 
+    // NOTE: We don't allow shadowing of variables in the any blocks,
     //       this is by design since it's a common mistake.
     if (find_local_variable(&token) != NULL)
         die_location(token.loc, "Variable `%s` already declared", token.value.as_string);
-    
+
     Node *node = Node_new(AST_VARDECL);
     node->var_decl.var.name = token.value.as_string;
 
@@ -239,7 +266,7 @@ Node *parse_function_call_args(Lexer *lexer, Node *func)
         int new_size = call->call.num_args + 1;
         call->call.args = realloc(call->call.args, sizeof(Node *) * new_size);
         call->call.args[call->call.num_args++] = arg;
-        
+
         if (new_size > func->func.num_args)
             die_location(identifier.loc, "Too many arguments to function `%s`", func->func.name);
 
@@ -280,20 +307,25 @@ Node *parse_factor(Lexer *lexer)
         assert_token(Lexer_next(lexer), TOKEN_CLOSE_PAREN);
     } else if (token.type == TOKEN_INTLIT) {
         expr = parse_literal(lexer);
-    } else if (token.type == TOKEN_IDENTIFIER) {   
+    } else if (token.type == TOKEN_IDENTIFIER) {
         // TODO: Check for global variables when added
 
-        Variable *var = find_local_variable(&token); 
+        Variable *var = find_local_variable(&token);
         if (var != NULL) {
             Lexer_next(lexer);
             expr = Node_new(AST_VAR);
             expr->variable = var;
             return expr;
         }
-        
+
         Node *func = find_function_definition(&token);
         if (func != NULL) {
             return parse_function_call_args(lexer, func);
+        }
+
+        Node *builtin = find_builtin_function(&token);
+        if (builtin != NULL) {
+            return parse_function_call_args(lexer, builtin);
         }
 
         die_location(token.loc, "Unknown identifier `%s`", token.value.as_string);
@@ -410,7 +442,7 @@ Node *parse_statement(Lexer *lexer)
         Lexer_next(lexer);
         node = Node_new(AST_FOR);
         assert_token(Lexer_next(lexer), TOKEN_OPEN_PAREN);
-        
+
         // All of the expressions in the for loop are optional
 
         // TODO: Allow this to be a declaration, need to inject
@@ -482,7 +514,7 @@ void parse_func_args(Lexer *lexer, Node *func)
         token = assert_token(Lexer_next(lexer), TOKEN_IDENTIFIER);
         // TODO: Check for shadowing with globals
         assert_token(Lexer_next(lexer), TOKEN_COLON);
-        Type type = parse_type(lexer);    
+        Type type = parse_type(lexer);
 
         i64 new_count = func->func.num_args + 1;
         func->func.args = realloc(func->func.args, sizeof(Variable) * new_count);
@@ -499,10 +531,10 @@ void parse_func_args(Lexer *lexer, Node *func)
     assert_token(Lexer_next(lexer), TOKEN_CLOSE_PAREN);
 
     // Set the offsets for the arguments
-    
+
     // IMPORTANT: We want to skip the saved ret_addr+old_rbp that we
     //            pushed on the stack. Each of these is 8 bytes.
-    int offset = -16; 
+    int offset = -16;
     for (int i = 0; i < func->func.num_args; i++) {
         Variable *var = &func->func.args[i];
         var->offset = offset;
@@ -546,6 +578,7 @@ Node *parse_func(Lexer *lexer)
 
 Node *parse_program(Lexer *lexer)
 {
+    initialize_builtins();
     Node *program = Node_new(AST_PROGRAM);
     Token token;
     while ((token = Lexer_peek(lexer)).type != TOKEN_EOF) {

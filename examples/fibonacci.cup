@@ -1,0 +1,14 @@
+
+
+fn main() {
+    let a: int = 0;
+    let b: int = 1;
+    let N: int = 20;
+    let i: int ;
+    for (i = 0; i < 20; i = i+1) {
+        print(a);
+        let t: int = a;
+        a = b;
+        b = t + b;
+    }
+}
