@@ -42,3 +42,38 @@ function assert_compile_failure_stdin() {
     fi
     echo -n "."
 }
+
+function assert_stdout_text() {
+    build/cupcc -c "$1" -o build/test.nasm
+    make build/test.out -s
+
+    set +e
+    output=$(build/test.out)
+    res=$?
+    set -e
+    if [ $res -ne 0 ]
+    then
+        echo ""
+        echo "----------------------------------------------" 
+        echo "Test failed: executable returned non-0 code"
+        echo "----------------------------------------------"
+        echo "$code"
+        exit 1
+    fi
+    if [[ "$output" != $2 ]]
+    then
+        echo ""
+        echo "----------------------------------------------" 
+        echo "Test failed: Did not get expected output"
+        echo "----------------------------------------------"
+        echo "$code"
+        echo "----------------------------------------------"
+        echo "Expected:"
+        echo "$2"
+        echo "----------------------------------------------"
+        echo "Got:"
+        echo "$output"
+        exit 1
+    fi
+    echo -n "."
+}
