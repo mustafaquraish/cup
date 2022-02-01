@@ -251,8 +251,10 @@ void generate_statement(Node *stmt, FILE *out)
         fprintf(out, "    push rax\n"); // Save the return value
 
         // Run all the defer statements
-        for (int i = defer_stack_count - 1; i >= 0; i--)
-            generate_statement(defer_stack[i], out);
+        i64 old_count = defer_stack_count;
+        while (defer_stack_count > 0)
+            generate_statement(defer_stack[--defer_stack_count], out);
+        defer_stack_count = old_count;
 
         // TODO: Only do this if we have local variables
         fprintf(out, "    pop rax\n");
