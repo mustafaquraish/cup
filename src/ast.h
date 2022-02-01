@@ -28,6 +28,7 @@
   F(AST_CONDITIONAL, "conditional expression")                                 \
   F(AST_IF, "if statement")                                                    \
   F(AST_WHILE, "while statement")                                              \
+  F(AST_DEFER, "defer statement")                                              \
   F(AST_FOR, "for statement")                                                  \
   F(AST_VARDECL, "variable decl")                                              \
   F(AST_LOCAL_VAR, "local variable")                                           \

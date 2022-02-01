@@ -12,6 +12,10 @@
 static int label_counter = 0;
 static Node *current_function = NULL;
 
+#define DEFER_STACK_SIZE 1024
+static Node *defer_stack[DEFER_STACK_SIZE];
+static i64 defer_stack_count = 0;
+
 void make_syscall(i64 syscall_no, FILE *out) {
 #if __APPLE__
     syscall_no += 0x2000000;
@@ -244,7 +248,14 @@ void generate_statement(Node *stmt, FILE *out)
 {
     if (stmt->type == AST_RETURN) {
         generate_expr_into_rax(stmt->unary_expr, out);
+        fprintf(out, "    push rax\n"); // Save the return value
+
+        // Run all the defer statements
+        for (int i = defer_stack_count - 1; i >= 0; i--)
+            generate_statement(defer_stack[i], out);
+
         // TODO: Only do this if we have local variables
+        fprintf(out, "    pop rax\n");
         fprintf(out, "    mov rsp, rbp\n");
         fprintf(out, "    pop rbp\n");
         fprintf(out, "    ret\n");
@@ -312,6 +323,9 @@ void generate_statement(Node *stmt, FILE *out)
 
     } else if (stmt->type == AST_BLOCK) {
         generate_block(stmt, out);
+    } else if (stmt->type == AST_DEFER) {
+        assert(defer_stack_count < DEFER_STACK_SIZE);
+        defer_stack[defer_stack_count++] = stmt->unary_expr;
     } else {
         // Once again, default to an expression here...
         generate_expr_into_rax(stmt, out);
@@ -320,9 +334,16 @@ void generate_statement(Node *stmt, FILE *out)
 
 void generate_block(Node *block, FILE *out)
 {
+    int cur_defer_pos = defer_stack_count;
     assert(block->type == AST_BLOCK);
     for (int i = 0; i < block->block.num_children; i++)
         generate_statement(block->block.children[i], out);
+    
+    assert(defer_stack_count - cur_defer_pos >= 0);
+    while (defer_stack_count > cur_defer_pos) {
+        Node *deferred = defer_stack[--defer_stack_count];
+        generate_statement(deferred, out);
+    }
 }
 
 void generate_function_header(Node *func, FILE *out)

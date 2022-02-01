@@ -57,7 +57,7 @@ function assert_stdout_text() {
         echo "----------------------------------------------" 
         echo "Test failed: executable returned non-0 code"
         echo "----------------------------------------------"
-        echo "$code"
+        echo "$1"
         exit 1
     fi
     if [[ "$output" != $2 ]]

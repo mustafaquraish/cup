@@ -124,3 +124,66 @@ fn main() {
 }
 EOF
 echo " OK"
+
+echo -n "- Defer: "
+assert_stdout_text \
+"fn main() {
+    defer print(5);
+    print(4);
+}" \
+"4
+5"
+
+assert_stdout_text \
+"fn main() {
+    defer print(1);
+    {
+        defer print(2);
+        {
+            defer print(3);
+            print(4);
+        }
+        print(5);
+        return 0;
+    }
+    print(10);
+}" \
+"4
+3
+5
+2
+1"
+
+assert_stdout_text \
+"fn test() {
+    defer {
+        defer print(1);
+        print(2);
+    }
+    print(3);
+}
+fn main() {
+    defer print(4);
+    defer test();
+    print(10);
+}" \
+"10
+3
+2
+1
+4"
+
+assert_stdout_text \
+"let g: int;
+fn test(): int {
+    g = 5;
+    defer g = 10;
+    return g;
+}
+fn main() {
+    print(test());
+    print(g);
+}" \
+"5
+10"
+echo " OK"

@@ -507,6 +507,10 @@ Node *parse_statement(Lexer *lexer)
         node->loop.body = parse_statement(lexer);
     } else if (token.type == TOKEN_OPEN_BRACE) {
         node = parse_block(lexer);
+    } else if (token.type == TOKEN_DEFER) {
+        Lexer_next(lexer);
+        node = Node_new(AST_DEFER);
+        node->unary_expr = parse_statement(lexer);
     } else {
         // Default to trying to handle it as an expression
         node = parse_expression(lexer);

@@ -44,6 +44,7 @@
 
 #define ENUM_KEYWORDS(F)                                                       \
   F(TOKEN_ELSE, "else")                                                        \
+  F(TOKEN_DEFER, "defer")                                                      \
   F(TOKEN_FN, "fn")                                                            \
   F(TOKEN_FOR, "for")                                                          \
   F(TOKEN_IF, "if")                                                            \
