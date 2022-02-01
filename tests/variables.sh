@@ -10,19 +10,19 @@ assert_exit_status 'fn main() { let x: int = 45; return x; }' 45
 assert_exit_status 'fn main() { let x: int = 45; return x+x; }' 90
 
 assert_exit_status_stdin 5 <<EOF
-fn main() { 
+fn main() {
     let x: int;
     x = 3;
     x = 5;
-    return x;  
+    return x;
 }
 EOF
 
 assert_exit_status_stdin 5 <<EOF
-fn main() { 
+fn main() {
     let x: int = 3;
     x = x + x - 1;
-    return x;  
+    return x;
 }
 EOF
 
@@ -30,36 +30,36 @@ echo " OK"
 
 echo -n "- Multiple variable: "
 assert_exit_status_stdin 2 <<EOF
-fn main() { 
+fn main() {
     let x: int = 1;
     let y: int = x + x;
-    return y;  
+    return y;
 }
 EOF
 
 assert_exit_status_stdin 23 <<EOF
-fn main() { 
+fn main() {
     let x: int = 1;
     let y: int = x + x;
     let z: int = y + y;
     let w: int = z + z;
     let r: int = w + w;
-    return r + x + y + z;  
+    return r + x + y + z;
 }
 EOF
 
 assert_exit_status_stdin 2 <<EOF
-fn main() { 
+fn main() {
     let x: int = 1;
     let y: int = x + x;
     y = y + x;
     x = (x + x) * y;
-    return x / y;  
+    return x / y;
 }
 EOF
 
 assert_exit_status_stdin 18 <<EOF
-fn main() { 
+fn main() {
     let x: int = 5;
     let y: int;
     let z: int = (y = x + 3) + 2;
@@ -68,15 +68,58 @@ fn main() {
 EOF
 echo " OK"
 
+echo -n "- Global variables: "
+assert_exit_status_stdin 18 <<EOF
+let g: int;
+fn main() {
+    g = 18;
+    return g;
+}
+EOF
+
+assert_exit_status_stdin 18 <<EOF
+let g: int;
+let h: int;
+fn main() {
+    g = 18;
+    h = g + g;
+    return h - g;
+}
+EOF
+
+assert_exit_status_stdin 18 <<EOF
+let g: int;
+let h: int;
+
+fn test() {
+    g = 18;
+    h = g + g;
+}
+
+fn main() {
+    test();
+    return h - g;
+}
+EOF
+
+assert_compile_failure_stdin <<EOF
+let g: int = 0;
+
+fn main() {
+    return g;
+}
+EOF
+echo " OK"
+
 echo -n "- Nested Blocks: "
 assert_exit_status_stdin 3 <<EOF
-fn main() { 
+fn main() {
     let x: int = 1;
     {
         let y: int = 3;
         x = y;
     }
-    return x;  
+    return x;
 }
 EOF
 
@@ -173,29 +216,29 @@ echo " OK"
 
 echo -n "- Conditionals w/ blocks: "
 assert_exit_status_stdin 3 <<EOF
-fn main() { 
+fn main() {
     let x: int = 1;
     if (x == 1) {
         let y: int = 3;
         x = y;
     }
-    return x;  
+    return x;
 }
 EOF
 
 assert_exit_status_stdin 1 <<EOF
-fn main() { 
+fn main() {
     let x: int = 1;
     if (x != 1) {
         let y: int = 3;
         x = y;
     }
-    return x;  
+    return x;
 }
 EOF
 
 assert_exit_status_stdin 5 <<EOF
-fn main() { 
+fn main() {
     let x: int = 1;
     if (x != 1) {
         let y: int = 3;
@@ -204,19 +247,19 @@ fn main() {
         let y: int = 5;
         x = y;
     }
-    return x;  
+    return x;
 }
 EOF
 
 assert_compile_failure_stdin <<EOF
-fn main() { 
+fn main() {
     let x: int = 1;
     if (x != 1) {
         let y: int = 3;
         x = y;
     }
     x = y; // Invalid
-    return x;  
+    return x;
 }
 EOF
 

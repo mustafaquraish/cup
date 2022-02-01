@@ -30,7 +30,8 @@
   F(AST_WHILE, "while statement")                                              \
   F(AST_FOR, "for statement")                                                  \
   F(AST_VARDECL, "variable decl")                                              \
-  F(AST_VAR, "variable")                                                       \
+  F(AST_LOCAL_VAR, "local variable")                                           \
+  F(AST_GLOBAL_VAR, "global variable")                                         \
   F(AST_RETURN, "return")                                                      \
   F(AST_FUNC, "func")                                                          \
   F(AST_BUILTIN, "builtin")                                                    \
@@ -120,7 +121,7 @@ typedef struct ast_node {
         } var_decl;
 
         struct {
-            Variable *var;
+            Node *var;
             Node *value;
         } assign;
 

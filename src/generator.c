@@ -51,17 +51,33 @@ void generate_expr_into_rax(Node *expr, FILE *out)
     } else if (expr->type == AST_FUNCCALL) {
         generate_func_call(expr, out);
 
-    } else if (expr->type == AST_VAR) {
+    } else if (expr->type == AST_LOCAL_VAR) {
         i64 offset = expr->variable->offset;
         if (offset > 0)
             fprintf(out, "    mov rax, [rbp-%lld]\n", offset);
         else
             fprintf(out, "    mov rax, [rbp+%lld]\n", -offset);
 
+    } else if (expr->type == AST_GLOBAL_VAR) {
+        i64 offset = expr->variable->offset;
+        fprintf(out, "    mov rax, global_vars\n");
+        fprintf(out, "    add rax, %lld\n", offset);
+        fprintf(out, "    mov rax, [rax]\n");
+
     } else if (expr->type == OP_ASSIGN) {
-        i64 offset = expr->assign.var->offset;
+        Node *var = expr->assign.var;
+        i64 offset = var->variable->offset;
         generate_expr_into_rax(expr->assign.value, out);
-        fprintf(out, "    mov [rbp-%lld], rax\n", offset);
+
+        if (var->type == AST_LOCAL_VAR) {
+            fprintf(out, "    mov [rbp-%lld], rax\n", offset);
+        } else if (var->type == AST_GLOBAL_VAR) {
+            fprintf(out, "    mov rbx, global_vars\n");
+            fprintf(out, "    mov [rbx+%lld], rax\n", offset);
+        } else {
+            fprintf(stderr, "Unhandled assignment type: %s\n", node_type_to_str(var->type));
+            exit(1);
+        }
 
     } else if (expr->type == OP_NEG) {
         generate_expr_into_rax(expr->unary_expr, out);
@@ -342,10 +358,13 @@ void generate_asm(Node *root, FILE *out)
 {
     assert(root->type == AST_PROGRAM);
     for (int i = 0; i < root->block.num_children; i++) {
-        if (root->block.children[i]->type == AST_FUNC) {
-            generate_function(root->block.children[i], out);
+        Node *child = root->block.children[i];
+        if (child->type == AST_FUNC) {
+            generate_function(child, out);
+        } else if (child->type == AST_VARDECL) {
+            // Do nothing, we don't need to generate global variables
         } else {
-            fprintf(stderr, "Unsupported node type in generate_asm: %s\n", node_type_to_str(root->block.children[i]->type));
+            fprintf(stderr, "Unsupported node type in generate_asm: %s\n", node_type_to_str(child->type));
             exit(1);
         }
     }
@@ -363,8 +382,12 @@ void generate_asm(Node *root, FILE *out)
     fprintf(out, "    mov rdi, rax\n");
     make_syscall(SYS_exit, out);
 
+    // TODO: Don't generate code for functions that cannot get called.
     // TODO: Add implementations of some primitives?
     generate_builtins(out);
+
+    fprintf(out, "section .bss\n");
+    fprintf(out, "    global_vars: resb %lld\n", root->block.locals_size);
 }
 
 void generate_builtins(FILE *out)
@@ -379,14 +402,6 @@ void generate_builtins(FILE *out)
         "    mov BYTE [rsp+31], 10\n"
         "    lea rcx, [rsp+30]\n"
         "    mov qword rbx, 0\n"
-
-        // Check if < 0, and set rbx=0, negate value
-        // "    cmp rdi, 0\n"
-        // "    jge .L2\n"
-        // "    mov qword rbx, 1\n"
-        // "    neg rdi\n"
-        // "    sub rcx, 1\n"
-
         ".L2:\n"
         "    mov rax, rdi\n"
         "    lea r8, [rsp+32]\n"
@@ -405,19 +420,6 @@ void generate_builtins(FILE *out)
         "    sub rcx, 1\n"
         "    cmp rax, 9\n"
         "    ja .L2\n"
-
-        // If rbx=1, then we need to add a minus sign, not sure how
-        // the above code works so there's probably a nicer way.
-        // "    cmp rbx, 0\n"
-        // "    je .end_neg_sign\n"
-        // "    add eax, 48\n"
-        // "    mov BYTE [rcx], 45\n"
-        // "    mov rax, rdi\n"
-        // "    mov rdi, rdx\n"
-        // "    mov rdx, rcx\n"
-        // "    sub rcx, 1\n"
-        // ".end_neg_sign:\n"
-
         "    lea rax, [rsp+32]\n"
         "    mov edi, 1\n"
         "    sub rdx, rax\n"

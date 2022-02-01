@@ -15,10 +15,15 @@ static Node *block_stack[BLOCK_STACK_SIZE];
 static i64 block_stack_count = 0;
 static i64 cur_stack_offset = 0;
 
+// TODO: Probably use a vector here
+#define GLOBAL_VARS_SIZE 1024
+static Variable *global_vars[GLOBAL_VARS_SIZE];
+static i64 global_vars_count = 0;
+static i64 global_vars_offset = 0;
+
 #define LEXER_STACK_SIZE 64
 static Lexer *lexer_stack[LEXER_STACK_SIZE];
 static i64 lexer_stack_count = 0;
-
 
 Token do_assert_token(Token token, TokenType type, char *filename, int line)
 {
@@ -133,6 +138,9 @@ Node *find_builtin_function(Token *token)
 
 Variable *find_local_variable(Token *token)
 {
+    if (current_function == NULL)
+        return NULL;
+
     assert_token(*token, TOKEN_IDENTIFIER);
     for (i64 i = block_stack_count - 1; i >= 0; --i) {
         Node *block = block_stack[i];
@@ -151,6 +159,16 @@ Variable *find_local_variable(Token *token)
     return NULL;
 }
 
+Variable *find_global_variable(Token *token)
+{
+    for (int i = 0; i < global_vars_count; i++) {
+        if (strcmp(global_vars[i]->name, token->value.as_string) == 0) {
+            return global_vars[i];
+        }
+    }
+    return NULL;
+}
+
 Node *find_function_definition(Token *token)
 {
     assert_token(*token, TOKEN_IDENTIFIER);
@@ -161,6 +179,15 @@ Node *find_function_definition(Token *token)
         }
     }
     return NULL;
+}
+
+void add_global_variable(Variable *var)
+{
+    var->offset = global_vars_offset;
+    // TODO: Compute based on type
+    int var_size = 8;
+    global_vars_offset += var_size;
+    global_vars[global_vars_count++] = var;
 }
 
 // TODO: rename this, it's ugly
@@ -224,16 +251,16 @@ Node *parse_expression(Lexer *);
 
 Node *parse_var_declaration(Lexer *lexer)
 {
+    bool is_global = (current_function == NULL);
     Token token = assert_token(Lexer_next(lexer), TOKEN_LET);
-    // TODO: Reuse this for globals? Or maybe just make a new function?
-    if (!current_function || current_function->type != AST_FUNC)
-        die_location(token.loc, "Variable declaration outside of function");
 
     token = assert_token(Lexer_next(lexer), TOKEN_IDENTIFIER);
     // NOTE: We don't allow shadowing of variables in the any blocks,
     //       this is by design since it's a common mistake.
     if (find_local_variable(&token) != NULL)
-        die_location(token.loc, "Variable `%s` already declared", token.value.as_string);
+        die_location(token.loc, "Variable `%s` already declared in function", token.value.as_string);
+    if (find_global_variable(&token) != NULL)
+        die_location(token.loc, "Variable `%s` already declared globally", token.value.as_string);
 
     Node *node = Node_new(AST_VARDECL);
     node->var_decl.var.name = token.value.as_string;
@@ -243,10 +270,16 @@ Node *parse_var_declaration(Lexer *lexer)
         die_location(token.loc, "Missing type specifier for variable `%s`", node->var_decl.var.name);
     node->var_decl.var.type = parse_type(lexer);
 
-    add_variable_to_current_block(&node->var_decl.var);
+    if (is_global) {
+        add_global_variable(&node->var_decl.var);
+    } else {
+        add_variable_to_current_block(&node->var_decl.var);
+    }
 
     token = Lexer_next(lexer);
     if (token.type == TOKEN_ASSIGN) {
+        if (is_global)
+            die_location(token.loc, "Cannot initialize global variable `%s` outside function", node->var_decl.var.name);
         node->var_decl.value = parse_expression(lexer);
         assert_token(Lexer_next(lexer), TOKEN_SEMICOLON);
     } else {
@@ -317,8 +350,16 @@ Node *parse_factor(Lexer *lexer)
         Variable *var = find_local_variable(&token);
         if (var != NULL) {
             Lexer_next(lexer);
-            expr = Node_new(AST_VAR);
+            expr = Node_new(AST_LOCAL_VAR);
             expr->variable = var;
+            return expr;
+        }
+
+        Variable *gvar = find_global_variable(&token);
+        if (gvar != NULL) {
+            Lexer_next(lexer);
+            expr = Node_new(AST_GLOBAL_VAR);
+            expr->variable = gvar;
             return expr;
         }
 
@@ -396,14 +437,14 @@ Node *parse_expression(Lexer *lexer)
     Node *node = parse_conditional_exp(lexer);
     // FIXME: This is a hack to handle assignment expressions
     //        and can probably be done properly.
-    if (node->type == AST_VAR) {
+    if (node->type == AST_LOCAL_VAR || node->type == AST_GLOBAL_VAR) {
         Token token = Lexer_peek(lexer);
         if (token.type == TOKEN_ASSIGN) {
             Lexer_next(lexer);
-            Variable *var = node->variable;
-            node->type = OP_ASSIGN;
-            node->assign.var = var;
-            node->assign.value = parse_expression(lexer);
+            Node *assign = Node_new(OP_ASSIGN);
+            assign->assign.var = node;
+            assign->assign.value = parse_expression(lexer);
+            node = assign;
         }
     }
     return node;
@@ -577,6 +618,9 @@ Node *parse_func(Lexer *lexer)
     assert(block_stack_count == 0);
     assert(cur_stack_offset == 0);
 
+    // Reset current function
+    current_function = NULL;
+
     return func;
 }
 
@@ -607,6 +651,9 @@ Node *parse_program(Lexer *lexer)
         if (token.type == TOKEN_FN) {
             Node *func = parse_func(lexer);
             Node_add_child(program, func);
+        } else if (token.type == TOKEN_LET) {
+            Node *var_decl = parse_var_declaration(lexer);
+            Node_add_child(program, var_decl);
         } else if (token.type == TOKEN_IMPORT) {
             // TODO: Handle circular imports
             // TODO: Handle complex import graphs (#pragma once)
@@ -629,5 +676,6 @@ Node *parse_program(Lexer *lexer)
             token = Lexer_peek(lexer);
         }
     }
+    program->block.locals_size = global_vars_offset;
     return program;
 }

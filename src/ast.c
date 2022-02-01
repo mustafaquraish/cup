@@ -109,7 +109,7 @@ static void do_print_ast(Node *node, int depth)
         printf("%s\n", node_type_to_str(node->type));
         do_print_ast(node->binary.left, depth + 1);
         do_print_ast(node->binary.right, depth + 1);
-    } else if (node->type == AST_VAR) {
+    } else if (node->type == AST_LOCAL_VAR) {
         assert(node->variable && node->variable->name);
         printf("%s\n", node->variable->name);
     } else if (node->type == AST_VARDECL) {
