@@ -43,61 +43,12 @@ NodeType binary_token_to_op(TokenType type)
     }
 }
 
-
-char *data_type_to_str(DataType type)
-{
-    switch (type)
-    {
-    case TYPE_NONE: return "void";
-    case TYPE_INT: return "int";
-    case TYPE_PTR: return "*";
-    default: assert(false && "Unreachable");
-    }
-}
-
-bool type_equals(Type *a, Type *b)
-{
-    if (a == NULL && b == NULL)
-        return true;
-    if (a == NULL || b == NULL)
-        return false;
-    return a->type == b->type && type_equals(a->ptr, b->ptr);
-}
-
-i64 size_for_type(Type *type)
-{
-    switch (type->type)
-    {
-    case TYPE_INT: return 8;
-    case TYPE_PTR: return 8;
-    default: assert(false && "Unreachable type");
-    }
-}
-Type *type_new(DataType type)
-{
-    // For the core types, we don't need to allocate any memory, just
-    // return a pointer to a static instance.
-    static Type type_int = {.type = TYPE_INT, .ptr = NULL};
-    if (type == TYPE_INT) return &type_int;
-    
-    Type *self = calloc(sizeof(Type), 1);
-    self->type = type;
-    return self;
-}
-
 Node *Node_from_int_literal(i64 value)
 {
     Node *self = Node_new(AST_LITERAL);
     self->literal.type = self->expr_type = type_new(TYPE_INT);
     self->literal.as_int = value;
     return self;
-}
-
-void print_type_to_file(FILE *out, Type *type)
-{
-    if (type->type == TYPE_PTR)
-        print_type_to_file(out, type->ptr);
-    fprintf(out, "%s", data_type_to_str(type->type));
 }
 
 char *node_type_to_str(NodeType type)
@@ -205,9 +156,7 @@ static void do_print_ast(Node *node, int depth)
         assert(node->variable && node->variable->name);
         printf("%s\n", node->variable->name);
     } else if (node->type == AST_VARDECL) {
-        printf("var %s (", node->var_decl.var.name);
-        print_type_to_file(stdout, node->var_decl.var.type);
-        printf(")");
+        printf("var %s (%s)", node->var_decl.var.name, type_to_str(node->var_decl.var.type));
         if (node->var_decl.value != NULL) {
             printf(" = \n");
             do_print_ast(node->var_decl.value, depth + 1);
@@ -233,15 +182,13 @@ void dump_func(Node *node, int depth)
     printf("fn %s(", node->func.name);
     for (int i = 0; i < node->func.num_args; i++) {
         if (i > 0) printf(", ");
-        printf("%s: ", node->func.args[i].name);
-        print_type_to_file(stdout, node->func.args[i].type);
+        printf("%s: %s", node->func.args[i].name, type_to_str(node->func.args[i].type));
         printf("[[%lld]]", node->func.args[i].offset);
     }
     printf(")");
     if (node->func.return_type->type != TYPE_NONE) {
         // FIXME: Print return type properly
-        printf(" -> ");
-        print_type_to_file(stdout, node->func.return_type);
+        printf(" -> %s", type_to_str(node->func.return_type));
     }
 
     do_print_ast(node->func.body, depth + 1);

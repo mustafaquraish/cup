@@ -1,7 +1,7 @@
 #pragma once
 
-#include "common.h"
 #include "tokens.h"
+#include "types.h"
 
 #define ENUM_AST_TYPES(F)                                                      \
   F(OP_NEG, "neg")                                                             \
@@ -55,26 +55,7 @@ char *node_type_to_str(NodeType type);
 bool is_binary_op(NodeType type);
 bool is_unary_op(NodeType type);
 bool is_expression(NodeType type);
-
 bool is_lvalue(NodeType type);
-
-typedef enum {
-    TYPE_NONE,
-    TYPE_INT,
-    TYPE_PTR,
-} DataType;
-
-char *data_type_to_str(DataType type);
-
-typedef struct data_type_node {
-    DataType type;
-    struct data_type_node *ptr;
-} Type;
-
-Type *type_new(DataType type);
-i64 size_for_type(Type *type);
-bool type_equals(Type *a, Type *b);
-void print_type_to_file(FILE *out, Type *type);
 
 typedef struct {
     char *name;
