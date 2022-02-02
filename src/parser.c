@@ -42,46 +42,6 @@ Token do_assert_token(Token token, TokenType type, char *filename, int line)
  * Some helpers
  */
 
-void Node_add_child(Node *parent, Node *child)
-{
-    // TODO, use a vector
-    parent->block.children = realloc(parent->block.children, sizeof(Node *) * (parent->block.num_children + 1));
-    parent->block.children[parent->block.num_children] = child;
-    parent->block.num_children++;
-}
-
-Node *Node_new(NodeType type)
-{
-    Node *self = calloc(sizeof(Node), 1);
-    self->type = type;
-    return self;
-}
-
-NodeType binary_token_to_op(TokenType type)
-{
-    switch (type)
-    {
-        case TOKEN_PLUS:    return OP_PLUS;
-        case TOKEN_MINUS:   return OP_MINUS;
-        case TOKEN_STAR:    return OP_MUL;
-        case TOKEN_SLASH:   return OP_DIV;
-        case TOKEN_PERCENT: return OP_MOD;
-        case TOKEN_LSHIFT:  return OP_LSHIFT;
-        case TOKEN_RSHIFT:  return OP_RSHIFT;
-        case TOKEN_AND:     return OP_AND;
-        case TOKEN_OR:      return OP_OR;
-        case TOKEN_XOR:     return OP_XOR;
-        case TOKEN_EQ:      return OP_EQ;
-        case TOKEN_NEQ:     return OP_NEQ;
-        case TOKEN_LT:      return OP_LT;
-        case TOKEN_LEQ:     return OP_LEQ;
-        case TOKEN_GT:      return OP_GT;
-        case TOKEN_GEQ:     return OP_GEQ;
-
-        default: assert(false && "binary_token_to_op called with invalid token type");
-    }
-}
-
 void block_stack_push(Node *block)
 {
     assert(block_stack_count < BLOCK_STACK_SIZE);
@@ -116,17 +76,17 @@ void initialize_builtins()
 {
     builtin_print = Node_new(AST_BUILTIN);
     builtin_print->func.name = "print";
-    builtin_print->func.return_type = (Type){TYPE_INT,0};
+    builtin_print->func.return_type = type_new(TYPE_INT);
     builtin_print->func.num_args = 1;
     builtin_print->func.args = (Variable *)calloc(sizeof(Variable), 1);
-    builtin_print->func.args[0] = (Variable){"val", (Type){TYPE_INT,0}, 0};
+    builtin_print->func.args[0] = (Variable){"val", type_new(TYPE_INT), 0};
 
     builtin_putc = Node_new(AST_BUILTIN);
     builtin_putc->func.name = "putc";
-    builtin_putc->func.return_type = (Type){TYPE_INT,0};
+    builtin_putc->func.return_type = type_new(TYPE_INT);
     builtin_putc->func.num_args = 1;
     builtin_putc->func.args = (Variable *)calloc(sizeof(Variable), 2);
-    builtin_putc->func.args[0] = (Variable){"arg", (Type){TYPE_INT,0}, 0};
+    builtin_putc->func.args[0] = (Variable){"arg", type_new(TYPE_INT), 0};
 }
 
 Node *find_builtin_function(Token *token)
@@ -219,20 +179,22 @@ void add_variable_to_current_block(Variable *var)
     assert(block_stack_count > 0);
 }
 
-Type parse_type(Lexer *lexer)
+Type *parse_type(Lexer *lexer)
 {
-    Type type = {0};
+    Type *type;
     Token token = Lexer_peek(lexer);
     if (token.type == TOKEN_INT) {
-        type.type = TYPE_INT;
+        type = type_new(TYPE_INT);
         Lexer_next(lexer);
     } else {
-        type.type = TYPE_NONE;
+        type = type_new(TYPE_NONE);
     }
 
     while (Lexer_peek(lexer).type == TOKEN_AMPERSAND) {
         Lexer_next(lexer);
-        type.indirection++;
+        Type *ptr = type_new(TYPE_PTR);
+        ptr->ptr = type;
+        type = ptr;
     }
 
     return type;
@@ -242,7 +204,7 @@ Node *parse_literal(Lexer *lexer)
 {
     Node *node = Node_new(AST_LITERAL);
     Token token = assert_token(Lexer_next(lexer), TOKEN_INTLIT);
-    node->literal.type = (Type) {.type = TYPE_INT};
+    node->literal.type = type_new(TYPE_INT);
     node->literal.as_int = token.value.as_int;
     return node;
 }
@@ -321,6 +283,42 @@ Node *parse_function_call_args(Lexer *lexer, Node *func)
     return call;
 }
 
+Node *parse_identifier(Lexer *lexer)
+{
+    Token token = assert_token(Lexer_peek(lexer), TOKEN_IDENTIFIER);
+
+    // TODO: Check for global variables when added
+    Node *expr;
+    Variable *var = find_local_variable(&token);
+    if (var != NULL) {
+        Lexer_next(lexer);
+        expr = Node_new(AST_LOCAL_VAR);
+        expr->variable = var;
+        return expr;
+    }
+
+    Variable *gvar = find_global_variable(&token);
+    if (gvar != NULL) {
+        Lexer_next(lexer);
+        expr = Node_new(AST_GLOBAL_VAR);
+        expr->variable = gvar;
+        return expr;
+    }
+
+    Node *func = find_function_definition(&token);
+    if (func != NULL) {
+        return parse_function_call_args(lexer, func);
+    }
+
+    Node *builtin = find_builtin_function(&token);
+    if (builtin != NULL) {
+        return parse_function_call_args(lexer, builtin);
+    }
+
+    die_location(token.loc, "Unknown identifier `%s`", token.value.as_string);
+    return NULL;
+}
+
 Node *parse_factor(Lexer *lexer)
 {
     // TODO: Parse more complicated things
@@ -345,36 +343,11 @@ Node *parse_factor(Lexer *lexer)
     } else if (token.type == TOKEN_INTLIT) {
         expr = parse_literal(lexer);
     } else if (token.type == TOKEN_IDENTIFIER) {
-        // TODO: Check for global variables when added
-
-        Variable *var = find_local_variable(&token);
-        if (var != NULL) {
-            Lexer_next(lexer);
-            expr = Node_new(AST_LOCAL_VAR);
-            expr->variable = var;
-            return expr;
-        }
-
-        Variable *gvar = find_global_variable(&token);
-        if (gvar != NULL) {
-            Lexer_next(lexer);
-            expr = Node_new(AST_GLOBAL_VAR);
-            expr->variable = gvar;
-            return expr;
-        }
-
-        Node *func = find_function_definition(&token);
-        if (func != NULL) {
-            return parse_function_call_args(lexer, func);
-        }
-
-        Node *builtin = find_builtin_function(&token);
-        if (builtin != NULL) {
-            return parse_function_call_args(lexer, builtin);
-        }
-
-        die_location(token.loc, "Unknown identifier `%s`", token.value.as_string);
-        expr = NULL;
+        expr = parse_identifier(lexer);
+    } else if (token.type == TOKEN_AMPERSAND) {
+        Lexer_next(lexer);
+        expr = Node_new(OP_ADDROF);
+        expr->unary_expr = parse_factor(lexer);
     } else {
         die_location(token.loc, ": Expected token found in parse_factor: `%s`", token_type_to_str(token.type));
         exit(1);
@@ -563,7 +536,7 @@ void parse_func_args(Lexer *lexer, Node *func)
         token = assert_token(Lexer_next(lexer), TOKEN_IDENTIFIER);
         // TODO: Check for shadowing with globals
         assert_token(Lexer_next(lexer), TOKEN_COLON);
-        Type type = parse_type(lexer);
+        Type *type = parse_type(lexer);
 
         i64 new_count = func->func.num_args + 1;
         func->func.args = realloc(func->func.args, sizeof(Variable) * new_count);
@@ -612,7 +585,7 @@ Node *parse_func(Lexer *lexer)
         func->func.return_type = parse_type(lexer);
     } else {
         // No return type, void fn.
-        func->func.return_type = (Type){.type = TYPE_NONE};
+        func->func.return_type = type_new(TYPE_NONE);
     }
 
     // Make sure there's no funny business with the stack offset
@@ -647,9 +620,9 @@ Node *parse_program(Lexer *lexer)
 {
     initialize_builtins();
     Node *program = Node_new(AST_PROGRAM);
-    
+
     push_new_lexer(lexer);
-    
+
     Token token = Lexer_peek(lexer);
     while (token.type != TOKEN_EOF) {
         if (token.type == TOKEN_FN) {

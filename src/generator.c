@@ -49,7 +49,7 @@ void generate_expr_into_rax(Node *expr, FILE *out)
     // TODO: Different sized output for different types?
     if (expr->type == AST_LITERAL) {
         // TODO: More literal types
-        assert(expr->literal.type.type == TYPE_INT);
+        assert(expr->literal.type->type == TYPE_INT);
         fprintf(out, "    mov rax, %d\n", expr->literal.as_int);
 
     } else if (expr->type == AST_FUNCCALL) {
@@ -340,7 +340,7 @@ void generate_block(Node *block, FILE *out)
     assert(block->type == AST_BLOCK);
     for (int i = 0; i < block->block.num_children; i++)
         generate_statement(block->block.children[i], out);
-    
+
     assert(defer_stack_count - cur_defer_pos >= 0);
     while (defer_stack_count > cur_defer_pos) {
         Node *deferred = defer_stack[--defer_stack_count];

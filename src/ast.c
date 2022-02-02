@@ -1,6 +1,48 @@
 #include "ast.h"
 #include <assert.h>
 #include <stdio.h>
+#include <stdlib.h>
+
+void Node_add_child(Node *parent, Node *child)
+{
+    // TODO, use a vector
+    parent->block.children = realloc(parent->block.children, sizeof(Node *) * (parent->block.num_children + 1));
+    parent->block.children[parent->block.num_children] = child;
+    parent->block.num_children++;
+}
+
+Node *Node_new(NodeType type)
+{
+    Node *self = calloc(sizeof(Node), 1);
+    self->type = type;
+    return self;
+}
+
+NodeType binary_token_to_op(TokenType type)
+{
+    switch (type)
+    {
+        case TOKEN_PLUS:    return OP_PLUS;
+        case TOKEN_MINUS:   return OP_MINUS;
+        case TOKEN_STAR:    return OP_MUL;
+        case TOKEN_SLASH:   return OP_DIV;
+        case TOKEN_PERCENT: return OP_MOD;
+        case TOKEN_LSHIFT:  return OP_LSHIFT;
+        case TOKEN_RSHIFT:  return OP_RSHIFT;
+        case TOKEN_AND:     return OP_AND;
+        case TOKEN_OR:      return OP_OR;
+        case TOKEN_XOR:     return OP_XOR;
+        case TOKEN_EQ:      return OP_EQ;
+        case TOKEN_NEQ:     return OP_NEQ;
+        case TOKEN_LT:      return OP_LT;
+        case TOKEN_LEQ:     return OP_LEQ;
+        case TOKEN_GT:      return OP_GT;
+        case TOKEN_GEQ:     return OP_GEQ;
+
+        default: assert(false && "binary_token_to_op called with invalid token type");
+    }
+}
+
 
 char *data_type_to_str(DataType type)
 {
@@ -8,16 +50,23 @@ char *data_type_to_str(DataType type)
     {
     case TYPE_NONE: return "void";
     case TYPE_INT: return "int";
+    case TYPE_PTR: return "*";
     default: assert(false && "Unreachable");
     }
 }
 
-void print_type_to_file(FILE *out, Type type)
+Type *type_new(DataType type)
 {
-    fprintf(out, "%s", data_type_to_str(type.type));
-    for (int i = 0; i < type.indirection; i++) {
-        fprintf(out, "*");
-    }
+    Type *t = calloc(sizeof(Type), 1);
+    t->type = type;
+    return t;
+}
+
+void print_type_to_file(FILE *out, Type *type)
+{
+    if (type->type == TYPE_PTR)
+        print_type_to_file(out, type->ptr);
+    fprintf(out, "%s", data_type_to_str(type->type));
 }
 
 char *node_type_to_str(NodeType type)
@@ -50,7 +99,7 @@ bool is_binary_op(NodeType type)
     case OP_LT:
     case OP_LEQ:
     case OP_GT:
-    case OP_GEQ: 
+    case OP_GEQ:
         return true;
     default: return false;
     }
@@ -73,6 +122,17 @@ bool is_expression(NodeType type)
     if (is_unary_op(type) || is_binary_op(type))
         return true;
     return type == AST_LITERAL;
+}
+
+bool is_lvalue(NodeType type)
+{
+    switch (type)
+    {
+    case AST_LOCAL_VAR:
+    case AST_GLOBAL_VAR:
+        return true;
+    default: return false;
+    }
 }
 
 void dump_func(Node *, int);
@@ -146,7 +206,7 @@ void dump_func(Node *node, int depth)
         printf("[[%lld]]", node->func.args[i].offset);
     }
     printf(")");
-    if (node->func.return_type.type != TYPE_NONE) {
+    if (node->func.return_type->type != TYPE_NONE) {
         // FIXME: Print return type properly
         printf(" -> ");
         print_type_to_file(stdout, node->func.return_type);

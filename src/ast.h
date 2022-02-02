@@ -1,6 +1,7 @@
 #pragma once
 
 #include "common.h"
+#include "tokens.h"
 
 #define ENUM_AST_TYPES(F)                                                      \
   F(OP_NEG, "neg")                                                             \
@@ -8,6 +9,7 @@
   F(OP_BWINV, "~")                                                             \
   F(OP_PLUS, "+")                                                              \
   F(OP_MINUS, "-")                                                             \
+  F(OP_ADDROF, "&")                                                             \
   F(OP_MUL, "*")                                                               \
   F(OP_DIV, "/")                                                               \
   F(OP_MOD, "%")                                                               \
@@ -45,28 +47,34 @@ typedef enum {
 #undef DEFINE_ENUM
 } NodeType;
 
+NodeType binary_token_to_op(TokenType type);
+
 char *node_type_to_str(NodeType type);
 
 bool is_binary_op(NodeType type);
 bool is_unary_op(NodeType type);
 bool is_expression(NodeType type);
 
+bool is_lvalue(NodeType type);
+
 typedef enum {
     TYPE_NONE,
     TYPE_INT,
+    TYPE_PTR,
 } DataType;
 
 char *data_type_to_str(DataType type);
 
-typedef struct {
+typedef struct data_type_node {
     DataType type;
-    // 0 = value, 1 = pointer, 2 = double pointer, ...
-    int indirection;
+    struct data_type_node *ptr;
 } Type;
+
+Type *type_new(DataType type);
 
 typedef struct {
     char *name;
-    Type type;
+    Type *type;
     i64 offset;
 } Variable;
 
@@ -87,7 +95,7 @@ typedef struct ast_node {
         // Function definition
         struct {
             char *name;
-            Type return_type;
+            Type *return_type;
             Node *body;
 
             // TODO: Should we just dynamically allocate space on the
@@ -110,7 +118,7 @@ typedef struct ast_node {
         } block;
 
         struct {
-            Type type;
+            Type *type;
             union {
                 int as_int;
             };
@@ -149,5 +157,8 @@ typedef struct ast_node {
         } call;
     };
 } Node;
+
+void Node_add_child(Node *parent, Node *child);
+Node *Node_new(NodeType type);
 
 void print_ast(Node *node);
