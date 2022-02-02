@@ -71,6 +71,7 @@ typedef struct data_type_node {
 } Type;
 
 Type *type_new(DataType type);
+i64 size_for_type(Type *type);
 
 typedef struct {
     char *name;

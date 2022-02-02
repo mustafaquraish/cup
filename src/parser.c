@@ -144,8 +144,7 @@ Node *find_function_definition(Token *token)
 void add_global_variable(Variable *var)
 {
     var->offset = global_vars_offset;
-    // TODO: Compute based on type
-    int var_size = 8;
+    int var_size = size_for_type(var->type);
     global_vars_offset += var_size;
     global_vars[global_vars_count++] = var;
 }
@@ -157,7 +156,8 @@ void add_variable_to_current_block(Variable *var)
     Node *cur_block = block_stack[block_stack_count - 1];
 
     int new_len = (cur_block->block.num_locals + 1);
-    int var_size = 8; // TODO: Compute sizes based on different types
+    // TODO: Align the stack to a certain size?
+    int var_size = size_for_type(var->type);
 
     // Add to the block
     // FIXME: Use a map here
@@ -560,8 +560,8 @@ void parse_func_args(Lexer *lexer, Node *func)
     for (int i = 0; i < func->func.num_args; i++) {
         Variable *var = &func->func.args[i];
         var->offset = offset;
-        // TODO: Compute this for different types
-        int var_size = 8;
+        // TODO: Do we need to align the stack here?
+        int var_size = size_for_type(var->type);
         offset -= var_size;
     }
 }

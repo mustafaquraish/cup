@@ -55,6 +55,16 @@ char *data_type_to_str(DataType type)
     }
 }
 
+i64 size_for_type(Type *type)
+{
+    switch (type->type)
+    {
+    case TYPE_INT: return 8;
+    case TYPE_PTR: return 8;
+    default: assert(false && "Unreachable type");
+    }
+}
+
 Type *type_new(DataType type)
 {
     Type *t = calloc(sizeof(Type), 1);
