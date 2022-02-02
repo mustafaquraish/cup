@@ -9,7 +9,8 @@
   F(OP_BWINV, "~")                                                             \
   F(OP_PLUS, "+")                                                              \
   F(OP_MINUS, "-")                                                             \
-  F(OP_ADDROF, "&")                                                             \
+  F(OP_ADDROF, "&")                                                            \
+  F(OP_DEREF, "*")                                                             \
   F(OP_MUL, "*")                                                               \
   F(OP_DIV, "/")                                                               \
   F(OP_MOD, "%")                                                               \

@@ -323,7 +323,7 @@ Node *parse_factor(Lexer *lexer)
 {
     // TODO: Parse more complicated things
     Token token = Lexer_peek(lexer);
-    Node *expr;
+    Node *expr = NULL;
     if (token.type == TOKEN_MINUS) {
         Lexer_next(lexer);
         expr = Node_new(OP_NEG);
@@ -348,9 +348,17 @@ Node *parse_factor(Lexer *lexer)
         Lexer_next(lexer);
         expr = Node_new(OP_ADDROF);
         expr->unary_expr = parse_factor(lexer);
+        if (!is_lvalue(expr->unary_expr->type))
+            die_location(token.loc, "Cannot take address of non-lvalue");
+    } else if (token.type == TOKEN_STAR) {
+        Lexer_next(lexer);
+        expr = Node_new(OP_DEREF);
+        // TODO: IMPORTANT: Make sure the `unary_expr` is a pointer type. For this
+        // to work, we need to to be able to evaluate the type for complex expressions,
+        // which we do not support as of now.
+        expr->unary_expr = parse_factor(lexer);
     } else {
         die_location(token.loc, ": Expected token found in parse_factor: `%s`", token_type_to_str(token.type));
-        exit(1);
     }
     return expr;
 }
@@ -410,7 +418,7 @@ Node *parse_expression(Lexer *lexer)
     Node *node = parse_conditional_exp(lexer);
     // FIXME: This is a hack to handle assignment expressions
     //        and can probably be done properly.
-    if (node->type == AST_LOCAL_VAR || node->type == AST_GLOBAL_VAR) {
+    if (is_lvalue(node->type)) {
         Token token = Lexer_peek(lexer);
         if (token.type == TOKEN_ASSIGN) {
             Lexer_next(lexer);

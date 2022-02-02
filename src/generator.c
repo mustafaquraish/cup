@@ -26,18 +26,20 @@ void make_syscall(i64 syscall_no, FILE *out) {
 
 void generate_expr_into_rax(Node *expr, FILE *out);
 
-void generate_lvalue_into_rbx(Node *node, FILE *out)
+void generate_lvalue_into_rax(Node *node, FILE *out)
 {
     assert(is_lvalue(node->type));
     i64 offset = node->variable->offset;
     if (node->type == AST_LOCAL_VAR) {
-        fprintf(out, "    mov rbx, rbp\n");
-        fprintf(out, "    sub rbx, %lld\n", offset);
+        fprintf(out, "    mov rax, rbp\n");
+        fprintf(out, "    sub rax, %lld\n", offset);
     } else if (node->type == AST_GLOBAL_VAR) {
-        fprintf(out, "    mov rbx, global_vars\n");
-        fprintf(out, "    add rbx, %lld\n", offset);
+        fprintf(out, "    mov rax, global_vars\n");
+        fprintf(out, "    add rax, %lld\n", offset);
+    } else if (node->type == OP_DEREF) {
+        generate_expr_into_rax(node->unary_expr, out);
     } else {
-        assert(false && "Unknown lvalue type in generate_lvalue_into_rbx");
+        assert(false && "Unknown lvalue type in generate_lvalue_into_rax");
     }
 }
 
@@ -70,18 +72,19 @@ void generate_expr_into_rax(Node *expr, FILE *out)
     } else if (expr->type == AST_FUNCCALL) {
         generate_func_call(expr, out);
 
-    } else if (expr->type == AST_LOCAL_VAR) {
-        generate_lvalue_into_rbx(expr, out);
-        fprintf(out, "    mov rax, [rbx]\n");
+    } else if (is_lvalue(expr->type)) {
+        generate_lvalue_into_rax(expr, out);
+        fprintf(out, "    mov rax, [rax]\n");
 
-    } else if (expr->type == AST_GLOBAL_VAR) {
-        generate_lvalue_into_rbx(expr, out);
-        fprintf(out, "    mov rax, [rbx]\n");
+    } else if (expr->type == OP_ADDROF) {
+        generate_lvalue_into_rax(expr->unary_expr, out);
 
     } else if (expr->type == OP_ASSIGN) {
         Node *var = expr->assign.var;
+        generate_lvalue_into_rax(var, out);
+        fprintf(out, "    push rax\n");
         generate_expr_into_rax(expr->assign.value, out);
-        generate_lvalue_into_rbx(var, out);
+        fprintf(out, "    pop rbx\n");
         fprintf(out, "    mov [rbx], rax\n");
 
     } else if (expr->type == OP_NEG) {
