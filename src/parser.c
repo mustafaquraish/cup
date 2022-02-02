@@ -190,7 +190,7 @@ Type *parse_type(Lexer *lexer)
         type = type_new(TYPE_NONE);
     }
 
-    while (Lexer_peek(lexer).type == TOKEN_AMPERSAND) {
+    while (Lexer_peek(lexer).type == TOKEN_STAR) {
         Lexer_next(lexer);
         Type *ptr = type_new(TYPE_PTR);
         ptr->ptr = type;
