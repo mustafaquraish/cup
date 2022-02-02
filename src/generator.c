@@ -26,6 +26,21 @@ void make_syscall(i64 syscall_no, FILE *out) {
 
 void generate_expr_into_rax(Node *expr, FILE *out);
 
+void generate_lvalue_into_rbx(Node *node, FILE *out)
+{
+    assert(is_lvalue(node->type));
+    i64 offset = node->variable->offset;
+    if (node->type == AST_LOCAL_VAR) {
+        fprintf(out, "    mov rbx, rbp\n");
+        fprintf(out, "    sub rbx, %lld\n", offset);
+    } else if (node->type == AST_GLOBAL_VAR) {
+        fprintf(out, "    mov rbx, global_vars\n");
+        fprintf(out, "    add rbx, %lld\n", offset);
+    } else {
+        assert(false && "Unknown lvalue type in generate_lvalue_into_rbx");
+    }
+}
+
 void generate_func_call(Node *node, FILE *out)
 {
     assert(node->type == AST_FUNCCALL);
@@ -56,32 +71,18 @@ void generate_expr_into_rax(Node *expr, FILE *out)
         generate_func_call(expr, out);
 
     } else if (expr->type == AST_LOCAL_VAR) {
-        i64 offset = expr->variable->offset;
-        if (offset > 0)
-            fprintf(out, "    mov rax, [rbp-%lld]\n", offset);
-        else
-            fprintf(out, "    mov rax, [rbp+%lld]\n", -offset);
+        generate_lvalue_into_rbx(expr, out);
+        fprintf(out, "    mov rax, [rbx]\n");
 
     } else if (expr->type == AST_GLOBAL_VAR) {
-        i64 offset = expr->variable->offset;
-        fprintf(out, "    mov rax, global_vars\n");
-        fprintf(out, "    add rax, %lld\n", offset);
-        fprintf(out, "    mov rax, [rax]\n");
+        generate_lvalue_into_rbx(expr, out);
+        fprintf(out, "    mov rax, [rbx]\n");
 
     } else if (expr->type == OP_ASSIGN) {
         Node *var = expr->assign.var;
-        i64 offset = var->variable->offset;
         generate_expr_into_rax(expr->assign.value, out);
-
-        if (var->type == AST_LOCAL_VAR) {
-            fprintf(out, "    mov [rbp-%lld], rax\n", offset);
-        } else if (var->type == AST_GLOBAL_VAR) {
-            fprintf(out, "    mov rbx, global_vars\n");
-            fprintf(out, "    mov [rbx+%lld], rax\n", offset);
-        } else {
-            fprintf(stderr, "Unhandled assignment type: %s\n", node_type_to_str(var->type));
-            exit(1);
-        }
+        generate_lvalue_into_rbx(var, out);
+        fprintf(out, "    mov [rbx], rax\n");
 
     } else if (expr->type == OP_NEG) {
         generate_expr_into_rax(expr->unary_expr, out);
