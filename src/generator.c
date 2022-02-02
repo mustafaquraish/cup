@@ -24,6 +24,16 @@ void make_syscall(i64 syscall_no, FILE *out) {
     fprintf(out, "    syscall\n");
 }
 
+char *specifier_for_type(Type *type) {
+    switch (size_for_type(type)) {
+        case 1: return "byte";
+        case 2: return "word";
+        case 4: return "dword";
+        case 8: return "qword";
+        default: assert(false && "Unreachable");
+    }
+}
+
 void generate_expr_into_rax(Node *expr, FILE *out);
 
 void generate_lvalue_into_rax(Node *node, FILE *out)
@@ -85,7 +95,7 @@ void generate_expr_into_rax(Node *expr, FILE *out)
         fprintf(out, "    push rax\n");
         generate_expr_into_rax(expr->assign.value, out);
         fprintf(out, "    pop rbx\n");
-        fprintf(out, "    mov [rbx], rax\n");
+        fprintf(out, "    mov %s [rbx], rax\n", specifier_for_type(var->expr_type));
 
     } else if (expr->type == OP_NEG) {
         generate_expr_into_rax(expr->unary_expr, out);

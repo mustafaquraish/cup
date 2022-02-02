@@ -55,6 +55,15 @@ char *data_type_to_str(DataType type)
     }
 }
 
+bool type_equals(Type *a, Type *b)
+{
+    if (a == NULL && b == NULL)
+        return true;
+    if (a == NULL || b == NULL)
+        return false;
+    return a->type == b->type && type_equals(a->ptr, b->ptr);
+}
+
 i64 size_for_type(Type *type)
 {
     switch (type->type)
@@ -64,12 +73,24 @@ i64 size_for_type(Type *type)
     default: assert(false && "Unreachable type");
     }
 }
-
 Type *type_new(DataType type)
 {
-    Type *t = calloc(sizeof(Type), 1);
-    t->type = type;
-    return t;
+    // For the core types, we don't need to allocate any memory, just
+    // return a pointer to a static instance.
+    static Type type_int = {.type = TYPE_INT, .ptr = NULL};
+    if (type == TYPE_INT) return &type_int;
+    
+    Type *self = calloc(sizeof(Type), 1);
+    self->type = type;
+    return self;
+}
+
+Node *Node_from_int_literal(i64 value)
+{
+    Node *self = Node_new(AST_LITERAL);
+    self->literal.type = self->expr_type = type_new(TYPE_INT);
+    self->literal.as_int = value;
+    return self;
 }
 
 void print_type_to_file(FILE *out, Type *type)

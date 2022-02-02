@@ -5,12 +5,12 @@
 set -e
 
 echo -n "- Conditionals: "
-assert_exit_status 'fn main() { return 1 ? 5 : 10; }' 5
-assert_exit_status 'fn main() { return 0 ? 5 : 10; }' 10
-assert_exit_status 'fn main() { return 1 < 2 ? 10 : 20; }' 10
+assert_exit_status 'fn main(): int { return 1 ? 5 : 10; }' 5
+assert_exit_status 'fn main(): int { return 0 ? 5 : 10; }' 10
+assert_exit_status 'fn main(): int { return 1 < 2 ? 10 : 20; }' 10
 
 assert_exit_status_stdin 5 <<EOF
-fn main() { 
+fn main(): int { 
     let flag: int = 1;
     let a: int;
     flag ? a = 5 : a = 10;
@@ -19,7 +19,7 @@ fn main() {
 EOF
 
 assert_exit_status_stdin 10 <<EOF
-fn main() { 
+fn main(): int { 
     let flag: int = 0;
     let a: int;
     flag ? a = 5 : a = 10;
@@ -30,21 +30,21 @@ echo " OK"
 
 echo -n "- If statement: "
 assert_exit_status_stdin 10 <<EOF
-fn main() { 
+fn main(): int { 
     if (5 < 20) return 10;
     return 3;  
 }
 EOF
 
 assert_exit_status_stdin 3 <<EOF
-fn main() { 
+fn main(): int { 
     if (5 > 20) return 10;
     return 3;  
 }
 EOF
 
 assert_exit_status_stdin 20 <<EOF
-fn main() { 
+fn main(): int { 
     let x: int;
     if (0) 
         x = 3;
@@ -55,7 +55,7 @@ fn main() {
 EOF
 
 assert_exit_status_stdin 3 <<EOF
-fn main() { 
+fn main(): int { 
     let x: int;
     if (1) 
         x = 3;

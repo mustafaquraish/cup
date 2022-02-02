@@ -73,6 +73,8 @@ typedef struct data_type_node {
 
 Type *type_new(DataType type);
 i64 size_for_type(Type *type);
+bool type_equals(Type *a, Type *b);
+void print_type_to_file(FILE *out, Type *type);
 
 typedef struct {
     char *name;
@@ -83,6 +85,7 @@ typedef struct {
 typedef struct ast_node Node;
 typedef struct ast_node {
     NodeType type;
+    Type *expr_type;
 
     union {
         // Binary expr
@@ -162,5 +165,7 @@ typedef struct ast_node {
 
 void Node_add_child(Node *parent, Node *child);
 Node *Node_new(NodeType type);
+
+Node *Node_from_int_literal(i64 value);
 
 void print_ast(Node *node);
