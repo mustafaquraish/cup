@@ -1,6 +1,6 @@
 
 
-fn main() {
+fn main(): int {
     let a: int = 0;
     let b: int = 1;
     let N: int = 20;

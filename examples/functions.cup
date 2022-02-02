@@ -8,6 +8,6 @@ fn sum(n: int): int {
     return rec_sum(n, 0);
 }
 
-fn main() {
+fn main(): int {
     return sum(10);
 }

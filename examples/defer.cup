@@ -1,4 +1,4 @@
-fn main() {
+fn main(): int {
     defer print(1);
     {
         defer print(2);
