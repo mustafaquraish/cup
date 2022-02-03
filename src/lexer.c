@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "utils.h"
+#include <assert.h>
 
 Lexer *Lexer_new(char *filename, char *src, i64 len)
 {
@@ -96,6 +97,18 @@ static Token Lexer_make_token(Lexer *lexer, TokenType type, int inc_amount)
     token.loc = Lexer_loc(lexer);
     advance(lexer, inc_amount);
     return token;
+}
+
+static char get_escaped(char c) {
+    switch (c)
+    {
+        case 'n': return '\n';
+        case 'r': return '\r';
+        case 't': return '\t';
+        case '\\': return '\\';
+        case '0': return '\0';
+    }
+    assert(false && "Unknown escape sequence");
 }
 
 Token Lexer_next(Lexer *lexer)
@@ -224,6 +237,20 @@ Token Lexer_next(Lexer *lexer)
                 strncpy(str, lexer->src + lexer->pos + 1, pos - lexer->pos - 1);
                 Token token = Token_from_string(str, Lexer_loc(lexer));
                 advance(lexer, pos - lexer->pos + 1);
+                return token;
+            }
+
+            if (lexer->src[lexer->pos] == '\'') {
+                i64 pos = lexer->pos + 1;
+                // TODO: Handle malformed / incomplete literals
+                // TODO: Handle escapes
+                char c = lexer->src[pos];
+                if (c == '\\') {
+                    pos++;
+                    c = get_escaped(lexer->src[pos]);
+                }
+                Token token = Token_from_char(c, Lexer_loc(lexer));
+                advance(lexer, pos - lexer->pos + 2);
                 return token;
             }
 

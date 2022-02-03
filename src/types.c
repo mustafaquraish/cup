@@ -12,6 +12,8 @@ bool type_equals(Type *a, Type *b)
         return true;
     if (a == NULL || b == NULL)
         return false;
+    if (a->type == TYPE_ANY || b->type == TYPE_ANY)
+        return true;
     return a->type == b->type && type_equals(a->ptr, b->ptr);
 }
 
@@ -21,8 +23,12 @@ i64 size_for_type(Type *type)
     {
     case TYPE_INT: return 8;
     case TYPE_PTR: return 8;
+    case TYPE_CHAR: return 1;
     case TYPE_ARRAY: return type->array_size * size_for_type(type->ptr);
-    default: assert(false && "Unreachable type");
+    default: {
+        printf("Unknown type: %d\n", type->type);
+        assert(false && "Unreachable type");
+    }
     }
 }
 
@@ -31,11 +37,22 @@ Type *type_new(DataType type)
     // For the core types, we don't need to allocate any memory, just
     // return a pointer to a static instance.
     static Type type_int = {.type = TYPE_INT, .ptr = NULL};
+    static Type type_char = {.type = TYPE_CHAR, .ptr = NULL};
+    static Type type_any = {.type = TYPE_ANY, .ptr = NULL};
     if (type == TYPE_INT) return &type_int;
+    if (type == TYPE_CHAR) return &type_char;
+    if (type == TYPE_ANY) return &type_any;
     
     Type *self = calloc(sizeof(Type), 1);
     self->type = type;
     return self;
+}
+
+bool is_string_type(Type *type)
+{
+    return type 
+        && type->type == TYPE_PTR 
+        && type->ptr->type == TYPE_CHAR; 
 }
 
 static char *data_type_to_str(DataType type)
@@ -46,6 +63,7 @@ static char *data_type_to_str(DataType type)
     case TYPE_INT: return "int";
     case TYPE_PTR: return "*";
     case TYPE_ARRAY: return "array";
+    case TYPE_CHAR: return "char";
     default: assert(false && "Unreachable");
     }
 }
@@ -115,18 +133,14 @@ Node *handle_binary_expr_types(Node *node, Token *token)
                 // Pointer arithmetic!
                 Node *mul = Node_new(OP_MUL);
                 mul->binary.left = node->binary.right;
-                mul->binary.right = Node_new(AST_LITERAL);
-                mul->binary.right->literal.type = type_new(TYPE_INT);
-                mul->binary.right->literal.as_int = size_for_type(left->ptr);
+                mul->binary.right = Node_from_int_literal(size_for_type(left->ptr));
                 node->binary.right = mul;
             } else if (left->type == TYPE_INT && right->type == TYPE_PTR) {
                 node->expr_type = right;
                 // Pointer arithmetic!
                 Node *mul = Node_new(OP_MUL);
                 mul->binary.left = node->binary.left;
-                mul->binary.right = Node_new(AST_LITERAL);
-                mul->binary.right->literal.type = type_new(TYPE_INT);
-                mul->binary.right->literal.as_int = size_for_type(right->ptr);
+                mul->binary.right = Node_from_int_literal(size_for_type(left->ptr));
                 node->binary.left = mul;
             } else {
                 die_location(token->loc, "Cannot add non-integer types");

@@ -74,19 +74,20 @@ Node *builtin_putc;
 
 void initialize_builtins()
 {
+    // FIXME: The `TYPE_ANY` is a hack
     builtin_print = Node_new(AST_BUILTIN);
     builtin_print->func.name = "print";
     builtin_print->func.return_type = type_new(TYPE_INT);
     builtin_print->func.num_args = 1;
     builtin_print->func.args = (Variable *)calloc(sizeof(Variable), 1);
-    builtin_print->func.args[0] = (Variable){"val", type_new(TYPE_INT), 0};
+    builtin_print->func.args[0] = (Variable){"val", type_new(TYPE_ANY), 0};
 
     builtin_putc = Node_new(AST_BUILTIN);
     builtin_putc->func.name = "putc";
     builtin_putc->func.return_type = type_new(TYPE_INT);
     builtin_putc->func.num_args = 1;
     builtin_putc->func.args = (Variable *)calloc(sizeof(Variable), 2);
-    builtin_putc->func.args[0] = (Variable){"arg", type_new(TYPE_INT), 0};
+    builtin_putc->func.args[0] = (Variable){"arg", type_new(TYPE_ANY), 0};
 }
 
 Node *find_builtin_function(Token *token)
@@ -184,10 +185,13 @@ Type *parse_type(Lexer *lexer)
     Type *type;
     Token token = Lexer_peek(lexer);
     if (token.type == TOKEN_INT) {
-        type = type_new(TYPE_INT);
         Lexer_next(lexer);
+        type = type_new(TYPE_INT);
+    } else if (token.type == TOKEN_CHAR) {
+        Lexer_next(lexer);
+        type = type_new(TYPE_CHAR);
     } else {
-        type = type_new(TYPE_NONE);
+        die_location(token.loc, "Unexpected type found: %s", token_type_to_str(token.type));
     }
 
     for (;;) {
@@ -218,10 +222,22 @@ Type *parse_type(Lexer *lexer)
 Node *parse_literal(Lexer *lexer)
 {
     Node *node = Node_new(AST_LITERAL);
-    Token token = assert_token(Lexer_next(lexer), TOKEN_INTLIT);
-    node->literal.type = type_new(TYPE_INT);
+
+    Token token = Lexer_next(lexer);
+    if (token.type == TOKEN_INTLIT) {
+        node->literal.type = type_new(TYPE_INT);
+        node->literal.as_int = token.value.as_int;
+    } else if (token.type == TOKEN_STRINGLIT) {
+        node->literal.type = type_new(TYPE_PTR);
+        node->literal.type->ptr = type_new(TYPE_CHAR);
+        node->literal.as_string = token.value.as_string;
+    } else if (token.type == TOKEN_CHARLIT) {
+        node->literal.type = type_new(TYPE_CHAR);
+        node->literal.as_char = token.value.as_char;
+    } else {
+        assert(false && "Invalid literal type in parse_literal\n");
+    }
     node->expr_type = node->literal.type;
-    node->literal.as_int = token.value.as_int;
     return node;
 }
 
@@ -380,7 +396,7 @@ Node *parse_factor(Lexer *lexer)
         Lexer_next(lexer);
         expr = parse_expression(lexer);
         assert_token(Lexer_next(lexer), TOKEN_CLOSE_PAREN);
-    } else if (token.type == TOKEN_INTLIT) {
+    } else if (is_literal_token(token.type)) {
         expr = parse_literal(lexer);
     } else if (token.type == TOKEN_IDENTIFIER) {
         expr = parse_identifier(lexer);

@@ -5,7 +5,9 @@
 
 typedef enum {
     TYPE_NONE,
+    TYPE_ANY, // This is a hack for builtins till we can cast types
     TYPE_INT,
+    TYPE_CHAR,
     TYPE_PTR,
     TYPE_ARRAY,
 } DataType;
@@ -18,8 +20,10 @@ typedef struct data_type_node {
 
 Type *type_new(DataType type);
 i64 size_for_type(Type *type);
-bool type_equals(Type *a, Type *b);
 char *type_to_str(Type *type);
+
+bool type_equals(Type *a, Type *b);
+bool is_string_type(Type *type);
 
 // Type checking / casting expressions to right types
 typedef struct ast_node Node;

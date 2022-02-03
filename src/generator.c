@@ -24,7 +24,17 @@ void make_syscall(i64 syscall_no, FILE *out) {
     fprintf(out, "    syscall\n");
 }
 
-char *specifier_for_type(Type *type) {
+static char *subregister_for_type(Type *type) {
+    switch (size_for_type(type)) {
+        case 1: return "al";
+        case 2: return "ax";
+        case 4: return "eax";
+        case 8: return "rax";
+        default: assert(false && "Unreachable");
+    }
+}
+
+static char *specifier_for_type(Type *type) {
     switch (size_for_type(type)) {
         case 1: return "byte";
         case 2: return "word";
@@ -33,6 +43,7 @@ char *specifier_for_type(Type *type) {
         default: assert(false && "Unreachable");
     }
 }
+
 
 void generate_expr_into_rax(Node *expr, FILE *out);
 
@@ -70,21 +81,46 @@ void generate_func_call(Node *node, FILE *out)
     fprintf(out, "    add rsp, %lld\n", total_size);
 }
 
+char **all_string_literals = NULL;
+i64 num_string_literals = 0;
+
+void generate_literal_into_rax(Node *node, FILE *out)
+{
+    assert(node->type == AST_LITERAL);
+    if (node->expr_type->type == TYPE_INT) {
+        fprintf(out, "    mov rax, %d\n", node->literal.as_int);
+    } else if (node->expr_type->type == TYPE_CHAR) {
+        fprintf(out, "    mov rax, %d\n", (int)node->literal.as_char);
+    } else if (node->expr_type->type == TYPE_PTR) {
+        // Add string to global string table
+        char *str = node->literal.as_string;
+        // TODO: Use a hash table here
+        all_string_literals = realloc(all_string_literals, sizeof(char *) * (num_string_literals + 1));
+        all_string_literals[num_string_literals] = str;
+        fprintf(out, "    mov rax, global_string_%lld\n", num_string_literals);
+        num_string_literals++;
+    } else {
+        assert(false && "Unknown literal type in generate_literal_into_rax");
+    }
+}
+
 // The evaluated expression is stored into `rax`
 void generate_expr_into_rax(Node *expr, FILE *out)
 {
     // TODO: Different sized output for different types?
     if (expr->type == AST_LITERAL) {
-        // TODO: More literal types
-        assert(expr->literal.type->type == TYPE_INT);
-        fprintf(out, "    mov rax, %d\n", expr->literal.as_int);
+        generate_literal_into_rax(expr, out);
 
     } else if (expr->type == AST_FUNCCALL) {
         generate_func_call(expr, out);
 
     } else if (is_lvalue(expr->type)) {
         generate_lvalue_into_rax(expr, out);
-        fprintf(out, "    mov rax, [rax]\n");
+        if (size_for_type(expr->expr_type) == 8) {
+            fprintf(out, "    mov rax, [rax]\n");
+        } else {
+            fprintf(out, "    movsx rax, %s [rax]\n", specifier_for_type(expr->expr_type));
+        }
 
     } else if (expr->type == OP_ADDROF) {
         generate_lvalue_into_rax(expr->unary_expr, out);
@@ -95,7 +131,7 @@ void generate_expr_into_rax(Node *expr, FILE *out)
         fprintf(out, "    push rax\n");
         generate_expr_into_rax(expr->assign.value, out);
         fprintf(out, "    pop rbx\n");
-        fprintf(out, "    mov %s [rbx], rax\n", specifier_for_type(var->expr_type));
+        fprintf(out, "    mov [rbx], %s\n", subregister_for_type(var->expr_type));
 
     } else if (expr->type == OP_NEG) {
         generate_expr_into_rax(expr->unary_expr, out);
@@ -420,6 +456,12 @@ void generate_asm(Node *root, FILE *out)
 
     fprintf(out, "section .bss\n");
     fprintf(out, "    global_vars: resb %lld\n", root->block.locals_size);
+
+    // Global strings
+    fprintf(out, "section .data\n");
+    for (i64 i = 0; i < num_string_literals; i++) {
+        fprintf(out, "    global_string_%lld: db `%s`, 0\n", i, all_string_literals[i]);
+    }
 }
 
 void generate_builtins(FILE *out)

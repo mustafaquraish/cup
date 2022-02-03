@@ -107,6 +107,8 @@ typedef struct ast_node {
             Type *type;
             union {
                 int as_int;
+                char as_char;
+                char *as_string;
             };
         } literal;
 

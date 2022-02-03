@@ -8,6 +8,7 @@
   F(TOKEN_AND, "&&")                                                           \
   F(TOKEN_ASSIGN, "=")                                                         \
   F(TOKEN_BAR, "|")                                                            \
+  F(TOKEN_CHARLIT, "char literal")                                             \
   F(TOKEN_CLOSE_BRACE, "}")                                                    \
   F(TOKEN_CLOSE_BRACKET, "]")                                                  \
   F(TOKEN_CLOSE_PAREN, ")")                                                    \
@@ -45,6 +46,7 @@
   F(TOKEN_XOR, "^")
 
 #define ENUM_KEYWORDS(F)                                                       \
+  F(TOKEN_CHAR, "char")                                                        \
   F(TOKEN_ELSE, "else")                                                        \
   F(TOKEN_DEFER, "defer")                                                      \
   F(TOKEN_FN, "fn")                                                            \
@@ -83,9 +85,12 @@ typedef struct {
 
 char *token_type_to_str(TokenType type);
 
+bool is_literal_token(TokenType type);
+
 Token Token_from_type(TokenType type, Location loc);
 Token Token_from_int(i64 value, Location loc);
 Token Token_from_string(char *value, Location loc);
+Token Token_from_char(char value, Location loc);
 Token Token_from_identifier(char *value, Location loc);
 
 void Token_print(FILE *f, Token *token);

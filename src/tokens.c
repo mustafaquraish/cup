@@ -28,6 +28,15 @@ Token Token_from_string(char *value, Location loc)
     return token;
 }
 
+Token Token_from_char(char value, Location loc)
+{
+    Token token = {0};
+    token.type = TOKEN_CHARLIT;
+    token.value.as_char = value;
+    token.loc = loc;
+    return token;
+}
+
 Token Token_from_identifier(char *value, Location loc)
 {
     Token token = {0};
@@ -68,4 +77,17 @@ void Token_print(FILE *f, Token *token)
     }
 
     fprintf(f, "%s", token_type_to_str(token->type));
+}
+
+bool is_literal_token(TokenType type)
+{
+    switch (type)
+    {
+        case TOKEN_INTLIT:
+        case TOKEN_STRINGLIT:
+        case TOKEN_CHARLIT:
+            return true;
+        default:
+            return false;
+    }
 }
