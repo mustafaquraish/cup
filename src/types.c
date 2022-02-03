@@ -114,7 +114,6 @@ Node *handle_unary_expr_types(Node *node, Token *token)
         // Default to not changing the type
         node->expr_type = old_type;
     }
-    // die_location(token->loc, "Unknown unary expression type in handle_unary_expr_types\n");
     return node;
 }
 
@@ -131,17 +130,21 @@ Node *handle_binary_expr_types(Node *node, Token *token)
             } else if (left->type == TYPE_PTR && right->type == TYPE_INT) {
                 node->expr_type = left;
                 // Pointer arithmetic!
-                Node *mul = Node_new(OP_MUL);
-                mul->binary.left = node->binary.right;
-                mul->binary.right = Node_from_int_literal(size_for_type(left->ptr));
-                node->binary.right = mul;
+                if (size_for_type(left->ptr) != 1) {
+                    Node *mul = Node_new(OP_MUL);
+                    mul->binary.left = node->binary.right;
+                    mul->binary.right = Node_from_int_literal(size_for_type(left->ptr));
+                    node->binary.right = mul;
+                }
             } else if (left->type == TYPE_INT && right->type == TYPE_PTR) {
                 node->expr_type = right;
                 // Pointer arithmetic!
-                Node *mul = Node_new(OP_MUL);
-                mul->binary.left = node->binary.left;
-                mul->binary.right = Node_from_int_literal(size_for_type(left->ptr));
-                node->binary.left = mul;
+                if (size_for_type(right->ptr) != 1) {
+                    Node *mul = Node_new(OP_MUL);
+                    mul->binary.left = node->binary.left;
+                    mul->binary.right = Node_from_int_literal(size_for_type(right->ptr));
+                    node->binary.left = mul;
+                }
             } else {
                 die_location(token->loc, "Cannot add non-integer types");
             }
@@ -153,26 +156,33 @@ Node *handle_binary_expr_types(Node *node, Token *token)
             } else if (left->type == TYPE_PTR && right->type == TYPE_INT) {
                 node->expr_type = left;
                 // Pointer arithmetic!
-                Node *mul = Node_new(OP_MUL);
-                mul->binary.left = node->binary.right;
-                mul->binary.right = Node_from_int_literal(size_for_type(left->ptr));
-                node->binary.right = mul;
+                if (size_for_type(left->ptr) != 1) {
+                    Node *mul = Node_new(OP_MUL);
+                    mul->binary.left = node->binary.right;
+                    mul->binary.right = Node_from_int_literal(size_for_type(left->ptr));
+                    node->binary.right = mul;
+                }
             } else if (left->type == TYPE_INT && right->type == TYPE_PTR) {
                 node->expr_type = right;
                 // Pointer arithmetic!
-                Node *mul = Node_new(OP_MUL);
-                mul->binary.left = node->binary.left;
-                mul->binary.right = Node_from_int_literal(size_for_type(right->ptr));
-                node->binary.left = mul;
+                if (size_for_type(right->ptr) != 1) {
+                    Node *mul = Node_new(OP_MUL);
+                    mul->binary.left = node->binary.left;
+                    mul->binary.right = Node_from_int_literal(size_for_type(right->ptr));
+                    node->binary.left = mul;
+                }
             } else if (left->type == TYPE_PTR && right->type == TYPE_PTR) {
-                // TODO: Check for different pointer types
                 node->expr_type = type_new(TYPE_INT);
-                // Divide by size of pointer
-                Node *div = Node_new(OP_DIV);
-                div->binary.left = node;
-                div->binary.right = Node_from_int_literal(size_for_type(left->ptr));
-                div->expr_type = node->expr_type;
-                node = div;
+                if (!type_equals(left->ptr, right->ptr))
+                    die_location(token->loc, "Cannot subtract pointers of different types");
+
+                // Pointer arithmetic! (Divide by size of element)
+                if (size_for_type(left->ptr) != 1) {
+                    Node *mul = Node_new(OP_MUL);
+                    mul->binary.left = node->binary.left;
+                    mul->binary.right = Node_from_int_literal(size_for_type(left->ptr));
+                    node->binary.left = mul;
+                }
             } else {
                 die_location(token->loc, "Cannot subtract non-integer types");
             }
