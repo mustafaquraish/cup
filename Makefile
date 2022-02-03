@@ -43,7 +43,7 @@ clean:
 test: compile
 	@for f in $(shell ls tests | grep -v "common"); \
 		do echo "Running $${f}"; \
-		./tests/$${f}; \
+		./tests/$${f} || exit 1; \
 	done
 
 tests/%.sh: compile
