@@ -279,7 +279,7 @@ Node *parse_var_declaration(Lexer *lexer)
 
         node->var_decl.value = parse_expression(lexer);
 
-        if (!type_equals(node->var_decl.var.type, node->var_decl.value->expr_type)) {
+        if (!is_convertible(node->var_decl.var.type, node->var_decl.value->expr_type)) {
             fprintf(stderr, "- Variable type: %s\n", type_to_str(node->var_decl.var.type));
             fprintf(stderr, "- Value type: %s\n", type_to_str(node->var_decl.value->expr_type));
             die_location(token.loc, "Type mismatch for variable declaration `%s` initalizer", node->var_decl.var.name);
@@ -318,7 +318,7 @@ Node *parse_function_call_args(Lexer *lexer, Node *func)
     if (call->call.num_args != func->func.num_args)
         die_location(identifier.loc, "Function `%s` expects %d arguments, got %d", func->func.name, func->func.num_args, call->call.num_args);
     for (int i = 0; i < call->call.num_args; i++) {
-        if (!type_equals(func->func.args[i].type, call->call.args[i]->expr_type)) {
+        if (!is_convertible(func->func.args[i].type, call->call.args[i]->expr_type)) {
             fprintf(stderr, "- Function argument %d: %s\n", i, type_to_str(func->func.args[i].type));
             fprintf(stderr, "- Provided argument %d: %s\n", i, type_to_str(call->call.args[i]->expr_type));
             die_location(identifier.loc, "Type mismatch for argument %d in function call `%s`", i, func->func.name);
@@ -519,7 +519,7 @@ Node *parse_expression(Lexer *lexer)
             assign->assign.value = parse_expression(lexer);
 
 
-            if (!type_equals(node->expr_type, assign->assign.value->expr_type)) {
+            if (!is_convertible(node->expr_type, assign->assign.value->expr_type)) {
                 fprintf(stderr, "- Variable type: %s\n", type_to_str(assign->assign.var->expr_type));
                 fprintf(stderr, "- Value type: %s\n", type_to_str(assign->assign.value->expr_type));
                 die_location(token.loc, "Type mismatch in assignment expression");
@@ -544,8 +544,11 @@ Node *parse_statement(Lexer *lexer)
         node = Node_new(AST_RETURN);
         node->unary_expr = parse_expression(lexer);
 
-        if (!type_equals(node->unary_expr->expr_type, current_function->func.return_type))
+        if (!is_convertible(node->unary_expr->expr_type, current_function->func.return_type)) {
+            fprintf(stderr, "- Expected type: %s\n", type_to_str(node->unary_expr->expr_type));
+            fprintf(stderr, "- Actual: %s\n", type_to_str(current_function->func.return_type));
             die_location(token.loc, "Return expression does not match function's return type");
+        }
 
         assert_token(Lexer_next(lexer), TOKEN_SEMICOLON);
     } else if (token.type == TOKEN_IF) {

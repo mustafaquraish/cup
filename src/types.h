@@ -23,7 +23,9 @@ i64 size_for_type(Type *type);
 char *type_to_str(Type *type);
 
 bool type_equals(Type *a, Type *b);
+bool is_int_type(Type *type);
 bool is_string_type(Type *type);
+bool is_convertible(Type *from, Type *to);
 
 // Type checking / casting expressions to right types
 typedef struct ast_node Node;

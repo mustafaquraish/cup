@@ -17,6 +17,17 @@ bool type_equals(Type *a, Type *b)
     return a->type == b->type && type_equals(a->ptr, b->ptr);
 }
 
+bool is_convertible(Type *from, Type *to)
+{
+    if (from->type == TYPE_ANY || to->type == TYPE_ANY)
+        return true;
+    // TODO: Should we rause a warning if the target type is narrower
+    //       than the source type?
+    if (is_int_type(from) && is_int_type(to))
+        return true;
+    return type_equals(from, to);
+}
+
 i64 size_for_type(Type *type)
 {
     switch (type->type)
@@ -53,6 +64,18 @@ bool is_string_type(Type *type)
     return type 
         && type->type == TYPE_PTR 
         && type->ptr->type == TYPE_CHAR; 
+}
+
+bool is_int_type(Type *type)
+{
+    switch (type->type)
+    {
+    case TYPE_INT:
+    case TYPE_CHAR:
+        return true;
+    default:
+        return false;
+    }
 }
 
 static char *data_type_to_str(DataType type)

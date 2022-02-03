@@ -107,7 +107,7 @@ echo " OK"
 
 echo -n "- Importing file: "
 assert_exit_status_stdin 10 <<EOF
-import "std/math.cup"
+import "std/common.cup"
 
 fn main(): int { 
     let x: int = abs(-5);
