@@ -1,0 +1,73 @@
+fn min(a: int, b: int): int {
+    return a < b ? a : b;
+}
+
+fn max(a: int, b: int): int {
+    return a > b ? a : b;
+}
+
+fn sign(a: int): int {
+    return a > 0 ? 1 : a == 0 ? 0 : -1;
+}
+
+fn abs(a: int): int {
+    return a * sign(a);
+}
+
+fn factorial(n: int): int {
+    let res: int = 1;
+    for (;n > 0; n = n - 1)
+        res = res * n;
+    return res;
+}
+
+
+fn strlen(s: char *): int {
+    let count: int = 0;
+    while (*s != 0) {
+        count = count + 1;
+        s = s + 1;
+    }
+    return count;
+}
+
+fn strcpy(dst: char *, src: char *) {
+    while (*src != 0) {
+        *dst = *src;
+        dst = dst + 1;
+        src = src + 1;
+    }
+    *dst = '\0';
+}
+
+fn strcat(dst: char *, src: char *) {
+    while (*dst != 0) {
+        dst = dst + 1;
+    }
+    while (*src != 0) {
+        *dst = *src;
+        dst = dst + 1;
+        src = src + 1;
+    }
+    *dst = '\0';
+}
+
+fn streq(s1: char *, s2: char *): int {
+    while (*s1 != 0 && *s2 != 0) {
+        if (*s1 != *s2)
+            return 0;
+        s1 = s1 + 1;
+        s2 = s2 + 1;
+    }
+    return *s1 == *s2;
+}
+
+// TODO: This should call fwrite() directly at some point.
+fn puts(c: char *) {
+    let len: int = strlen(c);
+    let i: int = 0;
+
+    for (i = 0; i < len; i = i + 1) {
+        putc(c[i]);
+    }
+}
