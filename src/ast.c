@@ -129,6 +129,12 @@ static void do_print_ast(Node *node, int depth)
         for (int i = 0; i < node->block.num_children; i++) {
             do_print_ast(node->block.children[i], depth);
         }
+    } else if (node->type == OP_DEREF) {
+        printf("DEREF\n");
+        do_print_ast(node->unary_expr, depth + 1);
+    } else if (node->type == OP_ADDROF) {
+        printf("ADDROF\n");
+        do_print_ast(node->unary_expr, depth + 1);
     } else if (node->type == AST_BLOCK) {
         printf("{\n");
         for (int i = 0; i < node->block.num_children; i++) {

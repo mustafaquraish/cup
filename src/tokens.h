@@ -9,6 +9,7 @@
   F(TOKEN_ASSIGN, "=")                                                         \
   F(TOKEN_BAR, "|")                                                            \
   F(TOKEN_CLOSE_BRACE, "}")                                                    \
+  F(TOKEN_CLOSE_BRACKET, "]")                                                  \
   F(TOKEN_CLOSE_PAREN, ")")                                                    \
   F(TOKEN_COLON, ":")                                                          \
   F(TOKEN_COMMA, ",")                                                          \
@@ -27,6 +28,7 @@
   F(TOKEN_MINUSMINUS, "--")                                                    \
   F(TOKEN_NEQ, "!=")                                                           \
   F(TOKEN_OPEN_BRACE, "{")                                                     \
+  F(TOKEN_OPEN_BRACKET, "[")                                                   \
   F(TOKEN_OPEN_PAREN, "(")                                                     \
   F(TOKEN_OR, "||")                                                            \
   F(TOKEN_PERCENT, "%")                                                        \

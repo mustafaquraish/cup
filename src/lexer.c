@@ -109,6 +109,8 @@ Token Lexer_next(Lexer *lexer)
         case ')': return Lexer_make_token(lexer, TOKEN_CLOSE_PAREN, 1);
         case '{': return Lexer_make_token(lexer, TOKEN_OPEN_BRACE, 1);
         case '}': return Lexer_make_token(lexer, TOKEN_CLOSE_BRACE, 1);
+        case '[': return Lexer_make_token(lexer, TOKEN_OPEN_BRACKET, 1);
+        case ']': return Lexer_make_token(lexer, TOKEN_CLOSE_BRACKET, 1);
         case ';': return Lexer_make_token(lexer, TOKEN_SEMICOLON, 1);
         case ':': return Lexer_make_token(lexer, TOKEN_COLON, 1);
         case '~': return Lexer_make_token(lexer, TOKEN_TILDE, 1);

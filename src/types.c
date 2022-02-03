@@ -21,6 +21,7 @@ i64 size_for_type(Type *type)
     {
     case TYPE_INT: return 8;
     case TYPE_PTR: return 8;
+    case TYPE_ARRAY: return type->array_size * size_for_type(type->ptr);
     default: assert(false && "Unreachable type");
     }
 }
@@ -44,6 +45,7 @@ static char *data_type_to_str(DataType type)
     case TYPE_NONE: return "void";
     case TYPE_INT: return "int";
     case TYPE_PTR: return "*";
+    case TYPE_ARRAY: return "array";
     default: assert(false && "Unreachable");
     }
 }
@@ -76,12 +78,16 @@ Node *handle_unary_expr_types(Node *node, Token *token)
         node->expr_type = type_new(TYPE_INT);
     } else if (node->type == OP_ADDROF) {
         Type *ptr = type_new(TYPE_PTR);
-        ptr->ptr = old_type;
+        // The address of an array is a pointer to the first element
+        ptr->ptr = old_type->type == TYPE_ARRAY ? old_type->ptr : old_type;
         node->expr_type = ptr;
     } else if (node->type == OP_DEREF) {
         if (old_type->type != TYPE_PTR)
             die_location(token->loc, "Cannot dereference non-pointer type");
         node->expr_type = old_type->ptr;
+        // If the dereferenced type is an array, we need to decay it to a
+        // pointer to the first element.
+        node = decay_array_to_pointer(node, token);
     } else if (node->type == OP_NEG) {
         if (old_type->type != TYPE_INT)
             die_location(token->loc, "Cannot negate non-integer type");
@@ -181,6 +187,18 @@ Node *handle_binary_expr_types(Node *node, Token *token)
 
         default:
             die_location(token->loc, "Unknown binary expression type in handle_binary_expr_types\n");
+    }
+    return node;
+}
+
+Node *decay_array_to_pointer(Node *node, Token *token)
+{
+    // We can only take the address of an lvalue, so we need to ensure that
+    if (is_lvalue(node->type) && node->expr_type->type == TYPE_ARRAY) {
+        Node *address = Node_new(OP_ADDROF);
+        address->unary_expr = node;
+        address = handle_unary_expr_types(address, token);
+        node = address;
     }
     return node;
 }

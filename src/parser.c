@@ -190,11 +190,26 @@ Type *parse_type(Lexer *lexer)
         type = type_new(TYPE_NONE);
     }
 
-    while (Lexer_peek(lexer).type == TOKEN_STAR) {
-        Lexer_next(lexer);
-        Type *ptr = type_new(TYPE_PTR);
-        ptr->ptr = type;
-        type = ptr;
+    for (;;) {
+        // FIXME: It doesn't really make sense to allow stuff like "int[3]*"
+        token = Lexer_peek(lexer);
+        if (token.type == TOKEN_STAR) {
+            Lexer_next(lexer);
+            Type *ptr = type_new(TYPE_PTR);
+            ptr->ptr = type;
+            type = ptr;
+        } else if (token.type == TOKEN_OPEN_BRACKET) {
+            Lexer_next(lexer);
+            Type *arr = type_new(TYPE_ARRAY);
+            arr->ptr = type;
+            // TODO: Contant integer expression support?
+            arr->array_size = assert_token(Lexer_next(lexer), TOKEN_INTLIT).value.as_int;
+            assert_token(Lexer_peek(lexer), TOKEN_CLOSE_BRACKET);
+            Lexer_next(lexer);
+            type = arr;
+        } else {
+            break;
+        }
     }
 
     return type;
@@ -245,8 +260,11 @@ Node *parse_var_declaration(Lexer *lexer)
             die_location(token.loc, "Cannot initialize global variable `%s` outside function", node->var_decl.var.name);
         node->var_decl.value = parse_expression(lexer);
 
-        if (!type_equals(node->var_decl.var.type, node->var_decl.value->expr_type))
+        if (!type_equals(node->var_decl.var.type, node->var_decl.value->expr_type)) {
+            fprintf(stderr, "- Variable type: %s\n", type_to_str(node->var_decl.var.type));
+            fprintf(stderr, "- Value type: %s\n", type_to_str(node->var_decl.value->expr_type));
             die_location(token.loc, "Type mismatch for variable declaration `%s` initalizer", node->var_decl.var.name);
+        }
 
         assert_token(Lexer_next(lexer), TOKEN_SEMICOLON);
     } else {
@@ -282,6 +300,8 @@ Node *parse_function_call_args(Lexer *lexer, Node *func)
         die_location(identifier.loc, "Function `%s` expects %d arguments, got %d", func->func.name, func->func.num_args, call->call.num_args);
     for (int i = 0; i < call->call.num_args; i++) {
         if (!type_equals(func->func.args[i].type, call->call.args[i]->expr_type)) {
+            fprintf(stderr, "- Function argument %d: %s\n", i, type_to_str(func->func.args[i].type));
+            fprintf(stderr, "- Provided argument %d: %s\n", i, type_to_str(call->call.args[i]->expr_type));
             die_location(identifier.loc, "Type mismatch for argument %d in function call `%s`", i, func->func.name);
         }
     }
@@ -303,6 +323,7 @@ Node *parse_identifier(Lexer *lexer)
         expr = Node_new(AST_LOCAL_VAR);
         expr->variable = var;
         expr->expr_type = var->type;
+        expr = decay_array_to_pointer(expr, &token);
         return expr;
     }
 
@@ -312,6 +333,7 @@ Node *parse_identifier(Lexer *lexer)
         expr = Node_new(AST_GLOBAL_VAR);
         expr->variable = gvar;
         expr->expr_type = gvar->type;
+        expr = decay_array_to_pointer(expr, &token);
         return expr;
     }
 
@@ -375,8 +397,35 @@ Node *parse_factor(Lexer *lexer)
         expr->unary_expr = parse_factor(lexer);
         expr = handle_unary_expr_types(expr, &token);
     } else {
-        die_location(token.loc, ": Expected token found in parse_factor: `%s`", token_type_to_str(token.type));
+        die_location(token.loc, ": Unexpected token found in parse_factor: `%s`", token_type_to_str(token.type));
     }
+
+    // TODO: This is a bit hacky, ideally we do this in a way that better follows the
+    //       grammar rules.
+    for (;;) {
+        token = Lexer_peek(lexer);
+        // Convert indexing into pointer arithmetic + dereferencing
+        if (token.type == TOKEN_OPEN_BRACKET) {
+            // if (expr->expr_type->type != TYPE_PTR)
+            //     die_location(token.loc, "Cannot index non-pointer type");
+            Lexer_next(lexer);
+
+            Node *index = parse_expression(lexer);
+            assert_token(Lexer_next(lexer), TOKEN_CLOSE_BRACKET);
+
+            Node *offset = Node_new(OP_PLUS);
+            offset->binary.left = expr;
+            offset->binary.right = index;
+            offset = handle_binary_expr_types(offset, &token);
+            
+            expr = Node_new(OP_DEREF);
+            expr->unary_expr = offset;
+            expr = handle_unary_expr_types(expr, &token);
+        } else {
+            break;
+        }
+    }
+
     return expr;
 }
 
@@ -450,8 +499,12 @@ Node *parse_expression(Lexer *lexer)
             assign->assign.var = node;
             assign->assign.value = parse_expression(lexer);
 
-            if (!type_equals(node->expr_type, assign->assign.value->expr_type))
+
+            if (!type_equals(node->expr_type, assign->assign.value->expr_type)) {
+                fprintf(stderr, "- Variable type: %s\n", type_to_str(assign->assign.var->expr_type));
+                fprintf(stderr, "- Value type: %s\n", type_to_str(assign->assign.value->expr_type));
                 die_location(token.loc, "Type mismatch in assignment expression");
+            }
 
             node = assign;
             node->expr_type = node->assign.var->expr_type;
