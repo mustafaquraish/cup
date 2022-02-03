@@ -59,6 +59,14 @@ Type *type_new(DataType type)
     return self;
 }
 
+Type *type_new_ptr(DataType type)
+{
+    Type *self = type_new(TYPE_PTR);
+    self->ptr = type_new(type);
+    return self;
+}
+
+
 bool is_string_type(Type *type)
 {
     return type 

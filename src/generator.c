@@ -170,6 +170,15 @@ void generate_expr_into_rax(Node *expr, FILE *out)
         fprintf(out, "    cqo\n");
         fprintf(out, "    idiv rbx\n");
 
+    } else if (expr->type == OP_MOD) {
+        generate_expr_into_rax(expr->binary.right, out);
+        fprintf(out, "    push rax\n");
+        generate_expr_into_rax(expr->binary.left, out);
+        fprintf(out, "    pop rbx\n");
+        fprintf(out, "    cqo\n");
+        fprintf(out, "    idiv rbx\n");
+        fprintf(out, "    mov rax, rdx\n");
+
     } else if (expr->type == OP_MUL) {
         generate_expr_into_rax(expr->binary.right, out);
         fprintf(out, "    push rax\n");
@@ -507,13 +516,12 @@ void generate_builtins(FILE *out)
 
     /////////////////////////////////////////////////////////////////
 
-    // Print out a single character
+    // Write syscall
     fprintf(out,
-        "func_putc:\n"
-        "    mov rdi, 1\n"   // stdout
-        "    mov rsi, rsp\n"
-        "    add rsi, 8\n"
-        "    mov rdx, 1\n" // 1 byte
+        "func_write:\n"
+        "    mov rdi, [rsp+8]\n"   // stdout
+        "    mov rsi, [rsp+16]\n"
+        "    mov rdx, [rsp+24]\n" // 1 byte
     );
     make_syscall(SYS_write, out);
     fprintf(out, "    ret\n");

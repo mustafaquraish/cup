@@ -31,38 +31,3 @@ assert_stdout_text \
 "18446744073709551615"
 
 echo " OK"
-
-echo -n "- putc: "
-assert_stdout_text \
-"fn main() { 
-    putc(65);
-}" \
-"A"
-
-assert_stdout_text \
-"fn main(a: int) {
-    let i: int = 65;
-    for (; i < 65 + 26; i = i + 1)
-        putc(i);
-}" \
-"ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-
-assert_stdout_text \
-"fn main() { 
-    putc(72);
-    putc(101);
-    putc(108);
-    putc(108);
-    putc(111);
-    putc(44);
-    putc(32);
-    putc(87);
-    putc(111);
-    putc(114);
-    putc(108);
-    putc(100);
-    putc(33);
-}" \
-"Hello, World!"
-
-echo " OK"

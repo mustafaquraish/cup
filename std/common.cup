@@ -62,12 +62,24 @@ fn streq(s1: char *, s2: char *): int {
     return *s1 == *s2;
 }
 
-// TODO: This should call fwrite() directly at some point.
 fn puts(c: char *) {
     let len: int = strlen(c);
-    let i: int = 0;
+    write(0, c, len);
+}
 
-    for (i = 0; i < len; i = i + 1) {
-        putc(c[i]);
+fn strrev(s: char *) {
+    let len: int = strlen(s);
+    let i: int = 0;
+    let j: int = len - 1;
+    while (i < j) {
+        let tmp: char = s[i];
+        s[i] = s[j];
+        s[j] = tmp;
+        i = i + 1;
+        j = j - 1;
     }
+}
+
+fn putc(c: char) {
+    write(0, &c, 1);
 }

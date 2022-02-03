@@ -29,11 +29,13 @@ void initialize_builtins()
     push_builtin(node);
 
     node = Node_new(AST_BUILTIN);
-    node->func.name = "putc";
+    node->func.name = "write";
     node->func.return_type = type_new(TYPE_INT);
-    node->func.num_args = 1;
-    node->func.args = (Variable *)calloc(sizeof(Variable), 2);
-    node->func.args[0] = (Variable){"arg", type_new(TYPE_INT), 0};
+    node->func.num_args = 3;
+    node->func.args = (Variable *)calloc(sizeof(Variable), 3);
+    node->func.args[0] = (Variable){"fd", type_new(TYPE_INT), 0};
+    node->func.args[1] = (Variable){"buf", type_new_ptr(TYPE_CHAR), 0}; 
+    node->func.args[2] = (Variable){"size", type_new(TYPE_INT), 0};
     push_builtin(node);
 }
 
