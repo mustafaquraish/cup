@@ -346,7 +346,7 @@ Node *parse_identifier(Lexer *lexer)
 Node *parse_factor(Lexer *lexer)
 {
     // TODO: We need to properly handle type conversions / operations with different types
-    //       where we need to cast one of the operands / etc. Perhaps have a separate 
+    //       where we need to cast one of the operands / etc. Perhaps have a separate
     //       type-checking / adding casts/conversions pass?
     Token token = Lexer_peek(lexer);
     Node *expr = NULL;
@@ -409,7 +409,7 @@ Node *parse_factor(Lexer *lexer)
             offset->binary.left = expr;
             offset->binary.right = index;
             offset = handle_binary_expr_types(offset, &token);
-            
+
             expr = Node_new(OP_DEREF);
             expr->unary_expr = offset;
             expr = handle_unary_expr_types(expr, &token);
@@ -470,7 +470,7 @@ Node *parse_conditional_exp(Lexer *lexer)
 
         if (!type_equals(then_expr->expr_type, else_expr->expr_type))
             die_location(token.loc, "Type mismatch in conditional expression cases");
-        
+
         conditional->expr_type = then_expr->expr_type;
         expr = conditional;
         expr->expr_type = then_expr->expr_type;
@@ -547,26 +547,41 @@ Node *parse_statement(Lexer *lexer)
         node->loop.body = parse_statement(lexer);
     }  else if (token.type == TOKEN_FOR) {
         Lexer_next(lexer);
-        node = Node_new(AST_FOR);
+
+
+        Node *loop = Node_new(AST_FOR);
         assert_token(Lexer_next(lexer), TOKEN_OPEN_PAREN);
+
+        // NOTE: We're going to put the for loop in it's own block
+        //       so that any declarations in the init of the loop
+        //       can only be referenced within the loop.
+        node = Node_new(AST_BLOCK);
+        Node_add_child(node, loop);
+        block_stack_push(node);
 
         // All of the expressions in the for loop are optional
 
-        // TODO: Allow this to be a declaration, need to inject
-        //       the variable into the symbol table for the block
-        if (Lexer_peek(lexer).type != TOKEN_SEMICOLON)
-            node->loop.init = parse_expression(lexer);
-        assert_token(Lexer_next(lexer), TOKEN_SEMICOLON);
+        token = Lexer_peek(lexer);
+        // FIXME: Maybe `parse_var_declaration` shouldn't consume the semicolon?
+        if (token.type == TOKEN_LET) {
+            loop->loop.init = parse_var_declaration(lexer);
+        } else {
+            if (token.type != TOKEN_SEMICOLON)
+                loop->loop.init = parse_expression(lexer);
+            assert_token(Lexer_next(lexer), TOKEN_SEMICOLON);
+        }
 
         if (Lexer_peek(lexer).type != TOKEN_SEMICOLON)
-            node->loop.cond = parse_expression(lexer);
+            loop->loop.cond = parse_expression(lexer);
         assert_token(Lexer_next(lexer), TOKEN_SEMICOLON);
 
         if (Lexer_peek(lexer).type != TOKEN_CLOSE_PAREN)
-            node->loop.step = parse_expression(lexer);
+            loop->loop.step = parse_expression(lexer);
         assert_token(Lexer_next(lexer), TOKEN_CLOSE_PAREN);
 
-        node->loop.body = parse_statement(lexer);
+        loop->loop.body = parse_statement(lexer);
+        block_stack_pop();
+
     } else if (token.type == TOKEN_OPEN_BRACE) {
         node = parse_block(lexer);
     } else if (token.type == TOKEN_DEFER) {
