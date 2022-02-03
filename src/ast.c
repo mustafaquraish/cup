@@ -144,6 +144,12 @@ static void do_print_ast(Node *node, int depth)
             printf("  ");
         }
         printf("}\n");
+    } else if (node->type == OP_ASSIGN) {
+        printf("(= \n");
+        do_print_ast(node->assign.var, depth + 1);
+        printf("%*s,\n", 2*depth, "");
+        do_print_ast(node->assign.value, depth + 1);
+        printf("%*s)\n", 2*depth, "");
     } else if (node->type == AST_FUNC) {
         dump_func(node, depth);
     } else if (node->type == AST_LITERAL) {
