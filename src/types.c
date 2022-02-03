@@ -156,9 +156,9 @@ Node *handle_binary_expr_types(Node *node, Token *token)
     switch (node->type) 
     {
         case OP_PLUS: {
-            if (left->type == TYPE_INT && right->type == TYPE_INT) {
+            if (is_int_type(left) && is_int_type(right)) {
                 node->expr_type = type_new(TYPE_INT);
-            } else if (left->type == TYPE_PTR && right->type == TYPE_INT) {
+            } else if (left->type == TYPE_PTR && is_int_type(right)) {
                 node->expr_type = left;
                 // Pointer arithmetic!
                 if (size_for_type(left->ptr) != 1) {
@@ -167,7 +167,7 @@ Node *handle_binary_expr_types(Node *node, Token *token)
                     mul->binary.right = Node_from_int_literal(size_for_type(left->ptr));
                     node->binary.right = mul;
                 }
-            } else if (left->type == TYPE_INT && right->type == TYPE_PTR) {
+            } else if (is_int_type(left) && right->type == TYPE_PTR) {
                 node->expr_type = right;
                 // Pointer arithmetic!
                 if (size_for_type(right->ptr) != 1) {
@@ -182,9 +182,9 @@ Node *handle_binary_expr_types(Node *node, Token *token)
         } break;
 
         case OP_MINUS: {
-            if (left->type == TYPE_INT && right->type == TYPE_INT) {
+            if (is_int_type(left) && is_int_type(right)) {
                 node->expr_type = type_new(TYPE_INT);
-            } else if (left->type == TYPE_PTR && right->type == TYPE_INT) {
+            } else if (left->type == TYPE_PTR && is_int_type(right)) {
                 node->expr_type = left;
                 // Pointer arithmetic!
                 if (size_for_type(left->ptr) != 1) {
@@ -193,7 +193,7 @@ Node *handle_binary_expr_types(Node *node, Token *token)
                     mul->binary.right = Node_from_int_literal(size_for_type(left->ptr));
                     node->binary.right = mul;
                 }
-            } else if (left->type == TYPE_INT && right->type == TYPE_PTR) {
+            } else if (is_int_type(left) && right->type == TYPE_PTR) {
                 node->expr_type = right;
                 // Pointer arithmetic!
                 if (size_for_type(right->ptr) != 1) {
@@ -222,7 +222,7 @@ Node *handle_binary_expr_types(Node *node, Token *token)
         case OP_DIV:
         case OP_MOD:
         case OP_MUL: {
-            if (left->type == TYPE_INT && right->type == TYPE_INT) {
+            if (is_int_type(left) && is_int_type(right)) {
                 node->expr_type = left;
             } else {
                 die_location(token->loc, "Cannot do operation `%s` non-integer types", node_type_to_str(node->type));
