@@ -1,5 +1,6 @@
 #include "parser.h"
 #include "utils.h"
+#include "builtins.h"
 #include <stdlib.h>
 #include <string.h>
 #include <assert.h>
@@ -67,34 +68,6 @@ void dump_block_stack()
         }
         printf("\n");
     }
-}
-
-Node *builtin_print;
-Node *builtin_putc;
-
-void initialize_builtins()
-{
-    // FIXME: The `TYPE_ANY` is a hack
-    builtin_print = Node_new(AST_BUILTIN);
-    builtin_print->func.name = "print";
-    builtin_print->func.return_type = type_new(TYPE_INT);
-    builtin_print->func.num_args = 1;
-    builtin_print->func.args = (Variable *)calloc(sizeof(Variable), 1);
-    builtin_print->func.args[0] = (Variable){"val", type_new(TYPE_ANY), 0};
-
-    builtin_putc = Node_new(AST_BUILTIN);
-    builtin_putc->func.name = "putc";
-    builtin_putc->func.return_type = type_new(TYPE_INT);
-    builtin_putc->func.num_args = 1;
-    builtin_putc->func.args = (Variable *)calloc(sizeof(Variable), 2);
-    builtin_putc->func.args[0] = (Variable){"arg", type_new(TYPE_ANY), 0};
-}
-
-Node *find_builtin_function(Token *token)
-{
-    if (strcmp(token->value.as_string, "putc") == 0) { return builtin_putc; }
-    if (strcmp(token->value.as_string, "print") == 0) { return builtin_print; }
-    return NULL;
 }
 
 Variable *find_local_variable(Token *token)
