@@ -221,46 +221,56 @@ Node *parse_var_declaration(Lexer *lexer)
     bool is_global = (current_function == NULL);
     Token token = assert_token(Lexer_next(lexer), TOKEN_LET);
 
-    token = assert_token(Lexer_next(lexer), TOKEN_IDENTIFIER);
+    Token identifier = assert_token(Lexer_next(lexer), TOKEN_IDENTIFIER);
     // NOTE: We don't allow shadowing of variables in the any blocks,
     //       this is by design since it's a common mistake.
-    if (find_local_variable(&token) != NULL)
-        die_location(token.loc, "Variable `%s` already declared in function", token.value.as_string);
-    if (find_global_variable(&token) != NULL)
-        die_location(token.loc, "Variable `%s` already declared globally", token.value.as_string);
+    if (find_local_variable(&identifier) != NULL)
+        die_location(identifier.loc, "Variable `%s` already declared in function", identifier.value.as_string);
+    if (find_global_variable(&identifier) != NULL)
+        die_location(identifier.loc, "Variable `%s` already declared globally", identifier.value.as_string);
 
     Node *node = Node_new(AST_VARDECL);
-    node->var_decl.var.name = token.value.as_string;
+    node->var_decl.var.name = identifier.value.as_string;
 
     token = Lexer_next(lexer);
-    if (token.type != TOKEN_COLON)
-        die_location(token.loc, "Missing type specifier for variable `%s`", node->var_decl.var.name);
-    node->var_decl.var.type = parse_type(lexer);
-
-    if (is_global) {
-        add_global_variable(&node->var_decl.var);
+    bool is_missing_type = false;
+    if (token.type != TOKEN_COLON) {
+        is_missing_type = true;
     } else {
-        add_variable_to_current_block(&node->var_decl.var);
+        node->var_decl.var.type = parse_type(lexer);
+        token = Lexer_next(lexer);
     }
 
-    token = Lexer_next(lexer);
     if (token.type == TOKEN_ASSIGN) {
         if (is_global)
             die_location(token.loc, "Cannot initialize global variable `%s` outside function", node->var_decl.var.name);
-        if (node->var_decl.var.type->type == TYPE_ARRAY)
-            die_location(token.loc, "Cannot initialize array variable `%s` here.", node->var_decl.var.name);
 
         node->var_decl.value = parse_expression(lexer);
 
-        if (!is_convertible(node->var_decl.var.type, node->var_decl.value->expr_type)) {
+        if (is_missing_type) {
+            node->var_decl.var.type = node->var_decl.value->expr_type;
+            is_missing_type = false;
+        } else if (!is_convertible(node->var_decl.var.type, node->var_decl.value->expr_type)) {
             fprintf(stderr, "- Variable type: %s\n", type_to_str(node->var_decl.var.type));
             fprintf(stderr, "- Value type: %s\n", type_to_str(node->var_decl.value->expr_type));
             die_location(token.loc, "Type mismatch for variable declaration `%s` initalizer", node->var_decl.var.name);
         }
 
+        if (node->var_decl.var.type->type == TYPE_ARRAY)
+            die_location(token.loc, "Cannot initialize array variable `%s` here.", node->var_decl.var.name);
+
         assert_token(Lexer_next(lexer), TOKEN_SEMICOLON);
     } else {
         assert_token(token, TOKEN_SEMICOLON);
+    }
+
+    if (is_missing_type)
+        die_location(token.loc, "Type for variable `%s` not specified, and could not be inferred.", node->var_decl.var.name);
+
+    if (is_global) {
+        add_global_variable(&node->var_decl.var);
+    } else {
+        add_variable_to_current_block(&node->var_decl.var);
     }
 
     return node;
