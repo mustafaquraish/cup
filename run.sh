@@ -21,5 +21,5 @@ make build/output.out
 
 set +e
 
-build/output.out
+build/output.out 1 2 3 4 "Hello World" "huh looky here :^)"
 echo "Exit status: $?"

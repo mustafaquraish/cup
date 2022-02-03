@@ -454,6 +454,13 @@ void generate_asm(Node *root, FILE *out)
     fprintf(out, "global _start\n");
     fprintf(out, "_start:\n");
 #endif
+    // Push argv
+    fprintf(out, "    mov rax, rsi\n");
+    fprintf(out, "    push rax\n");
+    // Push argc
+    fprintf(out, "    mov rax, rdi\n");
+    fprintf(out, "    push rax\n");
+
     fprintf(out, "    call func_main\n");
 
     fprintf(out, "    mov rdi, rax\n");
@@ -468,6 +475,9 @@ void generate_asm(Node *root, FILE *out)
 
     // Global strings
     fprintf(out, "section .data\n");
+    // TODO: Don't to this here because a string containing a backtick will
+    //       cause invalid output and break everything. Maybe just output the
+    //       byte values.
     for (i64 i = 0; i < num_string_literals; i++) {
         fprintf(out, "    global_string_%lld: db `%s`, 0\n", i, all_string_literals[i]);
     }
