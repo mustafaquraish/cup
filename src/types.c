@@ -146,6 +146,7 @@ Node *handle_unary_expr_types(Node *node, Token *token)
         // Default to not changing the type
         node->expr_type = old_type;
     }
+
     return node;
 }
 

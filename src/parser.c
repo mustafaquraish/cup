@@ -360,6 +360,33 @@ Node *parse_factor(Lexer *lexer)
         expr = Node_new(OP_BWINV);
         expr->unary_expr = parse_factor(lexer);
         expr = handle_unary_expr_types(expr, &token);
+    
+    // ++x is changed to (x = x + 1)
+    } else if (token.type == TOKEN_PLUSPLUS) {
+        Lexer_next(lexer);
+        expr = Node_new(OP_ASSIGN);
+        expr->assign.var = parse_factor(lexer);
+        if (!is_lvalue(expr->assign.var->type))
+            die_location(token.loc, "Cannot increment non-lvalue");
+        expr->assign.value = Node_new(OP_PLUS);
+        expr->assign.value->binary.left = expr->assign.var;
+        expr->assign.value->binary.right = Node_from_int_literal(1);
+        expr->assign.value = handle_binary_expr_types(expr->assign.value, &token);
+        expr->expr_type = expr->assign.var->expr_type;
+
+    // --x is changed to (x = x - 1)
+    } else if (token.type == TOKEN_MINUSMINUS) {
+        Lexer_next(lexer);
+        expr = Node_new(OP_ASSIGN);
+        expr->assign.var = parse_factor(lexer);
+        if (!is_lvalue(expr->assign.var->type))
+            die_location(token.loc, "Cannot decrement non-lvalue");
+        expr->assign.value = Node_new(OP_MINUS);
+        expr->assign.value->binary.left = expr->assign.var;
+        expr->assign.value->binary.right = Node_from_int_literal(1);
+        expr->assign.value = handle_binary_expr_types(expr->assign.value, &token);
+        expr->expr_type = expr->assign.var->expr_type;
+
     } else if (token.type == TOKEN_EXCLAMATION) {
         Lexer_next(lexer);
         expr = Node_new(OP_NOT);
@@ -398,8 +425,8 @@ Node *parse_factor(Lexer *lexer)
         token = Lexer_peek(lexer);
         // Convert indexing into pointer arithmetic + dereferencing
         if (token.type == TOKEN_OPEN_BRACKET) {
-            // if (expr->expr_type->type != TYPE_PTR)
-            //     die_location(token.loc, "Cannot index non-pointer type");
+            if (expr->expr_type->type != TYPE_PTR)
+                die_location(token.loc, "Cannot index non-pointer type");
             Lexer_next(lexer);
 
             Node *index = parse_expression(lexer);
@@ -413,6 +440,10 @@ Node *parse_factor(Lexer *lexer)
             expr = Node_new(OP_DEREF);
             expr->unary_expr = offset;
             expr = handle_unary_expr_types(expr, &token);
+        } else if (token.type == TOKEN_PLUSPLUS) {
+            die_location(token.loc, "Post-incrementing is not supported\n");
+        } else if (token.type == TOKEN_MINUSMINUS) {
+            die_location(token.loc, "Post-decrementing is not supported\n");
         } else {
             break;
         }
