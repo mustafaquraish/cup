@@ -258,6 +258,9 @@ Node *parse_var_declaration(Lexer *lexer)
     if (token.type == TOKEN_ASSIGN) {
         if (is_global)
             die_location(token.loc, "Cannot initialize global variable `%s` outside function", node->var_decl.var.name);
+        if (node->var_decl.var.type->type == TYPE_ARRAY)
+            die_location(token.loc, "Cannot initialize array variable `%s` here.", node->var_decl.var.name);
+
         node->var_decl.value = parse_expression(lexer);
 
         if (!type_equals(node->var_decl.var.type, node->var_decl.value->expr_type)) {

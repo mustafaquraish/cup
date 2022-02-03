@@ -9,3 +9,8 @@ cupcc
 *.out
 
 build
+
+# We ignore the examples by default since it's the playground for testing,
+# and it gets annoying on git.
+examples
+

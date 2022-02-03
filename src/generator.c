@@ -280,11 +280,6 @@ void generate_statement(Node *stmt, FILE *out)
             generate_expr_into_rax(stmt->var_decl.value, out);
             i64 offset = stmt->var_decl.var.offset;
             fprintf(out, "    mov [rbp-%lld], rax\n", offset);
-        } else {
-            // Initialize to 0
-            i64 offset = stmt->var_decl.var.offset;
-            // TODO: Use correct size for the type
-            fprintf(out, "    mov qword [rbp-%lld], 0\n", offset);
         }
     } else if (stmt->type == AST_IF) {
         assert(stmt->conditional.cond);
