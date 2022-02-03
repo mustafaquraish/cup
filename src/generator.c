@@ -16,7 +16,7 @@ static Node *current_function = NULL;
 static Node *defer_stack[DEFER_STACK_SIZE];
 static i64 defer_stack_count = 0;
 
-void make_syscall(i64 syscall_no, FILE *out) {
+void generate_syscall(i64 syscall_no, FILE *out) {
 #if __APPLE__
     syscall_no += 0x2000000;
 #endif
@@ -457,7 +457,7 @@ void generate_asm(Node *root, FILE *out)
     fprintf(out, "    call func_main\n");
 
     fprintf(out, "    mov rdi, rax\n");
-    make_syscall(SYS_exit, out);
+    generate_syscall(SYS_exit, out);
 
     // TODO: Don't generate code for functions that cannot get called.
     // TODO: Add implementations of some primitives?
@@ -471,58 +471,4 @@ void generate_asm(Node *root, FILE *out)
     for (i64 i = 0; i < num_string_literals; i++) {
         fprintf(out, "    global_string_%lld: db `%s`, 0\n", i, all_string_literals[i]);
     }
-}
-
-void generate_builtins(FILE *out)
-{
-    // Stolen shamelessly from tsoding/porth:
-    // https://gitlab.com/tsoding/porth
-    fprintf(out,
-        "func_print:\n"
-        "    mov rdi, [rsp+8]\n"
-        "    mov r9, -3689348814741910323\n"
-        "    sub rsp, 40\n"
-        "    mov BYTE [rsp+31], 10\n"
-        "    lea rcx, [rsp+30]\n"
-        "    mov qword rbx, 0\n"
-        ".L2:\n"
-        "    mov rax, rdi\n"
-        "    lea r8, [rsp+32]\n"
-        "    mul r9\n"
-        "    mov rax, rdi\n"
-        "    sub r8, rcx\n"
-        "    shr rdx, 3\n"
-        "    lea rsi, [rdx+rdx*4]\n"
-        "    add rsi, rsi\n"
-        "    sub rax, rsi\n"
-        "    add eax, 48\n"
-        "    mov BYTE [rcx], al\n"
-        "    mov rax, rdi\n"
-        "    mov rdi, rdx\n"
-        "    mov rdx, rcx\n"
-        "    sub rcx, 1\n"
-        "    cmp rax, 9\n"
-        "    ja .L2\n"
-        "    lea rax, [rsp+32]\n"
-        "    mov edi, 1\n"
-        "    sub rdx, rax\n"
-        "    xor eax, eax\n"
-        "    lea rsi, [rsp+32+rdx]\n"
-        "    mov rdx, r8\n"
-    );
-    make_syscall(SYS_write, out);
-    fprintf(out, "    add rsp, 40\n");
-    fprintf(out, "    ret\n");
-
-    /////////////////////////////////////////////////////////////////
-
-    // Write syscall
-    fprintf(out,
-        "func_write:\n"
-        "    mov rdi, [rsp+8]\n"   // stdout
-        "    mov rsi, [rsp+16]\n"
-        "    mov rdx, [rsp+24]\n" // 1 byte
-    );
-    make_syscall(SYS_write, out);
-    fprintf(out, "    ret\n");
 }

@@ -95,6 +95,7 @@ static char *data_type_to_str(DataType type)
     case TYPE_PTR: return "*";
     case TYPE_ARRAY: return "array";
     case TYPE_CHAR: return "char";
+    case TYPE_ANY: return "<@>";
     default: assert(false && "Unreachable");
     }
 }

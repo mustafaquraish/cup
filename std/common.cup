@@ -64,7 +64,7 @@ fn streq(s1: char *, s2: char *): int {
 
 fn puts(c: char *) {
     let len: int = strlen(c);
-    write(0, c, len);
+    write(1, c, len);
 }
 
 fn strrev(s: char *) {
