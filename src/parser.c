@@ -956,9 +956,55 @@ Type *parse_struct_union_declaration(Lexer *lexer, bool is_global) {
     if (!is_global)
         defined_structs_count = prev_struct_count;
 
+    // printf("Defined %s: %s, size: %lld\n", 
+    //     struct_type->type == TYPE_UNION ? "union":"struct", 
+    //     struct_type->struct_name,
+    //     struct_type->fields.size
+    // );
+    // for (int i = 0; i < struct_type->fields.num_fields; i++) {
+    //     printf("\t%s: %s (offset: %lld, size: %lld)\n", 
+    //         struct_type->fields.name[i],
+    //         type_to_str(struct_type->fields.type[i]),
+    //         struct_type->fields.offset[i],
+    //         size_for_type(struct_type->fields.type[i])
+    //     );
+    // }
+
     return struct_type;
 }
 
+void parse_enum_declaration(Lexer *lexer)
+{
+    // TODO: This is all a hack to automatically number
+    //       Some constants. It does not behave like a type,
+    //       and cannot be used as one. Fix this in the future.
+    assert_token(Lexer_next(lexer), TOKEN_ENUM);
+    assert_token(Lexer_next(lexer), TOKEN_IDENTIFIER); // Use this!
+    assert_token(Lexer_next(lexer), TOKEN_OPEN_BRACE);
+
+    Token token = Lexer_peek(lexer);
+    i64 enum_count = 0;
+    while (token.type != TOKEN_CLOSE_BRACE) {
+        token = assert_token(Lexer_next(lexer), TOKEN_IDENTIFIER);
+
+        if (identifier_exists(&token))
+            die_location(token.loc, "Identifier already exists, enums just behave like numbered constants.");
+
+        Node *node = Node_new(AST_CONSTANT);
+        node->constant.name = token.value.as_string;
+        node->constant.int_literal = Node_from_int_literal(enum_count++);
+        push_constant(node);
+
+        token = Lexer_peek(lexer);
+        if (token.type == TOKEN_COMMA) {
+            Lexer_next(lexer);
+            token = Lexer_peek(lexer);
+        } else if (token.type != TOKEN_CLOSE_BRACE) {
+            die_location(token.loc, "Expected a comma or a closing brace.");
+        }
+    }
+    assert_token(Lexer_next(lexer), TOKEN_CLOSE_BRACE);
+}
 
 void push_new_lexer(Lexer *lexer)
 {
@@ -1015,6 +1061,8 @@ Node *parse_program(Lexer *lexer)
             parse_constant_declaration(lexer);
         } else if (token.type == TOKEN_STRUCT || token.type == TOKEN_UNION) {
             parse_struct_union_declaration(lexer, true);
+        } else if (token.type == TOKEN_ENUM) {
+            parse_enum_declaration(lexer);
         } else if (token.type == TOKEN_IMPORT) {
             Lexer_next(lexer);
             token = assert_token(Lexer_next(lexer), TOKEN_STRINGLIT);
