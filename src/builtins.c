@@ -69,6 +69,9 @@ void initialize_builtins()
     make_syscall(3, SYS_read, "read", type_new(TYPE_INT),
         type_new(TYPE_INT), type_new_ptr(TYPE_CHAR), type_new(TYPE_INT) // Args
     );
+    make_syscall(1, SYS_exit, "exit", type_new(TYPE_NONE),
+        type_new(TYPE_INT) // Args
+    );
 }
 
 Node *find_builtin_function(Token *token)
