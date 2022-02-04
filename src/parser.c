@@ -873,10 +873,14 @@ Node *parse_func(Lexer *lexer)
     Token token;
     token = assert_token(Lexer_next(lexer), TOKEN_FN);
 
+    token = assert_token(Lexer_next(lexer), TOKEN_IDENTIFIER);
+    if (identifier_exists(&token))
+        die_location(token.loc, "Function name already exists as an identifier");
+
     Node *func = Node_new(AST_FUNC);
     push_new_function(func);
 
-    token = assert_token(Lexer_next(lexer), TOKEN_IDENTIFIER);
+
     func->func.name = token.value.as_string;
     parse_func_args(lexer, func);
 
@@ -922,6 +926,8 @@ Type *parse_struct_union_declaration(Lexer *lexer, bool is_global) {
         struct_type->struct_name = token.value.as_string;
         push_struct_definition(struct_type);
         Lexer_next(lexer);
+    } else {
+        struct_type->struct_name = "<anonymous>";
     }
 
     assert_token(Lexer_next(lexer), TOKEN_OPEN_BRACE);

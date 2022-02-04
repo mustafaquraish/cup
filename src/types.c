@@ -37,6 +37,7 @@ i64 size_for_type(Type *type)
     case TYPE_CHAR: return 1;
     case TYPE_ARRAY: return type->array_size * size_for_type(type->ptr);
     case TYPE_STRUCT: return type->fields.size;
+    case TYPE_UNION: return type->fields.size;
     default: {
         printf("Unknown type: %d\n", type->type);
         assert(false && "Unreachable type");
@@ -89,10 +90,11 @@ bool is_int_type(Type *type)
 
 bool is_struct_or_struct_ptr(Type *type)
 {
-    if (type->type == TYPE_STRUCT)
+    if (type->type == TYPE_STRUCT || type->type == TYPE_UNION)
         return true;
-    if (type->type == TYPE_PTR && type->ptr->type == TYPE_STRUCT)
-        return true;
+    if (type->type == TYPE_PTR)
+        if (type->ptr->type == TYPE_STRUCT || type->ptr->type == TYPE_UNION)
+            return true;
     return false;
 }
 
