@@ -11,6 +11,7 @@ typedef enum {
     TYPE_PTR,
     TYPE_ARRAY,
     TYPE_STRUCT,
+    TYPE_UNION,
 } DataType;
 
 typedef struct data_type_node {

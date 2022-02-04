@@ -813,14 +813,15 @@ Lexer *remove_lexer()
     return lexer_stack[lexer_stack_count - 1];
 }
 
-Type *parse_struct_declaration(Lexer *lexer, bool is_global) {
+Type *parse_struct_union_declaration(Lexer *lexer, bool is_global) {
     i64 prev_struct_count = defined_structs_count;
 
-    assert_token(Lexer_next(lexer), TOKEN_STRUCT);
+    Type *struct_type;
+    Token token = Lexer_next(lexer);
+    assert(token.type == TOKEN_STRUCT || token.type == TOKEN_UNION);
+    struct_type = type_new(token.type == TOKEN_STRUCT ? TYPE_STRUCT : TYPE_UNION);
 
-    Type *struct_type = type_new(TYPE_STRUCT);
-
-    Token token = Lexer_peek(lexer);
+    token = Lexer_peek(lexer);
     // For nested temporary structs we don't need a name
     if (token.type != TOKEN_IDENTIFIER && is_global)
         die_location(token.loc, "You need to specify a name for the struct defined globally.");
@@ -845,8 +846,8 @@ Type *parse_struct_declaration(Lexer *lexer, bool is_global) {
         // We want to allow nested temporary structs.
         Type *type;
         Token next = Lexer_peek(lexer);
-        if (next.type == TOKEN_STRUCT) {
-            type = parse_struct_declaration(lexer, false);
+        if (next.type == TOKEN_STRUCT || next.type == TOKEN_UNION) {
+            type = parse_struct_union_declaration(lexer, false);
         } else {
             type = parse_type(lexer);
         }
@@ -879,8 +880,8 @@ Node *parse_program(Lexer *lexer)
         } else if (token.type == TOKEN_LET) {
             Node *var_decl = parse_var_declaration(lexer);
             Node_add_child(program, var_decl);
-        } else if (token.type == TOKEN_STRUCT) {
-            parse_struct_declaration(lexer, true);
+        } else if (token.type == TOKEN_STRUCT || token.type == TOKEN_UNION) {
+            parse_struct_union_declaration(lexer, true);
         } else if (token.type == TOKEN_IMPORT) {
             // TODO: Handle circular imports
             // TODO: Handle complex import graphs (#pragma once)

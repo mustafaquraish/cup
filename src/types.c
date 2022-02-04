@@ -107,6 +107,7 @@ static char *data_type_to_str(Type *type)
     case TYPE_CHAR: return "char";
     case TYPE_ANY: return "<@>";
     case TYPE_STRUCT: return type->struct_name;
+    case TYPE_UNION: return type->struct_name;
     default: assert(false && "Unreachable");
     }
 }
@@ -133,19 +134,21 @@ char *type_to_str(Type *type)
 
 i64 push_field(Type *type, char *field_name, Type *field_type)
 {
-    assert(type->type == TYPE_STRUCT);
+    assert(type->type == TYPE_STRUCT || type->type == TYPE_UNION);
+    bool is_union = type->type == TYPE_UNION;
+
     type->fields.type = realloc(type->fields.type, sizeof(Type *) * (type->fields.num_fields + 1));
     type->fields.offset = realloc(type->fields.offset, sizeof(i64) * (type->fields.num_fields + 1));
     type->fields.name = realloc(type->fields.name, sizeof(char *) * (type->fields.num_fields + 1));
    
     i64 field_size = size_for_type(field_type);
     i64 offset_factor = i64min(field_size, 8);
-    i64 offset = align_up(type->fields.size, offset_factor);
+    i64 offset = is_union ? 0 : align_up(type->fields.size, offset_factor);
      
     type->fields.type[type->fields.num_fields] = field_type;
     type->fields.offset[type->fields.num_fields] = offset;
     type->fields.name[type->fields.num_fields] = field_name;
-    type->fields.size = offset + field_size;
+    type->fields.size = is_union ? i64max(field_size, type->fields.size) : offset + field_size;
     type->fields.num_fields++;
 
     return offset;
@@ -153,7 +156,7 @@ i64 push_field(Type *type, char *field_name, Type *field_type)
 
 i64 find_field_index(Type *type, char *field_name)
 {
-    assert(type->type == TYPE_STRUCT);
+    assert(type->type == TYPE_STRUCT || type->type == TYPE_UNION);
     for (int i = 0; i < type->fields.num_fields; i++) {
         if (strcmp(type->fields.name[i], field_name) == 0)
             return i;
