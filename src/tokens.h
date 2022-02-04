@@ -14,6 +14,7 @@
   F(TOKEN_CLOSE_PAREN, ")")                                                    \
   F(TOKEN_COLON, ":")                                                          \
   F(TOKEN_COMMA, ",")                                                          \
+  F(TOKEN_DOT, ".")                                                            \
   F(TOKEN_EOF, "EOF")                                                          \
   F(TOKEN_EQ, "==")                                                            \
   F(TOKEN_EXCLAMATION, "!")                                                    \
@@ -55,6 +56,7 @@
   F(TOKEN_INT, "int")                                                          \
   F(TOKEN_LET, "let")                                                          \
   F(TOKEN_RETURN, "return")                                                    \
+  F(TOKEN_STRUCT, "struct")                                                    \
   F(TOKEN_WHILE, "while")                                                      \
   F(TOKEN_IMPORT, "import")                                                    \
 

@@ -26,6 +26,11 @@ static i64 global_vars_offset = 0;
 static Lexer *lexer_stack[LEXER_STACK_SIZE];
 static i64 lexer_stack_count = 0;
 
+#define DEFINED_STRUCT_SIZE 128
+static Type *defined_structs[DEFINED_STRUCT_SIZE];
+static i64 defined_structs_count = 0;
+
+
 Token do_assert_token(Token token, TokenType type, char *filename, int line)
 {
     if (token.type != type) {
@@ -42,6 +47,22 @@ Token do_assert_token(Token token, TokenType type, char *filename, int line)
 /******
  * Some helpers
  */
+
+void push_struct_definition(Type *type)
+{
+    assert(defined_structs_count < DEFINED_STRUCT_SIZE);
+    defined_structs[defined_structs_count++] = type;
+}
+
+Type *find_custom_type_definition(Token *token)
+{
+    for (i64 i = 0; i < defined_structs_count; i++) {
+        if (strcmp(defined_structs[i]->struct_name, token->value.as_string) == 0) {
+            return defined_structs[i];
+        }
+    }
+    return NULL;
+}
 
 void block_stack_push(Node *block)
 {
@@ -164,7 +185,13 @@ Type *parse_type(Lexer *lexer)
         Lexer_next(lexer);
         type = type_new(TYPE_CHAR);
     } else {
-        die_location(token.loc, "Unexpected type found: %s", token_type_to_str(token.type));
+        assert_token(token, TOKEN_IDENTIFIER);
+        // TODO: Don't allow a type to contain itself.
+        // TODO: Don't allow a type to contain an array of itself.
+        type = find_custom_type_definition(&token);
+        if (!type)
+            die_location(token.loc, "Could not find what type `%s` is referencing", token.value.as_string);
+        Lexer_next(lexer);
     }
 
     for (;;) {
@@ -370,7 +397,7 @@ Node *parse_factor(Lexer *lexer)
         expr = Node_new(OP_BWINV);
         expr->unary_expr = parse_factor(lexer);
         expr = handle_unary_expr_types(expr, &token);
-    
+
     // ++x is changed to (x = x + 1)
     } else if (token.type == TOKEN_PLUSPLUS) {
         Lexer_next(lexer);
@@ -454,6 +481,26 @@ Node *parse_factor(Lexer *lexer)
             die_location(token.loc, "Post-incrementing is not supported\n");
         } else if (token.type == TOKEN_MINUSMINUS) {
             die_location(token.loc, "Post-decrementing is not supported\n");
+        } else if (token.type == TOKEN_DOT) {
+            // TODO: Pointer to struct
+            if (!is_struct_or_struct_ptr(expr->expr_type))
+                die_location(token.loc, "Cannot access member of non-struct type");
+
+            bool is_ptr = expr->expr_type->type == TYPE_PTR;
+            Type *struct_type = is_ptr ? expr->expr_type->ptr : expr->expr_type;
+            Lexer_next(lexer);
+            Token field_token = assert_token(Lexer_next(lexer), TOKEN_IDENTIFIER);
+            i64 index = find_field_index(struct_type, field_token.value.as_string);
+            if (index == -1)
+                die_location(field_token.loc, "Struct `%s` does not have a field named `%s`", type_to_str(struct_type), field_token.value.as_string);
+
+            Node *member = Node_new(OP_MEMBER);
+            member->expr_type = struct_type->fields.type[index];
+            member->member.expr = expr;
+            member->member.offset = struct_type->fields.offset[index];
+            member->member.is_ptr = (expr->expr_type->type == TYPE_PTR);
+            expr = member;
+
         } else {
             break;
         }
@@ -683,6 +730,9 @@ void parse_func_args(Lexer *lexer, Node *func)
         assert_token(Lexer_next(lexer), TOKEN_COLON);
         Type *type = parse_type(lexer);
 
+        if (type->type == TYPE_STRUCT)
+            die_location(token.loc, "Structs cannot be passed as arguments, maybe pass a pointer?");
+
         i64 new_count = func->func.num_args + 1;
         func->func.args = realloc(func->func.args, sizeof(Variable) * new_count);
         Variable *var = &func->func.args[func->func.num_args++];
@@ -763,6 +813,57 @@ Lexer *remove_lexer()
     return lexer_stack[lexer_stack_count - 1];
 }
 
+Type *parse_struct_declaration(Lexer *lexer, bool is_global) {
+    i64 prev_struct_count = defined_structs_count;
+
+    assert_token(Lexer_next(lexer), TOKEN_STRUCT);
+
+    Type *struct_type = type_new(TYPE_STRUCT);
+
+    Token token = Lexer_peek(lexer);
+    // For nested temporary structs we don't need a name
+    if (token.type != TOKEN_IDENTIFIER && is_global)
+        die_location(token.loc, "You need to specify a name for the struct defined globally.");
+
+    // But if they do provide one, we'll add it to the list of defined structs so they
+    // it can referenced internally.
+    bool has_name = false;
+    if (token.type == TOKEN_IDENTIFIER) {
+        struct_type->struct_name = token.value.as_string;
+        push_struct_definition(struct_type);
+        Lexer_next(lexer);
+        has_name = true;
+    }
+
+    assert_token(Lexer_next(lexer), TOKEN_OPEN_BRACE);
+
+    token = Lexer_peek(lexer);
+    while (token.type != TOKEN_CLOSE_BRACE) {
+        token = assert_token(Lexer_next(lexer), TOKEN_IDENTIFIER);
+        assert_token(Lexer_next(lexer), TOKEN_COLON);
+
+        // We want to allow nested temporary structs.
+        Type *type;
+        Token next = Lexer_peek(lexer);
+        if (next.type == TOKEN_STRUCT) {
+            type = parse_struct_declaration(lexer, false);
+        } else {
+            type = parse_type(lexer);
+        }
+
+        push_field(struct_type, token.value.as_string, type);
+        assert_token(Lexer_next(lexer), TOKEN_SEMICOLON);
+        token = Lexer_peek(lexer);
+    }
+    assert_token(Lexer_next(lexer), TOKEN_CLOSE_BRACE);
+
+    // If this is not being defined globally, we want to remove it from the namespace.
+    if (!is_global)
+        defined_structs_count = prev_struct_count;
+
+    return struct_type;
+}
+
 Node *parse_program(Lexer *lexer)
 {
     initialize_builtins();
@@ -778,6 +879,8 @@ Node *parse_program(Lexer *lexer)
         } else if (token.type == TOKEN_LET) {
             Node *var_decl = parse_var_declaration(lexer);
             Node_add_child(program, var_decl);
+        } else if (token.type == TOKEN_STRUCT) {
+            parse_struct_declaration(lexer, true);
         } else if (token.type == TOKEN_IMPORT) {
             // TODO: Handle circular imports
             // TODO: Handle complex import graphs (#pragma once)
@@ -788,6 +891,8 @@ Node *parse_program(Lexer *lexer)
             char *filename = token.value.as_string;
             lexer = Lexer_new_open_file(filename);
             push_new_lexer(lexer);
+        } else if (token.type == TOKEN_SEMICOLON) {
+            Lexer_next(lexer);
         } else {
             die_location(token.loc, "Unexpected token in parse_program: `%s`\n", token_type_to_str(token.type));
             exit(1);

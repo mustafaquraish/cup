@@ -50,12 +50,20 @@ void generate_expr_into_rax(Node *expr, FILE *out);
 void generate_lvalue_into_rax(Node *node, FILE *out)
 {
     assert(is_lvalue(node->type));
-    i64 offset = node->variable->offset;
     if (node->type == AST_LOCAL_VAR) {
+        i64 offset = node->variable->offset;
         fprintf(out, "    mov rax, rbp\n");
         fprintf(out, "    sub rax, %lld\n", offset);
     } else if (node->type == AST_GLOBAL_VAR) {
+        i64 offset = node->variable->offset;
         fprintf(out, "    mov rax, global_vars\n");
+        fprintf(out, "    add rax, %lld\n", offset);
+    } else if (node->type == OP_MEMBER) {
+        i64 offset = node->member.offset;
+        if (node->member.is_ptr)
+            generate_expr_into_rax(node->member.expr, out);
+        else
+            generate_lvalue_into_rax(node->member.expr, out);
         fprintf(out, "    add rax, %lld\n", offset);
     } else if (node->type == OP_DEREF) {
         generate_expr_into_rax(node->unary_expr, out);

@@ -112,6 +112,7 @@ bool is_lvalue(NodeType type)
     {
     case AST_LOCAL_VAR:
     case AST_GLOBAL_VAR:
+    case OP_MEMBER:
     case OP_DEREF:  // FIXME: Should this be the case?
         return true;
     default: return false;

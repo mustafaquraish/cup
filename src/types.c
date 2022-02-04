@@ -36,6 +36,7 @@ i64 size_for_type(Type *type)
     case TYPE_PTR: return 8;
     case TYPE_CHAR: return 1;
     case TYPE_ARRAY: return type->array_size * size_for_type(type->ptr);
+    case TYPE_STRUCT: return type->fields.size;
     default: {
         printf("Unknown type: %d\n", type->type);
         assert(false && "Unreachable type");
@@ -86,9 +87,18 @@ bool is_int_type(Type *type)
     }
 }
 
-static char *data_type_to_str(DataType type)
+bool is_struct_or_struct_ptr(Type *type)
 {
-    switch (type)
+    if (type->type == TYPE_STRUCT)
+        return true;
+    if (type->type == TYPE_PTR && type->ptr->type == TYPE_STRUCT)
+        return true;
+    return false;
+}
+
+static char *data_type_to_str(Type *type)
+{
+    switch (type->type)
     {
     case TYPE_NONE: return "void";
     case TYPE_INT: return "int";
@@ -96,6 +106,7 @@ static char *data_type_to_str(DataType type)
     case TYPE_ARRAY: return "array";
     case TYPE_CHAR: return "char";
     case TYPE_ANY: return "<@>";
+    case TYPE_STRUCT: return type->struct_name;
     default: assert(false && "Unreachable");
     }
 }
@@ -114,16 +125,50 @@ char *type_to_str(Type *type)
     
     // FIXME: This is inefficient as all hell but this will only really be
     //        used for error reporting.
-    strcat(str, data_type_to_str(type->type));
+    strcat(str, data_type_to_str(type));
     for (int i = 0; i < ptr_count; i++)
         strcat(str, "*");
     return str;
 }
 
+i64 push_field(Type *type, char *field_name, Type *field_type)
+{
+    assert(type->type == TYPE_STRUCT);
+    type->fields.type = realloc(type->fields.type, sizeof(Type *) * (type->fields.num_fields + 1));
+    type->fields.offset = realloc(type->fields.offset, sizeof(i64) * (type->fields.num_fields + 1));
+    type->fields.name = realloc(type->fields.name, sizeof(char *) * (type->fields.num_fields + 1));
+   
+    i64 field_size = size_for_type(field_type);
+    i64 offset_factor = i64min(field_size, 8);
+    i64 offset = align_up(type->fields.size, offset_factor);
+     
+    type->fields.type[type->fields.num_fields] = field_type;
+    type->fields.offset[type->fields.num_fields] = offset;
+    type->fields.name[type->fields.num_fields] = field_name;
+    type->fields.size = offset + field_size;
+    type->fields.num_fields++;
+
+    return offset;
+}
+
+i64 find_field_index(Type *type, char *field_name)
+{
+    assert(type->type == TYPE_STRUCT);
+    for (int i = 0; i < type->fields.num_fields; i++) {
+        if (strcmp(type->fields.name[i], field_name) == 0)
+            return i;
+    }
+    return -1;
+}
+
+
 Node *handle_unary_expr_types(Node *node, Token *token)
 {
     Type *old_type = node->unary_expr->expr_type;
     
+    if (node->type != OP_ADDROF && old_type->type == TYPE_STRUCT)
+        die_location(token->loc, "Performing invalid unary operation on struct type");
+
     if (node->type == OP_NOT) {
         node->expr_type = type_new(TYPE_INT);
     } else if (node->type == OP_ADDROF) {
@@ -154,6 +199,9 @@ Node *handle_binary_expr_types(Node *node, Token *token)
 {
     Type *left = node->binary.left->expr_type;
     Type *right = node->binary.right->expr_type;
+
+    if (left->type == TYPE_STRUCT || right->type == TYPE_STRUCT)
+        die_location(token->loc, "Performing invalid binary operation on struct type");
     
     switch (node->type) 
     {
