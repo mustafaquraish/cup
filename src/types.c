@@ -21,6 +21,12 @@ bool is_convertible(Type *from, Type *to)
 {
     if (from->type == TYPE_ANY || to->type == TYPE_ANY)
         return true;
+
+    // Allow converstions to and from void* to any other pointer type
+    if (from->type == TYPE_PTR && to->type == TYPE_PTR)
+        if (from->ptr->type == TYPE_VOID || to->ptr->type == TYPE_VOID)
+            return true;
+
     // TODO: Should we rause a warning if the target type is narrower
     //       than the source type?
     if (is_int_type(from) && is_int_type(to))
@@ -52,9 +58,11 @@ Type *type_new(DataType type)
     static Type type_int = {.type = TYPE_INT, .ptr = NULL};
     static Type type_char = {.type = TYPE_CHAR, .ptr = NULL};
     static Type type_any = {.type = TYPE_ANY, .ptr = NULL};
+    static Type type_void = {.type = TYPE_VOID, .ptr = NULL};
     if (type == TYPE_INT) return &type_int;
     if (type == TYPE_CHAR) return &type_char;
     if (type == TYPE_ANY) return &type_any;
+    if (type == TYPE_VOID) return &type_void;
 
     Type *self = calloc(sizeof(Type), 1);
     self->type = type;
@@ -102,7 +110,7 @@ static char *data_type_to_str(Type *type)
 {
     switch (type->type)
     {
-    case TYPE_NONE: return "void";
+    case TYPE_VOID: return "void";
     case TYPE_INT: return "int";
     case TYPE_PTR: return "*";
     case TYPE_ARRAY: return "array";

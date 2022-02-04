@@ -60,6 +60,7 @@
   F(TOKEN_RETURN, "return")                                                    \
   F(TOKEN_STRUCT, "struct")                                                    \
   F(TOKEN_UNION, "union")                                                      \
+  F(TOKEN_VOID, "void")                                                        \
   F(TOKEN_WHILE, "while")                                                      \
   F(TOKEN_IMPORT, "import")                                                    \
 

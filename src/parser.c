@@ -227,6 +227,9 @@ Type *parse_type(Lexer *lexer)
     } else if (token.type == TOKEN_CHAR) {
         Lexer_next(lexer);
         type = type_new(TYPE_CHAR);
+    } else if (token.type == TOKEN_VOID) {
+        Lexer_next(lexer);
+        type = type_new(TYPE_VOID);
     } else {
         assert_token(token, TOKEN_IDENTIFIER);
         // TODO: Don't allow a type to contain itself.
@@ -590,7 +593,6 @@ Node *parse_factor(Lexer *lexer)
         } else if (token.type == TOKEN_MINUSMINUS) {
             die_location(token.loc, "Post-decrementing is not supported\n");
         } else if (token.type == TOKEN_DOT) {
-            // TODO: Pointer to struct
             if (!is_struct_or_struct_ptr(expr->expr_type))
                 die_location(token.loc, "Cannot access member of non-struct type");
 
@@ -607,8 +609,8 @@ Node *parse_factor(Lexer *lexer)
             member->member.expr = expr;
             member->member.offset = struct_type->fields.offset[index];
             member->member.is_ptr = (expr->expr_type->type == TYPE_PTR);
-            expr = member;
 
+            expr = decay_array_to_pointer(member, &token);
         } else {
             break;
         }
@@ -685,8 +687,8 @@ Node *parse_expression(Lexer *lexer)
             Lexer_next(lexer);
             Node *assign = Node_new(OP_ASSIGN);
             assign->assign.var = node;
-            assign->assign.value = parse_expression(lexer);
-
+            Node *expr = parse_expression(lexer);
+            assign->assign.value = expr;
 
             if (!is_convertible(node->expr_type, assign->assign.value->expr_type)) {
                 fprintf(stderr, "- Variable type: %s\n", type_to_str(assign->assign.var->expr_type));
@@ -901,7 +903,7 @@ Node *parse_func(Lexer *lexer)
         func->func.return_type = parse_type(lexer);
     } else {
         // No return type, void fn.
-        func->func.return_type = type_new(TYPE_NONE);
+        func->func.return_type = type_new(TYPE_VOID);
     }
 
     // Make sure there's no funny business with the stack offset

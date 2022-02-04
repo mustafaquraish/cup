@@ -4,7 +4,7 @@
 #include <stdio.h>
 
 typedef enum {
-    TYPE_NONE,
+    TYPE_VOID,
     TYPE_ANY, // This is a hack for builtins till we can cast types
     TYPE_INT,
     TYPE_CHAR,

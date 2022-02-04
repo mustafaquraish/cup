@@ -1,10 +1,14 @@
+
 const true = 1;
 const false = 0;
+
+// This should really be a constant, but we only allow integers...
+let null: void*; // Zero initialized by default.
 
 ///////////////////////////////////////////////////////////////////////////////
 // Syscalls
 
-fn write(fd: int, s: char*, n: int): int {
+fn write(fd: int, s: void*, n: int): int {
     return syscall3(SYS_write, fd, s, n);
 }
 
@@ -12,7 +16,7 @@ fn exit(status: int): int {
     return syscall1(SYS_exit, status);
 }
 
-fn read(fd: int, s: char*, n: int): int {
+fn read(fd: int, s: void*, n: int): int {
     return syscall3(SYS_read, fd, s, n);
 }
 
