@@ -903,21 +903,6 @@ Node *parse_func(Lexer *lexer)
     return func;
 }
 
-void push_new_lexer(Lexer *lexer)
-{
-    assert(lexer_stack_count < LEXER_STACK_SIZE);
-    lexer_stack[lexer_stack_count++] = lexer;
-}
-
-Lexer *remove_lexer()
-{
-    assert(lexer_stack_count > 0);
-    free(lexer_stack[--lexer_stack_count]);
-    if (lexer_stack_count == 0)
-        return NULL;
-    return lexer_stack[lexer_stack_count - 1];
-}
-
 Type *parse_struct_union_declaration(Lexer *lexer, bool is_global) {
     i64 prev_struct_count = defined_structs_count;
 
@@ -970,6 +955,43 @@ Type *parse_struct_union_declaration(Lexer *lexer, bool is_global) {
     return struct_type;
 }
 
+
+void push_new_lexer(Lexer *lexer)
+{
+    assert(lexer_stack_count < LEXER_STACK_SIZE);
+    lexer_stack[lexer_stack_count++] = lexer;
+}
+
+Lexer *remove_lexer()
+{
+    assert(lexer_stack_count > 0);
+    free(lexer_stack[--lexer_stack_count]);
+    if (lexer_stack_count == 0)
+        return NULL;
+    return lexer_stack[lexer_stack_count - 1];
+}
+
+#define MAX_OPENED_FILES 1024
+char *opened_files[MAX_OPENED_FILES];
+int opened_files_count = 0;
+
+void open_new_file(char *filename)
+{
+    // TODO: Use absolute paths instead of relative paths
+    // TODO: Check different locations for existence of file
+    for (int i = 0; i < opened_files_count; i++) {
+        if (strcmp(opened_files[i], filename) == 0) {
+            return;
+        }
+    }
+
+    assert(opened_files_count < MAX_OPENED_FILES);
+    opened_files[opened_files_count++] = filename;
+
+    Lexer *lexer = Lexer_new_open_file(filename);
+    push_new_lexer(lexer);
+}
+
 Node *parse_program(Lexer *lexer)
 {
     initialize_builtins();
@@ -990,15 +1012,11 @@ Node *parse_program(Lexer *lexer)
         } else if (token.type == TOKEN_STRUCT || token.type == TOKEN_UNION) {
             parse_struct_union_declaration(lexer, true);
         } else if (token.type == TOKEN_IMPORT) {
-            // TODO: Handle circular imports
-            // TODO: Handle complex import graphs (#pragma once)
-            // TODO: Validation of imports
-            // TODO: Have default directories to search for imports
             Lexer_next(lexer);
             token = assert_token(Lexer_next(lexer), TOKEN_STRINGLIT);
             char *filename = token.value.as_string;
-            lexer = Lexer_new_open_file(filename);
-            push_new_lexer(lexer);
+            open_new_file(filename);
+            lexer = lexer_stack[lexer_stack_count - 1];
         } else if (token.type == TOKEN_SEMICOLON) {
             Lexer_next(lexer);
         } else {
