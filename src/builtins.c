@@ -2,8 +2,10 @@
 #include "ast.h"
 #include "utils.h"
 #include "generator.h"
+#include "parser.h"
 #include <string.h>
 #include <stdlib.h>
+#include <fcntl.h>
 #include <assert.h>
 #include <stdarg.h>
 #include <sys/syscall.h>
@@ -12,47 +14,32 @@
 static Node *custom_builtins[MAX_CUSTOM_BUILTIN_COUNT];
 static i64 custom_builtins_count = 0;
 
-#define MAX_SYSCALL_BUILTIN_COUNT 256
-static Node *syscall_builtins[MAX_SYSCALL_BUILTIN_COUNT];
-static i64 syscall_builtins_count = 0;
-
 static void push_builtin(Node *node)
 {
     assert(custom_builtins_count < MAX_CUSTOM_BUILTIN_COUNT);
     custom_builtins[custom_builtins_count++] = node;
 }
 
-static void make_syscall(int num_args, i64 syscall_num, char *name, Type *return_type, ...)
-{
-    Node *node = Node_new(AST_BUILTIN);
+static void push_syscall_builtin(char *name, int num_args) {
+    Node *node;
+    node = Node_new(AST_BUILTIN);
     node->func.name = name;
-    node->func.return_type = return_type;
-    node->func.num_args = num_args;
-    node->func.args = calloc(sizeof(Variable), num_args);
-
-    // This is a hack to get around the fact that we can't pass a variable
-    // Luckily, we don't actually use this field for the builtins anyway.
-    node->func.max_locals_size = syscall_num;
-
-    va_list ap;
-    va_start(ap, return_type);
-    for (i64 i = 0; i < num_args; i++)
-    {
-        Type *typ = va_arg(ap, Type *);
-        if (!typ) {
-            fprintf(stderr, "Error: Builtin %s has no type for argument %lld\n", name, i);
-            exit(1);
-        }
-        node->func.args[i] = (Variable){"arg", typ, 0};
+    node->func.return_type = type_new(TYPE_INT);
+    node->func.num_args = num_args+1;
+    node->func.args = (Variable *)calloc(sizeof(Variable), num_args+1);
+    node->func.args[0] = (Variable){"syscall_num", type_new(TYPE_INT), 0};
+    for (int i = 0; i < num_args; i++) {
+        node->func.args[i+1].type = type_new(TYPE_ANY);
     }
-    va_end(ap);
-
-    assert(syscall_builtins_count < MAX_SYSCALL_BUILTIN_COUNT);
-    syscall_builtins[syscall_builtins_count++] = node;
+    push_builtin(node);
 }
+
+void push_posix_constants();
 
 void initialize_builtins()
 {
+    push_posix_constants();
+
     Node *node;
     // FIXME: The `TYPE_ANY` is a hack
     node = Node_new(AST_BUILTIN);
@@ -63,15 +50,14 @@ void initialize_builtins()
     node->func.args[0] = (Variable){"val", type_new(TYPE_ANY), 0};
     push_builtin(node);
 
-    make_syscall(3, SYS_write, "write", type_new(TYPE_INT),
-        type_new(TYPE_INT), type_new_ptr(TYPE_CHAR), type_new(TYPE_INT) // Args
-    );
-    make_syscall(3, SYS_read, "read", type_new(TYPE_INT),
-        type_new(TYPE_INT), type_new_ptr(TYPE_CHAR), type_new(TYPE_INT) // Args
-    );
-    make_syscall(1, SYS_exit, "exit", type_new(TYPE_NONE),
-        type_new(TYPE_INT) // Args
-    );
+    push_syscall_builtin("syscall0", 0);
+    push_syscall_builtin("syscall1", 1);
+    push_syscall_builtin("syscall2", 2);
+    push_syscall_builtin("syscall3", 3);
+    push_syscall_builtin("syscall4", 4);
+    push_syscall_builtin("syscall5", 5);
+    push_syscall_builtin("syscall6", 6);
+    push_syscall_builtin("syscall7", 7);
 }
 
 Node *find_builtin_function(Token *token)
@@ -80,25 +66,20 @@ Node *find_builtin_function(Token *token)
         if (strcmp(custom_builtins[i]->func.name, token->value.as_string) == 0)
             return custom_builtins[i];
     }
-    for (i64 i = 0; i < syscall_builtins_count; i++) {
-        if (strcmp(syscall_builtins[i]->func.name, token->value.as_string) == 0)
-            return syscall_builtins[i];
-    }
     return NULL;
 }
 
 char *x86_64_syscall_regs[10] = {
-    "rdi", "rsi", "rdx", "rcx", "r8", "r9", "r10", "r11", "r12", "r13"
+    "rax", "rdi", "rsi", "rdx", "rcx", "r8", "r9", "r10", "r11", "r12"
 };
 
 static void generate_syscall_builtins(FILE *out)
 {
-    for (i64 i = 0; i < syscall_builtins_count; i++) {
-        Node *node = syscall_builtins[i];
-        fprintf(out, "func_%s:\n", node->func.name);
-        for (i64 i = 0; i < node->func.num_args; i++)
+    for (i64 sysc_args = 0; sysc_args < 7; sysc_args++) {
+        fprintf(out, "func_syscall%lld:\n", sysc_args);
+        for (i64 i = 0; i < sysc_args+1; i++)
             fprintf(out, "    mov %s, [rsp+%lld]\n", x86_64_syscall_regs[i], (i+1) * 8);
-        generate_syscall(node->func.max_locals_size, out);
+        fprintf(out, "    syscall\n");
         fprintf(out, "    ret\n");
     }
 }
@@ -149,4 +130,32 @@ void generate_builtins(FILE *out)
 {
     generate_custom_builtins(out);
     generate_syscall_builtins(out);
+}
+
+
+#define PUSH_SYS_(name) push_constant("SYS_" #name, get_syscall_num(SYS_##name))
+#define PUSH(name) push_constant(#name, name)
+
+void push_posix_constants()
+{
+    PUSH_SYS_(read);
+    PUSH_SYS_(write);
+    PUSH_SYS_(exit);
+    PUSH_SYS_(open);
+    PUSH_SYS_(openat);
+    PUSH_SYS_(close);
+    PUSH_SYS_(fork);
+    PUSH_SYS_(wait4);
+
+    PUSH(SEEK_SET);
+    PUSH(SEEK_CUR);
+    PUSH(SEEK_END);
+
+    PUSH(O_RDONLY);
+    PUSH(O_WRONLY);
+    PUSH(O_RDWR);
+    PUSH(O_CREAT);
+    PUSH(O_EXCL);
+    PUSH(O_TRUNC);
+    PUSH(AT_FDCWD);   
 }

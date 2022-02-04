@@ -11,5 +11,7 @@ i64 i64min(i64 a, i64 b);
 
 // Assumes alignment is a power of 2
 i64 align_up(i64 val, i64 align);
+i64 get_syscall_num(i64 orig_syscall);
+
 
 #define die_location(loc, ...) _die_location(__FILE__, __LINE__, loc, __VA_ARGS__)

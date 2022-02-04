@@ -171,8 +171,11 @@ bool identifier_exists(Token *token) {
     return false;
 }
 
-void push_constant(Node *node) {
+void push_constant(char *name, i64 value) {
     assert(constants_count < TOTAL_CONSTANTS_SIZE);
+    Node *node = Node_new(AST_CONSTANT);
+    node->constant.name = name;
+    node->constant.int_literal = Node_from_int_literal(value);
     all_constants[constants_count++] = node;
 }
 
@@ -246,8 +249,20 @@ Type *parse_type(Lexer *lexer)
             Lexer_next(lexer);
             Type *arr = type_new(TYPE_ARRAY);
             arr->ptr = type;
-            // TODO: Contant integer expression support?
-            arr->array_size = assert_token(Lexer_next(lexer), TOKEN_INTLIT).value.as_int;
+
+            token = Lexer_next(lexer);
+            if (token.type == TOKEN_INTLIT) {
+                arr->array_size = token.value.as_int;
+            } else if (token.type == TOKEN_IDENTIFIER) {
+                Node *constant = find_constant(&token);
+                if (!constant)
+                    die_location(token.loc, "Could not find constant `%s`", token.value.as_string);
+                arr->array_size = constant->constant.int_literal->literal.as_int;
+            } else {
+                die_location(token.loc, "Expected a constant expression for array size");
+            }
+
+
             assert_token(Lexer_peek(lexer), TOKEN_CLOSE_BRACKET);
             Lexer_next(lexer);
             type = arr;
@@ -305,7 +320,7 @@ i64 eval_constexp(Node *expr)
 }
 
 
-Node *parse_constant_declaration(Lexer *lexer)
+void parse_constant_declaration(Lexer *lexer)
 {
     Token token = assert_token(Lexer_next(lexer), TOKEN_CONST);
 
@@ -326,14 +341,9 @@ Node *parse_constant_declaration(Lexer *lexer)
     assert_token(token, TOKEN_ASSIGN);
     Node *expr = parse_expression(lexer);
     i64 value = eval_constexp(expr);
-
-    Node *node = Node_new(AST_CONSTANT);
-    node->constant.name = constant_name;
-    node->constant.int_literal = Node_from_int_literal(value);
-    push_constant(node);
+    push_constant(constant_name, value);
 
     assert_token(Lexer_next(lexer), TOKEN_SEMICOLON);
-    return node;
 }
 
 Node *parse_var_declaration(Lexer *lexer)
@@ -956,13 +966,13 @@ Type *parse_struct_union_declaration(Lexer *lexer, bool is_global) {
     if (!is_global)
         defined_structs_count = prev_struct_count;
 
-    // printf("Defined %s: %s, size: %lld\n", 
-    //     struct_type->type == TYPE_UNION ? "union":"struct", 
+    // printf("Defined %s: %s, size: %lld\n",
+    //     struct_type->type == TYPE_UNION ? "union":"struct",
     //     struct_type->struct_name,
     //     struct_type->fields.size
     // );
     // for (int i = 0; i < struct_type->fields.num_fields; i++) {
-    //     printf("\t%s: %s (offset: %lld, size: %lld)\n", 
+    //     printf("\t%s: %s (offset: %lld, size: %lld)\n",
     //         struct_type->fields.name[i],
     //         type_to_str(struct_type->fields.type[i]),
     //         struct_type->fields.offset[i],
@@ -990,10 +1000,7 @@ void parse_enum_declaration(Lexer *lexer)
         if (identifier_exists(&token))
             die_location(token.loc, "Identifier already exists, enums just behave like numbered constants.");
 
-        Node *node = Node_new(AST_CONSTANT);
-        node->constant.name = token.value.as_string;
-        node->constant.int_literal = Node_from_int_literal(enum_count++);
-        push_constant(node);
+        push_constant(token.value.as_string, enum_count++);
 
         token = Lexer_peek(lexer);
         if (token.type == TOKEN_COMMA) {

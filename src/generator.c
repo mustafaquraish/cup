@@ -3,6 +3,7 @@
  */
 
 #include "generator.h"
+#include "utils.h"
 #include <stdlib.h>
 #include <string.h>
 #include <assert.h>
@@ -17,10 +18,7 @@ static Node *defer_stack[DEFER_STACK_SIZE];
 static i64 defer_stack_count = 0;
 
 void generate_syscall(i64 syscall_no, FILE *out) {
-#if __APPLE__
-    syscall_no += 0x2000000;
-#endif
-    fprintf(out, "    mov rax, %lld\n", syscall_no);
+    fprintf(out, "    mov rax, %lld\n", get_syscall_num(syscall_no));
     fprintf(out, "    syscall\n");
 }
 
