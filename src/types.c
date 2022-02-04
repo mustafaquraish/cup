@@ -54,7 +54,7 @@ Type *type_new(DataType type)
     if (type == TYPE_INT) return &type_int;
     if (type == TYPE_CHAR) return &type_char;
     if (type == TYPE_ANY) return &type_any;
-    
+
     Type *self = calloc(sizeof(Type), 1);
     self->type = type;
     return self;
@@ -70,9 +70,9 @@ Type *type_new_ptr(DataType type)
 
 bool is_string_type(Type *type)
 {
-    return type 
-        && type->type == TYPE_PTR 
-        && type->ptr->type == TYPE_CHAR; 
+    return type
+        && type->type == TYPE_PTR
+        && type->ptr->type == TYPE_CHAR;
 }
 
 bool is_int_type(Type *type)
@@ -115,15 +115,15 @@ static char *data_type_to_str(Type *type)
 char *type_to_str(Type *type)
 {
     // FIXME: Handle array types.
-    
+
     // TODO: This allocates memory and we probably don't want to do that.
     // TODO: Probably want to increase this size once we have longer types
     char *str = calloc(sizeof(char), 32);
     int ptr_count = 0;
     for (; type->type == TYPE_PTR; type = type->ptr)
         ptr_count++;
-    
-    
+
+
     // FIXME: This is inefficient as all hell but this will only really be
     //        used for error reporting.
     strcat(str, data_type_to_str(type));
@@ -140,11 +140,11 @@ i64 push_field(Type *type, char *field_name, Type *field_type)
     type->fields.type = realloc(type->fields.type, sizeof(Type *) * (type->fields.num_fields + 1));
     type->fields.offset = realloc(type->fields.offset, sizeof(i64) * (type->fields.num_fields + 1));
     type->fields.name = realloc(type->fields.name, sizeof(char *) * (type->fields.num_fields + 1));
-   
+
     i64 field_size = size_for_type(field_type);
     i64 offset_factor = i64min(field_size, 8);
     i64 offset = is_union ? 0 : align_up(type->fields.size, offset_factor);
-     
+
     type->fields.type[type->fields.num_fields] = field_type;
     type->fields.offset[type->fields.num_fields] = offset;
     type->fields.name[type->fields.num_fields] = field_name;
@@ -168,7 +168,7 @@ i64 find_field_index(Type *type, char *field_name)
 Node *handle_unary_expr_types(Node *node, Token *token)
 {
     Type *old_type = node->unary_expr->expr_type;
-    
+
     if (node->type != OP_ADDROF && old_type->type == TYPE_STRUCT)
         die_location(token->loc, "Performing invalid unary operation on struct type");
 
@@ -205,8 +205,8 @@ Node *handle_binary_expr_types(Node *node, Token *token)
 
     if (left->type == TYPE_STRUCT || right->type == TYPE_STRUCT)
         die_location(token->loc, "Performing invalid binary operation on struct type");
-    
-    switch (node->type) 
+
+    switch (node->type)
     {
         case OP_PLUS: {
             if (is_int_type(left) && is_int_type(right)) {

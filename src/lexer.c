@@ -132,19 +132,19 @@ Token Lexer_next(Lexer *lexer)
         case ',': return Lexer_make_token(lexer, TOKEN_COMMA, 1);
         case '*': return Lexer_make_token(lexer, TOKEN_STAR, 1);
         case '%': return Lexer_make_token(lexer, TOKEN_PERCENT, 1);
-        
+
         case '&': {
             if (peek(lexer, 1) == '&')
                 return Lexer_make_token(lexer, TOKEN_AND, 2);
             return Lexer_make_token(lexer, TOKEN_AMPERSAND, 1);
         }
-        
+
         case '!': {
             if (peek(lexer, 1) == '=')
                 return Lexer_make_token(lexer, TOKEN_NEQ, 2);
             return Lexer_make_token(lexer, TOKEN_EXCLAMATION, 1);
         }
-        
+
         case '<': {
             if (peek(lexer, 1) == '=')
                 return Lexer_make_token(lexer, TOKEN_LEQ, 2);
@@ -185,7 +185,7 @@ Token Lexer_next(Lexer *lexer)
                 return Lexer_make_token(lexer, TOKEN_MINUSEQUALS, 2);
             return Lexer_make_token(lexer, TOKEN_MINUS, 1);
         }
-        
+
         case '/': {
             if (peek(lexer, 1) == '/') {
                 lexer->pos += 2;    // skip the '//'
@@ -206,7 +206,7 @@ Token Lexer_next(Lexer *lexer)
             if (isdigit(lexer->src[lexer->pos])) {
                 // TODO: Parse hex and octal numbers
                 i64 pos = lexer->pos;
-                while (pos < lexer->len && isdigit(lexer->src[pos])) 
+                while (pos < lexer->len && isdigit(lexer->src[pos]))
                     pos++;
                 Token token = Token_from_int(atoi(lexer->src + lexer->pos), Lexer_loc(lexer));
                 advance(lexer, pos - lexer->pos);

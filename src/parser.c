@@ -174,7 +174,7 @@ bool identifier_exists(Token *token) {
 void push_constant(Node *node) {
     assert(constants_count < TOTAL_CONSTANTS_SIZE);
     all_constants[constants_count++] = node;
-} 
+}
 
 void add_global_variable(Variable *var)
 {
@@ -297,7 +297,7 @@ i64 eval_constexp(Node *expr)
     case OP_MOD: return eval_constexp(expr->binary.left) % eval_constexp(expr->binary.right);
     case OP_NEG: return -eval_constexp(expr->unary_expr);
     case OP_NOT: return !eval_constexp(expr->unary_expr);
-    
+
     default:
         die("Unsupported constant expression type %s\n", node_type_to_str(expr->type));
     }
@@ -918,12 +918,10 @@ Type *parse_struct_union_declaration(Lexer *lexer, bool is_global) {
 
     // But if they do provide one, we'll add it to the list of defined structs so they
     // it can referenced internally.
-    bool has_name = false;
     if (token.type == TOKEN_IDENTIFIER) {
         struct_type->struct_name = token.value.as_string;
         push_struct_definition(struct_type);
         Lexer_next(lexer);
-        has_name = true;
     }
 
     assert_token(Lexer_next(lexer), TOKEN_OPEN_BRACE);

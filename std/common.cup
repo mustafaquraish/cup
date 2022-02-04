@@ -62,9 +62,18 @@ fn streq(s1: char *, s2: char *): int {
     return *s1 == *s2;
 }
 
+fn putc(c: char) {
+    write(0, &c, 1);
+}
+
 fn puts(c: char *) {
     let len: int = strlen(c);
     write(1, c, len);
+}
+
+fn putsln(c: char *) {
+    puts(c);
+    putc('\n');
 }
 
 fn strrev(s: char *) {
@@ -78,8 +87,4 @@ fn strrev(s: char *) {
         i = i + 1;
         j = j - 1;
     }
-}
-
-fn putc(c: char) {
-    write(0, &c, 1);
 }
