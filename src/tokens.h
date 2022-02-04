@@ -48,6 +48,7 @@
 
 #define ENUM_KEYWORDS(F)                                                       \
   F(TOKEN_CHAR, "char")                                                        \
+  F(TOKEN_CONST, "const")                                                      \
   F(TOKEN_ELSE, "else")                                                        \
   F(TOKEN_DEFER, "defer")                                                      \
   F(TOKEN_FN, "fn")                                                            \

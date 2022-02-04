@@ -13,6 +13,7 @@ static Node *current_function = NULL;
 
 #define BLOCK_STACK_SIZE 64
 static Node *block_stack[BLOCK_STACK_SIZE];
+static i64 block_constants_stack[BLOCK_STACK_SIZE];
 static i64 block_stack_count = 0;
 static i64 cur_stack_offset = 0;
 
@@ -30,6 +31,9 @@ static i64 lexer_stack_count = 0;
 static Type *defined_structs[DEFINED_STRUCT_SIZE];
 static i64 defined_structs_count = 0;
 
+#define TOTAL_CONSTANTS_SIZE 1024
+static Node *all_constants[TOTAL_CONSTANTS_SIZE];
+static i64 constants_count = 0;
 
 Token do_assert_token(Token token, TokenType type, char *filename, int line)
 {
@@ -68,16 +72,21 @@ void block_stack_push(Node *block)
 {
     assert(block_stack_count < BLOCK_STACK_SIZE);
     assert(current_function);
-    block_stack[block_stack_count++] = block;
+    block_constants_stack[block_stack_count] = constants_count;
+    block_stack[block_stack_count] = block;
+    block_stack_count++;
 }
 
 void block_stack_pop()
 {
     assert(block_stack_count > 0);
     assert(current_function);
-    Node *block = block_stack[--block_stack_count];
+    --block_stack_count;
+    Node *block = block_stack[block_stack_count];
+    constants_count = block_constants_stack[block_stack_count];
     cur_stack_offset -= block->block.locals_size;
     assert(cur_stack_offset >= 0);
+    assert(constants_count >= 0);
 }
 
 void dump_block_stack()
@@ -135,6 +144,37 @@ Node *find_function_definition(Token *token)
     }
     return NULL;
 }
+
+Node *find_constant(Token *token)
+{
+    assert_token(*token, TOKEN_IDENTIFIER);
+    for (i64 i = 0; i < constants_count; i++) {
+        Node *constant = all_constants[i];
+        if (strcmp(constant->constant.name, token->value.as_string) == 0) {
+            return constant;
+        }
+    }
+    return NULL;
+}
+
+bool identifier_exists(Token *token) {
+    if (find_local_variable(token) != NULL)
+        return true;
+    if (find_global_variable(token) != NULL)
+        return true;
+    if (find_builtin_function(token) != NULL)
+        return true;
+    if (find_function_definition(token) != NULL)
+        return true;
+    if (find_constant(token) != NULL)
+        return true;
+    return false;
+}
+
+void push_constant(Node *node) {
+    assert(constants_count < TOTAL_CONSTANTS_SIZE);
+    all_constants[constants_count++] = node;
+} 
 
 void add_global_variable(Variable *var)
 {
@@ -243,6 +283,59 @@ Node *parse_literal(Lexer *lexer)
 
 Node *parse_expression(Lexer *);
 
+i64 eval_constexp(Node *expr)
+{
+    switch (expr->type) {
+    case AST_LITERAL:
+        if (expr->literal.type->type != TYPE_INT)
+            die("Constant expression can only contain integer literals");
+        return expr->literal.as_int;
+    case OP_PLUS: return eval_constexp(expr->binary.left) + eval_constexp(expr->binary.right);
+    case OP_MINUS: return eval_constexp(expr->binary.left) - eval_constexp(expr->binary.right);
+    case OP_MUL: return eval_constexp(expr->binary.left) * eval_constexp(expr->binary.right);
+    case OP_DIV: return eval_constexp(expr->binary.left) / eval_constexp(expr->binary.right);
+    case OP_MOD: return eval_constexp(expr->binary.left) % eval_constexp(expr->binary.right);
+    case OP_NEG: return -eval_constexp(expr->unary_expr);
+    case OP_NOT: return !eval_constexp(expr->unary_expr);
+    
+    default:
+        die("Unsupported constant expression type %s\n", node_type_to_str(expr->type));
+    }
+    return 0;
+}
+
+
+Node *parse_constant_declaration(Lexer *lexer)
+{
+    Token token = assert_token(Lexer_next(lexer), TOKEN_CONST);
+
+    token = assert_token(Lexer_next(lexer), TOKEN_IDENTIFIER);
+    if (identifier_exists(&token))
+        die_location(token.loc, "Identifier `%s` already exists", token.value.as_string);
+    char *constant_name = token.value.as_string;
+
+    token = Lexer_next(lexer);
+    // All constants are implicitly `int`, but we'll allow it for consistency
+    if (token.type == TOKEN_COLON) {
+        token = Lexer_next(lexer);
+        if (token.type != TOKEN_INT)
+            die_location(token.loc, "Expected `int` type for constant");
+        token = Lexer_next(lexer);
+    }
+
+    assert_token(token, TOKEN_ASSIGN);
+    Node *expr = parse_expression(lexer);
+    i64 value = eval_constexp(expr);
+
+    Node *node = Node_new(AST_CONSTANT);
+    node->constant.name = constant_name;
+    node->constant.int_literal = Node_from_int_literal(value);
+    push_constant(node);
+
+    assert_token(Lexer_next(lexer), TOKEN_SEMICOLON);
+    return node;
+}
+
 Node *parse_var_declaration(Lexer *lexer)
 {
     bool is_global = (current_function == NULL);
@@ -344,7 +437,6 @@ Node *parse_identifier(Lexer *lexer)
 {
     Token token = assert_token(Lexer_peek(lexer), TOKEN_IDENTIFIER);
 
-    // TODO: Check for global variables when added
     Node *expr;
     Variable *var = find_local_variable(&token);
     if (var != NULL) {
@@ -374,6 +466,12 @@ Node *parse_identifier(Lexer *lexer)
     Node *builtin = find_builtin_function(&token);
     if (builtin != NULL) {
         return parse_function_call_args(lexer, builtin);
+    }
+
+    Node *constant = find_constant(&token);
+    if (constant != NULL) {
+        Lexer_next(lexer);
+        return constant->constant.int_literal;
     }
 
     die_location(token.loc, "Unknown identifier `%s`", token.value.as_string);
@@ -679,7 +777,11 @@ Node *parse_statement(Lexer *lexer)
     } else {
         // Default to trying to handle it as an expression
         node = parse_expression(lexer);
-        assert_token(Lexer_next(lexer), TOKEN_SEMICOLON);
+
+        token = Lexer_next(lexer);
+        if (token.type == TOKEN_ASSIGN)
+            die_location(token.loc, "It's not possible to assign a value to an expression. Did you mean to use a variable?");
+        assert_token(token, TOKEN_SEMICOLON);
     }
 
     return node;
@@ -698,11 +800,14 @@ Node *parse_block(Lexer *lexer)
         Node *block_item;
         if (token.type == TOKEN_LET) {
             block_item = parse_var_declaration(lexer);
+            Node_add_child(block, block_item);
+        } else if (token.type == TOKEN_CONST) {
+            parse_constant_declaration(lexer);
         } else {
             // Default to a statement
             block_item = parse_statement(lexer);
+            Node_add_child(block, block_item);
         }
-        Node_add_child(block, block_item);
         token = Lexer_peek(lexer);
     }
 
@@ -880,6 +985,8 @@ Node *parse_program(Lexer *lexer)
         } else if (token.type == TOKEN_LET) {
             Node *var_decl = parse_var_declaration(lexer);
             Node_add_child(program, var_decl);
+        } else if (token.type == TOKEN_CONST) {
+            parse_constant_declaration(lexer);
         } else if (token.type == TOKEN_STRUCT || token.type == TOKEN_UNION) {
             parse_struct_union_declaration(lexer, true);
         } else if (token.type == TOKEN_IMPORT) {

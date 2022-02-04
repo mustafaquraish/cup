@@ -26,8 +26,9 @@
   F(OP_GT, ">")                                                                \
   F(OP_GEQ, ">=")                                                              \
   F(OP_ASSIGN, "=")                                                            \
-  F(OP_MEMBER, ".")                                                          \
+  F(OP_MEMBER, ".")                                                            \
   F(AST_LITERAL, "literal")                                                    \
+  F(AST_CONSTANT, "constant integer")                                          \
   F(AST_FUNCCALL, "Function call")                                             \
   F(AST_CONDITIONAL, "conditional expression")                                 \
   F(AST_IF, "if statement")                                                    \
@@ -150,6 +151,11 @@ typedef struct ast_node {
             Node *expr;
             bool is_ptr;
         } member;
+
+        struct {
+            char *name;
+            Node *int_literal;
+        } constant;
     };
 } Node;
 
