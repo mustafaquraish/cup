@@ -333,7 +333,10 @@ void generate_block(Node *block, FILE *out);
 void generate_statement(Node *stmt, FILE *out)
 {
     if (stmt->type == AST_RETURN) {
-        generate_expr_into_rax(stmt->unary_expr, out);
+        if (stmt->unary_expr)
+            generate_expr_into_rax(stmt->unary_expr, out);
+        else
+            fprintf(out, "    xor rax, rax\n"); // Return 0
         fprintf(out, "    push rax\n"); // Save the return value
 
         // Run all the defer statements

@@ -727,15 +727,23 @@ Node *parse_statement(Lexer *lexer)
     if (token.type == TOKEN_RETURN) {
         assert_token(Lexer_next(lexer), TOKEN_RETURN);
         node = Node_new(AST_RETURN);
-        node->unary_expr = parse_expression(lexer);
+        
+        token = Lexer_peek(lexer);
+        if (token.type == TOKEN_SEMICOLON) {
+            Lexer_next(lexer);
+            if (current_function->func.return_type->type != TYPE_VOID)
+                die_location(token.loc, "Return statement with no value in function that expects it");
+            return node;
+        } else {
+            node->unary_expr = parse_expression(lexer);
+            assert_token(Lexer_next(lexer), TOKEN_SEMICOLON);
+        }
 
         if (!is_convertible(node->unary_expr->expr_type, current_function->func.return_type)) {
             fprintf(stderr, "- Expected type: %s\n", type_to_str(node->unary_expr->expr_type));
             fprintf(stderr, "- Actual: %s\n", type_to_str(current_function->func.return_type));
             die_location(token.loc, "Return expression does not match function's return type");
         }
-
-        assert_token(Lexer_next(lexer), TOKEN_SEMICOLON);
     } else if (token.type == TOKEN_IF) {
         Lexer_next(lexer);
         node = Node_new(AST_IF);
