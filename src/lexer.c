@@ -107,6 +107,7 @@ static char get_escaped(char c) {
         case 't': return '\t';
         case '\\': return '\\';
         case '0': return '\0';
+        case '\'': return '\'';
     }
     assert(false && "Unknown escape sequence");
 }

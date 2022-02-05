@@ -157,7 +157,8 @@ fn putu_buffer(n: int, buf: char*): int {
     if (i == 0) {
         buf[i] = '0';
         i = i + 1;
-    } else {
+    } else if (i > 1) {
+        buf[i] = 0;
         strrev(buf);
     }
     return i;
