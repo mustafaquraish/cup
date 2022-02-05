@@ -279,34 +279,34 @@ void generate_expr_into_rax(Node *expr, FILE *out)
 
     // Note: These are different because of short-circuit evaluation!
     } else if (expr->type == OP_OR) {
+        int cur_label = label_counter++;
         generate_expr_into_rax(expr->binary.left, out);
         // If left is true, we can short-circuit
         fprintf(out, "    cmp rax, 0\n");
-        fprintf(out, "    je .or_right_%d\n", label_counter);
+        fprintf(out, "    je .or_right_%d\n", cur_label);
         fprintf(out, "    mov rax, 1\n");
-        fprintf(out, "    jmp .or_end_%d\n", label_counter);
-        fprintf(out, ".or_right_%d:\n", label_counter);
+        fprintf(out, "    jmp .or_end_%d\n", cur_label);
+        fprintf(out, ".or_right_%d:\n", cur_label);
         generate_expr_into_rax(expr->binary.right, out);
         // Booleanize the result
         fprintf(out, "    cmp rax, 0\n");
         fprintf(out, "    setne al\n");
-        fprintf(out, ".or_end_%d:\n", label_counter);
-        label_counter++;
+        fprintf(out, ".or_end_%d:\n", cur_label);
 
     } else if (expr->type == OP_AND) {
+        int cur_label = label_counter++;
         generate_expr_into_rax(expr->binary.left, out);
         // If left is false, we can short-circuit
         fprintf(out, "    cmp rax, 0\n");
-        fprintf(out, "    jne .and_right_%d\n", label_counter);
+        fprintf(out, "    jne .and_right_%d\n", cur_label);
         fprintf(out, "    mov rax, 0\n");
-        fprintf(out, "    jmp .and_end_%d\n", label_counter);
-        fprintf(out, ".and_right_%d:\n", label_counter);
+        fprintf(out, "    jmp .and_end_%d\n", cur_label);
+        fprintf(out, ".and_right_%d:\n", cur_label);
         generate_expr_into_rax(expr->binary.right, out);
         // Booleanize the result
         fprintf(out, "    cmp rax, 0\n");
         fprintf(out, "    setne al\n");
-        fprintf(out, ".and_end_%d:\n", label_counter);
-        label_counter++;
+        fprintf(out, ".and_end_%d:\n", cur_label);
 
     } else if (expr->type == AST_CONDITIONAL) {
         int cur_label = label_counter++;
