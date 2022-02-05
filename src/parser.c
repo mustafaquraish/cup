@@ -541,6 +541,14 @@ Node *parse_factor(Lexer *lexer)
         Lexer_next(lexer);
         expr = parse_expression(lexer);
         assert_token(Lexer_next(lexer), TOKEN_CLOSE_PAREN);
+
+    // FIXME: This should probably go somewhere else more appropriate
+    } else if (token.type == TOKEN_SIZEOF) {
+        Lexer_next(lexer);
+        assert_token(Lexer_next(lexer), TOKEN_OPEN_PAREN);
+        Type *type = parse_type(lexer);
+        assert_token(Lexer_next(lexer), TOKEN_CLOSE_PAREN);
+        expr = Node_from_int_literal(size_for_type(type));
     } else if (is_literal_token(token.type)) {
         expr = parse_literal(lexer);
     } else if (token.type == TOKEN_IDENTIFIER) {

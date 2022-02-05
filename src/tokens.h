@@ -59,6 +59,7 @@
   F(TOKEN_LET, "let")                                                          \
   F(TOKEN_RETURN, "return")                                                    \
   F(TOKEN_STRUCT, "struct")                                                    \
+  F(TOKEN_SIZEOF, "sizeof")                                                    \
   F(TOKEN_UNION, "union")                                                      \
   F(TOKEN_VOID, "void")                                                        \
   F(TOKEN_WHILE, "while")                                                      \
