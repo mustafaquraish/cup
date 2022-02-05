@@ -22,22 +22,25 @@ NodeType binary_token_to_op(TokenType type)
 {
     switch (type)
     {
-        case TOKEN_PLUS:    return OP_PLUS;
-        case TOKEN_MINUS:   return OP_MINUS;
-        case TOKEN_STAR:    return OP_MUL;
-        case TOKEN_SLASH:   return OP_DIV;
-        case TOKEN_PERCENT: return OP_MOD;
-        case TOKEN_LSHIFT:  return OP_LSHIFT;
-        case TOKEN_RSHIFT:  return OP_RSHIFT;
-        case TOKEN_AND:     return OP_AND;
-        case TOKEN_OR:      return OP_OR;
-        case TOKEN_XOR:     return OP_XOR;
-        case TOKEN_EQ:      return OP_EQ;
-        case TOKEN_NEQ:     return OP_NEQ;
-        case TOKEN_LT:      return OP_LT;
-        case TOKEN_LEQ:     return OP_LEQ;
-        case TOKEN_GT:      return OP_GT;
-        case TOKEN_GEQ:     return OP_GEQ;
+        case TOKEN_PLUS:      return OP_PLUS;
+        case TOKEN_MINUS:     return OP_MINUS;
+        case TOKEN_STAR:      return OP_MUL;
+        case TOKEN_SLASH:     return OP_DIV;
+        case TOKEN_PERCENT:   return OP_MOD;
+        case TOKEN_LSHIFT:    return OP_LSHIFT;
+        case TOKEN_RSHIFT:    return OP_RSHIFT;
+        case TOKEN_AND:       return OP_AND;
+        case TOKEN_OR:        return OP_OR;
+        case TOKEN_XOR:       return OP_XOR;
+        case TOKEN_EQ:        return OP_EQ;
+        case TOKEN_NEQ:       return OP_NEQ;
+        case TOKEN_LT:        return OP_LT;
+        case TOKEN_LEQ:       return OP_LEQ;
+        case TOKEN_GT:        return OP_GT;
+        case TOKEN_GEQ:       return OP_GEQ;
+        case TOKEN_AMPERSAND: return OP_BWAND;
+        case TOKEN_BAR:       return OP_BWOR;
+        case TOKEN_CARET:     return OP_XOR;
 
         default: assert(false && "binary_token_to_op called with invalid token type");
     }

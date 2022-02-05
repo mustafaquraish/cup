@@ -651,8 +651,17 @@ Node *parse_relational(Lexer *lexer) { BINOP_PARSER(parse_additive, is_relationa
 bool is_equality_token(TokenType type) { return type == TOKEN_EQ || type == TOKEN_NEQ; }
 Node *parse_equality(Lexer *lexer) { BINOP_PARSER(parse_relational, is_equality_token); }
 
+bool is_and_token(TokenType type) { return type == TOKEN_AMPERSAND; }
+Node *parse_and(Lexer *lexer) { BINOP_PARSER(parse_equality, is_and_token); }
+
+bool is_exclusive_or_token(TokenType type) { return type == TOKEN_CARET; }
+Node *parse_exclusive_or(Lexer *lexer) { BINOP_PARSER(parse_and, is_exclusive_or_token); }
+
+bool is_inclusive_or_token(TokenType type) { return type == TOKEN_BAR; }
+Node *parse_inclusive_or(Lexer *lexer) { BINOP_PARSER(parse_exclusive_or, is_inclusive_or_token); }
+
 bool is_logical_and_token(TokenType type) { return type == TOKEN_AND; }
-Node *parse_logical_and(Lexer *lexer) { BINOP_PARSER(parse_equality, is_logical_and_token); }
+Node *parse_logical_and(Lexer *lexer) { BINOP_PARSER(parse_inclusive_or, is_logical_and_token); }
 
 bool is_logical_or_token(TokenType type) { return type == TOKEN_OR; }
 Node *parse_logical_or(Lexer *lexer) { BINOP_PARSER(parse_logical_and, is_logical_or_token); }

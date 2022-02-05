@@ -17,7 +17,9 @@
   F(OP_LSHIFT, "<<")                                                           \
   F(OP_RSHIFT, ">>")                                                           \
   F(OP_AND, "&&")                                                              \
+  F(OP_BWAND, "&")                                                             \
   F(OP_OR, "||")                                                               \
+  F(OP_BWOR, "|")                                                              \
   F(OP_XOR, "^")                                                               \
   F(OP_EQ, "==")                                                               \
   F(OP_NEQ, "!=")                                                              \

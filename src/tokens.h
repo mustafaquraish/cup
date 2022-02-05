@@ -8,6 +8,7 @@
   F(TOKEN_AND, "&&")                                                           \
   F(TOKEN_ASSIGN, "=")                                                         \
   F(TOKEN_BAR, "|")                                                            \
+  F(TOKEN_CARET, "^")                                                          \
   F(TOKEN_CHARLIT, "char literal")                                             \
   F(TOKEN_CLOSE_BRACE, "}")                                                    \
   F(TOKEN_CLOSE_BRACKET, "]")                                                  \

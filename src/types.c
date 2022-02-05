@@ -298,6 +298,9 @@ Node *handle_binary_expr_types(Node *node, Token *token)
         case OP_GT:
         case OP_LEQ:
         case OP_GEQ:
+        case OP_BWAND:
+        case OP_BWOR:
+        case OP_XOR:
         case OP_AND:
         case OP_OR: {
             node->expr_type = type_new(TYPE_INT);

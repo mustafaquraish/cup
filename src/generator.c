@@ -256,6 +256,27 @@ void generate_expr_into_rax(Node *expr, FILE *out)
         fprintf(out, "    setge al\n");
         fprintf(out, "    movzx rax, al\n");
 
+    } else if (expr->type == OP_BWAND) {
+        generate_expr_into_rax(expr->binary.right, out);
+        fprintf(out, "    push rax\n");
+        generate_expr_into_rax(expr->binary.left, out);
+        fprintf(out, "    pop rbx\n");
+        fprintf(out, "    and rax, rbx\n");
+
+    } else if (expr->type == OP_BWOR) {
+        generate_expr_into_rax(expr->binary.right, out);
+        fprintf(out, "    push rax\n");
+        generate_expr_into_rax(expr->binary.left, out);
+        fprintf(out, "    pop rbx\n");
+        fprintf(out, "    or rax, rbx\n");
+
+    } else if (expr->type == OP_XOR) {
+        generate_expr_into_rax(expr->binary.right, out);
+        fprintf(out, "    push rax\n");
+        generate_expr_into_rax(expr->binary.left, out);
+        fprintf(out, "    pop rbx\n");
+        fprintf(out, "    xor rax, rbx\n");
+
     // Note: These are different because of short-circuit evaluation!
     } else if (expr->type == OP_OR) {
         generate_expr_into_rax(expr->binary.left, out);
@@ -287,7 +308,7 @@ void generate_expr_into_rax(Node *expr, FILE *out)
         fprintf(out, ".and_end_%d:\n", label_counter);
         label_counter++;
 
-    }  else if (expr->type == AST_CONDITIONAL) {
+    } else if (expr->type == AST_CONDITIONAL) {
         int cur_label = label_counter++;
         generate_expr_into_rax(expr->conditional.cond, out);
         // If left is false, we can short-circuit

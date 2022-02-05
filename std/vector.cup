@@ -1,0 +1,40 @@
+import "std/common.cup"
+
+struct Vector {
+    size: int;
+    capacity: int;
+    data: void**;
+};
+
+fn vector_new_sized(capacity: int): Vector* {
+    let t: Vector* = malloc(sizeof(Vector));
+    t.size = 0;
+    t.capacity = capacity;
+    t.data = malloc(capacity * sizeof(void*));
+    return t;
+}
+
+fn vector_new(): Vector* {
+    const initial_default_capacity = 4;
+    return vector_new_sized(initial_default_capacity);
+}
+
+fn vector_push(vec: Vector*, item: void*) {
+    if (vec.size == vec.capacity) {
+        let new_capacity = vec.capacity * 2;
+        let new_data = malloc(new_capacity * sizeof(void*));
+        memcpy(new_data, vec.data, vec.capacity * sizeof(void*));
+        vec.data = new_data;
+        vec.capacity = new_capacity;
+    }
+    vec.data[vec.size] = item;
+    vec.size = vec.size + 1;
+}
+
+fn vector_pop(vec: Vector*): void* {
+    if (vec.size == 0)
+        die("Vector is empty, nothing to pop.");
+
+    vec.size = vec.size - 1;
+    return vec.data[vec.size];
+}
