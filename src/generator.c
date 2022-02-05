@@ -444,6 +444,9 @@ void generate_function_header(Node *func, FILE *out)
 void generate_function(Node *func, FILE *out)
 {
     assert(func->type == AST_FUNC);
+    // This will happen for declarations.
+    if (func->func.body == NULL)
+        return;
     current_function = func;
     generate_function_header(func, out);
     generate_block(func->func.body, out);

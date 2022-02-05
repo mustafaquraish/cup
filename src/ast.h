@@ -95,6 +95,8 @@ typedef struct ast_node {
             // TODO: Arguments / etc?
             Variable *args;
             int num_args;
+
+            bool is_defined;
         } func;
 
         // Block of statements

@@ -896,18 +896,34 @@ void parse_func_args(Lexer *lexer, Node *func)
 
 Node *parse_func(Lexer *lexer)
 {
-    Token token;
-    token = assert_token(Lexer_next(lexer), TOKEN_FN);
-
-    token = assert_token(Lexer_next(lexer), TOKEN_IDENTIFIER);
-    if (identifier_exists(&token))
-        die_location(token.loc, "Function name already exists as an identifier");
+    assert_token(Lexer_next(lexer), TOKEN_FN);
+    Token token = assert_token(Lexer_next(lexer), TOKEN_IDENTIFIER);
 
     Node *func = Node_new(AST_FUNC);
-    push_new_function(func);
-
-
+    Node *dfunc = func; // The pointer to a declaration node
     func->func.name = token.value.as_string;
+
+    // If the identifier exists, there's 3 possible cases:
+    //  1. It's another variable / struct, which is an error.
+    //  2. It's a function that's been defined, which is an error.
+    //  3. It's a function that's been declared (but not defined), which is OK
+    if (identifier_exists(&token)) {
+        dfunc = find_function_definition(&token);
+        // Case 1
+        if (dfunc == NULL)
+            die_location(token.loc, "Function name already exists as an identifier");
+        // Case 2
+        if (dfunc->func.is_defined)
+            die_location(token.loc, "Function already defined earlier");
+
+        // Case 3 (No error, just set the current function correctly)
+        current_function = func;
+    } else {
+        // We don't have a declaration yet, push this.
+        push_new_function(func);
+    }
+
+    // TODO: IMPORTANT: Make sure that args match the declaration, if any.
     parse_func_args(lexer, func);
 
     token = Lexer_peek(lexer);
@@ -920,12 +936,18 @@ Node *parse_func(Lexer *lexer)
         func->func.return_type = type_new(TYPE_VOID);
     }
 
-    // Make sure there's no funny business with the stack offset
-    assert(cur_stack_offset == 0);
-    assert(block_stack_count == 0);
-    func->func.body = parse_block(lexer);
-    assert(block_stack_count == 0);
-    assert(cur_stack_offset == 0);
+    token = Lexer_peek(lexer);
+    if (token.type != TOKEN_SEMICOLON) {
+        // Make sure there's no funny business with the stack offset
+        assert(cur_stack_offset == 0);
+        assert(block_stack_count == 0);
+        func->func.body = parse_block(lexer);
+        assert(block_stack_count == 0);
+        assert(cur_stack_offset == 0);
+        
+        // Mark the declaration as defined.
+        dfunc->func.is_defined = true;
+    }
 
     // Reset current function
     current_function = NULL;
