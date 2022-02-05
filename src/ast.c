@@ -199,7 +199,7 @@ void dump_func(Node *node, int depth)
         printf("[[%lld]]", node->func.args[i].offset);
     }
     printf(")");
-    if (node->func.return_type->type != TYPE_NONE) {
+    if (node->func.return_type->type != TYPE_VOID) {
         // FIXME: Print return type properly
         printf(" -> %s", type_to_str(node->func.return_type));
     }

@@ -375,9 +375,6 @@ Node *parse_var_declaration(Lexer *lexer)
     }
 
     if (token.type == TOKEN_ASSIGN) {
-        if (is_global)
-            die_location(token.loc, "Cannot initialize global variable `%s` outside function", node->var_decl.var.name);
-
         node->var_decl.value = parse_expression(lexer);
 
         if (is_missing_type) {

@@ -467,6 +467,19 @@ void generate_asm(Node *root, FILE *out)
     fprintf(out, "    mov rax, rdi\n");
     fprintf(out, "    push rax\n");
 
+    // Initialize global variables
+    for (int i = 0; i < root->block.num_children; i++) {
+        Node *child = root->block.children[i];
+        if (child->type == AST_VARDECL && child->var_decl.value) {
+            Node *expr = child->var_decl.value;
+            generate_expr_into_rax(expr, out);
+            i64 offset = child->var_decl.var.offset;
+            fprintf(out, "    mov rbx, global_vars\n");
+            fprintf(out, "    add rbx, %lld\n", offset);
+            fprintf(out, "    mov [rbx], %s\n", subregister_for_type(expr->expr_type));
+        }
+    }
+
     fprintf(out, "    call func_main\n");
 
     fprintf(out, "    mov rdi, rax\n");
