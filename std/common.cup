@@ -24,6 +24,10 @@ fn open(path: char*, flags: int, mode: int): int {
     return syscall3(SYS_open, path, flags, mode);
 }
 
+fn close(fd: int): int {
+    return syscall1(SYS_close, fd);
+}
+
 fn openat(fd: int, path: char*, flags: int, mode: int): int {
     return syscall4(SYS_openat, fd, path, flags, mode);
 }
@@ -135,19 +139,26 @@ fn putsln(c: char *) {
     putc('\n');
 }
 
-fn putu(n: int) {
-    let buf: char[32];
+fn putu_buffer(n: int, buf: char*): int {
     let i: int = 0;
     while (n > 0) {
         buf[i] = (n % 10) + '0';
         n = n / 10;
         i = i + 1;
     }
-    if (i == 0)
+    if (i == 0) {
         buf[i] = '0';
-    else
+        i = i + 1;
+    } else {
         strrev(buf);
-    write(0, buf, i);
+    }
+    return i;
+}
+
+fn putu(n: int) {
+    let buf: char[32];
+    let len = putu_buffer(n, buf);
+    write(stdout, buf, len);
 }
 
 fn die(msg: char *) {
@@ -180,3 +191,28 @@ fn factorial(n: int): int {
         res = res * n;
     return res;
 }
+
+///////////////////////////////////////////////////////////////////////////////
+// Memory
+
+// FIXME: This is horrible for performance.
+fn memcpy(dst: void *, src: void *, n: int) {
+    let _dst: char* = dst;
+    let _src: char* = src;
+    for (let i: int = 0; i < n; i = i + 1)
+        _dst[i] = _src[i];
+}
+
+const __MALLOC_BUF_SIZE = 1024 * 1024 * 1024; // 1 GB
+let __malloc_buf: char[__MALLOC_BUF_SIZE];
+let __malloc_buf_pos = 0;
+
+fn malloc(size: int): void* {
+    if (__malloc_buf_pos + size > __MALLOC_BUF_SIZE)
+        die("malloc: out of memory. only 1gb available");
+    let ptr = &__malloc_buf[__malloc_buf_pos];
+    __malloc_buf_pos = __malloc_buf_pos + size;
+    return ptr;
+}
+
+fn free(ptr: void*) {} // Placeholder
