@@ -40,6 +40,14 @@ fn wait(status: int*): int {
     return syscall4(SYS_wait4, -1, status, 0, 0);
 }
 
+fn lseek(fd: int, offset: int, whence: int): int {
+    return syscall3(SYS_lseek, fd, offset, whence);
+}
+
+fn mmap(addr: void*, len: int, prot: int, flags: int, fd: int, offset: int): void* {
+    return syscall6(SYS_mmap, addr, len, prot, flags, fd, offset);
+}
+
 
 ///////////////////////////////////////////////////////////////////////////////
 // Strings

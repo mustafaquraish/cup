@@ -9,6 +9,7 @@
 #include <assert.h>
 #include <stdarg.h>
 #include <sys/syscall.h>
+#include <sys/mman.h>
 
 #define MAX_CUSTOM_BUILTIN_COUNT 128
 static Node *custom_builtins[MAX_CUSTOM_BUILTIN_COUNT];
@@ -24,7 +25,7 @@ static void push_syscall_builtin(char *name, int num_args) {
     Node *node;
     node = Node_new(AST_BUILTIN);
     node->func.name = name;
-    node->func.return_type = type_new(TYPE_INT);
+    node->func.return_type = type_new(TYPE_ANY);
     node->func.num_args = num_args+1;
     node->func.args = (Variable *)calloc(sizeof(Variable), num_args+1);
     node->func.args[0] = (Variable){"syscall_num", type_new(TYPE_INT), 0};
@@ -150,10 +151,12 @@ void push_posix_constants()
     PUSH_SYS_(write);
     PUSH_SYS_(exit);
     PUSH_SYS_(open);
+    PUSH_SYS_(lseek);
     PUSH_SYS_(openat);
     PUSH_SYS_(close);
     PUSH_SYS_(fork);
     PUSH_SYS_(wait4);
+    PUSH_SYS_(mmap);
 
     PUSH(SEEK_SET);
     PUSH(SEEK_CUR);
@@ -166,4 +169,16 @@ void push_posix_constants()
     PUSH(O_EXCL);
     PUSH(O_TRUNC);
     PUSH(AT_FDCWD);   
+
+    PUSH(PROT_READ);
+    PUSH(PROT_WRITE);
+    PUSH(PROT_EXEC);
+    PUSH(PROT_NONE);
+
+    PUSH(MAP_SHARED);
+    PUSH(MAP_PRIVATE);
+    PUSH(MAP_ANONYMOUS);
+    PUSH(MAP_FIXED);
+
+    push_constant("MAP_FAILED", (i64)MAP_FAILED);
 }
