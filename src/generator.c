@@ -477,16 +477,25 @@ void generate_asm(Node *root, FILE *out)
 #if __APPLE__
     fprintf(out, "global _main\n");
     fprintf(out, "_main:\n");
-#else
-    fprintf(out, "global _start\n");
-    fprintf(out, "_start:\n");
-#endif
     // Push argv
     fprintf(out, "    mov rax, rsi\n");
     fprintf(out, "    push rax\n");
     // Push argc
     fprintf(out, "    mov rax, rdi\n");
     fprintf(out, "    push rax\n");
+#else
+    fprintf(out, "global _start\n");
+    fprintf(out, "_start:\n");
+
+    fprintf(out, "    mov rbp, rsp\n");
+    // // Push argv
+    fprintf(out, "    mov rax, rbp\n");
+    fprintf(out, "    add rax, 8\n");
+    fprintf(out, "    push rax\n");
+    // Push argc
+    fprintf(out, "    mov rax, [rbp]\n");
+    fprintf(out, "    push rax\n");
+#endif
 
     // Initialize global variables
     for (int i = 0; i < root->block.num_children; i++) {
