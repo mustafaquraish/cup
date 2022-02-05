@@ -101,14 +101,6 @@ fn main(): int {
     return h - g;
 }
 EOF
-
-assert_compile_failure_stdin <<EOF
-let g: int = 0;
-
-fn main(): int {
-    return g;
-}
-EOF
 echo " OK"
 
 echo -n "- Nested Blocks: "
