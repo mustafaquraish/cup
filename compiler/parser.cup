@@ -1,0 +1,433 @@
+import "compiler/ast.cup"
+import "compiler/lexer.cup"
+
+// p_ prefix for parser global variables.
+
+let p_all_functions = vector_new();
+
+let p_block_stack = vector_new();
+let p_cur_stack_offset = 0;
+
+fn parse_literal(lexer: Lexer*): Node* {
+    let token: Token;
+    lexer_next(lexer, &token);
+    let node = node_new(AST_LITERAL);
+
+    if (token.typ == TOKEN_INTLIT) {
+        node.d.literal.as_int = token.value.as_int;
+        node.etyp = type_new(TYPE_INT);
+    } else if (token.typ == TOKEN_STRINGLIT) {
+        node.d.literal.as_string = token.value.as_string;
+        node.etyp = type_new_ptr(TYPE_CHAR);
+    } else if (token.typ == TOKEN_CHARLIT) {
+        node.d.literal.as_char = token.value.as_char;
+        node.etyp = type_new(TYPE_CHAR);
+    } else {
+        die_loc2(&token.loc, "Unexpected token in parse_literal: ", token_type_to_string(token.typ));
+    }
+    return node;
+}
+
+fn parse_type(lexer: Lexer*): Type* {
+    let token: Token;
+    let typ: Type *;
+    lexer_peek(lexer, &token);
+    if (token.typ == TOKEN_INT) {
+        lexer_next(lexer, &token);
+        typ = type_new(TYPE_INT);
+    } else if (token.typ == TOKEN_CHAR) {
+        lexer_next(lexer, &token);
+        typ = type_new(TYPE_CHAR);
+    } else if (token.typ == TOKEN_VOID) {
+        lexer_next(lexer, &token);
+        typ = type_new(TYPE_VOID);
+    }
+    
+    let running = true;
+    while (running) {
+        lexer_peek(lexer, &token);
+        if (token.typ == TOKEN_STAR) {
+            lexer_next(lexer, &token);
+            let ptr = type_new(TYPE_PTR);
+            ptr.ptr = typ;
+            typ = ptr;
+        } else if (token.typ == TOKEN_OPEN_BRACKET) {
+            die("Array types not yet implemented");
+        } else {
+            running = false;
+        }
+    }
+    return typ;
+}
+
+// pragma region expressions
+fn parse_expression(lexer: Lexer*): Node*;
+
+fn parse_factor(lexer: Lexer*): Node* {
+    let token: Token;
+    let expr: Node*;
+    lexer_peek(lexer, &token);
+
+    if (token.typ == TOKEN_MINUS) {
+        lexer_next(lexer, &token);
+        expr = node_new(AST_NEG);
+        expr.d.unary = parse_factor(lexer);
+
+    } else if (token.typ == TOKEN_TILDE) {
+        lexer_next(lexer, &token);
+        expr = node_new(AST_BWINV);
+        expr.d.unary = parse_factor(lexer);
+
+    } else if (token.typ == TOKEN_EXCLAMATION) {
+        lexer_next(lexer, &token);
+        expr = node_new(AST_NOT);
+        expr.d.unary = parse_factor(lexer);
+
+    } else if (token.typ == TOKEN_OPEN_PAREN) {
+        lexer_next(lexer, &token);
+        expr = parse_expression(lexer);
+        lexer_next_assert(lexer, &token, TOKEN_CLOSE_PAREN);
+
+    } else if (is_literal_token(token.typ)) {
+        expr = parse_literal(lexer);
+
+    } else {
+        die_loc2(&token.loc, ": Unexpected token found in parse_factor: ", token_type_to_string(token.typ));
+    }
+    return expr;
+}
+
+// This is absolutely terrible, but I'm not sure how to do it better without macros...
+fn parse_term(lexer: Lexer*): Node* {
+    let token: Token;
+
+    let lhs = parse_factor(lexer);
+    lexer_peek(lexer, &token);
+    while (token.typ == TOKEN_STAR || token.typ == TOKEN_SLASH || token.typ == TOKEN_PERCENT) {
+        lexer_next(lexer, &token);
+        let op = node_new(binary_token_to_op(token.typ));
+        let rhs = parse_factor(lexer);
+        op.d.binary.lhs = lhs;
+        op.d.binary.rhs = rhs;
+        lhs = op;
+        lexer_peek(lexer, &token);
+    }
+    return lhs;
+}
+
+fn parse_additive(lexer: Lexer*): Node* {
+    let token: Token;
+
+    let lhs = parse_term(lexer);
+    lexer_peek(lexer, &token);
+    while (token.typ == TOKEN_PLUS || token.typ == TOKEN_MINUS) {
+        lexer_next(lexer, &token);
+        let op = node_new(binary_token_to_op(token.typ));
+        let rhs = parse_term(lexer);
+        op.d.binary.lhs = lhs;
+        op.d.binary.rhs = rhs;
+        lhs = op;
+        lexer_peek(lexer, &token);
+    }
+    return lhs;
+}
+
+fn parse_relational(lexer: Lexer*): Node* {
+    let token: Token;
+
+    let lhs = parse_additive(lexer);
+    lexer_peek(lexer, &token);
+    while (token.typ == TOKEN_LT || token.typ == TOKEN_LEQ || 
+           token.typ == TOKEN_GT || token.typ == TOKEN_GEQ) {
+        lexer_next(lexer, &token);
+        let op = node_new(binary_token_to_op(token.typ));
+        let rhs = parse_additive(lexer);
+        op.d.binary.lhs = lhs;
+        op.d.binary.rhs = rhs;
+        lhs = op;
+        lexer_peek(lexer, &token);
+    }
+    return lhs;
+}
+
+fn parse_equality(lexer: Lexer*): Node* {
+    let token: Token;
+
+    let lhs = parse_relational(lexer);
+    lexer_peek(lexer, &token);
+    while (token.typ == TOKEN_EQ || token.typ == TOKEN_NEQ) {
+        lexer_next(lexer, &token);
+        let op = node_new(binary_token_to_op(token.typ));
+        let rhs = parse_relational(lexer);
+        op.d.binary.lhs = lhs;
+        op.d.binary.rhs = rhs;
+        lhs = op;
+        lexer_peek(lexer, &token);
+    }
+    return lhs;
+}
+
+fn parse_and(lexer: Lexer*): Node* {
+    let token: Token;
+
+    let lhs = parse_equality(lexer);
+    lexer_peek(lexer, &token);
+    while (token.typ == TOKEN_AMPERSAND) {
+        lexer_next(lexer, &token);
+        let op = node_new(binary_token_to_op(token.typ));
+        let rhs = parse_equality(lexer);
+        op.d.binary.lhs = lhs;
+        op.d.binary.rhs = rhs;
+        lhs = op;
+        lexer_peek(lexer, &token);
+    }
+    return lhs;
+}
+
+fn parse_exclusive_or(lexer: Lexer*): Node* {
+    let token: Token;
+
+    let lhs = parse_and(lexer);
+    lexer_peek(lexer, &token);
+    while (token.typ == TOKEN_CARET) {
+        lexer_next(lexer, &token);
+        let op = node_new(binary_token_to_op(token.typ));
+        let rhs = parse_and(lexer);
+        op.d.binary.lhs = lhs;
+        op.d.binary.rhs = rhs;
+        lhs = op;
+        lexer_peek(lexer, &token);
+    }
+    return lhs;
+}
+
+fn parse_inclusive_or(lexer: Lexer*): Node* {
+    let token: Token;
+
+    let lhs = parse_exclusive_or(lexer);
+    lexer_peek(lexer, &token);
+    while (token.typ == TOKEN_BAR) {
+        lexer_next(lexer, &token);
+        let op = node_new(binary_token_to_op(token.typ));
+        let rhs = parse_exclusive_or(lexer);
+        op.d.binary.lhs = lhs;
+        op.d.binary.rhs = rhs;
+        lhs = op;
+        lexer_peek(lexer, &token);
+    }
+    return lhs;
+}
+
+fn parse_logical_and(lexer: Lexer*): Node* {
+    let token: Token;
+
+    let lhs = parse_inclusive_or(lexer);
+    lexer_peek(lexer, &token);
+    while (token.typ == TOKEN_AND) {
+        lexer_next(lexer, &token);
+        let op = node_new(binary_token_to_op(token.typ));
+        let rhs = parse_inclusive_or(lexer);
+        op.d.binary.lhs = lhs;
+        op.d.binary.rhs = rhs;
+        lhs = op;
+        lexer_peek(lexer, &token);
+    }
+    return lhs;
+}
+
+fn parse_logical_or(lexer: Lexer*): Node* {
+    let token: Token;
+
+    let lhs = parse_logical_and(lexer);
+    lexer_peek(lexer, &token);
+    while (token.typ == TOKEN_OR) {
+        lexer_next(lexer, &token);
+        let op = node_new(binary_token_to_op(token.typ));
+        let rhs = parse_logical_and(lexer);
+        op.d.binary.lhs = lhs;
+        op.d.binary.rhs = rhs;
+        lhs = op;
+        lexer_peek(lexer, &token);
+    }
+    return lhs;
+}
+
+fn parse_conditional_exp(lexer: Lexer*): Node* {
+    let token: Token;
+
+    let lhs = parse_logical_or(lexer);
+    lexer_peek(lexer, &token);
+    if (token.typ == TOKEN_QUESTION) {
+        lexer_next(lexer, &token);
+        let then = parse_expression(lexer);
+        lexer_next_assert(lexer, &token, TOKEN_COLON);
+        let els = parse_expression(lexer);
+
+        let cond = node_new(AST_CONDITIONAL);
+        cond.d.conditional.cond = lhs;
+        cond.d.conditional.then = then;
+        cond.d.conditional.els = els;
+
+        lhs = cond;
+    }
+    return lhs;
+}
+
+fn parse_expression(lexer: Lexer*): Node* {
+    return parse_conditional_exp(lexer);
+}
+
+fn parse_var_declaration(lexer: Lexer*): Node* {
+    let token: Token;
+    lexer_next_assert(lexer, &token, TOKEN_LET);
+    lexer_next_assert(lexer, &token, TOKEN_IDENTIFIER);
+    // TODO: check if identifier is already defined
+    let node = node_new(AST_VARDECL);
+    node.d.var_decl.var.name = token.value.as_string;
+
+    lexer_peek(lexer, &token);
+    let has_type = false;
+    if (token.typ == TOKEN_COLON) {
+        lexer_next(lexer, &token);
+        has_type = true;
+        node.d.var_decl.var.typ = parse_type(lexer);
+        lexer_peek(lexer, &token);
+    }
+
+    if (token.typ == TOKEN_ASSIGN) {
+        lexer_next(lexer, &token);
+        node.d.var_decl.init = parse_expression(lexer);
+    } else if (!has_type) {
+        die_loc(&token.loc, "Expected ':' or '=' after variable declaration");
+    }
+
+    return node;
+}
+
+fn parse_function_params(lexer: Lexer*, func: Node*) {
+    let token: Token;
+    lexer_peek(lexer, &token);
+    // TODO: Actually parse params
+    while (token.typ != TOKEN_CLOSE_PAREN) {
+        lexer_next(lexer, &token);
+    }
+}
+
+fn parse_block(lexer: Lexer*): Node*;
+
+
+fn parse_statement(lexer: Lexer*): Node* {
+    let node: Node*;
+    let token: Token;
+
+    lexer_peek(lexer, &token);
+    if (token.typ == TOKEN_OPEN_BRACE) {
+        node = parse_block(lexer);
+
+    } else if (token.typ == TOKEN_RETURN) {
+        lexer_next(lexer, &token);
+        node = node_new(AST_RETURN);
+
+        lexer_peek(lexer, &token);
+        if (token.typ != TOKEN_SEMICOLON) {
+            node.d.unary = parse_expression(lexer);
+        } else {
+            node.d.unary = null; // empty return statment
+        }
+        lexer_next_assert(lexer, &token, TOKEN_SEMICOLON);
+
+    } else if (token.typ == TOKEN_IF) {
+        lexer_next(lexer, &token);
+
+        node = node_new(AST_IF);
+
+        lexer_next_assert(lexer, &token, TOKEN_OPEN_PAREN);
+        node.d.conditional.cond = parse_expression(lexer);
+        lexer_next_assert(lexer, &token, TOKEN_CLOSE_PAREN);
+        node.d.conditional.then = parse_statement(lexer);
+        
+        lexer_peek(lexer, &token);
+        if (token.typ == TOKEN_ELSE) {
+            lexer_next(lexer, &token);
+            node.d.conditional.els = parse_statement(lexer);
+        }
+    } else if (token.typ == TOKEN_WHILE) {
+        die("while is not implemented yet");
+    } else if (token.typ == TOKEN_FOR) {
+        die("for is not implemented yet");
+    } else if (token.typ == TOKEN_DEFER) {
+        die("defer is not implemented yet");
+    } else if (token.typ == TOKEN_LET) {
+        node = parse_var_declaration(lexer);
+        lexer_next_assert(lexer, &token, TOKEN_SEMICOLON);
+    } else {
+        // Default to expression statement
+        node = parse_expression(lexer);
+        lexer_next_assert(lexer, &token, TOKEN_SEMICOLON);
+    }
+    return node;
+}
+
+fn parse_block(lexer: Lexer*): Node* {
+    let token: Token;
+    lexer_next_assert(lexer, &token, TOKEN_OPEN_BRACE);
+
+    let block = node_new(AST_BLOCK);
+    block.d.block.children = vector_new();
+
+    lexer_peek(lexer, &token);
+    while (token.typ != TOKEN_CLOSE_BRACE) {
+        block_add_child(block, parse_statement(lexer));
+        lexer_peek(lexer, &token);
+    }
+    lexer_next_assert(lexer, &token, TOKEN_CLOSE_BRACE);
+    return block;
+}
+
+fn parse_function(lexer: Lexer*): Node* {
+    let token: Token;
+
+    lexer_next_assert(lexer, &token, TOKEN_FN);
+    lexer_next_assert(lexer, &token, TOKEN_IDENTIFIER);
+    // TODO: Check if identifier exists
+    let node = node_new(AST_FUNC);
+    node.d.func.name = token.value.as_string;
+
+    lexer_next_assert(lexer, &token, TOKEN_OPEN_PAREN);
+    parse_function_params(lexer, node);
+    lexer_next_assert(lexer, &token, TOKEN_CLOSE_PAREN);
+
+    lexer_peek(lexer, &token);
+    if (token.typ == TOKEN_COLON) {
+        lexer_next(lexer, &token);
+        node.etyp = parse_type(lexer);
+    } else {
+        node.etyp = type_new(TYPE_VOID);
+    }
+
+    node.d.func.body = parse_block(lexer);
+    return node;
+}
+
+fn parse_program(lexer: Lexer*): Node* {
+    let node = node_new(AST_PROGRAM);
+    node.d.block.children = vector_new();
+    
+    let token: Token;
+    lexer_peek(lexer, &token);
+
+    while (token.typ != TOKEN_EOF) {
+        if (token.typ == TOKEN_FN) {
+            block_add_child(node, parse_function(lexer));
+        } else if (token.typ == TOKEN_LET) {
+            block_add_child(node, parse_var_declaration(lexer));
+        } else if (token.typ == TOKEN_SEMICOLON) {
+            lexer_next(lexer, &token);
+        } else {
+            die_loc2(&token.loc, "unexpected token in parse_program", token_type_to_string(token.typ));
+        }
+
+        lexer_peek(lexer, &token);
+    }
+    return node;
+}

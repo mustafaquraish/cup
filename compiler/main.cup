@@ -1,0 +1,34 @@
+import "std/file.cup"
+import "compiler/lexer.cup"
+import "compiler/parser.cup"
+import "compiler/codegen.cup"
+
+fn main(argc: int, argv: char **): int {
+    if (argc != 2)
+        die("Usage: cupcc <input_file>");
+    
+    let input_file = fopen(argv[1], 'r');
+    defer fclose(input_file);
+
+    // using `fmap` here doesn't work on linux, for some reason.
+    let file_size = fsize(input_file);
+    let src: char* = malloc(file_size+1);
+    fread(input_file, src, file_size);
+    src[file_size] = '\0';
+    
+    let lexer = lexer_new(argv[1], src, file_size);
+    let ast = parse_program(lexer);
+
+    dump_ast(ast, 0);
+
+    let out_file = fopen("build/host.nasm", 'w');
+    defer fclose(out_file);
+
+    generate_program(ast, out_file);
+
+    puts("---------------------------\n");
+
+    puts("Total amount of memory used by malloc: ");
+    putu(__malloc_buf_pos);
+    putsln("\nDone.");
+}

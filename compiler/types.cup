@@ -1,0 +1,82 @@
+import "std/common.cup"
+
+enum BaseType {
+    TYPE_VOID,
+    TYPE_ANY,
+
+    TYPE_PTR,
+    TYPE_ARRAY,
+    TYPE_STRUCT,
+    TYPE_UNION,
+
+    TYPE_INT,
+    TYPE_CHAR,
+};
+
+struct Type {
+    typ: int;
+    ptr: Type*;
+    struct_name: char*;
+    size: int;
+    array_size: int;
+    fields: struct {
+        names: char**;
+        types: Type**;
+        num_fields: int;
+    };
+};
+
+fn size_for_base_type(type: int): int {
+    if (type == TYPE_INT) return 8;
+    if (type == TYPE_PTR) return 8;
+    if (type == TYPE_CHAR) return 1;
+    // Need to be initialized explicitly for compound types 
+    return 0; 
+}
+
+let _type_int: Type* = null;
+let _type_char: Type* = null;
+let _type_void: Type* = null;
+let _type_any: Type* = null;
+
+fn type_new(typ: int): Type* {
+    if (_type_int == null) { _type_int = malloc(sizeof(Type)); _type_int.typ = TYPE_INT; _type_int.size = 8; }
+    if (_type_char == null) { _type_char = malloc(sizeof(Type)); _type_char.typ = TYPE_CHAR; _type_char.size = 1; }
+    if (_type_void == null) { _type_void = malloc(sizeof(Type)); _type_void.typ = TYPE_VOID; _type_void.size = 0; }
+    if (_type_any == null) { _type_any = malloc(sizeof(Type)); _type_any.typ = TYPE_ANY; _type_any.size = 8; }
+    
+    if (typ == TYPE_INT) return _type_int;
+    if (typ == TYPE_CHAR) return _type_char;
+    if (typ == TYPE_VOID) return _type_void;
+    if (typ == TYPE_ANY) return _type_any;
+
+    putsln("Allocating Type*");
+
+    let t: Type* = malloc(sizeof(Type));
+    t.typ = typ;
+    t.size = size_for_base_type(typ);
+    return t;
+}
+
+fn type_new_ptr(typ: int): Type* {
+    let ptr = type_new(TYPE_PTR);
+    ptr.ptr = type_new(typ);
+    return ptr;
+}
+
+// This is named differently because it performs an allocation
+fn create_type_string(typ: Type *): char* {
+    let buf: char* = malloc(32);
+    while (typ.typ == TYPE_PTR || typ.typ == TYPE_ARRAY) {
+        strcat(buf, typ.typ == TYPE_PTR ? "*" : "[]");
+        typ = typ.ptr;
+    }
+
+         if (typ.typ == TYPE_INT) strcat(buf, "int");
+    else if (typ.typ == TYPE_CHAR) strcat(buf, "char");
+    else if (typ.typ == TYPE_VOID) strcat(buf, "void");
+    else if (typ.typ == TYPE_ANY) strcat(buf, "any");
+    else  die("type_to_string: unknown type");
+
+    return buf;
+}

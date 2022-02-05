@@ -1,0 +1,28 @@
+#!/bin/bash
+
+# This script does the following:
+#   1. Builds the project
+#   2. Compiles selected file
+#   3. Assembles executable from compiled asm
+#   4. Runs the executable
+#   5. Echoes the output of the executable
+
+if [ -z "$1" ]
+then
+    echo "Usage: $0 <arguments to cupcc>"
+    exit 1
+fi
+
+set -xe
+
+make
+build/cupcc compiler/main.cup -o build/cup.nasm
+make build/cup.out
+build/cup.out "$@"
+make build/host.out
+
+set +e
+
+build/host.out
+
+echo "Exit status: $?"

@@ -1,0 +1,238 @@
+import "std/common.cup"
+
+enum TokenType {
+    TOKEN_AMPERSAND,
+    TOKEN_AND,
+    TOKEN_ASSIGN,
+    TOKEN_BAR,
+    TOKEN_CARET,
+    TOKEN_CHARLIT,
+    TOKEN_CLOSE_BRACE,
+    TOKEN_CLOSE_BRACKET,
+    TOKEN_CLOSE_PAREN,
+    TOKEN_COLON,
+    TOKEN_COMMA,
+    TOKEN_DOT,
+    TOKEN_EOF,
+    TOKEN_EQ,
+    TOKEN_EXCLAMATION,
+    TOKEN_GEQ,
+    TOKEN_GT,
+    TOKEN_IDENTIFIER,
+    TOKEN_INTLIT,
+    TOKEN_LEQ,
+    TOKEN_LSHIFT,
+    TOKEN_LT,
+    TOKEN_MINUS,
+    TOKEN_MINUSEQUALS,
+    TOKEN_MINUSMINUS,
+    TOKEN_NEQ,
+    TOKEN_OPEN_BRACE,
+    TOKEN_OPEN_BRACKET,
+    TOKEN_OPEN_PAREN,
+    TOKEN_OR,
+    TOKEN_PERCENT,
+    TOKEN_PLUS,
+    TOKEN_PLUSEQUALS,
+    TOKEN_PLUSPLUS,
+    TOKEN_QUESTION,
+    TOKEN_RSHIFT,
+    TOKEN_SEMICOLON,
+    TOKEN_SLASH,
+    TOKEN_STAR,
+    TOKEN_STRINGLIT,
+    TOKEN_TILDE,
+    TOKEN_XOR,
+
+    // Keywords go below:
+    TOKEN__KEYWORD_BEGIN,
+    TOKEN_CHAR,
+    TOKEN_CONST,
+    TOKEN_ENUM,
+    TOKEN_ELSE,
+    TOKEN_DEFER,
+    TOKEN_FN,
+    TOKEN_FOR,
+    TOKEN_IF,
+    TOKEN_INT,
+    TOKEN_LET,
+    TOKEN_RETURN,
+    TOKEN_STRUCT,
+    TOKEN_UNION,
+    TOKEN_VOID,
+    TOKEN_WHILE,
+    TOKEN_IMPORT,
+    TOKEN__KEYWORD_END,
+};
+
+struct Location {
+    filename: char*;
+    line: int;
+    col: int;
+};
+
+struct Token {
+    typ: int;
+    loc: Location;
+    value: union {
+        as_int: int;
+        as_string: char*;
+        as_char: char;
+    };
+};
+
+fn token_type_to_string(typ: int): char* {
+    if (typ == TOKEN_AMPERSAND) return "TOKEN_AMPERSAND";
+    if (typ == TOKEN_AND) return "TOKEN_AND";
+    if (typ == TOKEN_ASSIGN) return "TOKEN_ASSIGN";
+    if (typ == TOKEN_BAR) return "TOKEN_BAR";
+    if (typ == TOKEN_CARET) return "TOKEN_CARET";
+    if (typ == TOKEN_CHARLIT) return "TOKEN_CHARLIT";
+    if (typ == TOKEN_CLOSE_BRACE) return "TOKEN_CLOSE_BRACE";
+    if (typ == TOKEN_CLOSE_BRACKET) return "TOKEN_CLOSE_BRACKET";
+    if (typ == TOKEN_CLOSE_PAREN) return "TOKEN_CLOSE_PAREN";
+    if (typ == TOKEN_COLON) return "TOKEN_COLON";
+    if (typ == TOKEN_COMMA) return "TOKEN_COMMA";
+    if (typ == TOKEN_DOT) return "TOKEN_DOT";
+    if (typ == TOKEN_EOF) return "TOKEN_EOF";
+    if (typ == TOKEN_EQ) return "TOKEN_EQ";
+    if (typ == TOKEN_EXCLAMATION) return "TOKEN_EXCLAMATION";
+    if (typ == TOKEN_GEQ) return "TOKEN_GEQ";
+    if (typ == TOKEN_GT) return "TOKEN_GT";
+    if (typ == TOKEN_IDENTIFIER) return "TOKEN_IDENTIFIER";
+    if (typ == TOKEN_INTLIT) return "TOKEN_INTLIT";
+    if (typ == TOKEN_LEQ) return "TOKEN_LEQ";
+    if (typ == TOKEN_LSHIFT) return "TOKEN_LSHIFT";
+    if (typ == TOKEN_LT) return "TOKEN_LT";
+    if (typ == TOKEN_MINUS) return "TOKEN_MINUS";
+    if (typ == TOKEN_MINUSEQUALS) return "TOKEN_MINUSEQUALS";
+    if (typ == TOKEN_MINUSMINUS) return "TOKEN_MINUSMINUS";
+    if (typ == TOKEN_NEQ) return "TOKEN_NEQ";
+    if (typ == TOKEN_OPEN_BRACE) return "TOKEN_OPEN_BRACE";
+    if (typ == TOKEN_OPEN_BRACKET) return "TOKEN_OPEN_BRACKET";
+    if (typ == TOKEN_OPEN_PAREN) return "TOKEN_OPEN_PAREN";
+    if (typ == TOKEN_OR) return "TOKEN_OR";
+    if (typ == TOKEN_PERCENT) return "TOKEN_PERCENT";
+    if (typ == TOKEN_PLUS) return "TOKEN_PLUS";
+    if (typ == TOKEN_PLUSEQUALS) return "TOKEN_PLUSEQUALS";
+    if (typ == TOKEN_PLUSPLUS) return "TOKEN_PLUSPLUS";
+    if (typ == TOKEN_QUESTION) return "TOKEN_QUESTION";
+    if (typ == TOKEN_RSHIFT) return "TOKEN_RSHIFT";
+    if (typ == TOKEN_SEMICOLON) return "TOKEN_SEMICOLON";
+    if (typ == TOKEN_SLASH) return "TOKEN_SLASH";
+    if (typ == TOKEN_STAR) return "TOKEN_STAR";
+    if (typ == TOKEN_STRINGLIT) return "TOKEN_STRINGLIT";
+    if (typ == TOKEN_TILDE) return "TOKEN_TILDE";
+    if (typ == TOKEN_XOR) return "TOKEN_XOR";
+    if (typ == TOKEN_CHAR) return "TOKEN_CHAR";
+    if (typ == TOKEN_CONST) return "TOKEN_CONST";
+    if (typ == TOKEN_ENUM) return "TOKEN_ENUM";
+    if (typ == TOKEN_ELSE) return "TOKEN_ELSE";
+    if (typ == TOKEN_DEFER) return "TOKEN_DEFER";
+    if (typ == TOKEN_FN) return "TOKEN_FN";
+    if (typ == TOKEN_FOR) return "TOKEN_FOR";
+    if (typ == TOKEN_IF) return "TOKEN_IF";
+    if (typ == TOKEN_INT) return "TOKEN_INT";
+    if (typ == TOKEN_LET) return "TOKEN_LET";
+    if (typ == TOKEN_RETURN) return "TOKEN_RETURN";
+    if (typ == TOKEN_STRUCT) return "TOKEN_STRUCT";
+    if (typ == TOKEN_UNION) return "TOKEN_UNION";
+    if (typ == TOKEN_VOID) return "TOKEN_VOID";
+    if (typ == TOKEN_WHILE) return "TOKEN_WHILE";
+    if (typ == TOKEN_IMPORT) return "TOKEN_IMPORT";
+
+    putsln("\nUnknown token type in token_type_to_string: "); print(typ);
+    exit(1);
+}
+
+fn keyword_to_string(typ: int): char* {
+    if (typ == TOKEN_CHAR) return "char";
+    if (typ == TOKEN_CONST) return "const";
+    if (typ == TOKEN_ENUM) return "enum";
+    if (typ == TOKEN_ELSE) return "else";
+    if (typ == TOKEN_DEFER) return "defer";
+    if (typ == TOKEN_FN) return "fn";
+    if (typ == TOKEN_FOR) return "for";
+    if (typ == TOKEN_IF) return "if";
+    if (typ == TOKEN_INT) return "int";
+    if (typ == TOKEN_LET) return "let";
+    if (typ == TOKEN_RETURN) return "return";
+    if (typ == TOKEN_STRUCT) return "struct";
+    if (typ == TOKEN_UNION) return "union";
+    if (typ == TOKEN_VOID) return "void";
+    if (typ == TOKEN_WHILE) return "while";
+    if (typ == TOKEN_IMPORT) return "import";
+
+    puts("Unknown keyword in keyword_to_string: ");
+    putsln(token_type_to_string(typ));
+    exit(1);
+}
+
+fn location_init(loc: Location*, filename: char*, line: int, col: int) {
+    loc.filename = filename;
+    loc.line = line;
+    loc.col = col;
+}
+
+fn location_print(loc: Location *) {
+    puts(loc.filename);
+    putc(':');
+    putu(loc.line + 1);
+    putc(':');
+    putu(loc.col + 1);
+}
+
+fn die_loc2(loc: Location*, msg1: char *, msg2: char *) {
+    location_print(loc);
+    puts(": ");
+    puts(msg1);
+    putsln(msg2);
+    exit(1);
+}
+
+fn die_loc(loc: Location*, msg: char *) {
+    die_loc2(loc, msg, "");
+}
+
+fn token_from_type(token: Token*, typ: int, loc: Location *) {
+    token.typ = typ;
+}
+
+fn token_from_int(token: Token*, val: int, loc: Location *) {
+    token.typ = TOKEN_INTLIT;
+    token.value.as_int = val;
+    token.loc.filename = loc.filename;
+    token.loc.line = loc.line;
+    token.loc.col = loc.col;
+}
+
+fn token_from_string(token: Token*, str: char *, loc: Location *) {
+    token.typ = TOKEN_STRINGLIT;
+    token.value.as_string = str;
+    token.loc.filename = loc.filename;
+    token.loc.line = loc.line;
+    token.loc.col = loc.col;
+}
+
+fn token_from_char(token: Token*, c: char, loc: Location *) {
+    token.typ = TOKEN_CHARLIT;
+    token.value.as_char = c;
+    token.loc.filename = loc.filename;
+    token.loc.line = loc.line;
+    token.loc.col = loc.col;
+}
+
+fn token_from_identifier(token: Token*, str: char *, loc: Location *) {
+    token.typ = TOKEN_IDENTIFIER;
+    token.value.as_string = str;
+    token.loc.filename = loc.filename;
+    token.loc.line = loc.line;
+    token.loc.col = loc.col;
+}
+
+fn is_literal_token(typ: int): int {
+    if (typ == TOKEN_INTLIT) return true;
+    if (typ == TOKEN_CHARLIT) return true;
+    if (typ == TOKEN_STRINGLIT) return true;
+    return false;
+}
