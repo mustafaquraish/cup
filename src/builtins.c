@@ -40,6 +40,14 @@ void initialize_builtins()
 {
     push_posix_constants();
 
+#if __APPLE__
+    push_constant("OS_IS_MACOS", 1);
+    push_constant("OS_IS_LINUX", 0);
+#else
+    push_constant("OS_IS_MACOS", 0);
+    push_constant("OS_IS_LINUX", 1);
+#endif
+
     Node *node;
     // FIXME: The `TYPE_ANY` is a hack
     node = Node_new(AST_BUILTIN);
