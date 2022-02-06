@@ -8,6 +8,9 @@ let p_current_function: Node* = null;
 let p_block_stack = vector_new();
 let p_cur_stack_offset = 0;
 
+let p_global_variables = vector_new();
+let p_global_offset = 0;
+
 fn block_stack_push(block: Node*) {
     vector_push(p_block_stack, block);
 }
@@ -41,6 +44,16 @@ fn find_local_variable(token: Token*): Variable* {
     return null;
 }
 
+fn find_global_variable(token: Token*): Variable* {
+    for (let i = 0; i < p_global_variables.size; ++i) {
+        let var: Variable* = p_global_variables.data[i];
+        if (streq(token.value.as_string, var.name)) {
+            return var;
+        }
+    }
+    return null;
+}
+
 fn find_function_definition(token: Token*): Node* {
     for (let i = 0; i < p_all_functions.size; ++i) {
         let func: Node* = p_all_functions.data[i];
@@ -53,6 +66,7 @@ fn find_function_definition(token: Token*): Node* {
 
 fn identifier_exists(token: Token*): int {
     if (find_local_variable(token)) return true;
+    if (find_global_variable(token)) return true;
     if (find_function_definition(token)) return true;
     if (find_builtin_function(token)) return true;
     return false;
@@ -151,6 +165,14 @@ fn parse_identifier(lexer: Lexer*): Node* {
     let var = find_local_variable(&token);
     if (var != null) {
         node = node_new(AST_LOCAL_VAR);
+        node.d.variable = var;
+        node.etyp = var.typ;
+        return node;
+    }
+
+    var = find_global_variable(&token);
+    if (var != null) {
+        node = node_new(AST_GLOBAL_VAR);
         node.d.variable = var;
         node.etyp = var.typ;
         return node;
@@ -418,11 +440,21 @@ fn add_variable_to_current_block(var: Variable*) {
     p_current_function.d.func.max_locals_size = max_offset;
 }
 
+fn add_global_variable(var: Variable*) {
+    var.offset = p_global_offset;
+    let var_size = align_up(size_for_type(var.typ), 8);
+    p_global_offset = p_global_offset + var_size;
+    vector_push(p_global_variables, var);
+}
+
 fn parse_var_declaration(lexer: Lexer*): Node* {
 
     let token: Token;
     lexer_next_assert(lexer, &token, TOKEN_LET);
     lexer_next_assert(lexer, &token, TOKEN_IDENTIFIER);
+
+    let is_global = (p_current_function == null);
+
     // TODO: check if identifier is already defined
     let node = node_new(AST_VARDECL);
     let decl = &node.d.var_decl;
@@ -442,7 +474,11 @@ fn parse_var_declaration(lexer: Lexer*): Node* {
         die_loc(&token.loc, "Expected ':' or '=' after variable declaration");
     }
 
-    add_variable_to_current_block(&decl.var);
+    if (is_global) {
+        add_global_variable(&decl.var);
+    } else {
+        add_variable_to_current_block(&decl.var);
+    }
 
     return node;
 }

@@ -48,6 +48,10 @@ fn generate_lvalue_into_rax(node: Node*) {
         let offset = node.d.variable.offset;
         emit_asm("    mov rax, rbp\n");
         emit_asm("    sub rax, "); emit_num(offset); emit_asm("\n");
+    } else if (node.typ == AST_GLOBAL_VAR) {
+        let offset = node.d.variable.offset;
+        emit_asm("    mov rax, global_vars\n");
+        emit_asm("    add rax, "); emit_num(offset); emit_asm("\n");
     } else {
         die2("Unsupported type in generate_lvalue_into_rax: ", node_type_to_string(node.typ));
     }
@@ -351,6 +355,8 @@ fn generate_program(ast: Node*, file: File*) {
         let node: Node* = ast.d.block.children.data[i];
         if (node.typ == AST_FUNC) {
             generate_function(node);
+        } else if (node.typ == AST_VARDECL) {
+            // Do nothing
         } else {
             die("Unknown node type in generate_program");
         }
@@ -379,9 +385,24 @@ fn generate_program(ast: Node*, file: File*) {
         emit_asm("    push rax\n");
     }
 
+    // Initialize all the global variables
+    for (let i = 0; i < n; ++i) {
+        let node: Node* = ast.d.block.children.data[i];
+        if (node.typ == AST_VARDECL && node.d.var_decl.init) {
+            generate_expr_into_rax(node.d.var_decl.init);
+            let offset = node.d.var_decl.var.offset;
+            emit_asm("    mov rbx, global_vars\n");
+            emit_asm("    add rbx, "); emit_num(offset); emit_asm("\n");
+            emit_asm("    mov [rbx], rax\n");
+        }
+    }
+
     emit_asm("    call func_main\n");
     emit_asm("    mov rdi, rax\n");
     generate_syscall(SYS_exit);
 
     generate_builtins();
+
+    emit_asm("section .bss\n");
+    emit_asm("    global_vars: resb "); emit_num(p_global_offset); emit_asm("\n");
 }
