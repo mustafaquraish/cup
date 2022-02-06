@@ -175,6 +175,18 @@ fn die(msg: char *) {
     exit(1);
 }
 
+fn die2(msg1: char *, msg2: char *) {
+    puts(msg1);
+    putsln(msg2);
+    exit(1);
+}
+
+// TODO: file/line numbers would be helpful
+fn assert(cond: int) {
+    if (!cond)
+        die("assertion failed");
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 // Math
 
@@ -199,6 +211,10 @@ fn factorial(n: int): int {
     for (;n > 0; n = n - 1)
         res = res * n;
     return res;
+}
+
+fn align_up(val: int, algn: int): int {
+    return 8;
 }
 
 ///////////////////////////////////////////////////////////////////////////////

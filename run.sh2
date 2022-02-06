@@ -1,15 +1,15 @@
 #!/bin/bash
 
 # This script does the following:
-#   1. Builds the project
-#   2. Compiles selected file
-#   3. Assembles executable from compiled asm
+#   1. Builds compiler written in C first
+#   2. Builds the compiler written in CUP with the C compiler
+#   3. Compiles the file specified through CLI with CUP compiler
 #   4. Runs the executable
 #   5. Echoes the output of the executable
 
 if [ -z "$1" ]
 then
-    echo "Usage: $0 <arguments to cupcc>"
+    echo "Usage: $0 <arguments to build/cup.out>"
     exit 1
 fi
 

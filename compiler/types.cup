@@ -34,6 +34,18 @@ fn size_for_base_type(type: int): int {
     return 0; 
 }
 
+fn size_for_type(typ: Type*): int {
+    if (typ.typ == TYPE_INT) return 8;
+    if (typ.typ == TYPE_PTR) return 8;
+    if (typ.typ == TYPE_CHAR) return 1;
+    if (typ.typ == TYPE_ARRAY) return typ.array_size * size_for_type(typ.ptr);
+    if (typ.typ == TYPE_STRUCT) return typ.size;
+    if (typ.typ == TYPE_UNION) return typ.size;
+    if (typ.typ == TYPE_VOID) return 0;
+    if (typ.typ == TYPE_ANY) return 8;
+    die("Unknown type in size_for_type");
+}
+
 let _type_int: Type* = null;
 let _type_char: Type* = null;
 let _type_void: Type* = null;

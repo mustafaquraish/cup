@@ -4,9 +4,35 @@ import "compiler/lexer.cup"
 // p_ prefix for parser global variables.
 
 let p_all_functions = vector_new();
+let p_current_function: Node* = null;
 
 let p_block_stack = vector_new();
 let p_cur_stack_offset = 0;
+
+fn block_stack_push(block: Node*) {
+    vector_push(p_block_stack, block);
+}
+
+fn block_stack_pop() {
+    let block: Node* = vector_pop(p_block_stack);
+    p_cur_stack_offset = p_cur_stack_offset - block.d.block.locals_size;
+}
+
+fn find_local_variable(token: Token*): Variable* {
+    if (p_current_function == null) return null;
+
+    for (let i = p_block_stack.size - 1; i >= 0; --i) {
+        let block: Node* = p_block_stack.data[i];
+        for (let j = 0; j < block.d.block.locals.size; ++j) {
+            let var: Variable* = block.d.block.locals.data[j];
+            if (streq(token.value.as_string, var.name)) {
+                return var;
+            }
+        }
+    }
+
+    return null;
+}
 
 fn parse_literal(lexer: Lexer*): Node* {
     let token: Token;
@@ -60,7 +86,23 @@ fn parse_type(lexer: Lexer*): Type* {
     return typ;
 }
 
-// pragma region expressions
+fn parse_identifier(lexer: Lexer*): Node* {
+    let token: Token;
+    lexer_next_assert(lexer, &token, TOKEN_IDENTIFIER);
+
+    let expr: Node*;
+    let var = find_local_variable(&token);
+    if (var != null) {
+        expr = node_new(AST_LOCAL_VAR);
+        expr.d.variable = var;
+        expr.etyp = var.typ;
+        return expr;
+    }
+
+    die_loc2(&token.loc, "Unknown identifier in parse_identifier: ", token.value.as_string);
+}
+
+
 fn parse_expression(lexer: Lexer*): Node*;
 
 fn parse_factor(lexer: Lexer*): Node* {
@@ -90,6 +132,9 @@ fn parse_factor(lexer: Lexer*): Node* {
 
     } else if (is_literal_token(token.typ)) {
         expr = parse_literal(lexer);
+
+    } else if (token.typ == TOKEN_IDENTIFIER) {
+        expr = parse_identifier(lexer);
 
     } else {
         die_loc2(&token.loc, ": Unexpected token found in parse_factor: ", token_type_to_string(token.typ));
@@ -274,7 +319,40 @@ fn parse_conditional_exp(lexer: Lexer*): Node* {
 }
 
 fn parse_expression(lexer: Lexer*): Node* {
-    return parse_conditional_exp(lexer);
+    let lhs = parse_conditional_exp(lexer);
+    putsln(node_type_to_string(lhs.typ));
+    if (is_lvalue(lhs.typ)) {
+        let token: Token;
+        lexer_peek(lexer, &token);
+        if (token.typ == TOKEN_ASSIGN) {
+            lexer_next(lexer, &token);
+            let node = node_new(AST_ASSIGN);
+            node.d.assign.lhs = lhs;
+            node.d.assign.rhs = parse_expression(lexer);
+            lhs = node;
+        } 
+    }
+    return lhs;
+}
+
+fn add_variable_to_current_block(var: Variable*) {
+    // Set offset for variable
+    let cur_block: Node* = vector_top(p_block_stack);
+    let var_size = align_up(size_for_type(var.typ), 8);
+
+    // Add to the block
+    // FIXME: Use a map here
+    vector_push(cur_block.d.block.locals, var);
+
+    assert(p_current_function != null);
+    // Update current stack offset (w.r.t function stack frame) and block size
+    p_cur_stack_offset = p_cur_stack_offset + var_size;
+    cur_block.d.block.locals_size = cur_block.d.block.locals_size + var_size;
+    var.offset = p_cur_stack_offset;
+
+    // Update function's max locals size
+    let max_offset = max(p_current_function.d.func.max_locals_size, p_cur_stack_offset);
+    p_current_function.d.func.max_locals_size = max_offset;
 }
 
 fn parse_var_declaration(lexer: Lexer*): Node* {
@@ -283,23 +361,24 @@ fn parse_var_declaration(lexer: Lexer*): Node* {
     lexer_next_assert(lexer, &token, TOKEN_IDENTIFIER);
     // TODO: check if identifier is already defined
     let node = node_new(AST_VARDECL);
-    node.d.var_decl.var.name = token.value.as_string;
+    let decl = &node.d.var_decl;
+    decl.var.name = token.value.as_string;
 
     lexer_peek(lexer, &token);
     let has_type = false;
-    if (token.typ == TOKEN_COLON) {
-        lexer_next(lexer, &token);
-        has_type = true;
-        node.d.var_decl.var.typ = parse_type(lexer);
-        lexer_peek(lexer, &token);
-    }
-
+    // TODO: implicit types when type system is better
+    lexer_next_assert(lexer, &token, TOKEN_COLON);
+    decl.var.typ = parse_type(lexer);
+    
+    lexer_peek(lexer, &token);
     if (token.typ == TOKEN_ASSIGN) {
         lexer_next(lexer, &token);
-        node.d.var_decl.init = parse_expression(lexer);
+        decl.init = parse_expression(lexer);
     } else if (!has_type) {
         die_loc(&token.loc, "Expected ':' or '=' after variable declaration");
     }
+
+    add_variable_to_current_block(&decl.var);
 
     return node;
 }
@@ -374,6 +453,9 @@ fn parse_block(lexer: Lexer*): Node* {
 
     let block = node_new(AST_BLOCK);
     block.d.block.children = vector_new();
+    block.d.block.locals = vector_new();
+
+    block_stack_push(block);
 
     lexer_peek(lexer, &token);
     while (token.typ != TOKEN_CLOSE_BRACE) {
@@ -381,6 +463,8 @@ fn parse_block(lexer: Lexer*): Node* {
         lexer_peek(lexer, &token);
     }
     lexer_next_assert(lexer, &token, TOKEN_CLOSE_BRACE);
+
+    block_stack_pop();
     return block;
 }
 
@@ -389,9 +473,13 @@ fn parse_function(lexer: Lexer*): Node* {
 
     lexer_next_assert(lexer, &token, TOKEN_FN);
     lexer_next_assert(lexer, &token, TOKEN_IDENTIFIER);
+    
     // TODO: Check if identifier exists
     let node = node_new(AST_FUNC);
     node.d.func.name = token.value.as_string;
+    
+    vector_push(p_all_functions, node);
+    p_current_function = node;
 
     lexer_next_assert(lexer, &token, TOKEN_OPEN_PAREN);
     parse_function_params(lexer, node);
@@ -406,6 +494,8 @@ fn parse_function(lexer: Lexer*): Node* {
     }
 
     node.d.func.body = parse_block(lexer);
+
+    p_current_function = null;
     return node;
 }
 

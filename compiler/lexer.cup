@@ -85,12 +85,7 @@ fn lexer_make_token(lexer: Lexer*, token: Token*, typ: int, inc: int) {
 
 fn lexer_next(lexer: Lexer*, token: Token*) {
     while (lexer.pos < lexer.len) {
-        putsln("101.1");
-        print(lexer.pos);
-        print(lexer.len);
         let c = lexer.src[lexer.pos];
-        putc(c);
-        putc('\n');
 
              if (c == '\n')   { ++lexer.line; lexer.col = 0; ++lexer.pos; }
         else if (is_space(c)) { lexer_advance(lexer, 1); }
