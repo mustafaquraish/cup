@@ -1,5 +1,7 @@
 import "std/file.cup"
-import "compiler/lexer.cup"
+// FIXME: The order of the following lines is important.
+//        Perhaps have multiple passes?
+import "compiler/builtins.cup"
 import "compiler/parser.cup"
 import "compiler/codegen.cup"
 

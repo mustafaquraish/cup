@@ -1,5 +1,6 @@
-import "std/vector.cup"
+import "compiler/tokens.cup"
 import "compiler/types.cup"
+import "std/vector.cup"
 
 enum NodeType {
     // Unary
@@ -147,6 +148,14 @@ fn node_from_int_literal(val: int): Node* {
     node.etyp = type_new(TYPE_INT);
     node.d.literal.as_int = val;
     return node;
+}
+
+fn variable_new(name: char*, typ: Type*, offset: int): Variable* {
+    let v: Variable* = malloc(sizeof(Variable));
+    v.name = name;
+    v.typ = typ;
+    v.offset = offset;
+    return v;
 }
 
 fn block_add_child(block: Node*, child: Node*) {

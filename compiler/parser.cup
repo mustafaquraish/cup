@@ -54,6 +54,7 @@ fn find_function_definition(token: Token*): Node* {
 fn identifier_exists(token: Token*): int {
     if (find_local_variable(token)) return true;
     if (find_function_definition(token)) return true;
+    if (find_builtin_function(token)) return true;
     return false;
 }
 
@@ -156,6 +157,11 @@ fn parse_identifier(lexer: Lexer*): Node* {
     }
 
     let func = find_function_definition(&token);
+    if (func != null) {
+        return parse_function_call_args(lexer, func);
+    }
+
+    func = find_builtin_function(&token);
     if (func != null) {
         return parse_function_call_args(lexer, func);
     }
@@ -642,6 +648,8 @@ fn parse_function(lexer: Lexer*): Node* {
 }
 
 fn parse_program(lexer: Lexer*): Node* {
+    initialize_builtins();
+
     let node = node_new(AST_PROGRAM);
     node.d.block.children = vector_new();
     

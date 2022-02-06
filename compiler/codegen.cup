@@ -1,3 +1,4 @@
+import "compiler/builtins.cup"
 import "compiler/ast.cup"
 import "std/file.cup"
 
@@ -381,4 +382,6 @@ fn generate_program(ast: Node*, file: File*) {
     emit_asm("    call func_main\n");
     emit_asm("    mov rdi, rax\n");
     generate_syscall(SYS_exit);
+
+    generate_builtins();
 }
