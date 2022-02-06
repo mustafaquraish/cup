@@ -11,6 +11,10 @@ let p_cur_stack_offset = 0;
 let p_global_variables = vector_new();
 let p_global_offset = 0;
 
+let p_lexer_stack = vector_new();
+let p_constant_stack = vector_new();
+let p_compound_type_stack = vector_new();
+
 fn block_stack_push(block: Node*) {
     vector_push(p_block_stack, block);
 }
@@ -18,6 +22,13 @@ fn block_stack_push(block: Node*) {
 fn block_stack_pop() {
     let block: Node* = vector_pop(p_block_stack);
     p_cur_stack_offset = p_cur_stack_offset - block.d.block.locals_size;
+}
+
+fn constant_push(name: char*, value: int) {
+    let node = node_new(AST_CONSTANT);
+    node.d.constant.name = name;
+    node.d.constant.value = node_from_int_literal(value);
+    vector_push(p_constant_stack, node);
 }
 
 fn find_local_variable(token: Token*): Variable* {
@@ -44,6 +55,16 @@ fn find_local_variable(token: Token*): Variable* {
     return null;
 }
 
+fn find_compound_type(token: Token*): Type* {
+    for (let i = p_compound_type_stack.size - 1; i >= 0; --i) {
+        let typ: Type* = p_compound_type_stack.data[i];
+        if (streq(token.value.as_string, typ.struct_name)) {
+            return typ;
+        }
+    }
+    return null;
+}
+
 fn find_global_variable(token: Token*): Variable* {
     for (let i = 0; i < p_global_variables.size; ++i) {
         let var: Variable* = p_global_variables.data[i];
@@ -64,14 +85,60 @@ fn find_function_definition(token: Token*): Node* {
     return null;
 }
 
+fn find_constant(token: Token*): Node* {
+    for (let i = 0; i < p_constant_stack.size; ++i) {
+        let constant: Node* = p_constant_stack.data[i];
+        if (streq(token.value.as_string, constant.d.constant.name)) {
+            return constant;
+        }
+    }
+    return null;
+}
+
 fn identifier_exists(token: Token*): int {
     if (find_local_variable(token)) return true;
     if (find_global_variable(token)) return true;
     if (find_function_definition(token)) return true;
     if (find_builtin_function(token)) return true;
+    if (find_compound_type(token)) return true;
+    if (find_constant(token)) return true;
     return false;
 }
 
+fn eval_constexp(node: Node*): int {
+    if (node.typ == AST_LITERAL) {
+        if (node.etyp.typ != TYPE_INT)
+            die("Constant expressions can only contain integer literals/constants.");
+        return node.d.literal.as_int;
+    } else if (is_binary_op(node.typ)) {
+        let left = eval_constexp(node.d.binary.lhs);
+        let right = eval_constexp(node.d.binary.rhs);
+             if (node.typ == AST_PLUS) return left + right;
+        else if (node.typ == AST_MINUS) return left - right;
+        else if (node.typ == AST_BWOR) return left | right;
+        else if (node.typ == AST_BWAND) return left & right;
+        else if (node.typ == AST_XOR) return left ^ right;
+        else if (node.typ == AST_MUL) return left * right;
+        else if (node.typ == AST_DIV) return left / right;
+        else if (node.typ == AST_MOD) return left % right;
+        else if (node.typ == AST_MUL) return left * right;
+        else if (node.typ == AST_MUL) return left * right;
+        else {
+            die("Unsupported binary operator in constant expression.");
+        }
+    }
+    else if (node.typ == AST_NEG) return -eval_constexp(node.d.unary);
+    else if (node.typ == AST_BWINV) return ~eval_constexp(node.d.unary);
+    else if (node.typ == AST_NOT) return !eval_constexp(node.d.unary);
+    else {
+        die("Unsupported constant expression.");
+    }
+    return 0;
+}
+
+fn parse_constant_declaration(lexer: Lexer*): Node* {
+    die("parse_constant_declaration is not implemented yet.");
+}
 
 fn parse_literal(lexer: Lexer*): Node* {
     let token: Token;
@@ -106,6 +173,11 @@ fn parse_type(lexer: Lexer*): Type* {
     } else if (token.typ == TOKEN_VOID) {
         lexer_next(lexer, &token);
         typ = type_new(TYPE_VOID);
+    } else {
+        lexer_next_assert(lexer, &token, TOKEN_IDENTIFIER);
+        typ = find_compound_type(&token);
+        if (!typ)
+            die_loc2(&token.loc, "Unknown token in parse_type: ", token.value.as_string);
     }
     
     let running = true;
@@ -117,7 +189,26 @@ fn parse_type(lexer: Lexer*): Type* {
             ptr.ptr = typ;
             typ = ptr;
         } else if (token.typ == TOKEN_OPEN_BRACKET) {
-            die("Array types not yet implemented");
+            lexer_next(lexer, &token);
+            let arr = type_new(TYPE_ARRAY);
+            arr.ptr = typ;
+
+            lexer_next(lexer, &token);
+            if (token.typ == TOKEN_INTLIT) {
+                arr.array_size = token.value.as_int;
+            } else if (token.typ == TOKEN_IDENTIFIER) {
+                let constant = find_constant(&token);
+                if (!constant)
+                    die_loc2(&token.loc, "Could not find constant: ", token.value.as_string);
+                // FIXME: This is a complete mess.
+                let value = constant.d.constant.value;
+                arr.array_size = value.d.literal.as_int;
+            } else {
+                die_loc(&token.loc, "Expected a constant expression for array size");
+            }
+            lexer_next_assert(lexer, &token, TOKEN_CLOSE_BRACKET);
+            typ = arr;
+
         } else {
             running = false;
         }
@@ -188,7 +279,14 @@ fn parse_identifier(lexer: Lexer*): Node* {
         return parse_function_call_args(lexer, func);
     }
 
+    let constant = find_constant(&token);
+    if (constant != null) {
+        // TODO: Make sure this is an integer
+        return constant.d.constant.value;
+    }
+
     die_loc2(&token.loc, "Unknown identifier in parse_identifier: ", token.value.as_string);
+    return null;
 }
 
 fn parse_factor(lexer: Lexer*): Node* {
@@ -206,6 +304,39 @@ fn parse_factor(lexer: Lexer*): Node* {
         expr = node_new(AST_BWINV);
         expr.d.unary = parse_factor(lexer);
 
+    } else if (token.typ == TOKEN_PLUSPLUS) {
+        lexer_next(lexer, &token);
+        expr = node_new(AST_ASSIGN);
+        expr.d.assign.lhs = parse_factor(lexer);
+        if (!is_lvalue(expr.d.assign.lhs.typ))
+            die_loc(&token.loc, "Cannot increment non-lvalue");
+
+        let plus = node_new(AST_PLUS);
+        plus.d.binary.lhs = expr.d.assign.lhs;
+        plus.d.binary.rhs = node_from_int_literal(1);
+        expr.d.assign.rhs = plus;
+
+    // --x is changed to (x = x - 1)
+    } else if (token.typ == TOKEN_MINUSMINUS) {
+        lexer_next(lexer, &token);
+        expr = node_new(AST_ASSIGN);
+        expr.d.assign.lhs = parse_factor(lexer);
+        if (!is_lvalue(expr.d.assign.lhs.typ))
+            die_loc(&token.loc, "Cannot decrement non-lvalue");
+
+        let minus = node_new(AST_MINUS);
+        minus.d.binary.lhs = expr.d.assign.lhs;
+        minus.d.binary.rhs = node_from_int_literal(1);
+        expr.d.assign.rhs = minus;
+
+    // FIXME: This should probably go somewhere else more appropriate
+    } else if (token.typ == TOKEN_SIZEOF) {
+        lexer_next(lexer, &token);
+        lexer_next_assert(lexer, &token, TOKEN_OPEN_PAREN);
+        let typ = parse_type(lexer);
+        lexer_next_assert(lexer, &token, TOKEN_CLOSE_PAREN);
+        expr = node_from_int_literal(size_for_type(typ));
+
     } else if (token.typ == TOKEN_EXCLAMATION) {
         lexer_next(lexer, &token);
         expr = node_new(AST_NOT);
@@ -222,9 +353,18 @@ fn parse_factor(lexer: Lexer*): Node* {
     } else if (token.typ == TOKEN_IDENTIFIER) {
         expr = parse_identifier(lexer);
 
+    } else if (token.typ == TOKEN_AMPERSAND) {
+        die("TOKEN_AMPERSAND not implemented in parse_factor");
+
+    } else if (token.typ == TOKEN_STAR) {
+        die("TOKEN_STAR not implemented in parse_factor");
+
     } else {
         die_loc2(&token.loc, ": Unexpected token found in parse_factor: ", token_type_to_string(token.typ));
     }
+
+    // TODO: Handle postfix operators here.
+
     return expr;
 }
 
@@ -522,7 +662,7 @@ fn parse_function_params(lexer: Lexer*, func: Node*) {
         let var: Variable* = func.d.func.args.data[i];
         var.offset = offset;
         // TODO: (Here and other uses of `size_for_type`):
-        //      Should we only align to max(8, type->size) instead?
+        //      Should we only align to max(8, type.size) instead?
         let var_size = align_up(size_for_type(var.typ), 8);
         offset = offset - var_size;
     }

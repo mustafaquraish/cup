@@ -57,6 +57,7 @@ enum TokenType {
     TOKEN_INT,
     TOKEN_LET,
     TOKEN_RETURN,
+    TOKEN_SIZEOF,
     TOKEN_STRUCT,
     TOKEN_UNION,
     TOKEN_VOID,
@@ -135,6 +136,7 @@ fn token_type_to_string(typ: int): char* {
     if (typ == TOKEN_INT) return "TOKEN_INT";
     if (typ == TOKEN_LET) return "TOKEN_LET";
     if (typ == TOKEN_RETURN) return "TOKEN_RETURN";
+    if (typ == TOKEN_SIZEOF) return "TOKEN_SIZEOF";
     if (typ == TOKEN_STRUCT) return "TOKEN_STRUCT";
     if (typ == TOKEN_UNION) return "TOKEN_UNION";
     if (typ == TOKEN_VOID) return "TOKEN_VOID";
@@ -157,6 +159,7 @@ fn keyword_to_string(typ: int): char* {
     if (typ == TOKEN_INT) return "int";
     if (typ == TOKEN_LET) return "let";
     if (typ == TOKEN_RETURN) return "return";
+    if (typ == TOKEN_SIZEOF) return "sizeof";
     if (typ == TOKEN_STRUCT) return "struct";
     if (typ == TOKEN_UNION) return "union";
     if (typ == TOKEN_VOID) return "void";
