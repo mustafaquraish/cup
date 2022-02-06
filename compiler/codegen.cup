@@ -247,7 +247,6 @@ fn generate_expr_into_rax(node: Node*) {
         emit_asm("    mov rax, [rax]\n");
 
     } else if (node.typ == AST_ASSIGN) {
-        putsln("...");
         generate_lvalue_into_rax(node.d.assign.lhs);
         emit_asm("    push rax\n");
         generate_expr_into_rax(node.d.assign.rhs);
@@ -283,11 +282,11 @@ fn generate_statement(node: Node*) {
         generate_expr_into_rax(node.d.conditional.cond);
         emit_asm("    cmp rax, 0\n");
         emit_asm("    je .els"); emit_num(label); emit_asm("\n");
-        generate_block(node.d.conditional.then);
+        generate_statement(node.d.conditional.then);
         emit_asm("    jmp .if"); emit_num(label); emit_asm("\n");
         emit_asm(".els"); emit_num(label); emit_asm(":\n");
         if (node.d.conditional.els)
-            generate_block(node.d.conditional.els);
+            generate_statement(node.d.conditional.els);
         emit_asm(".if"); emit_num(label); emit_asm(":\n");
 
     } else if (node.typ == AST_WHILE) {
