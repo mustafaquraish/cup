@@ -413,6 +413,7 @@ fn add_variable_to_current_block(var: Variable*) {
 }
 
 fn parse_var_declaration(lexer: Lexer*): Node* {
+
     let token: Token;
     lexer_next_assert(lexer, &token, TOKEN_LET);
     lexer_next_assert(lexer, &token, TOKEN_IDENTIFIER);
@@ -486,7 +487,48 @@ fn parse_function_params(lexer: Lexer*, func: Node*) {
 }
 
 fn parse_block(lexer: Lexer*): Node*;
+fn parse_statement(lexer: Lexer*): Node*;
 
+fn parse_for_loop(lexer: Lexer*): Node* {
+    let token: Token;
+    lexer_next_assert(lexer, &token, TOKEN_FOR);
+
+    let looop = node_new(AST_FOR);
+    lexer_next_assert(lexer, &token, TOKEN_OPEN_PAREN);
+
+    // NOTE: We're going to put the for loop in it's own block
+    //       so that any declarations in the init of the loop
+    //       can only be referenced within the loop.
+    let node = node_new(AST_BLOCK);
+    node.d.block.children = vector_new_sized(1);
+    node.d.block.locals = vector_new_sized(1);
+    block_add_child(node, looop);
+    block_stack_push(node);
+
+    // All of the expressions in the for loop are optional
+
+    lexer_peek(lexer, &token);
+    if (token.typ == TOKEN_LET)
+        looop.d.looop.init = parse_var_declaration(lexer);
+    else if (token.typ != TOKEN_SEMICOLON)
+        looop.d.looop.init = parse_expression(lexer);
+    lexer_next_assert(lexer, &token, TOKEN_SEMICOLON);
+
+    lexer_peek(lexer, &token);
+    if (token.typ != TOKEN_SEMICOLON)
+        looop.d.looop.cond = parse_expression(lexer);
+    lexer_next_assert(lexer, &token, TOKEN_SEMICOLON);
+
+    lexer_peek(lexer, &token);
+    if (token.typ != TOKEN_CLOSE_PAREN)
+        looop.d.looop.step = parse_expression(lexer);
+    lexer_next_assert(lexer, &token, TOKEN_CLOSE_PAREN);
+
+    looop.d.looop.body = parse_statement(lexer);
+    block_stack_pop();
+
+    return node;
+}
 
 fn parse_statement(lexer: Lexer*): Node* {
     let node: Node*;
@@ -524,9 +566,16 @@ fn parse_statement(lexer: Lexer*): Node* {
             node.d.conditional.els = parse_statement(lexer);
         }
     } else if (token.typ == TOKEN_WHILE) {
-        die("while is not implemented yet");
+        lexer_next(lexer, &token);
+        node = node_new(AST_WHILE);
+        lexer_next_assert(lexer, &token, TOKEN_OPEN_PAREN);
+        node.d.looop.cond = parse_expression(lexer);
+        lexer_next_assert(lexer, &token, TOKEN_CLOSE_PAREN);
+        node.d.looop.body = parse_statement(lexer);
+
     } else if (token.typ == TOKEN_FOR) {
-        die("for is not implemented yet");
+        node = parse_for_loop(lexer);
+
     } else if (token.typ == TOKEN_DEFER) {
         die("defer is not implemented yet");
     } else if (token.typ == TOKEN_LET) {

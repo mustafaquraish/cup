@@ -290,6 +290,32 @@ fn generate_statement(node: Node*) {
             generate_block(node.d.conditional.els);
         emit_asm(".if"); emit_num(label); emit_asm(":\n");
 
+    } else if (node.typ == AST_WHILE) {
+        let label = ++gen_label_counter;
+        emit_asm(".loop_s"); emit_num(label); emit_asm(":\n");
+        generate_expr_into_rax(node.d.looop.cond);
+        emit_asm("    cmp rax, 0\n");
+        emit_asm("    je .loop_e"); emit_num(label); emit_asm("\n");
+        generate_statement(node.d.looop.body);
+        emit_asm("    jmp .loop_s"); emit_num(label); emit_asm("\n");
+        emit_asm(".loop_e"); emit_num(label); emit_asm(":\n");
+
+    } else if (node.typ == AST_FOR) {
+        let label = ++gen_label_counter;
+        if (node.d.looop.init)
+            generate_statement(node.d.looop.init);
+        emit_asm(".loop_s"); emit_num(label); emit_asm(":\n");
+        if (node.d.looop.cond) {
+            generate_expr_into_rax(node.d.looop.cond);
+            emit_asm("    cmp rax, 0\n");
+            emit_asm("    je .loop_e"); emit_num(label); emit_asm("\n");
+        }
+        generate_statement(node.d.looop.body);
+        if (node.d.looop.step)
+            generate_statement(node.d.looop.step);
+        emit_asm("    jmp .loop_s"); emit_num(label); emit_asm("\n");
+        emit_asm(".loop_e"); emit_num(label); emit_asm(":\n");
+
     } else {
         // Default to a simple expression statement
         generate_expr_into_rax(node);
