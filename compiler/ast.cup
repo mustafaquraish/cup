@@ -286,6 +286,13 @@ fn dump_ast(node: Node*, depth: int) {
         putsln(node_type_to_string(node.typ));
         dump_ast(node.d.unary, depth + 1);
     
+    } else if (node.typ == AST_CONDITIONAL || node.typ == AST_IF) {
+        putsln(node_type_to_string(node.typ));
+        dump_ast(node.d.conditional.cond, depth + 1);
+        dump_ast(node.d.conditional.then, depth + 1);
+        if (node.d.conditional.els)
+            dump_ast(node.d.conditional.els, depth + 1);
+    
     } else if (node.typ == AST_LITERAL) {
         if (node.etyp.typ == TYPE_INT) {
             putu(node.d.literal.as_int); putc('\n');
@@ -311,6 +318,12 @@ fn dump_ast(node: Node*, depth: int) {
         } else {
             putc('\n');
         }
+    } else if (node.typ == AST_ASSIGN) {
+        putsln(node_type_to_string(node.typ));
+        dump_ast(node.d.assign.lhs, depth + 1);
+        dump_ast(node.d.assign.rhs, depth + 1);
+    } else if (node.typ == AST_LOCAL_VAR || node.typ == AST_GLOBAL_VAR) {
+        putsln(node.d.variable.name);
     } else {
         putsln(node_type_to_string(node.typ));
     }

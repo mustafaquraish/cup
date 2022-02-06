@@ -2,6 +2,7 @@ import "compiler/ast.cup"
 import "std/file.cup"
 
 let gen_out_file: File*;
+let gen_label_counter = 0;
 
 fn emit_asm4(msg1: char*, msg2: char*, msg3: char*, msg4: char*) {
     fwrite(gen_out_file, msg1, strlen(msg1));
@@ -39,7 +40,7 @@ fn generate_lvalue_into_rax(node: Node*) {
         let offset = node.d.variable.offset;
         emit_asm("    mov rax, rbp\n");
         emit_asm("    sub rax, "); emit_num(offset); emit_asm("\n");
-    } else {    
+    } else {
         die2("Unsupported type in generate_lvalue_into_rax: ", node_type_to_string(node.typ));
     }
 }
@@ -51,18 +52,31 @@ fn generate_expr_into_rax(node: Node*) {
         } else {
             die("Unsupported literal type in generate_expr_into_rax");
         }
+    } else if (node.typ == AST_CONDITIONAL) {
+        let label = ++gen_label_counter;
+        generate_expr_into_rax(node.d.conditional.cond);
+        emit_asm("    cmp rax, 0\n");
+        emit_asm("    je .cond_els"); emit_num(label); emit_asm("\n");
+        generate_expr_into_rax(node.d.conditional.then);
+        emit_asm("    jmp .cond"); emit_num(label); emit_asm("\n");
+        emit_asm(".cond_els"); emit_num(label); emit_asm(":\n");
+        generate_expr_into_rax(node.d.conditional.els);
+        emit_asm(".cond"); emit_num(label); emit_asm(":\n");
+
     } else if (node.typ == AST_PLUS) {
         generate_expr_into_rax(node.d.binary.rhs);
         emit_asm("    push rax\n");
         generate_expr_into_rax(node.d.binary.lhs);
         emit_asm("    pop rbx\n");
         emit_asm("    add rax, rbx\n");
+
     } else if (node.typ == AST_MINUS) {
         generate_expr_into_rax(node.d.binary.rhs);
         emit_asm("    push rax\n");
         generate_expr_into_rax(node.d.binary.lhs);
         emit_asm("    pop rbx\n");
         emit_asm("    sub rax, rbx\n");
+
     } else if (node.typ == AST_DIV) {
         generate_expr_into_rax(node.d.binary.rhs);
         emit_asm("    push rax\n");
@@ -86,6 +100,61 @@ fn generate_expr_into_rax(node: Node*) {
         generate_expr_into_rax(node.d.binary.lhs);
         emit_asm("    pop rbx\n");
         emit_asm("    imul rbx\n");
+
+    } else if (node.typ == AST_EQ) {
+        generate_expr_into_rax(node.d.binary.rhs);
+        emit_asm("    push rax\n");
+        generate_expr_into_rax(node.d.binary.lhs);
+        emit_asm("    pop rbx\n");
+        emit_asm("    cmp rax, rbx\n");
+        emit_asm("    sete al\n");
+        emit_asm("    movzx rax, al\n");
+
+    } else if (node.typ == AST_NEQ) {
+        generate_expr_into_rax(node.d.binary.rhs);
+        emit_asm("    push rax\n");
+        generate_expr_into_rax(node.d.binary.lhs);
+        emit_asm("    pop rbx\n");
+        emit_asm("    cmp rax, rbx\n");
+        emit_asm("    setne al\n");
+        emit_asm("    movzx rax, al\n");
+
+    } else if (node.typ == AST_LT) {
+        generate_expr_into_rax(node.d.binary.rhs);
+        emit_asm("    push rax\n");
+        generate_expr_into_rax(node.d.binary.lhs);
+        emit_asm("    pop rbx\n");
+        emit_asm("    cmp rax, rbx\n");
+        emit_asm("    setl al\n");
+        emit_asm("    movzx rax, al\n");
+
+    } else if (node.typ == AST_LEQ) {
+        generate_expr_into_rax(node.d.binary.rhs);
+        emit_asm("    push rax\n");
+        generate_expr_into_rax(node.d.binary.lhs);
+        emit_asm("    pop rbx\n");
+        emit_asm("    cmp rax, rbx\n");
+        emit_asm("    setle al\n");
+        emit_asm("    movzx rax, al\n");
+
+    } else if (node.typ == AST_GT) {
+        generate_expr_into_rax(node.d.binary.rhs);
+        emit_asm("    push rax\n");
+        generate_expr_into_rax(node.d.binary.lhs);
+        emit_asm("    pop rbx\n");
+        emit_asm("    cmp rax, rbx\n");
+        emit_asm("    setg al\n");
+        emit_asm("    movzx rax, al\n");
+
+    } else if (node.typ == AST_GEQ) {
+        generate_expr_into_rax(node.d.binary.rhs);
+        emit_asm("    push rax\n");
+        generate_expr_into_rax(node.d.binary.lhs);
+        emit_asm("    pop rbx\n");
+        emit_asm("    cmp rax, rbx\n");
+        emit_asm("    setge al\n");
+        emit_asm("    movzx rax, al\n");
+
     } else if (is_lvalue(node.typ)) {
         generate_lvalue_into_rax(node);
         emit_asm("    mov rax, [rax]\n");
@@ -110,7 +179,7 @@ fn generate_statement(node: Node*) {
         generate_expr_into_rax(node.d.unary);
         emit_asm("    mov rsp, rbp\n");
         emit_asm("    pop rbp\n");
-        emit_asm("    ret\n");   
+        emit_asm("    ret\n");
     } else if (node.typ == AST_VARDECL) {
         if (node.d.var_decl.init) {
             generate_expr_into_rax(node.d.var_decl.init);
@@ -119,6 +188,18 @@ fn generate_statement(node: Node*) {
         }
     } else if (node.typ == AST_BLOCK) {
         generate_block(node);
+    } else if (node.typ == AST_IF) {
+        let label = ++gen_label_counter;
+        generate_expr_into_rax(node.d.conditional.cond);
+        emit_asm("    cmp rax, 0\n");
+        emit_asm("    je .els"); emit_num(label); emit_asm("\n");
+        generate_block(node.d.conditional.then);
+        emit_asm("    jmp .if"); emit_num(label); emit_asm("\n");
+        emit_asm(".els"); emit_num(label); emit_asm(":\n");
+        if (node.d.conditional.els)
+            generate_block(node.d.conditional.els);
+        emit_asm(".if"); emit_num(label); emit_asm(":\n");
+
     } else {
         // Default to a simple expression statement
         generate_expr_into_rax(node);
