@@ -27,6 +27,11 @@ fn emit_asm(msg: char*) {
 }
 
 fn emit_num(num: int) {
+    // FIXME: Just support printing negatives directly.
+    if (num < 0) {
+        emit_asm("-");
+        num = -num;
+    }
     fputu(gen_out_file, num);
 }
 
@@ -34,6 +39,8 @@ fn generate_syscall(num: int) {
     emit_asm("    mov rax, "); emit_num(num); emit_asm("\n");
     emit_asm("    syscall\n");
 }
+
+fn generate_expr_into_rax(node: Node*);
 
 fn generate_lvalue_into_rax(node: Node*) {
     if (node.typ == AST_LOCAL_VAR) {
@@ -43,6 +50,20 @@ fn generate_lvalue_into_rax(node: Node*) {
     } else {
         die2("Unsupported type in generate_lvalue_into_rax: ", node_type_to_string(node.typ));
     }
+}
+
+fn generate_function_call(node: Node*) {
+    let total_size = 0;
+    let n = node.d.call.args.size;
+    for (let i = n-1; i >= 0; --i) {
+        let expr: Node* = node.d.call.args.data[i];
+        generate_expr_into_rax(expr);
+        emit_asm("    push rax\n");
+        // TODO: this might be an issue if we pass structs some day
+        total_size = total_size + 8;
+    }
+    emit_asm3("    call func_", node.d.call.func.d.func.name, "\n");
+    emit_asm("    add rsp, "); emit_num(total_size); emit_asm("\n");
 }
 
 fn generate_expr_into_rax(node: Node*) {
@@ -232,6 +253,9 @@ fn generate_expr_into_rax(node: Node*) {
         generate_expr_into_rax(node.d.assign.rhs);
         emit_asm("    pop rbx\n");
         emit_asm("    mov [rbx], rax\n");
+
+    } else if (node.typ == AST_FUNCCALL) {
+        generate_function_call(node);
 
     } else {
         die2("Unsupported node type in generate_expr_into_rax: ", node_type_to_string(node.typ));

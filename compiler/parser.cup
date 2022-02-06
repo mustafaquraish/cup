@@ -2,7 +2,6 @@ import "compiler/ast.cup"
 import "compiler/lexer.cup"
 
 // p_ prefix for parser global variables.
-
 let p_all_functions = vector_new();
 let p_current_function: Node* = null;
 
@@ -31,8 +30,33 @@ fn find_local_variable(token: Token*): Variable* {
         }
     }
 
+    let args = p_current_function.d.func.args;
+    for (let i = 0; i < args.size; ++i) {
+        let var: Variable* = args.data[i];
+        if (streq(token.value.as_string, var.name)) {
+            return var;
+        }
+    }
+
     return null;
 }
+
+fn find_function_definition(token: Token*): Node* {
+    for (let i = 0; i < p_all_functions.size; ++i) {
+        let func: Node* = p_all_functions.data[i];
+        if (streq(token.value.as_string, func.d.func.name)) {
+            return func;
+        }
+    }
+    return null;
+}
+
+fn identifier_exists(token: Token*): int {
+    if (find_local_variable(token)) return true;
+    if (find_function_definition(token)) return true;
+    return false;
+}
+
 
 fn parse_literal(lexer: Lexer*): Node* {
     let token: Token;
@@ -86,24 +110,58 @@ fn parse_type(lexer: Lexer*): Type* {
     return typ;
 }
 
+fn parse_expression(lexer: Lexer*): Node*;
+
+fn parse_function_call_args(lexer: Lexer*, func: Node*): Node* {
+    let token: Token;
+
+    let node = node_new(AST_FUNCCALL);
+    node.d.call.func = func;
+    node.d.call.args = vector_new();
+    
+    lexer_next_assert(lexer, &token, TOKEN_OPEN_PAREN);
+    lexer_peek(lexer, &token);
+
+    while (token.typ != TOKEN_CLOSE_PAREN) {
+        // TODO: Check types
+        let arg = parse_expression(lexer);
+        vector_push(node.d.call.args, arg);
+
+        lexer_peek(lexer, &token);
+
+        if (token.typ == TOKEN_COMMA) {
+            lexer_next(lexer, &token);
+            lexer_peek(lexer, &token);
+        }
+    }
+    lexer_next_assert(lexer, &token, TOKEN_CLOSE_PAREN);
+
+    if (node.d.call.args.size != func.d.func.args.size)
+        die_loc2(&token.loc, "Function call argument count mismatch: ", func.d.func.name);
+
+    return node;
+}
+
 fn parse_identifier(lexer: Lexer*): Node* {
     let token: Token;
     lexer_next_assert(lexer, &token, TOKEN_IDENTIFIER);
 
-    let expr: Node*;
+    let node: Node*;
     let var = find_local_variable(&token);
     if (var != null) {
-        expr = node_new(AST_LOCAL_VAR);
-        expr.d.variable = var;
-        expr.etyp = var.typ;
-        return expr;
+        node = node_new(AST_LOCAL_VAR);
+        node.d.variable = var;
+        node.etyp = var.typ;
+        return node;
+    }
+
+    let func = find_function_definition(&token);
+    if (func != null) {
+        return parse_function_call_args(lexer, func);
     }
 
     die_loc2(&token.loc, "Unknown identifier in parse_identifier: ", token.value.as_string);
 }
-
-
-fn parse_expression(lexer: Lexer*): Node*;
 
 fn parse_factor(lexer: Lexer*): Node* {
     let token: Token;
@@ -385,9 +443,45 @@ fn parse_var_declaration(lexer: Lexer*): Node* {
 fn parse_function_params(lexer: Lexer*, func: Node*) {
     let token: Token;
     lexer_peek(lexer, &token);
+
+    func.d.func.args = vector_new();
+
     // TODO: Actually parse params
     while (token.typ != TOKEN_CLOSE_PAREN) {
-        lexer_next(lexer, &token);
+        lexer_next_assert(lexer, &token, TOKEN_IDENTIFIER);
+        let name = token.value.as_string;
+        
+        if (identifier_exists(&token))
+            die_loc2(&token.loc, "Identifier already defined: ", name);
+        
+        lexer_next_assert(lexer, &token, TOKEN_COLON);
+        let typ = parse_type(lexer);
+
+        let var: Variable* = malloc(sizeof(Variable));
+        var.name = name;
+        var.typ = typ;
+        vector_push(func.d.func.args, var);
+
+        lexer_peek(lexer, &token);
+        if (token.typ == TOKEN_COMMA) {
+            lexer_next(lexer, &token);
+            lexer_peek(lexer, &token);
+        }
+    }
+
+    // Set the offsets for the arguments
+
+    // IMPORTANT: We want to skip the saved ret_addr+old_rbp that we
+    //            pushed on the stack. Each of these is 8 bytes.
+    let offset = -16;
+    let n = func.d.func.args.size;
+    for (let i = 0; i < n; ++i) {
+        let var: Variable* = func.d.func.args.data[i];
+        var.offset = offset;
+        // TODO: (Here and other uses of `size_for_type`):
+        //      Should we only align to max(8, type->size) instead?
+        let var_size = align_up(size_for_type(var.typ), 8);
+        offset = offset - var_size;
     }
 }
 

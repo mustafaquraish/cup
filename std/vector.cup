@@ -15,7 +15,7 @@ fn vector_new_sized(capacity: int): Vector* {
 }
 
 fn vector_new(): Vector* {
-    const initial_default_capacity = 4;
+    const initial_default_capacity = 8;
     return vector_new_sized(initial_default_capacity);
 }
 

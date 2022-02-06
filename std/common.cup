@@ -214,7 +214,7 @@ fn factorial(n: int): int {
 }
 
 fn align_up(val: int, algn: int): int {
-    return 8;
+    return (val + algn - 1) & ~(algn - 1);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
