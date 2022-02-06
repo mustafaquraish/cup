@@ -320,7 +320,6 @@ fn parse_conditional_exp(lexer: Lexer*): Node* {
 
 fn parse_expression(lexer: Lexer*): Node* {
     let lhs = parse_conditional_exp(lexer);
-    putsln(node_type_to_string(lhs.typ));
     if (is_lvalue(lhs.typ)) {
         let token: Token;
         lexer_peek(lexer, &token);
