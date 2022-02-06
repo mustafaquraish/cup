@@ -1,23 +1,22 @@
 #!/bin/bash
 
 # This script does the following:
-#   1. Builds compiler written in C first
-#   2. Builds the compiler written in CUP with the C compiler
-#   3. Compiles the file specified through CLI with CUP compiler
-#   4. Runs the executable
-#   5. Echoes the output of the executable
+# - Builds the compiler written in CUP with the C compile
+# - Compiles the file specified through CLI with CUP compiler
+# - Runs the executable
+# - Echoes the output of the executable
 
 if [ -z "$1" ]
 then
-    echo "Usage: $0 <arguments to build/cup.out>"
+    echo "Usage: $0 [-r] <arguments to build/cup.out>"
     exit 1
 fi
 
 set -xe
 
-make
 build/cupcc compiler/main.cup -o build/cup.nasm
 make build/cup.out
+
 build/cup.out "$@"
 make build/host.out
 
