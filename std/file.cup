@@ -1,0 +1,99 @@
+import "std/common.cup"
+
+const __FILE_BUFFER_CAP = 1024;
+
+struct File {
+    fd: int;
+    name: char*;
+    // Buffer
+    buffer: char[__FILE_BUFFER_CAP];
+    buffer_size: int;
+};
+
+fn fopen(name: char*, mode: char): File* {
+    let open_mode: int;
+         if (mode == 'w') open_mode = O_WRONLY | O_CREAT | O_TRUNC;
+    else if (mode == 'r') open_mode = O_RDONLY;
+    else                  die("Unknown file open mode");
+
+    let f: File* = malloc(sizeof(File));
+    f.name = name;
+    f.fd = open(name, open_mode, 438);  // 438 = 0o666
+    if (f.fd < 0)
+        die("Could not open file");
+    f.buffer_size = 0;
+    return f;
+}
+
+fn fflush(f: File*) {
+    if (f.buffer_size > 0) {
+        let n = write(f.fd, f.buffer, f.buffer_size);
+        if (n < 0)
+            die("Could not write to file");
+        f.buffer_size = 0;
+    }
+}
+
+fn fwrite(f: File*, buf: char*, size: int) {
+    if (f.buffer_size + size > __FILE_BUFFER_CAP)
+        fflush(f);
+    if (size > __FILE_BUFFER_CAP) {
+        write(f.fd, buf, size);
+    } else {
+        memcpy(f.buffer + f.buffer_size, buf, size);
+        f.buffer_size = f.buffer_size + size;
+    }
+}
+
+fn fread(f: File*, buf: char*, size: int): int {
+    let n = read(f.fd, buf, size);
+    if (n < 0)
+        die("Could not read from file");
+    return n;
+}
+
+fn fclose(f: File*) {
+    fflush(f);
+    close(f.fd);
+}
+
+fn fputs(f: File*, s: char*) {
+    fwrite(f, s, strlen(s));
+}
+
+fn fputc(f: File*, c: char) {
+    fwrite(f, &c, 1);
+}
+
+fn fputu(f: File*, n: int) {
+    let buf: char[32];
+    let len = putu_buffer(n, buf);
+    fwrite(f, buf, len);
+}
+
+// Resets file position to the beginning of the file
+fn fsize(f: File*): int {
+    let pos = lseek(f.fd, 0, SEEK_CUR);
+    let size = lseek(f.fd, 0, SEEK_END);
+    lseek(f.fd, pos, SEEK_SET);
+    return size;
+}
+
+// Map file to memory and return pointer
+fn fmap(f: File*, sizeptr: int*): char* {
+    let size = fsize(f);
+    let ptr = mmap(null, size, PROT_READ, MAP_PRIVATE, f.fd, 0);
+    if (ptr == MAP_FAILED)
+        die("Could not map file");
+    if (sizeptr) *sizeptr = size;
+    return ptr;
+}
+
+fn fread_to_string(f: File*, sizeptr: int*): char* {
+    let size = fsize(f);
+    let text: char* = malloc(size + 1);
+    fread(f, text, size);
+    text[size] = 0;
+    if (sizeptr) *sizeptr = size;
+    return text;
+}

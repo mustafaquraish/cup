@@ -132,3 +132,4 @@ fn is_struct_or_structptr(typ: Type*): int {
             return true;
     return false;
 }
+

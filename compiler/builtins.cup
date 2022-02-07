@@ -1,0 +1,158 @@
+import "compiler/ast.cup"
+import "std/vector.cup"
+
+let all_builtins = vector_new();
+
+fn builtin_create_syscall(name: char*, num_args: int) {
+    let node = node_new(AST_BUILTIN);
+    node.etyp = type_new(TYPE_ANY);
+    node.d.func.name = name;
+    node.d.func.args = vector_new_sized(num_args+1); // +1 for syscall number
+    vector_push(node.d.func.args, variable_new("val", type_new(TYPE_INT), 0));
+    for (let i = 0; i < num_args; i = i + 1) {
+        vector_push(node.d.func.args, variable_new("arg", type_new(TYPE_ANY), 0));
+    }
+    vector_push(all_builtins, node);
+}
+
+// Defined in `parser.cup`
+fn constant_push(name: char*, val: int);
+
+fn builtins_push_posix_constants() {
+    constant_push("SYS_read", SYS_read);
+    constant_push("SYS_write", SYS_write);
+    constant_push("SYS_exit", SYS_exit);
+    constant_push("SYS_open", SYS_open);
+    constant_push("SYS_lseek", SYS_lseek);
+    constant_push("SYS_openat", SYS_openat);
+    constant_push("SYS_close", SYS_close);
+    constant_push("SYS_fork", SYS_fork);
+    constant_push("SYS_wait4", SYS_wait4);
+    constant_push("SYS_mmap", SYS_mmap);
+
+    constant_push("SEEK_SET", SEEK_SET);
+    constant_push("SEEK_CUR", SEEK_CUR);
+    constant_push("SEEK_END", SEEK_END);
+
+    constant_push("O_RDONLY", O_RDONLY);
+    constant_push("O_WRONLY", O_WRONLY);
+    constant_push("O_RDWR", O_RDWR);
+    constant_push("O_CREAT", O_CREAT);
+    constant_push("O_EXCL", O_EXCL);
+    constant_push("O_TRUNC", O_TRUNC);
+    constant_push("AT_FDCWD", AT_FDCWD);   
+
+    constant_push("PROT_READ", PROT_READ);
+    constant_push("PROT_WRITE", PROT_WRITE);
+    constant_push("PROT_EXEC", PROT_EXEC);
+    constant_push("PROT_NONE", PROT_NONE);
+
+    constant_push("MAP_SHARED", MAP_SHARED);
+    constant_push("MAP_PRIVATE", MAP_PRIVATE);
+    constant_push("MAP_ANONYMOUS", MAP_ANONYMOUS);
+    constant_push("MAP_FIXED", MAP_FIXED);
+
+    constant_push("MAP_FAILED", MAP_FAILED);
+}
+
+fn initialize_builtins() {
+    let node: Node*;
+    let var: Variable*;
+
+    builtins_push_posix_constants();
+
+    constant_push("OS_IS_MACOS", OS_IS_MACOS);
+    constant_push("OS_IS_LINUX", OS_IS_LINUX);
+
+    // This is very annoying to do by hand.
+    node = node_new(AST_BUILTIN);
+    node.etyp = type_new(TYPE_VOID);
+    node.d.func.name = "print";
+    node.d.func.args = vector_new_sized(1);
+    vector_push(node.d.func.args, variable_new("val", type_new(TYPE_ANY), 0));
+    vector_push(all_builtins, node);
+
+    builtin_create_syscall("syscall0", 0);
+    builtin_create_syscall("syscall1", 1);
+    builtin_create_syscall("syscall2", 2);
+    builtin_create_syscall("syscall3", 3);
+    builtin_create_syscall("syscall4", 4);
+    builtin_create_syscall("syscall5", 5);
+    builtin_create_syscall("syscall6", 6);
+    builtin_create_syscall("syscall7", 7);
+}
+
+fn find_builtin_function(token: Token*): Node* {
+    for (let i = 0; i < all_builtins.size; i = i + 1) {
+        let node: Node* = all_builtins.data[i];
+        if (streq(node.d.func.name, token.value.as_string)) {
+            return node;
+        }
+    }
+    return null;
+}
+
+// Defined in "compiler/codegen.c"
+fn emit_asm(msg: char*);
+fn emit_num(val: int);
+fn generate_syscall(num: int);
+
+fn generate_builtins() {
+    emit_asm("func_print:\n");
+    emit_asm("    mov rdi, [rsp+8]\n");
+    emit_asm("    mov r9, -3689348814741910323\n");
+    emit_asm("    sub rsp, 40\n");
+    emit_asm("    mov byte [rsp+31], 10\n");
+    emit_asm("    lea rcx, [rsp+30]\n");
+    emit_asm("    mov qword rbx, 0\n");
+    emit_asm(".L2:\n");
+    emit_asm("    mov rax, rdi\n");
+    emit_asm("    lea r8, [rsp+32]\n");
+    emit_asm("    mul r9\n");
+    emit_asm("    mov rax, rdi\n");
+    emit_asm("    sub r8, rcx\n");
+    emit_asm("    shr rdx, 3\n");
+    emit_asm("    lea rsi, [rdx+rdx*4]\n");
+    emit_asm("    add rsi, rsi\n");
+    emit_asm("    sub rax, rsi\n");
+    emit_asm("    add eax, 48\n");
+    emit_asm("    mov byte [rcx], al\n");
+    emit_asm("    mov rax, rdi\n");
+    emit_asm("    mov rdi, rdx\n");
+    emit_asm("    mov rdx, rcx\n");
+    emit_asm("    sub rcx, 1\n");
+    emit_asm("    cmp rax, 9\n");
+    emit_asm("    ja .L2\n");
+    emit_asm("    lea rax, [rsp+32]\n");
+    emit_asm("    mov edi, 1\n");
+    emit_asm("    sub rdx, rax\n");
+    emit_asm("    xor eax, eax\n");
+    emit_asm("    lea rsi, [rsp+32+rdx]\n");
+    emit_asm("    mov rdx, r8\n");
+    generate_syscall(SYS_write);
+    emit_asm("    add rsp, 40\n");
+    emit_asm("    ret\n");
+
+    // Syscalls
+    let x86_64_sysc_regs: char*[10];
+    x86_64_sysc_regs[0] = "rax";
+    x86_64_sysc_regs[1] = "rdi";
+    x86_64_sysc_regs[2] = "rsi";
+    x86_64_sysc_regs[3] = "rdx";
+    x86_64_sysc_regs[4] = "rcx";
+    x86_64_sysc_regs[5] = "r8";
+    x86_64_sysc_regs[6] = "r9";
+    x86_64_sysc_regs[7] = "r10";
+    x86_64_sysc_regs[8] = "r11";
+    x86_64_sysc_regs[9] = "r12";
+
+    for (let sysc_args = 0; sysc_args < 7; ++sysc_args) {
+        emit_asm("func_syscall"); emit_num(sysc_args); emit_asm(":\n");
+        for (let i = 0; i < sysc_args+1; ++i) {
+            emit_asm("    mov "); emit_asm(x86_64_sysc_regs[i]); 
+            emit_asm(", [rsp+"); emit_num((i+1)*8); emit_asm("]\n");
+        }
+        emit_asm("    syscall\n");
+        emit_asm("    ret\n");
+    }
+}

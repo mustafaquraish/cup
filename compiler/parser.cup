@@ -697,6 +697,19 @@ fn parse_var_declaration(lexer: Lexer*): Node* {
         add_variable_to_current_block(&decl.var);
     }
 
+    if (0) {
+        putsln("------------------");
+        location_print(&token.loc);
+        putsln(" : Variable declared");
+        puts("Name: ");
+        putsln(decl.var.name);
+        puts("Type: ");
+        putsln(create_type_string(decl.var.typ));
+        puts("Offset: ");
+        putu(abs(decl.var.offset));
+        putsln("\n------------------");
+    }
+
     return node;
 }
 
