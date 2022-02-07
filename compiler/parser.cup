@@ -246,6 +246,7 @@ fn parse_function_call_args(lexer: Lexer*, func: Node*): Node* {
     let node = node_new(AST_FUNCCALL);
     node.d.call.func = func;
     node.d.call.args = vector_new();
+    node.etyp = func.etyp;
     
     lexer_next_assert(lexer, &token, TOKEN_OPEN_PAREN);
     lexer_peek(lexer, &token);
@@ -280,7 +281,7 @@ fn parse_identifier(lexer: Lexer*): Node* {
         node = node_new(AST_LOCAL_VAR);
         node.d.variable = var;
         node.etyp = var.typ;
-        return node;
+        return decay_array_to_pointer(node, &token);
     }
 
     var = find_global_variable(&token);
@@ -288,7 +289,7 @@ fn parse_identifier(lexer: Lexer*): Node* {
         node = node_new(AST_GLOBAL_VAR);
         node.d.variable = var;
         node.etyp = var.typ;
-        return node;
+        return decay_array_to_pointer(node, &token);
     }
 
     let func = find_function_definition(&token);
@@ -320,11 +321,13 @@ fn parse_factor(lexer: Lexer*): Node* {
         lexer_next(lexer, &token);
         expr = node_new(AST_NEG);
         expr.d.unary = parse_factor(lexer);
+        expr = type_check_unary(expr, &token);
 
     } else if (token.typ == TOKEN_TILDE) {
         lexer_next(lexer, &token);
         expr = node_new(AST_BWINV);
         expr.d.unary = parse_factor(lexer);
+        expr = type_check_unary(expr, &token);
 
     } else if (token.typ == TOKEN_PLUSPLUS) {
         lexer_next(lexer, &token);
@@ -336,7 +339,8 @@ fn parse_factor(lexer: Lexer*): Node* {
         let plus = node_new(AST_PLUS);
         plus.d.binary.lhs = expr.d.assign.lhs;
         plus.d.binary.rhs = node_from_int_literal(1);
-        expr.d.assign.rhs = plus;
+        expr.d.assign.rhs = type_check_binary(plus, &token);
+        expr.etyp = expr.d.assign.lhs.etyp;
 
     // --x is changed to (x = x - 1)
     } else if (token.typ == TOKEN_MINUSMINUS) {
@@ -349,7 +353,8 @@ fn parse_factor(lexer: Lexer*): Node* {
         let minus = node_new(AST_MINUS);
         minus.d.binary.lhs = expr.d.assign.lhs;
         minus.d.binary.rhs = node_from_int_literal(1);
-        expr.d.assign.rhs = minus;
+        expr.d.assign.rhs = type_check_binary(minus, &token);
+        expr.etyp = expr.d.assign.lhs.etyp;
 
     // FIXME: This should probably go somewhere else more appropriate
     } else if (token.typ == TOKEN_SIZEOF) {
@@ -363,6 +368,7 @@ fn parse_factor(lexer: Lexer*): Node* {
         lexer_next(lexer, &token);
         expr = node_new(AST_NOT);
         expr.d.unary = parse_factor(lexer);
+        expr = type_check_unary(expr, &token);
 
     } else if (token.typ == TOKEN_OPEN_PAREN) {
         lexer_next(lexer, &token);
@@ -376,16 +382,55 @@ fn parse_factor(lexer: Lexer*): Node* {
         expr = parse_identifier(lexer);
 
     } else if (token.typ == TOKEN_AMPERSAND) {
-        die("TOKEN_AMPERSAND not implemented in parse_factor");
+        lexer_next(lexer, &token);
+        expr = node_new(AST_ADDROF);
+        expr.d.unary = parse_factor(lexer);
+        if (!is_lvalue(expr.d.unary.typ))
+            die_loc(here, &token.loc, "Cannot take address of non-lvalue");
+        expr = type_check_unary(expr, &token);
 
     } else if (token.typ == TOKEN_STAR) {
-        die("TOKEN_STAR not implemented in parse_factor");
+        lexer_next(lexer, &token);
+        let subexp = parse_factor(lexer);
+        if (subexp.etyp.typ != TYPE_PTR)
+            die_loc(here, &token.loc, "Cannot dereference non-pointer type");
+
+        expr = node_new(AST_DEREF);
+        expr.d.unary = subexp;
+        expr = type_check_unary(expr, &token);
 
     } else {
         die_loc2(here, &token.loc, ": Unexpected token found in parse_factor: ", token_type_to_string(token.typ));
     }
 
-    // TODO: Handle postfix operators here.
+    let running = true;
+    while (running) {
+        lexer_peek(lexer, &token);
+        if (token.typ == TOKEN_OPEN_BRACKET) {
+            if (expr.etyp.typ != TYPE_PTR)
+                die_loc(here, &token.loc, "Cannot index non-pointer/array type");
+            lexer_next(lexer, &token);
+
+            let index = parse_expression(lexer);
+
+            let offset = node_new(AST_PLUS);
+            offset.d.binary.lhs = expr;
+            offset.d.binary.rhs = index;
+            offset = type_check_binary(offset, &token);
+            
+            expr = node_new(AST_DEREF);
+            expr.d.unary = offset;
+            expr = type_check_unary(expr, &token);
+
+            lexer_next_assert(lexer, &token, TOKEN_CLOSE_BRACKET);
+            
+        } else if (token.typ == TOKEN_DOT) {
+            die_loc(here, &token.loc, "Member access not implemented");
+
+        } else {
+            running = false;
+        }
+    }
 
     return expr;
 }
@@ -402,7 +447,7 @@ fn parse_term(lexer: Lexer*): Node* {
         let rhs = parse_factor(lexer);
         op.d.binary.lhs = lhs;
         op.d.binary.rhs = rhs;
-        lhs = op;
+        lhs = type_check_binary(op, &token);
         lexer_peek(lexer, &token);
     }
     return lhs;
@@ -419,7 +464,7 @@ fn parse_additive(lexer: Lexer*): Node* {
         let rhs = parse_term(lexer);
         op.d.binary.lhs = lhs;
         op.d.binary.rhs = rhs;
-        lhs = op;
+        lhs = type_check_binary(op, &token);
         lexer_peek(lexer, &token);
     }
     return lhs;
@@ -437,7 +482,7 @@ fn parse_relational(lexer: Lexer*): Node* {
         let rhs = parse_additive(lexer);
         op.d.binary.lhs = lhs;
         op.d.binary.rhs = rhs;
-        lhs = op;
+        lhs = type_check_binary(op, &token);
         lexer_peek(lexer, &token);
     }
     return lhs;
@@ -454,7 +499,7 @@ fn parse_equality(lexer: Lexer*): Node* {
         let rhs = parse_relational(lexer);
         op.d.binary.lhs = lhs;
         op.d.binary.rhs = rhs;
-        lhs = op;
+        lhs = type_check_binary(op, &token);
         lexer_peek(lexer, &token);
     }
     return lhs;
@@ -471,7 +516,7 @@ fn parse_and(lexer: Lexer*): Node* {
         let rhs = parse_equality(lexer);
         op.d.binary.lhs = lhs;
         op.d.binary.rhs = rhs;
-        lhs = op;
+        lhs = type_check_binary(op, &token);
         lexer_peek(lexer, &token);
     }
     return lhs;
@@ -488,7 +533,7 @@ fn parse_exclusive_or(lexer: Lexer*): Node* {
         let rhs = parse_and(lexer);
         op.d.binary.lhs = lhs;
         op.d.binary.rhs = rhs;
-        lhs = op;
+        lhs = type_check_binary(op, &token);
         lexer_peek(lexer, &token);
     }
     return lhs;
@@ -505,7 +550,7 @@ fn parse_inclusive_or(lexer: Lexer*): Node* {
         let rhs = parse_exclusive_or(lexer);
         op.d.binary.lhs = lhs;
         op.d.binary.rhs = rhs;
-        lhs = op;
+        lhs = type_check_binary(op, &token);
         lexer_peek(lexer, &token);
     }
     return lhs;
@@ -522,7 +567,7 @@ fn parse_logical_and(lexer: Lexer*): Node* {
         let rhs = parse_inclusive_or(lexer);
         op.d.binary.lhs = lhs;
         op.d.binary.rhs = rhs;
-        lhs = op;
+        lhs = type_check_binary(op, &token);
         lexer_peek(lexer, &token);
     }
     return lhs;
@@ -539,7 +584,7 @@ fn parse_logical_or(lexer: Lexer*): Node* {
         let rhs = parse_logical_and(lexer);
         op.d.binary.lhs = lhs;
         op.d.binary.rhs = rhs;
-        lhs = op;
+        lhs = type_check_binary(op, &token);
         lexer_peek(lexer, &token);
     }
     return lhs;
@@ -561,7 +606,11 @@ fn parse_conditional_exp(lexer: Lexer*): Node* {
         cond.d.conditional.then = then;
         cond.d.conditional.els = els;
 
+        if (!types_equal(then.etyp, els.etyp))
+            die_loc(here, &token.loc, "THEN and ELSE branches of conditional expression have different types");
+
         lhs = cond;
+        lhs.etyp = then.etyp;
     }
     return lhs;
 }
@@ -615,6 +664,9 @@ fn parse_var_declaration(lexer: Lexer*): Node* {
     lexer_next_assert(lexer, &token, TOKEN_LET);
     lexer_next_assert(lexer, &token, TOKEN_IDENTIFIER);
 
+    if (identifier_exists(&token))
+        die_loc2(here, &token.loc, "Identifier already defined: %s", token.value.as_string);
+
     let is_global = (p_current_function == null);
 
     // TODO: check if identifier is already defined
@@ -623,18 +675,19 @@ fn parse_var_declaration(lexer: Lexer*): Node* {
     decl.var.name = token.value.as_string;
 
     lexer_peek(lexer, &token);
-    // TODO: implicit types when type system is better
-    lexer_next_assert(lexer, &token, TOKEN_COLON);
-    decl.var.typ = parse_type(lexer);
+    let missing_type = true;
+    if (token.typ == TOKEN_COLON) {
+        lexer_next(lexer, &token);
+        decl.var.typ = parse_type(lexer);
+        missing_type = false;
+        lexer_peek(lexer, &token);
+    }
     
-    lexer_peek(lexer, &token);
     if (token.typ == TOKEN_ASSIGN) {
         lexer_next(lexer, &token);
         decl.init = parse_expression(lexer);
-    } 
-    
-    // FIXME: This will need to be enabled at some point
-    if (false) {
+        decl.var.typ = decl.init.etyp;
+    } else if (missing_type) {
         die_loc(here, &token.loc, "Expected ':' or '=' after variable declaration");
     }
 
@@ -893,7 +946,7 @@ fn parse_program(lexer: Lexer*): Node* {
             parser_open_new_file(path);
             lexer = vector_top(p_lexer_stack);
         } else {
-            die_loc2(here, &token.loc, "unexpected token in parse_program", token_type_to_string(token.typ));
+            die_loc2(here, &token.loc, "unexpected token in parse_program: ", token_type_to_string(token.typ));
         }
 
         lexer_peek(lexer, &token);

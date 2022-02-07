@@ -337,3 +337,129 @@ fn dump_ast(node: Node*, depth: int) {
         putsln(node_type_to_string(node.typ));
     }
 }
+
+// Defined below.
+fn type_check_unary(node: Node*, token: Token*): Node*;
+
+fn decay_array_to_pointer(node: Node*, token: Token*): Node* {
+    // We can only take the address of an lvalue, so we need to ensure that
+    if (is_lvalue(node.typ) && node.etyp.typ == TYPE_ARRAY) {
+        let address = node_new(AST_ADDROF);
+        address.d.unary = node;
+        address = type_check_unary(address, token);
+        node = address;
+    }
+    return node;
+}
+
+fn type_check_unary(node: Node*, token: Token*): Node* {
+    let old_type = node.d.unary.etyp;
+
+    if (node.typ != AST_ADDROF && old_type.typ == TYPE_STRUCT)
+        die_loc(here, &token.loc, "Performing invalid unary operation on struct type");
+
+    if (node.typ == AST_NOT) {
+        node.etyp = type_new(TYPE_INT);
+    } else if (node.typ == AST_ADDROF) {
+        let ptr = type_new(TYPE_PTR);
+        // The address of an array is a pointer to the first element
+        ptr.ptr = old_type.typ == TYPE_ARRAY ? old_type.ptr : old_type;
+        node.etyp = ptr;
+    } else if (node.typ == AST_DEREF) {
+        if (old_type.typ != TYPE_PTR)
+            die_loc(here, &token.loc, "Cannot dereference non-pointer type");
+        node.etyp = old_type.ptr;
+        // If the dereferenced type is an array, we need to decay it to a
+        // pointer to the first element.
+        node = decay_array_to_pointer(node, token);
+    } else if (node.typ == AST_NEG) {
+        if (old_type.typ != TYPE_INT)
+            die_loc(here, &token.loc, "Cannot negate non-integer type");
+        node.etyp = type_new(TYPE_INT);
+    } else {
+        // Default to not changing the type
+        node.etyp = old_type;
+    }
+    return node;
+}
+
+fn type_check_binary(node: Node*, token: Token*): Node*
+{
+    let lhs = node.d.binary.lhs.etyp;
+    let rhs = node.d.binary.rhs.etyp;
+
+    if (lhs.typ == TYPE_STRUCT || rhs.typ == TYPE_STRUCT)
+        die_loc(here, &token.loc, "Performing invalid binary operation on struct type");
+
+    if (node.typ == AST_PLUS) {
+        if (is_int_type(lhs) && is_int_type(rhs)) {
+            node.etyp = type_new(TYPE_INT);
+        } else if (lhs.typ == TYPE_PTR && is_int_type(rhs)) {
+            node.etyp = lhs;
+            // Pointer arithmetic!
+            if (size_for_type(lhs.ptr) != 1) {
+                let mul = node_new(AST_MUL);
+                mul.d.binary.lhs = node.d.binary.rhs;
+                mul.d.binary.rhs = node_from_int_literal(size_for_type(lhs.ptr));
+                node.d.binary.rhs = mul;
+            }
+        } else if (is_int_type(lhs) && rhs.typ == TYPE_PTR) {
+            node.etyp = rhs;
+            // Pointer arithmetic!
+            if (size_for_type(rhs.ptr) != 1) {
+                let mul = node_new(AST_MUL);
+                mul.d.binary.lhs = node.d.binary.lhs;
+                mul.d.binary.rhs = node_from_int_literal(size_for_type(rhs.ptr));
+                node.d.binary.lhs = mul;
+            }
+        } else {
+            die_loc(here, &token.loc, "Cannot add non-integer types");
+        }
+    } else if (node.typ == AST_MINUS) {
+        if (is_int_type(lhs) && is_int_type(rhs)) {
+            node.etyp = type_new(TYPE_INT);
+        } else if (lhs.typ == TYPE_PTR && is_int_type(rhs)) {
+            node.etyp = lhs;
+            // Pointer arithmetic!
+            if (size_for_type(lhs.ptr) != 1) {
+                let mul = node_new(AST_MUL);
+                mul.d.binary.lhs = node.d.binary.rhs;
+                mul.d.binary.rhs = node_from_int_literal(size_for_type(lhs.ptr));
+                node.d.binary.rhs = mul;
+            }
+        } else if (is_int_type(lhs) && rhs.typ == TYPE_PTR) {
+            node.etyp = rhs;
+            // Pointer arithmetic!
+            if (size_for_type(rhs.ptr) != 1) {
+                let mul = node_new(AST_MUL);
+                mul.d.binary.lhs = node.d.binary.lhs;
+                mul.d.binary.rhs = node_from_int_literal(size_for_type(rhs.ptr));
+                node.d.binary.lhs = mul;
+            }
+        } else if (lhs.typ == TYPE_PTR && rhs.typ == TYPE_PTR) {
+            node.etyp = type_new(TYPE_INT);
+            if (!types_equal(lhs.ptr, rhs.ptr))
+                die_loc(here, &token.loc, "Cannot subtract pointers of different types");
+
+            // Pointer arithmetic! (Divide by size of element)
+            if (size_for_type(lhs.ptr) != 1) {
+                let mul = node_new(AST_MUL);
+                mul.d.binary.lhs = node.d.binary.lhs;
+                mul.d.binary.rhs = node_from_int_literal(size_for_type(lhs.ptr));
+                node.d.binary.lhs = mul;
+            }
+        } else {
+            die_loc(here, &token.loc, "Cannot subtract non-integer types");
+        }
+    } else if (node.typ == AST_MUL || node.typ == AST_DIV || node.typ == AST_MOD) {
+        if (is_int_type(lhs) && is_int_type(rhs)) {
+            node.etyp = lhs;
+        } else {
+            die_loc2(here, &token.loc, "Cannot do operation non-integer types:", node_type_to_string(node.typ));
+        }
+    } else {
+        // FIXME: This isn't very correct, but it's probably good enough for now
+        node.etyp = type_new(TYPE_INT);
+    }
+    return node;
+}

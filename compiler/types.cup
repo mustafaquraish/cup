@@ -90,3 +90,45 @@ fn create_type_string(typ: Type *): char* {
 
     return buf;
 }
+
+fn is_int_type(typ: Type*): int {
+    if (typ.typ == TYPE_INT) return true;
+    if (typ.typ == TYPE_CHAR) return true;
+    return false;
+}
+
+
+fn types_equal(a: Type*, b: Type*): int {
+    if (a == null && b == null)
+        return true;
+    if (a == null || b == null)
+        return false;
+    if (a.typ == TYPE_ANY || b.typ == TYPE_ANY)
+        return true;
+    return a.typ == b.typ && types_equal(a.ptr, b.ptr);
+}
+
+fn is_convertible(from: Type*, to: Type*): int {
+    if (from.typ == TYPE_ANY || to.typ == TYPE_ANY)
+        return true;
+
+    // Allow converstions to and from void* to any other pointer type
+    if (from.typ == TYPE_PTR && to.typ == TYPE_PTR)
+        if (from.ptr.typ == TYPE_VOID || to.ptr.typ == TYPE_VOID)
+            return true;
+
+    // TODO: Should we rause a warning if the target type is narrower
+    //       than the source type?
+    if (is_int_type(from) && is_int_type(to))
+        return true;
+    return types_equal(from, to);
+}
+
+fn is_struct_or_structptr(typ: Type*): int {
+    if (typ.typ == TYPE_STRUCT || typ.typ == TYPE_UNION)
+        return true;
+    if (typ.typ == TYPE_PTR)
+        if (typ.ptr.typ == TYPE_STRUCT || typ.ptr.typ == TYPE_UNION)
+            return true;
+    return false;
+}

@@ -52,6 +52,8 @@ fn generate_lvalue_into_rax(node: Node*) {
         let offset = node.d.variable.offset;
         emit_asm("    mov rax, global_vars\n");
         emit_asm("    add rax, "); emit_num(offset); emit_asm("\n");
+    } else if (node.typ == AST_DEREF) {
+        generate_expr_into_rax(node.d.unary);
     } else {
         die2("Unsupported type in generate_lvalue_into_rax: ", node_type_to_string(node.typ));
     }
@@ -78,6 +80,9 @@ fn generate_expr_into_rax(node: Node*) {
         } else {
             die("Unsupported literal type in generate_expr_into_rax");
         }
+    } else if (node.typ == AST_ADDROF) {
+        generate_lvalue_into_rax(node.d.unary);
+
     } else if (node.typ == AST_CONDITIONAL) {
         let label = ++gen_label_counter;
         generate_expr_into_rax(node.d.conditional.cond);
