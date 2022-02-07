@@ -29,12 +29,6 @@ fn emit_asm(msg: char*) {
     fwrite(gen_out_file, msg, strlen(msg));
 }
 
-// This is a hack because we don't support manual escaping, and 
-// we need to be able to include '`' in string literal definitions.
-fn emit_asm_char(c: char) {
-    fwrite(gen_out_file, &c, 1);
-}
-
 fn emit_num(num: int) {
     // FIXME: Just support printing negatives directly.
     if (num < 0) {
@@ -486,10 +480,7 @@ fn generate_program(ast: Node*, file: File*) {
     //       cause invalid output and break everything. Maybe just output the
     //       byte values.
     for (let i = 0; i < gen_string_literals.size; ++i) {
-        emit_asm("    global_string_"); emit_num(i); emit_asm(": db ");
-        emit_asm_char('`');
-        emit_asm(gen_string_literals.data[i]);
-        emit_asm_char('`');
-        emit_asm(", 0\n");
+        emit_asm("    global_string_"); emit_num(i);
+        emit_asm(": db \`"); emit_asm(gen_string_literals.data[i]); emit_asm("\`, 0\n");
     }
 }
