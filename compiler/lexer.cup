@@ -19,16 +19,11 @@ fn lexer_new(filename: char*, src: char*, len: int): Lexer* {
 }
 
 fn lexer_new_open_file(filename: char*): Lexer* {
-    let input_file = fopen(filename, 'r');
-    defer fclose(input_file);
-
-    // using `fmap` here doesn't work on linux, for some reason.
-    let file_size = fsize(input_file);
-    let src: char* = malloc(file_size+1);
-    fread(input_file, src, file_size);
-    src[file_size] = '\0';
-
-    return lexer_new(filename, src, file_size);
+    let file = fopen(filename, 'r');
+    let size = 0;
+    let source = fread_to_string(file, &size);
+    fclose(file);
+    return lexer_new(filename, source, size);
 } 
 
 fn lexer_loc(lexer: Lexer*, loc: Location*) {

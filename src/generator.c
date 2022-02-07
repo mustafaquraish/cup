@@ -317,7 +317,6 @@ void generate_expr_into_rax(Node *expr, FILE *out)
         generate_expr_into_rax(expr->conditional.do_then, out);
         fprintf(out, "    jmp .cond_end_%d\n", cur_label);
         fprintf(out, ".cond_else_%d:\n", cur_label);
-        generate_expr_into_rax(expr->binary.right, out);
         // Booleanize the result
         generate_expr_into_rax(expr->conditional.do_else, out);
         fprintf(out, ".cond_end_%d:\n", cur_label);

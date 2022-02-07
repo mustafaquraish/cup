@@ -5,23 +5,80 @@ import "compiler/builtins.cup"
 import "compiler/parser.cup"
 import "compiler/codegen.cup"
 
+fn print_usage_and_exit(name: char*, status: int) {
+    puts("Usage: "); puts(name); putsln(" [options] <file>");
+    putsln("Options:");
+    putsln("  -c <code>  Code to compile");
+    putsln("  -h         Show this help");
+    putsln("  -o <file>  Output file");
+    putsln("  -d         Dump AST to stdout");
+    putsln("Output file will be named 'build/host.nasm' by default");
+    exit(status);
+}
+
+// FIXME: Allow variables functions to be static to a file?
+//        we can avoid the prefixes then.
+const MAX_STDIN_SOURCE_LEN = 4096;
+let m_filename: char*;
+let m_outut_filename = "build/host.nasm";
+let m_source: char*;
+let m_source_len = 0;
+let m_dump_ast = false;
+
+fn parse_cli_args(argc: int, argv: char**) {
+    for (let i = 1; i < argc; ++i) {
+        if (streq(argv[i], "-c")) {
+            m_source_len = strlen(argv[i+1]);
+            m_source = argv[i+1];
+            ++i;
+            m_filename = "CLI";
+        } else if (streq(argv[i], "-h")) {
+            print_usage_and_exit(argv[0], 0);
+        } else if (streq(argv[i], "-d")) {
+            m_dump_ast = true;
+        } else if (streq(argv[i], "-o")) {
+            ++i;
+            m_outut_filename = argv[i];
+        } else if (m_filename == null) {
+            if (streq(argv[i], "-")) {
+                m_filename = "stdin";
+                m_source = malloc(MAX_STDIN_SOURCE_LEN);
+                m_source_len = read(0, m_source, MAX_STDIN_SOURCE_LEN);
+                m_source[m_source_len] = 0;
+                if (m_source_len == MAX_STDIN_SOURCE_LEN) {
+                    putsln("Source too long to use through stdin");
+                    exit(1);
+                }
+            } else {
+                m_filename = argv[i];
+                let file = fopen(m_filename, 'r');
+                m_source = fread_to_string(file, &m_source_len);
+                fclose(file);
+            }
+        } else {
+            print_usage_and_exit(argv[0], 1);
+        }
+    }
+    if (m_filename == null) {
+        print_usage_and_exit(argv[0], 1);
+    }
+}
+
 fn main(argc: int, argv: char **): int {
-    if (argc != 2)
-        die("Usage: cupcc <input_file>");
+    parse_cli_args(argc, argv);
     
-    let lexer = lexer_new_open_file(argv[1]);
+    let lexer = lexer_new(m_filename, m_source, m_source_len);
     let ast = parse_program(lexer);
 
-    dump_ast(ast, 0);
+    if (m_dump_ast)
+        dump_ast(ast, 0);
 
-    let out_file = fopen("build/host.nasm", 'w');
-    defer fclose(out_file);
-
+    let out_file = fopen(m_outut_filename, 'w');
     generate_program(ast, out_file);
+    fclose(out_file); // TODO: Defer on self-host
 
-    puts("---------------------------\n");
-
-    puts("Total amount of memory used by malloc: ");
-    putu(__malloc_buf_pos);
-    putsln("\nDone.");
+    // puts("---------------------------\n");
+    // puts("Total amount of memory used by malloc: ");
+    // putu(__malloc_buf_pos);
+    // putsln("\nDone.");
 }

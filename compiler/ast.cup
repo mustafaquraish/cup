@@ -75,6 +75,7 @@ struct Node {
             body: Node *;
             max_locals_size: int;
             args: Vector *; // Vector<Variable>
+            is_defined: int;
         };
 
         block: struct {
@@ -462,4 +463,31 @@ fn type_check_binary(node: Node*, token: Token*): Node*
         node.etyp = type_new(TYPE_INT);
     }
     return node;
+}
+
+// FIXME: These should be in `types.cup` ideally, but `Variable` is not defined
+//        there and we can't forward-declare types.
+fn compound_push_field(compound: Type*, name: char*, typ: Type*): int {
+    if (compound.typ != TYPE_STRUCT && compound.typ != TYPE_UNION)
+        die("compound_push_field: not a compound type");
+    
+    let is_union = compound.typ == TYPE_UNION;
+
+    let field_size = size_for_type(typ);
+    let offset_factor = min(field_size, 8);
+    let offset = is_union ? 0 : align_up(compound.size, offset_factor);
+    compound.size = is_union ? max(field_size, compound.size) : offset + field_size;
+
+    vector_push(compound.fields, variable_new(name, typ, offset));
+    return offset;
+}
+
+fn compound_find_field(typ: Type*, name: char*): Variable* {
+    for (let i = 0; i < typ.fields.size; ++i) {
+        let field: Variable* = typ.fields.data[i];
+        if (streq(field.name, name)) {
+            return field;
+        }
+    }
+    return null;
 }

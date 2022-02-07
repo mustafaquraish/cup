@@ -12,16 +12,15 @@ then
     exit 1
 fi
 
-set -xe
+set -e
 
 build/cupcc compiler/main.cup -o build/cup.nasm
-make build/cup.out
+make build/cup.out -s
 
 build/cup.out "$@"
-make build/host.out
+make build/host.out -s
 
 set +e
+set -x
 
 build/host.out
-
-echo "Exit status: $?"

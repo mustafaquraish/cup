@@ -425,8 +425,32 @@ fn parse_factor(lexer: Lexer*): Node* {
             lexer_next_assert(lexer, &token, TOKEN_CLOSE_BRACKET);
             
         } else if (token.typ == TOKEN_DOT) {
-            die_loc(here, &token.loc, "Member access not implemented");
+            lexer_next_assert(lexer, &token, TOKEN_DOT);
+            if (!is_struct_or_structptr(expr.etyp)) {
+                putsln(create_type_string(expr.etyp));
+                die_loc(here, &token.loc, "Cannot access member of non-struct type");
+            }
 
+            let is_ptr = expr.etyp.typ == TYPE_PTR;
+            let struct_type = is_ptr ? expr.etyp.ptr : expr.etyp;
+            
+            lexer_next_assert(lexer, &token, TOKEN_IDENTIFIER);
+            let name = token.value.as_string;
+            let field = compound_find_field(struct_type, name);
+
+            if (field == null) {
+                puts("Struct type: "); putsln(create_type_string(struct_type));
+                puts("Field name: "); putsln(name);
+                die_loc(here, &token.loc, "Invalid field name for struct");
+            }
+
+            let member = node_new(AST_MEMBER);
+            member.etyp = field.typ;
+            member.d.member.obj = expr;
+            member.d.member.offset = field.offset;
+            member.d.member.is_ptr = (expr.etyp.typ == TYPE_PTR);
+
+            expr = decay_array_to_pointer(member, &token);
         } else {
             running = false;
         }
@@ -686,7 +710,16 @@ fn parse_var_declaration(lexer: Lexer*): Node* {
     if (token.typ == TOKEN_ASSIGN) {
         lexer_next(lexer, &token);
         decl.init = parse_expression(lexer);
-        decl.var.typ = decl.init.etyp;
+
+        if (missing_type) {
+            decl.var.typ = decl.init.etyp;
+        } else if (!is_convertible(decl.var.typ, decl.init.etyp)) {
+            puts("- Variable type: "); putsln(create_type_string(decl.var.typ));
+            puts("- Value type: "); putsln(create_type_string(decl.init.etyp));
+            die_loc2(here, &token.loc, "Type mismatch for variable declaration: ", decl.var.name);
+        }
+        
+        node.etyp = decl.init.etyp;
     } else if (missing_type) {
         die_loc(here, &token.loc, "Expected ':' or '=' after variable declaration");
     }
@@ -849,7 +882,7 @@ fn parse_statement(lexer: Lexer*): Node* {
         node = parse_for_loop(lexer);
 
     } else if (token.typ == TOKEN_DEFER) {
-        die("defer is not implemented yet");
+        die_loc(here, &token.loc, "defer is not implemented yet");
     } else if (token.typ == TOKEN_LET) {
         node = parse_var_declaration(lexer);
         lexer_next_assert(lexer, &token, TOKEN_SEMICOLON);
@@ -882,6 +915,114 @@ fn parse_block(lexer: Lexer*): Node* {
     return block;
 }
 
+// FIXME: Make this a real type
+fn parse_enum_declaration(lexer: Lexer*) {
+    let token: Token;
+    // TODO: This is all a hack to automatically number
+    //       Some constants. It does not behave like a type,
+    //       and cannot be used as one. Fix this in the future.
+    lexer_next_assert(lexer, &token, TOKEN_ENUM);
+    lexer_next_assert(lexer, &token, TOKEN_IDENTIFIER); // Use this!
+    lexer_next_assert(lexer, &token, TOKEN_OPEN_BRACE);
+
+    let enum_count = 0;
+    lexer_peek(lexer, &token);
+    while (token.typ != TOKEN_CLOSE_BRACE) {
+        lexer_next_assert(lexer, &token, TOKEN_IDENTIFIER);
+
+        if (identifier_exists(&token))
+            die_loc(here, &token.loc, "Identifier already exists, enums just behave like numbered constants.");
+
+        constant_push(token.value.as_string, enum_count);
+        ++enum_count;
+
+        lexer_peek(lexer, &token);
+        if (token.typ == TOKEN_COMMA) {
+            lexer_next(lexer, &token);
+            lexer_peek(lexer, &token);
+        } else if (token.typ != TOKEN_CLOSE_BRACE) {
+            die_loc(here, &token.loc, "Expected a comma or a closing brace.");
+        }
+    }
+    lexer_next_assert(lexer, &token, TOKEN_CLOSE_BRACE);
+}
+
+// FIXME: This should just be part of `parse_type()`, and we should be allowed
+//        to parse a type without a name. Probably also need to handle converstions
+//        between structs with similar embedded types.
+fn parse_struct_union_declaration(lexer: Lexer*, top_level: int): Type* {
+    let token: Token;
+    lexer_next(lexer, &token);
+    
+    if (token.typ != TOKEN_STRUCT && token.typ != TOKEN_UNION)
+        die_loc(here, &token.loc, "Expected STRUCT or UNION in parse_struct_union_declaration");
+    
+    let compound = type_new(token.typ == TOKEN_STRUCT ? TYPE_STRUCT : TYPE_UNION);
+    compound.fields = vector_new();
+
+    lexer_peek(lexer, &token);
+    
+    // For nested temporary structs we don't need a name
+    if (token.typ != TOKEN_IDENTIFIER && top_level)
+        die_loc(here, &token.loc, "You need to specify a name for the struct defined globally.");
+
+    // But if they do provide one, we'll add it to the list of defined structs so they
+    // it can referenced internally.
+    if (token.typ == TOKEN_IDENTIFIER) {
+        compound.struct_name = token.value.as_string;
+        vector_push(p_compound_type_stack, compound);
+        lexer_next(lexer, &token);
+    } else {
+        compound.struct_name = "<anonymous>";
+    }
+
+    lexer_next_assert(lexer, &token, TOKEN_OPEN_BRACE);
+
+    lexer_peek(lexer, &token);
+    while (token.typ != TOKEN_CLOSE_BRACE) {
+        // TODO: Allow no-name fields
+        lexer_next_assert(lexer, &token, TOKEN_IDENTIFIER);
+        let name = token.value.as_string;
+        
+        lexer_next_assert(lexer, &token, TOKEN_COLON);
+        lexer_peek(lexer, &token);
+
+        // We want to allow nested temporary structs.
+        let typ: Type*;
+        if (token.typ == TOKEN_STRUCT || token.typ == TOKEN_UNION) {
+            // Nested structs live in their own "namespace", can't be accessed
+            // from outside, so we will pop them off the stack once done.
+            let prev_compound_count = p_compound_type_stack.size;
+            typ = parse_struct_union_declaration(lexer, false);
+            p_compound_type_stack.size = prev_compound_count;
+
+        } else {
+            typ = parse_type(lexer);
+        }
+
+        compound_push_field(compound, name, typ);
+        lexer_next_assert(lexer, &token, TOKEN_SEMICOLON);
+        lexer_peek(lexer, &token);
+    }
+    lexer_next_assert(lexer, &token, TOKEN_CLOSE_BRACE);
+
+    // printf("Defined %s: %s, size: %lld\n",
+    //     compound.type == TYPE_UNION ? "union":"struct",
+    //     compound.struct_name,
+    //     compound.fields.size
+    // );
+    // for (int i = 0; i < compound.fields.num_fields; i++) {
+    //     printf("\t%s: %s (offset: %lld, size: %lld)\n",
+    //         compound.fields.name[i],
+    //         type_to_str(compound.fields.typ[i]),
+    //         compound.fields.offset[i],
+    //         size_for_type(compound.fields.typ[i])
+    //     );
+    // }
+
+    return compound;
+}
+
 fn parse_function(lexer: Lexer*): Node* {
     let token: Token;
 
@@ -889,28 +1030,53 @@ fn parse_function(lexer: Lexer*): Node* {
     lexer_next_assert(lexer, &token, TOKEN_IDENTIFIER);
     
     // TODO: Check if identifier exists
-    let node = node_new(AST_FUNC);
-    node.d.func.name = token.value.as_string;
+    let func = node_new(AST_FUNC);
+    let dfunc = func;
+    func.d.func.name = token.value.as_string;
     
-    vector_push(p_all_functions, node);
-    p_current_function = node;
+    // If the identifier exists, there's 3 possible cases:
+    //  1. It's another variable / struct, which is an error.
+    //  2. It's a function that's been defined, which is an error.
+    //  3. It's a function that's been declared (but not defined), which is OK
+    if (identifier_exists(&token)) {
+        dfunc = find_function_definition(&token);
+        // Case 1
+        if (dfunc == null)
+            die_loc(here, &token.loc, "Function name already exists as an identifier");
+        // Case 2
+        if (dfunc.d.func.is_defined)
+            die_loc(here, &token.loc, "Function already defined earlier");
+
+        // Case 3 (No error, just set the current function correctly)
+        p_current_function = func;
+    } else {
+        // We don't have a declaration yet, push this.
+        vector_push(p_all_functions, func);
+        p_current_function = func;
+    }
 
     lexer_next_assert(lexer, &token, TOKEN_OPEN_PAREN);
-    parse_function_params(lexer, node);
+    parse_function_params(lexer, func);
     lexer_next_assert(lexer, &token, TOKEN_CLOSE_PAREN);
 
     lexer_peek(lexer, &token);
     if (token.typ == TOKEN_COLON) {
         lexer_next(lexer, &token);
-        node.etyp = parse_type(lexer);
+        func.etyp = parse_type(lexer);
     } else {
-        node.etyp = type_new(TYPE_VOID);
+        func.etyp = type_new(TYPE_VOID);
     }
 
-    node.d.func.body = parse_block(lexer);
+    lexer_peek(lexer, &token);
+    if (token.typ == TOKEN_OPEN_BRACE) {
+        func.d.func.body = parse_block(lexer);
+        func.d.func.is_defined = true;
+    } else {
+        func.d.func.is_defined = false;
+    }
 
     p_current_function = null;
-    return node;
+    return func;
 }
 
 let p_opened_files = vector_new();
@@ -925,7 +1091,7 @@ fn parser_open_new_file(path: char*) {
     }
     for (let i = 0; i < p_opened_files.size; i = i + 1) {
         if (streq(p_opened_files.data[i], path)) {
-            puts("Already opened file: "); puts(path); putsln(": Ignoring.");
+            // Already opened this file, ignore
             return;
         }
     }
@@ -958,6 +1124,10 @@ fn parse_program(lexer: Lexer*): Node* {
             let path = token.value.as_string;
             parser_open_new_file(path);
             lexer = vector_top(p_lexer_stack);
+        } else if (token.typ == TOKEN_STRUCT || token.typ == TOKEN_UNION) {
+            parse_struct_union_declaration(lexer, true);
+        } else if (token.typ == TOKEN_ENUM) {
+            parse_enum_declaration(lexer);
         } else {
             die_loc2(here, &token.loc, "unexpected token in parse_program: ", token_type_to_string(token.typ));
         }

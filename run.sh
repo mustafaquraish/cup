@@ -13,13 +13,13 @@ then
     exit 1
 fi
 
-set -xe
+set -e
 
-make
+make -s
 build/cupcc "$@"
-make build/output.out
+make build/output.out -s
 
 set +e
+set -x
 
 build/output.out
-echo "Exit status: $?"

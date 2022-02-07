@@ -1,4 +1,5 @@
 import "std/common.cup"
+import "std/vector.cup"
 
 enum BaseType {
     TYPE_VOID,
@@ -19,11 +20,7 @@ struct Type {
     struct_name: char*;
     size: int;
     array_size: int;
-    fields: struct {
-        names: char**;
-        types: Type**;
-        num_fields: int;
-    };
+    fields: Vector*; // Vector<Variable*>;
 };
 
 fn size_for_base_type(type: int): int {
@@ -86,7 +83,8 @@ fn create_type_string(typ: Type *): char* {
     else if (typ.typ == TYPE_CHAR) strcat(buf, "char");
     else if (typ.typ == TYPE_VOID) strcat(buf, "void");
     else if (typ.typ == TYPE_ANY) strcat(buf, "any");
-    else  die("type_to_string: unknown type");
+    else if (typ.typ == TYPE_STRUCT) strcat(buf, typ.struct_name);
+    else  die("create_type_string: unknown type");
 
     return buf;
 }
