@@ -62,8 +62,6 @@ fn type_new(typ: int): Type* {
     if (typ == TYPE_VOID) return _type_void;
     if (typ == TYPE_ANY) return _type_any;
 
-    putsln("Allocating Type*");
-
     let t: Type* = malloc(sizeof(Type));
     t.typ = typ;
     t.size = size_for_base_type(typ);

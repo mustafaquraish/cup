@@ -200,6 +200,15 @@ Token Lexer_next(Lexer *lexer)
 
 
         default: {
+            // Hack to support getting source locations
+            if (Lexer_starts_with(lexer, "here")) {
+                char *loc_string = calloc(sizeof(char), 100);
+                sprintf(loc_string, "%s:%lld:%lld", lexer->filename, lexer->line+1, lexer->col+1);
+                Token token = Token_from_string(loc_string, Lexer_loc(lexer));
+                advance(lexer, 4);
+                return token;
+            }
+
             // Handle keywords explicitly
             #define LEX_KEYWORD(token_type, str) if (Lexer_starts_with(lexer, str)) return Lexer_make_token(lexer, token_type, strlen(str));
             ENUM_KEYWORDS(LEX_KEYWORD)

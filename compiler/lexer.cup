@@ -217,7 +217,7 @@ fn lexer_next(lexer: Lexer*, token: Token*) {
                 lexer_loc(lexer, &loc);
 
                 if (pos == lexer.len)
-                    die_loc(&loc, "EOF while parsing string literal");
+                    die_loc(here, &loc, "EOF while parsing string literal");
 
                 // Careful with indexing here, because we want to skip opening and closing quotes
                 let str_len = pos - lexer.pos - 1;

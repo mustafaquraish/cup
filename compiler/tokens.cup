@@ -185,16 +185,18 @@ fn location_print(loc: Location *) {
     putu(loc.col + 1);
 }
 
-fn die_loc2(loc: Location*, msg1: char *, msg2: char *) {
+fn die_loc2(eloc: char*, loc: Location*, msg1: char *, msg2: char *) {
     location_print(loc);
     puts(": ");
     puts(msg1);
     putsln(msg2);
+    puts("Note: Error happened here: ");
+    putsln(eloc);
     exit(1);
 }
 
-fn die_loc(loc: Location*, msg: char *) {
-    die_loc2(loc, msg, "");
+fn die_loc(eloc: char*, loc: Location*, msg: char *) {
+    die_loc2(eloc, loc, msg, "");
 }
 
 fn token_from_type(token: Token*, typ: int, loc: Location *) {

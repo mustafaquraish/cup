@@ -155,7 +155,7 @@ fn parse_literal(lexer: Lexer*): Node* {
         node.d.literal.as_char = token.value.as_char;
         node.etyp = type_new(TYPE_CHAR);
     } else {
-        die_loc2(&token.loc, "Unexpected token in parse_literal: ", token_type_to_string(token.typ));
+        die_loc2(here, &token.loc, "Unexpected token in parse_literal: ", token_type_to_string(token.typ));
     }
     return node;
 }
@@ -177,7 +177,7 @@ fn parse_type(lexer: Lexer*): Type* {
         lexer_next_assert(lexer, &token, TOKEN_IDENTIFIER);
         typ = find_compound_type(&token);
         if (!typ)
-            die_loc2(&token.loc, "Unknown token in parse_type: ", token.value.as_string);
+            die_loc2(here, &token.loc, "Unknown token in parse_type: ", token.value.as_string);
     }
     
     let running = true;
@@ -199,12 +199,12 @@ fn parse_type(lexer: Lexer*): Type* {
             } else if (token.typ == TOKEN_IDENTIFIER) {
                 let constant = find_constant(&token);
                 if (!constant)
-                    die_loc2(&token.loc, "Could not find constant: ", token.value.as_string);
+                    die_loc2(here, &token.loc, "Could not find constant: ", token.value.as_string);
                 // FIXME: This is a complete mess.
                 let value = constant.d.constant.value;
                 arr.array_size = value.d.literal.as_int;
             } else {
-                die_loc(&token.loc, "Expected a constant expression for array size");
+                die_loc(here, &token.loc, "Expected a constant expression for array size");
             }
             lexer_next_assert(lexer, &token, TOKEN_CLOSE_BRACKET);
             typ = arr;
@@ -243,7 +243,7 @@ fn parse_function_call_args(lexer: Lexer*, func: Node*): Node* {
     lexer_next_assert(lexer, &token, TOKEN_CLOSE_PAREN);
 
     if (node.d.call.args.size != func.d.func.args.size)
-        die_loc2(&token.loc, "Function call argument count mismatch: ", func.d.func.name);
+        die_loc2(here, &token.loc, "Function call argument count mismatch: ", func.d.func.name);
 
     return node;
 }
@@ -285,7 +285,7 @@ fn parse_identifier(lexer: Lexer*): Node* {
         return constant.d.constant.value;
     }
 
-    die_loc2(&token.loc, "Unknown identifier in parse_identifier: ", token.value.as_string);
+    die_loc2(here, &token.loc, "Unknown identifier in parse_identifier: ", token.value.as_string);
     return null;
 }
 
@@ -309,7 +309,7 @@ fn parse_factor(lexer: Lexer*): Node* {
         expr = node_new(AST_ASSIGN);
         expr.d.assign.lhs = parse_factor(lexer);
         if (!is_lvalue(expr.d.assign.lhs.typ))
-            die_loc(&token.loc, "Cannot increment non-lvalue");
+            die_loc(here, &token.loc, "Cannot increment non-lvalue");
 
         let plus = node_new(AST_PLUS);
         plus.d.binary.lhs = expr.d.assign.lhs;
@@ -322,7 +322,7 @@ fn parse_factor(lexer: Lexer*): Node* {
         expr = node_new(AST_ASSIGN);
         expr.d.assign.lhs = parse_factor(lexer);
         if (!is_lvalue(expr.d.assign.lhs.typ))
-            die_loc(&token.loc, "Cannot decrement non-lvalue");
+            die_loc(here, &token.loc, "Cannot decrement non-lvalue");
 
         let minus = node_new(AST_MINUS);
         minus.d.binary.lhs = expr.d.assign.lhs;
@@ -360,7 +360,7 @@ fn parse_factor(lexer: Lexer*): Node* {
         die("TOKEN_STAR not implemented in parse_factor");
 
     } else {
-        die_loc2(&token.loc, ": Unexpected token found in parse_factor: ", token_type_to_string(token.typ));
+        die_loc2(here, &token.loc, ": Unexpected token found in parse_factor: ", token_type_to_string(token.typ));
     }
 
     // TODO: Handle postfix operators here.
@@ -601,7 +601,6 @@ fn parse_var_declaration(lexer: Lexer*): Node* {
     decl.var.name = token.value.as_string;
 
     lexer_peek(lexer, &token);
-    let has_type = false;
     // TODO: implicit types when type system is better
     lexer_next_assert(lexer, &token, TOKEN_COLON);
     decl.var.typ = parse_type(lexer);
@@ -635,7 +634,7 @@ fn parse_function_params(lexer: Lexer*, func: Node*) {
         let name = token.value.as_string;
         
         if (identifier_exists(&token))
-            die_loc2(&token.loc, "Identifier already defined: ", name);
+            die_loc2(here, &token.loc, "Identifier already defined: ", name);
         
         lexer_next_assert(lexer, &token, TOKEN_COLON);
         let typ = parse_type(lexer);
@@ -839,8 +838,10 @@ fn parse_program(lexer: Lexer*): Node* {
             block_add_child(node, parse_var_declaration(lexer));
         } else if (token.typ == TOKEN_SEMICOLON) {
             lexer_next(lexer, &token);
+        } else if (token.typ == TOKEN_CONST) {
+            parse_constant_declaration(lexer);
         } else {
-            die_loc2(&token.loc, "unexpected token in parse_program", token_type_to_string(token.typ));
+            die_loc2(here, &token.loc, "unexpected token in parse_program", token_type_to_string(token.typ));
         }
 
         lexer_peek(lexer, &token);
