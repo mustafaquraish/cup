@@ -184,6 +184,22 @@ fn lexer_next(lexer: Lexer*, token: Token*) {
         }
 
         else {
+            // Handle the `here` keyword at lex-time
+            if (lexer_starts_with(lexer, "here")) {
+                let s: char* = malloc(sizeof(char) * 128); // Should be enough 
+                // Print the location into the string
+                let buf: char[32];
+                strcpy(s, lexer.filename); strcat(s, ":");
+                putu_buffer(lexer.line+1, buf); strcat(s, buf); strcat(s, ":");
+                putu_buffer(lexer.col+1, buf); strcat(s, buf);
+
+                // Make the token
+                let loc: Location;
+                lexer_loc(lexer, &loc);
+                lexer_advance(lexer, 4);
+                return token_from_string(token, s, &loc);
+            }
+
             // Parse the keywords...
             for (let i = TOKEN__KEYWORD_BEGIN+1; i < TOKEN__KEYWORD_END; ++i) {
                 let str = keyword_to_string(i);
