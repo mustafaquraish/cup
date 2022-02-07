@@ -136,8 +136,32 @@ fn eval_constexp(node: Node*): int {
     return 0;
 }
 
+fn parse_expression(lexer: Lexer*): Node*;
+
 fn parse_constant_declaration(lexer: Lexer*): Node* {
-    die("parse_constant_declaration is not implemented yet.");
+    let token: Token;
+    lexer_next_assert(lexer, &token, TOKEN_CONST);
+
+    lexer_next_assert(lexer, &token, TOKEN_IDENTIFIER);
+    if (identifier_exists(&token))
+        die_loc2(here, &token.loc, "Identifier already exists: ", token.value.as_string);
+    let constant_name = token.value.as_string;
+
+    lexer_peek(lexer, &token);
+    // All constants are implicitly `int`, but we'll allow it for consistency
+    if (token.typ == TOKEN_COLON) {
+        lexer_next(lexer, &token);
+        if (token.typ != TOKEN_INT)
+            die_loc(here, &token.loc, "Expected 'int' type for constant");
+        lexer_peek(lexer, &token);
+    }
+
+    lexer_next_assert(lexer, &token, TOKEN_ASSIGN);
+    let expr = parse_expression(lexer);
+    let value = eval_constexp(expr);
+    constant_push(constant_name, value);
+
+    lexer_next_assert(lexer, &token, TOKEN_SEMICOLON);
 }
 
 fn parse_literal(lexer: Lexer*): Node* {
@@ -215,8 +239,6 @@ fn parse_type(lexer: Lexer*): Type* {
     }
     return typ;
 }
-
-fn parse_expression(lexer: Lexer*): Node*;
 
 fn parse_function_call_args(lexer: Lexer*, func: Node*): Node* {
     let token: Token;
@@ -609,8 +631,11 @@ fn parse_var_declaration(lexer: Lexer*): Node* {
     if (token.typ == TOKEN_ASSIGN) {
         lexer_next(lexer, &token);
         decl.init = parse_expression(lexer);
-    } else if (!has_type) {
-        die_loc(&token.loc, "Expected ':' or '=' after variable declaration");
+    } 
+    
+    // FIXME: This will need to be enabled at some point
+    if (false) {
+        die_loc(here, &token.loc, "Expected ':' or '=' after variable declaration");
     }
 
     if (is_global) {
@@ -822,6 +847,26 @@ fn parse_function(lexer: Lexer*): Node* {
     return node;
 }
 
+let p_opened_files = vector_new();
+
+fn parser_open_new_file(path: char*) {
+    for (let i = 0; i < p_lexer_stack.size; i = i + 1) {
+        let lex: Lexer* = p_lexer_stack.data[i];
+        if (streq(lex.filename, path)) {
+            puts("Found a circular import dependency in: "); puts(path); putsln(": Exiting.");
+            exit(1);
+        }
+    }
+    for (let i = 0; i < p_opened_files.size; i = i + 1) {
+        if (streq(p_opened_files.data[i], path)) {
+            puts("Already opened file: "); puts(path); putsln(": Ignoring.");
+            return;
+        }
+    }
+    vector_push(p_opened_files, path);
+    vector_push(p_lexer_stack, lexer_new_open_file(path));
+}
+
 fn parse_program(lexer: Lexer*): Node* {
     initialize_builtins();
 
@@ -830,6 +875,7 @@ fn parse_program(lexer: Lexer*): Node* {
     
     let token: Token;
     lexer_peek(lexer, &token);
+    vector_push(p_lexer_stack, lexer);
 
     while (token.typ != TOKEN_EOF) {
         if (token.typ == TOKEN_FN) {
@@ -840,11 +886,22 @@ fn parse_program(lexer: Lexer*): Node* {
             lexer_next(lexer, &token);
         } else if (token.typ == TOKEN_CONST) {
             parse_constant_declaration(lexer);
+        } else if (token.typ == TOKEN_IMPORT) {
+            lexer_next(lexer, &token);
+            lexer_next_assert(lexer, &token, TOKEN_STRINGLIT);
+            let path = token.value.as_string;
+            parser_open_new_file(path);
+            lexer = vector_top(p_lexer_stack);
         } else {
             die_loc2(here, &token.loc, "unexpected token in parse_program", token_type_to_string(token.typ));
         }
 
         lexer_peek(lexer, &token);
+        while (token.typ == TOKEN_EOF && p_lexer_stack.size > 1) {
+            vector_pop(p_lexer_stack);
+            lexer = vector_top(p_lexer_stack);
+            lexer_peek(lexer, &token);
+        }
     }
     return node;
 }
