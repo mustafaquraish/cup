@@ -5,6 +5,8 @@ import "std/file.cup"
 let gen_out_file: File*;
 let gen_label_counter = 0;
 
+let gen_string_literals = vector_new();
+
 fn emit_asm4(msg1: char*, msg2: char*, msg3: char*, msg4: char*) {
     fwrite(gen_out_file, msg1, strlen(msg1));
     fwrite(gen_out_file, msg2, strlen(msg2));
@@ -25,6 +27,12 @@ fn emit_asm2(msg1: char*, msg2: char*) {
 
 fn emit_asm(msg: char*) {
     fwrite(gen_out_file, msg, strlen(msg));
+}
+
+// This is a hack because we don't support manual escaping, and 
+// we need to be able to include '`' in string literal definitions.
+fn emit_asm_char(c: char) {
+    fwrite(gen_out_file, &c, 1);
 }
 
 fn emit_num(num: int) {
@@ -77,6 +85,13 @@ fn generate_expr_into_rax(node: Node*) {
     if (node.typ == AST_LITERAL) {
         if (node.etyp.typ == TYPE_INT) {
             emit_asm("    mov rax, "); emit_num(node.d.literal.as_int); emit_asm("\n");
+        } else if (node.etyp.typ == TYPE_CHAR) {
+            emit_asm("    mov rax, "); emit_num(node.d.literal.as_char); emit_asm("\n");
+        } else if (node.etyp.typ == TYPE_PTR) {
+            let s = node.d.literal.as_string;
+            let idx = gen_string_literals.size;
+            vector_push(gen_string_literals, s);
+            emit_asm("    mov rax, global_string_"); emit_num(idx); emit_asm("\n");
         } else {
             die("Unsupported literal type in generate_expr_into_rax");
         }
@@ -410,4 +425,17 @@ fn generate_program(ast: Node*, file: File*) {
 
     emit_asm("section .bss\n");
     emit_asm("    global_vars: resb "); emit_num(p_global_offset); emit_asm("\n");
+
+    // Global strings
+    emit_asm("section .data\n");
+    // TODO: Don't to this here because a string containing a backtick will
+    //       cause invalid output and break everything. Maybe just output the
+    //       byte values.
+    for (let i = 0; i < gen_string_literals.size; ++i) {
+        emit_asm("    global_string_"); emit_num(i); emit_asm(": db ");
+        emit_asm_char('`');
+        emit_asm(gen_string_literals.data[i]);
+        emit_asm_char('`');
+        emit_asm("\n");
+    }
 }
