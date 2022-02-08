@@ -5,40 +5,44 @@ import "compiler/builtins.cup"
 import "compiler/parser.cup"
 import "compiler/codegen.cup"
 
+// FIXME: Allow variables functions to be static to a file?
+//        we can avoid the prefixes then.
+const MAX_STDIN_SOURCE_LEN = 4096;
+let m_filename: char*;
+let m_output_filename = "build/output";
+let m_source: char*;
+let m_source_len = 0;
+let m_dump_ast = false;
+let m_run_exec = false;
+
 fn print_usage_and_exit(name: char*, status: int) {
     puts("Usage: "); puts(name); putsln(" [options] <file>");
     putsln("Options:");
     putsln("  -c <code>  Code to compile");
     putsln("  -h         Show this help");
+    putsln("  -r         Run the generated executable");
     putsln("  -o <file>  Output file");
     putsln("  -d         Dump AST to stdout");
-    putsln("Output file will be named 'build/host.nasm' by default");
+    puts("Output file will be named '"); puts(m_output_filename); putsln("' by default");
     exit(status);
 }
 
-// FIXME: Allow variables functions to be static to a file?
-//        we can avoid the prefixes then.
-const MAX_STDIN_SOURCE_LEN = 4096;
-let m_filename: char*;
-let m_outut_filename = "build/host.nasm";
-let m_source: char*;
-let m_source_len = 0;
-let m_dump_ast = false;
-
-fn parse_cli_args(argc: int, argv: char**) {
+fn parse_cli_args(argc: int, argv: char**): char** {
     for (let i = 1; i < argc; ++i) {
         if (streq(argv[i], "-c")) {
             m_source_len = strlen(argv[i+1]);
             m_source = argv[i+1];
             ++i;
             m_filename = "CLI";
+        } else if (streq(argv[i], "-r")) {
+            m_run_exec = true;
         } else if (streq(argv[i], "-h")) {
             print_usage_and_exit(argv[0], 0);
         } else if (streq(argv[i], "-d")) {
             m_dump_ast = true;
         } else if (streq(argv[i], "-o")) {
             ++i;
-            m_outut_filename = argv[i];
+            m_output_filename = argv[i];
         } else if (m_filename == null) {
             if (streq(argv[i], "-")) {
                 m_filename = "stdin";
@@ -55,17 +59,22 @@ fn parse_cli_args(argc: int, argv: char**) {
                 m_source = fread_to_string(file, &m_source_len);
                 fclose(file);
             }
-        } else {
+        } else if (!m_run_exec) {
+            // No `-r` option passed, we shouldn't have any extra args.
             print_usage_and_exit(argv[0], 1);
+        } else {
+            // Any extra args with `-r` are passed to the executable.
+            return argv + i;
         }
     }
     if (m_filename == null) {
         print_usage_and_exit(argv[0], 1);
     }
+    return argv + argc;
 }
 
 fn main(argc: int, argv: char **): int {
-    parse_cli_args(argc, argv);
+    let subproc_args = parse_cli_args(argc, argv);
     
     let lexer = lexer_new(m_filename, m_source, m_source_len);
     let ast = parse_program(lexer);
@@ -73,9 +82,45 @@ fn main(argc: int, argv: char **): int {
     if (m_dump_ast)
         dump_ast(ast, 0);
 
-    let out_file = fopen(m_outut_filename, 'w');
+    let asm_filename: char[256];
+    strcpy(asm_filename, m_output_filename);
+    replace_extension(asm_filename, ".nasm");
+
+    let out_file = fopen(asm_filename, 'w');
     generate_program(ast, out_file);
     fclose(out_file); // TODO: Defer on self-host
+
+    let obj_filename: char[256];
+    strcpy(obj_filename, m_output_filename);
+    replace_extension(obj_filename, ".o");
+
+
+    let cmd_args: char*[10];
+    // FIXME: Is there a way to do this without hardcoding the exact path?
+    cmd_args[0] = OS_IS_MACOS ? "/usr/local/bin/nasm" : "/usr/bin/nasm";
+    cmd_args[1] = OS_IS_MACOS ? "-fmacho64" : "-felf64";
+    cmd_args[2] = "-o";
+    cmd_args[3] = obj_filename;
+    cmd_args[4] = asm_filename;
+    cmd_args[5] = null;
+    run_command(cmd_args, true);
+
+    cmd_args[0] = "/usr/bin/ld";
+    cmd_args[1] = "-o";
+    cmd_args[2] = m_output_filename;
+    cmd_args[3] = obj_filename;
+    if (OS_IS_MACOS)
+        cmd_args[4] = "-lSystem";
+    else
+        cmd_args[4] = null;
+    cmd_args[5] = null;
+    run_command(cmd_args, true);
+
+    if (m_run_exec) {
+        --subproc_args; // Always valid
+        subproc_args[0] = m_output_filename;
+        run_command(subproc_args, true);
+    }
 
     // puts("---------------------------\n");
     // puts("Total amount of memory used by malloc: ");

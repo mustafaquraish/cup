@@ -4,22 +4,22 @@
 
 set -e
 
+echo "[+] Compiling the bootstrap compiler..."
 case "$(uname -s)" in
    Darwin)
-        cp bootstrap/macos.nasm bootstrap/cup.nasm
+        cp bootstrap/macos.nasm bootstrap/cupcc.nasm
+        nasm -f macho64 -o bootstrap/cupcc.o bootstrap/cupcc.nasm
+        ld -lSystem -o bootstrap/cupcc bootstrap/cupcc.o
         ;;
    Linux)
-        cp bootstrap/linux.nasm bootstrap/cup.nasm
+        cp bootstrap/linux.nasm bootstrap/cupcc.nasm
+        nasm -f elf64 -o bootstrap/cupcc.o bootstrap/cupcc.nasm
+        ld -o bootstrap/cupcc bootstrap/cupcc.o
         ;;
 esac
 
-echo "[+] Compiling the bootstrap compiler..."
-make bootstrap/cup.out
+echo "[+] Creating build/cupcc with bootstrap compiler..."
 mkdir -p build
-
-echo "[+] Creating build/cup.out with bootstrap compiler..."
-./bootstrap/cup.out compiler/main.cup -o build/cup.nasm
-make build/cup.out
-rm -f bootstrap/cup.nasm
+bootstrap/cupcc -o build/cupcc compiler/main.cup
 
 echo "[+] Bootstrap complete!"

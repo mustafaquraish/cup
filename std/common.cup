@@ -126,6 +126,24 @@ fn atoi(s: char *): int {
     return atoi_end(s, &tmp);
 }
 
+fn find_extension_start(s: char*): int {
+    let len = strlen(s);
+    let i = len - 1;
+    while (i >= 0) {
+        if (s[i] == '.')
+        return i;
+        if (s[i] == '/')
+        return len;
+        --i;
+    }
+    return len;
+}
+
+fn replace_extension(path: char*, new_ext: char*) {
+    let idx = find_extension_start(path);
+    strcpy(path + idx, new_ext);
+}
+
 
 ///////////////////////////////////////////////////////////////////////////////
 // I/O
@@ -254,7 +272,15 @@ fn WEXITSTATUS(status: int): int {
     return (status >> 8) & 127;
 }
 
-fn run_command(args: char**) {
+fn run_command(args: char**, echo: int) {
+    if (echo) {
+        puts("[+]");
+        for (let c = args; *c; ++c) {
+            puts(" "); puts(*c);
+        }
+        puts("\n");
+    }
+
     let pid = fork();
     if (pid == 0) {
         execve(args[0], args, 0);
@@ -271,3 +297,4 @@ fn run_command(args: char**) {
     if (WEXITSTATUS(status) != 0)
         die2(here, ": Child exited with non-zero status");
 }
+
