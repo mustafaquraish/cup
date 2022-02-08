@@ -88,7 +88,7 @@ fn main(argc: int, argv: char **): int {
 
     let out_file = fopen(asm_filename, 'w');
     generate_program(ast, out_file);
-    fclose(out_file); // TODO: Defer on self-host
+    fclose(out_file);   // Want to flush before we assemble.
 
     let obj_filename: char[256];
     strcpy(obj_filename, m_output_filename);
