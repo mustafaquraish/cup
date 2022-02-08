@@ -21,13 +21,7 @@ fn constant_push(name: char*, val: int);
 const MACOS_SYSCALL_OFFSET = 33554432; // 0x2000000;
 fn builtins_push_posix_constants() {
     
-    // TODO: make this permanent?
-    if (OS_IS_MACOS) {
-        constant_push("SYS_execve", 59 + MACOS_SYSCALL_OFFSET);
-    } else {
-        constant_push("SYS_execve", 59);
-    }
-
+    constant_push("SYS_execve", SYS_execve);
     constant_push("SYS_read", SYS_read);
     constant_push("SYS_write", SYS_write);
     constant_push("SYS_exit", SYS_exit);
