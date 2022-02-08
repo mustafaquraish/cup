@@ -142,6 +142,21 @@ fn generate_expr_into_rax(node: Node*) {
         emit_asm("    pop rbx\n");
         emit_asm("    sub rax, rbx\n");
 
+    } else if (node.typ == AST_LSHIFT) {
+        generate_expr_into_rax(node.d.binary.rhs);
+        emit_asm("    push rax\n");
+        generate_expr_into_rax(node.d.binary.lhs);
+        emit_asm("    pop rcx\n");
+        emit_asm("    shl rax, cl\n");
+        
+
+    } else if (node.typ == AST_RSHIFT) {
+        generate_expr_into_rax(node.d.binary.rhs);
+        emit_asm("    push rax\n");
+        generate_expr_into_rax(node.d.binary.lhs);
+        emit_asm("    pop rcx\n");
+        emit_asm("    shr rax, cl\n");
+
     } else if (node.typ == AST_DIV) {
         generate_expr_into_rax(node.d.binary.rhs);
         emit_asm("    push rax\n");

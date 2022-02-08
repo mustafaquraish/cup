@@ -138,12 +138,16 @@ fn lexer_next(lexer: Lexer*, token: Token*) {
         }
 
         else if (c == '<') {
+            if (lexer_peek_char(lexer, 1) == '<')
+                return lexer_make_token(lexer, token, TOKEN_LSHIFT, 2);
             if (lexer_peek_char(lexer, 1) == '=')
                 return lexer_make_token(lexer, token, TOKEN_LEQ, 2);
             return lexer_make_token(lexer, token, TOKEN_LT, 1);
         }
 
         else if (c == '>') {
+            if (lexer_peek_char(lexer, 1) == '>')
+                return lexer_make_token(lexer, token, TOKEN_RSHIFT, 2);
             if (lexer_peek_char(lexer, 1) == '=')
                 return lexer_make_token(lexer, token, TOKEN_GEQ, 2);
             return lexer_make_token(lexer, token, TOKEN_GT, 1);

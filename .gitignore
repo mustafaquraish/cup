@@ -8,6 +8,10 @@ cupcc
 *.o
 *.out
 
+!bootstrap
+!bootstrap/linux.nasm
+!bootstrap/macos.nasm
+
 build
 
 # We ignore the examples by default since it's the playground for testing,

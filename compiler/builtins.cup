@@ -18,7 +18,16 @@ fn builtin_create_syscall(name: char*, num_args: int) {
 // Defined in `parser.cup`
 fn constant_push(name: char*, val: int);
 
+const MACOS_SYSCALL_OFFSET = 33554432; // 0x2000000;
 fn builtins_push_posix_constants() {
+    
+    // TODO: make this permanent?
+    if (OS_IS_MACOS) {
+        constant_push("SYS_execve", 59 + MACOS_SYSCALL_OFFSET);
+    } else {
+        constant_push("SYS_execve", 59);
+    }
+
     constant_push("SYS_read", SYS_read);
     constant_push("SYS_write", SYS_write);
     constant_push("SYS_exit", SYS_exit);
@@ -70,6 +79,14 @@ fn initialize_builtins() {
     node.d.func.name = "print";
     node.d.func.args = vector_new_sized(1);
     vector_push(node.d.func.args, variable_new("val", type_new(TYPE_ANY), 0));
+    vector_push(all_builtins, node);
+
+    // The return value of fork() is weird on macOS, parent/child is returned in rdx
+    // and the child pid is returned in rax, so we'll make our own wrapper.
+    node = node_new(AST_BUILTIN);
+    node.etyp = type_new(TYPE_INT);
+    node.d.func.name = "fork";
+    node.d.func.args = vector_new_sized(0);
     vector_push(all_builtins, node);
 
     builtin_create_syscall("syscall0", 0);
@@ -155,4 +172,17 @@ fn generate_builtins() {
         emit_asm("    syscall\n");
         emit_asm("    ret\n");
     }
+
+    emit_asm("func_fork:\n");
+    emit_asm("    mov rdi, [rsp+8]\n");
+    emit_asm("    mov rax, "); emit_num(SYS_fork); emit_asm("\n");
+    emit_asm("    syscall\n");
+    if (OS_IS_MACOS) {
+        // If rdx is 0, we are in the child, so set rax to 0 to match Linux
+        emit_asm("    cmp rdx, 0\n");
+        emit_asm("    je .L1\n");
+        emit_asm("    mov rax, 0\n");
+        emit_asm(".L1:\n");
+    }
+    emit_asm("    ret\n");
 }

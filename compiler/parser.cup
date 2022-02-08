@@ -482,7 +482,7 @@ fn parse_additive(lexer: Lexer*): Node* {
 
     let lhs = parse_term(lexer);
     lexer_peek(lexer, &token);
-    while (token.typ == TOKEN_PLUS || token.typ == TOKEN_MINUS) {
+    while (token.typ == TOKEN_PLUS || token.typ == TOKEN_MINUS || token.typ == TOKEN_LSHIFT || token.typ == TOKEN_RSHIFT) {
         lexer_next(lexer, &token);
         let op = node_new(binary_token_to_op(token.typ));
         let rhs = parse_term(lexer);

@@ -32,9 +32,7 @@ fn openat(fd: int, path: char*, flags: int, mode: int): int {
     return syscall4(SYS_openat, fd, path, flags, mode);
 }
 
-fn fork(): int {
-    return syscall0(SYS_fork);
-}
+// fork() is a builtin because of OS-specific semantics.
 
 fn wait(status: int*): int {
     return syscall4(SYS_wait4, -1, status, 0, 0);
@@ -48,6 +46,9 @@ fn mmap(addr: void*, len: int, prot: int, flags: int, fd: int, offset: int): voi
     return syscall6(SYS_mmap, addr, len, prot, flags, fd, offset);
 }
 
+fn execve(filename: char*, argv: char**, envp: char**): int {
+    return syscall3(SYS_execve, filename, argv, envp);
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 // Strings
@@ -241,3 +242,32 @@ fn malloc(size: int): void* {
 }
 
 fn free(ptr: void*) {} // Placeholder
+
+///////////////////////////////////////////////////////////////////////////////
+// External processes
+
+fn WIFEXITED(status: int): int {
+    return (status & 127) == 0;
+}
+
+fn WEXITSTATUS(status: int): int {
+    return (status >> 8) & 127;
+}
+
+fn run_command(args: char**) {
+    let pid = fork();
+    if (pid == 0) {
+        execve(args[0], args, 0);
+        die2(here, ": Error in execve()");
+    }
+    // Parent
+    let status: int;
+    if (wait(&status) < 0)
+        die2(here, ": Error in wait()");
+    
+    if (!WIFEXITED(status))
+        die2(here, ": Child did not exit normally");
+    
+    if (WEXITSTATUS(status) != 0)
+        die2(here, ": Child exited with non-zero status");
+}
