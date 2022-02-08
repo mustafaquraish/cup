@@ -14,12 +14,14 @@ let m_source: char*;
 let m_source_len = 0;
 let m_dump_ast = false;
 let m_run_exec = false;
+let m_silent = false;
 
 fn print_usage_and_exit(name: char*, status: int) {
     puts("Usage: "); puts(name); putsln(" [options] <file>");
     putsln("Options:");
     putsln("  -c <code>  Code to compile");
     putsln("  -h         Show this help");
+    putsln("  -s         Silence debug output");
     putsln("  -r         Run the generated executable");
     putsln("  -o <file>  Output file");
     putsln("  -d         Dump AST to stdout");
@@ -34,6 +36,8 @@ fn parse_cli_args(argc: int, argv: char**): char** {
             m_source = argv[i+1];
             ++i;
             m_filename = "CLI";
+        } else if (streq(argv[i], "-s")) {
+            m_silent = true;
         } else if (streq(argv[i], "-r")) {
             m_run_exec = true;
         } else if (streq(argv[i], "-h")) {
@@ -103,7 +107,7 @@ fn main(argc: int, argv: char **): int {
     cmd_args[3] = obj_filename;
     cmd_args[4] = asm_filename;
     cmd_args[5] = null;
-    run_command(cmd_args, true);
+    run_command(cmd_args, !m_silent);
 
     cmd_args[0] = "/usr/bin/ld";
     cmd_args[1] = "-o";
@@ -114,12 +118,12 @@ fn main(argc: int, argv: char **): int {
     else
         cmd_args[4] = null;
     cmd_args[5] = null;
-    run_command(cmd_args, true);
+    run_command(cmd_args, !m_silent);
 
     if (m_run_exec) {
         --subproc_args; // Always valid
         subproc_args[0] = m_output_filename;
-        run_command(subproc_args, true);
+        run_command(subproc_args, !m_silent);
     }
 
     // puts("---------------------------\n");
