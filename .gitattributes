@@ -1,1 +1,2 @@
 *.cup linguist-language=Rust
+bootstrap/*.nasm binary -text -diff
