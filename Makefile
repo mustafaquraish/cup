@@ -1,5 +1,7 @@
 # No separable compilation here, the program is too small to bother
 
+# TODO: This is a remnant from C-days, will eventually be replaced.
+
 CC = gcc
 CFLAGS = -Wall -Wextra -Werror -ggdb3
 SRCS = $(wildcard src/*.c)

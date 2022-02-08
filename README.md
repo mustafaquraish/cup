@@ -8,23 +8,15 @@ Only linux and macOS (only on x86_64) are supported.
 
 ## Building
 
-Build the compiler `build/cupcc` using:
+The reference implementation of the compiler is written in CUP, so you'll need to use the pre-compiled NASM files yourself. Assuming you have `nasm` on your PATH, you should be able to run the command below to create the `./build/cup.out` compiler.
 ```bash
-make
+./meta/bootstrap.sh
 ```
-Compile a test program to nasm using:
+Compile, assemble, link an run a test program (using `./build/cup.out`) into an executable (by default `./build/output.out`) using:
 ```bash
-build/cupcc /path/to/test.cup -o test.nasm
-```
-Assemble and link the assembly to a binary:
-```bash
-make test.out   # converts XXX.nasm to XXX.out
+./meta/run.sh /path/to/test.cup
 ```
 
-Or, you can do all the above in one go, and run the exeutable with the `run.sh` script, which by default creates the `build/output.out` executable:
-```bash
-./run.sh /path/to/test.cup
-```
 ---
 
 ## Code Samples
