@@ -7,6 +7,8 @@ let gen_label_counter = -1; // So the labels start at 0
 
 let gen_string_literals = vector_new();
 
+let gen_defer_stack = vector_new();
+
 fn emit_asm4(msg1: char*, msg2: char*, msg3: char*, msg4: char*) {
     fwrite(gen_out_file, msg1, strlen(msg1));
     fwrite(gen_out_file, msg2, strlen(msg2));
@@ -149,7 +151,6 @@ fn generate_expr_into_rax(node: Node*) {
         emit_asm("    pop rcx\n");
         emit_asm("    shl rax, cl\n");
         
-
     } else if (node.typ == AST_RSHIFT) {
         generate_expr_into_rax(node.d.binary.rhs);
         emit_asm("    push rax\n");
@@ -336,7 +337,13 @@ fn generate_statement(node: Node*) {
         }
 
         emit_asm("    push rax\n");
-        // TODO: Undo the defer stack here, this is for consistency with the C implementation for now.
+        // We want to "pop off" the defer stack so that nested defers don't loop
+        // forever, but we'll restore it after the generating these
+        let prev_defer_count = gen_defer_stack.size;
+        while (gen_defer_stack.size > 0) {
+            generate_statement(vector_pop(gen_defer_stack));
+        }
+        gen_defer_stack.size = prev_defer_count;
         emit_asm("    pop rax\n");
 
         emit_asm("    mov rsp, rbp\n");
@@ -350,6 +357,10 @@ fn generate_statement(node: Node*) {
         }
     } else if (node.typ == AST_BLOCK) {
         generate_block(node);
+
+    } else if (node.typ == AST_DEFER) {
+        vector_push(gen_defer_stack, node.d.unary);
+
     } else if (node.typ == AST_IF) {
         let label = ++gen_label_counter;
         generate_expr_into_rax(node.d.conditional.cond);
@@ -403,9 +414,16 @@ fn generate_statement(node: Node*) {
 }
 
 fn generate_block(node: Node*) {
+    let prev_defer_count = gen_defer_stack.size;
+
     let n = node.d.block.children.size;
     for (let i = 0; i < n; ++i) {
         generate_statement(node.d.block.children.data[i]);
+    }
+
+    // Undo the defer stack
+    while (gen_defer_stack.size > prev_defer_count) {
+        generate_statement(vector_pop(gen_defer_stack));
     }
 }
 

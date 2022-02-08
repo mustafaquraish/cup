@@ -882,7 +882,10 @@ fn parse_statement(lexer: Lexer*): Node* {
         node = parse_for_loop(lexer);
 
     } else if (token.typ == TOKEN_DEFER) {
-        die_loc(here, &token.loc, "defer is not implemented yet");
+        lexer_next_assert(lexer, &token, TOKEN_DEFER);
+        node = node_new(AST_DEFER);
+        node.d.unary = parse_statement(lexer);
+
     } else if (token.typ == TOKEN_LET) {
         node = parse_var_declaration(lexer);
         lexer_next_assert(lexer, &token, TOKEN_SEMICOLON);
