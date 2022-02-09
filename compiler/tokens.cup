@@ -11,6 +11,7 @@ enum TokenType {
     TOKEN_CLOSE_BRACKET,
     TOKEN_CLOSE_PAREN,
     TOKEN_COLON,
+    TOKEN_COLONCOLON,
     TOKEN_COMMA,
     TOKEN_DOT,
     TOKEN_EOF,
@@ -56,6 +57,7 @@ enum TokenType {
     TOKEN_IF,
     TOKEN_INT,
     TOKEN_LET,
+    TOKEN_METHOD,
     TOKEN_RETURN,
     TOKEN_SIZEOF,
     TOKEN_STRUCT,
@@ -93,6 +95,7 @@ fn token_type_to_string(typ: int): char* {
     if (typ == TOKEN_CLOSE_BRACKET) return "TOKEN_CLOSE_BRACKET";
     if (typ == TOKEN_CLOSE_PAREN) return "TOKEN_CLOSE_PAREN";
     if (typ == TOKEN_COLON) return "TOKEN_COLON";
+    if (typ == TOKEN_COLONCOLON) return "TOKEN_COLONCOLON";
     if (typ == TOKEN_COMMA) return "TOKEN_COMMA";
     if (typ == TOKEN_DOT) return "TOKEN_DOT";
     if (typ == TOKEN_EOF) return "TOKEN_EOF";
@@ -135,6 +138,7 @@ fn token_type_to_string(typ: int): char* {
     if (typ == TOKEN_IF) return "TOKEN_IF";
     if (typ == TOKEN_INT) return "TOKEN_INT";
     if (typ == TOKEN_LET) return "TOKEN_LET";
+    if (typ == TOKEN_METHOD) return "TOKEN_METHOD";
     if (typ == TOKEN_RETURN) return "TOKEN_RETURN";
     if (typ == TOKEN_SIZEOF) return "TOKEN_SIZEOF";
     if (typ == TOKEN_STRUCT) return "TOKEN_STRUCT";
@@ -158,6 +162,7 @@ fn keyword_to_string(typ: int): char* {
     if (typ == TOKEN_IF) return "if";
     if (typ == TOKEN_INT) return "int";
     if (typ == TOKEN_LET) return "let";
+    if (typ == TOKEN_METHOD) return "method";
     if (typ == TOKEN_RETURN) return "return";
     if (typ == TOKEN_SIZEOF) return "sizeof";
     if (typ == TOKEN_STRUCT) return "struct";

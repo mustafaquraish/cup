@@ -124,6 +124,33 @@ fn main() {
 }
 ```
 
+### Methods for Structs/Unions
+
+```rust
+struct Value {
+    x: int;
+};
+
+method Value::inc(amount: int) {
+    // self (pointer) is implicitly passed in
+    self.x = self.x + amount;
+}
+
+method Value::print() {
+    print(self.x);
+}
+
+fn main() {
+    let v: Value;
+    let v_ptr = &v;
+
+    v.x = 0;
+    // Call methods using `::`
+    v::inc(10);
+    v_ptr::print(); // Also works for pointers
+}
+```
+
 ---
 
 Want some more examples? Check out the [examples](examples/) directory, or the [compiler](compiler/) directory, which contains the implementation of the compiler itself.

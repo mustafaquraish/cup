@@ -98,7 +98,6 @@ fn main(argc: int, argv: char **): int {
     strcpy(obj_filename, m_output_filename);
     replace_extension(obj_filename, ".o");
 
-
     let cmd_args: char*[10];
     // FIXME: Is there a way to do this without hardcoding the exact path?
     cmd_args[0] = OS_IS_MACOS ? "/usr/local/bin/nasm" : "/usr/bin/nasm";

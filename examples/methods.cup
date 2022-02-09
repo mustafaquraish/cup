@@ -1,0 +1,37 @@
+struct Vec2D {
+    x: int;
+    y: int;
+};
+
+method Vec2D::add(other: Vec2D*) {
+    self.x = self.x + other.x;
+    self.y = self.y + other.y;
+}
+
+method Vec2D::cmp_wise_max(): int {
+    return self.x > self.y ? self.x : self.y;
+}
+
+method Vec2D::cmp_wise_min(): int {
+    return self.x < self.y ? self.x : self.y;
+}
+
+fn cmp_wise_min(): int {
+    return 0;
+}
+
+fn main() {
+    let a: Vec2D;
+    let b: Vec2D;
+    let c = &a;
+
+
+    a.x = 1;
+    a.y = 2;
+    b.x = 3;
+    b.y = 4;
+
+    c::add(&b);
+    print(a::cmp_wise_max());
+    print(c::cmp_wise_min());
+}

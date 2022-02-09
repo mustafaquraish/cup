@@ -60,7 +60,24 @@ fn specifier_for_type(typ: Type*): char* {
     if (n == 2) return "word";
     if (n == 4) return "dword";
     if (n == 8) return "qword";
-    die2(here, "Unsupported type size");
+    putsln(create_type_string(typ));
+    die2(here, ": Unsupported type size");
+}
+
+// Q&D hack to differentiate function/method names
+let __func_name_buf: char[256];
+fn get_func_name(func: Node*): char* {
+    __func_name_buf[0] = 0;
+    if (func.d.func.is_method) {
+        let typ: Type* = func.d.func.method_of;
+        strcat(__func_name_buf, "_");
+        strcat(__func_name_buf, typ.struct_name);
+        strcat(__func_name_buf, "_method_");
+    } else {
+        strcat(__func_name_buf, "func_");
+    }
+    strcat(__func_name_buf, func.d.func.name);
+    return __func_name_buf;
 }
 
 fn generate_expr_into_rax(node: Node*);
@@ -98,7 +115,8 @@ fn generate_function_call(node: Node*) {
         // TODO: this might be an issue if we pass structs some day
         total_size = total_size + 8;
     }
-    emit_asm3("    call func_", node.d.call.func.d.func.name, "\n");
+    let name: char* = get_func_name(node.d.call.func);
+    emit_asm3("    call ", name, "\n");
     emit_asm("    add rsp, "); emit_num(total_size); emit_asm("\n");
 }
 
@@ -432,8 +450,9 @@ fn generate_function(node: Node*) {
     if (node.d.func.body == null)
         return;
 
-    emit_asm3("global func_", node.d.func.name, "\n");
-    emit_asm3("func_", node.d.func.name, ":\n");
+    let name: char* = get_func_name(node);
+    emit_asm3("global ", name, "\n");
+    emit_asm2(name, ":\n");
     emit_asm("    push rbp\n");
     emit_asm("    mov rbp, rsp\n");
     emit_asm("    sub rsp, "); emit_num(node.d.func.max_locals_size); emit_asm("\n");

@@ -93,10 +93,10 @@ fn initialize_builtins() {
     builtin_create_syscall("syscall7", 7);
 }
 
-fn find_builtin_function(token: Token*): Node* {
+fn find_builtin_function(name: char*): Node* {
     for (let i = 0; i < all_builtins.size; i = i + 1) {
         let node: Node* = all_builtins.data[i];
-        if (streq(node.d.func.name, token.value.as_string)) {
+        if (streq(name, node.d.func.name)) {
             return node;
         }
     }

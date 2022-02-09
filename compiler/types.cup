@@ -20,7 +20,9 @@ struct Type {
     struct_name: char*;
     size: int;
     array_size: int;
+
     fields: Vector*; // Vector<Variable*>;
+    methods: Vector*; // Vector<Node(AST_FUNC)*>;
 };
 
 fn size_for_base_type(type: int): int {

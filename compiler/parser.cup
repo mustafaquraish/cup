@@ -1,5 +1,5 @@
-import "compiler/ast.cup"
 import "compiler/lexer.cup"
+import "compiler/ast.cup"
 
 // p_ prefix for parser global variables.
 let p_all_functions = vector_new();
@@ -31,14 +31,14 @@ fn constant_push(name: char*, value: int) {
     vector_push(p_constant_stack, node);
 }
 
-fn find_local_variable(token: Token*): Variable* {
+fn find_local_variable(name: char*): Variable* {
     if (p_current_function == null) return null;
 
     for (let i = p_block_stack.size - 1; i >= 0; --i) {
         let block: Node* = p_block_stack.data[i];
         for (let j = 0; j < block.d.block.locals.size; ++j) {
             let var: Variable* = block.d.block.locals.data[j];
-            if (streq(token.value.as_string, var.name)) {
+            if (streq(name, var.name)) {
                 return var;
             }
         }
@@ -47,7 +47,7 @@ fn find_local_variable(token: Token*): Variable* {
     let args = p_current_function.d.func.args;
     for (let i = 0; i < args.size; ++i) {
         let var: Variable* = args.data[i];
-        if (streq(token.value.as_string, var.name)) {
+        if (streq(name, var.name)) {
             return var;
         }
     }
@@ -55,53 +55,53 @@ fn find_local_variable(token: Token*): Variable* {
     return null;
 }
 
-fn find_compound_type(token: Token*): Type* {
+fn find_compound_type(name: char*): Type* {
     for (let i = p_compound_type_stack.size - 1; i >= 0; --i) {
         let typ: Type* = p_compound_type_stack.data[i];
-        if (streq(token.value.as_string, typ.struct_name)) {
+        if (streq(name, typ.struct_name)) {
             return typ;
         }
     }
     return null;
 }
 
-fn find_global_variable(token: Token*): Variable* {
+fn find_global_variable(name: char*): Variable* {
     for (let i = 0; i < p_global_variables.size; ++i) {
         let var: Variable* = p_global_variables.data[i];
-        if (streq(token.value.as_string, var.name)) {
+        if (streq(name, var.name)) {
             return var;
         }
     }
     return null;
 }
 
-fn find_function_definition(token: Token*): Node* {
+fn find_function_definition(name: char*): Node* {
     for (let i = 0; i < p_all_functions.size; ++i) {
         let func: Node* = p_all_functions.data[i];
-        if (streq(token.value.as_string, func.d.func.name)) {
+        if (streq(name, func.d.func.name)) {
             return func;
         }
     }
     return null;
 }
 
-fn find_constant(token: Token*): Node* {
+fn find_constant(name: char*): Node* {
     for (let i = 0; i < p_constant_stack.size; ++i) {
         let constant: Node* = p_constant_stack.data[i];
-        if (streq(token.value.as_string, constant.d.constant.name)) {
+        if (streq(name, constant.d.constant.name)) {
             return constant;
         }
     }
     return null;
 }
 
-fn identifier_exists(token: Token*): int {
-    if (find_local_variable(token)) return true;
-    if (find_global_variable(token)) return true;
-    if (find_function_definition(token)) return true;
-    if (find_builtin_function(token)) return true;
-    if (find_compound_type(token)) return true;
-    if (find_constant(token)) return true;
+fn identifier_exists(name: char*): int {
+    if (find_local_variable(name)) return true;
+    if (find_global_variable(name)) return true;
+    if (find_function_definition(name)) return true;
+    if (find_builtin_function(name)) return true;
+    if (find_compound_type(name)) return true;
+    if (find_constant(name)) return true;
     return false;
 }
 
@@ -143,7 +143,7 @@ fn parse_constant_declaration(lexer: Lexer*): Node* {
     lexer_next_assert(lexer, &token, TOKEN_CONST);
 
     lexer_next_assert(lexer, &token, TOKEN_IDENTIFIER);
-    if (identifier_exists(&token))
+    if (identifier_exists(token.value.as_string))
         die_loc2(here, &token.loc, "Identifier already exists: ", token.value.as_string);
     let constant_name = token.value.as_string;
 
@@ -199,7 +199,7 @@ fn parse_type(lexer: Lexer*): Type* {
         typ = type_new(TYPE_VOID);
     } else {
         lexer_next_assert(lexer, &token, TOKEN_IDENTIFIER);
-        typ = find_compound_type(&token);
+        typ = find_compound_type(token.value.as_string);
         if (!typ)
             die_loc2(here, &token.loc, "Unknown token in parse_type: ", token.value.as_string);
     }
@@ -221,7 +221,7 @@ fn parse_type(lexer: Lexer*): Type* {
             if (token.typ == TOKEN_INTLIT) {
                 arr.array_size = token.value.as_int;
             } else if (token.typ == TOKEN_IDENTIFIER) {
-                let constant = find_constant(&token);
+                let constant = find_constant(token.value.as_string);
                 if (!constant)
                     die_loc2(here, &token.loc, "Could not find constant: ", token.value.as_string);
                 // FIXME: This is a complete mess.
@@ -240,7 +240,10 @@ fn parse_type(lexer: Lexer*): Type* {
     return typ;
 }
 
-fn parse_function_call_args(lexer: Lexer*, func: Node*): Node* {
+// NOTE: This is used for both functions / methods. For methods, we pass in
+// `obj_ptr` here, which is injected as the first argument (implicit `self` pointer).
+// For regular functions, we expect obj_ptr == null.
+fn parse_function_call_args(lexer: Lexer*, func: Node*, obj_ptr: Node*): Node* {
     let token: Token;
 
     let node = node_new(AST_FUNCCALL);
@@ -250,6 +253,9 @@ fn parse_function_call_args(lexer: Lexer*, func: Node*): Node* {
     
     lexer_next_assert(lexer, &token, TOKEN_OPEN_PAREN);
     lexer_peek(lexer, &token);
+
+    if (obj_ptr)
+        vector_push(node.d.call.args, obj_ptr);
 
     while (token.typ != TOKEN_CLOSE_PAREN) {
         // TODO: Check types
@@ -268,15 +274,25 @@ fn parse_function_call_args(lexer: Lexer*, func: Node*): Node* {
     if (node.d.call.args.size != func.d.func.args.size)
         die_loc2(here, &token.loc, "Function call argument count mismatch: ", func.d.func.name);
 
+    let n = func.d.func.args.size;
+    for (let i = 0; i < n; ++i) {
+        let arg: Node* = node.d.call.args.data[i];
+        let var: Variable* = func.d.func.args.data[i];
+
+        if (!is_convertible(var.typ, arg.etyp))
+            die_loc2(here, &token.loc, "Function argument type mismatch: ", var.name);
+    }
+
     return node;
 }
 
 fn parse_identifier(lexer: Lexer*): Node* {
     let token: Token;
     lexer_next_assert(lexer, &token, TOKEN_IDENTIFIER);
+    let name = token.value.as_string;
 
     let node: Node*;
-    let var = find_local_variable(&token);
+    let var = find_local_variable(name);
     if (var != null) {
         node = node_new(AST_LOCAL_VAR);
         node.d.variable = var;
@@ -284,7 +300,7 @@ fn parse_identifier(lexer: Lexer*): Node* {
         return decay_array_to_pointer(node, &token);
     }
 
-    var = find_global_variable(&token);
+    var = find_global_variable(name);
     if (var != null) {
         node = node_new(AST_GLOBAL_VAR);
         node.d.variable = var;
@@ -292,17 +308,17 @@ fn parse_identifier(lexer: Lexer*): Node* {
         return decay_array_to_pointer(node, &token);
     }
 
-    let func = find_function_definition(&token);
+    let func = find_function_definition(name);
     if (func != null) {
-        return parse_function_call_args(lexer, func);
+        return parse_function_call_args(lexer, func, null);
     }
 
-    func = find_builtin_function(&token);
+    func = find_builtin_function(name);
     if (func != null) {
-        return parse_function_call_args(lexer, func);
+        return parse_function_call_args(lexer, func, null);
     }
 
-    let constant = find_constant(&token);
+    let constant = find_constant(name);
     if (constant != null) {
         // TODO: Make sure this is an integer
         return constant.d.constant.value;
@@ -451,6 +467,36 @@ fn parse_factor(lexer: Lexer*): Node* {
             member.d.member.is_ptr = (expr.etyp.typ == TYPE_PTR);
 
             expr = decay_array_to_pointer(member, &token);
+
+        } else if (token.typ == TOKEN_COLONCOLON) {
+            lexer_next(lexer, &token);
+
+            if (!is_lvalue(expr.typ))
+                die_loc(here, &token.loc, "Cannot call method on non-lvalue");
+            if (!is_struct_or_structptr(expr.etyp))
+                die_loc(here, &token.loc, "Cannot call method on non-struct type");
+
+            let struct_type: Type*;
+            let obj_ptr: Node*;
+
+            if (expr.etyp.typ == TYPE_PTR) {
+                struct_type = expr.etyp.ptr;
+                obj_ptr = expr;
+            } else {
+                struct_type = expr.etyp;
+                obj_ptr = node_new(AST_ADDROF);
+                obj_ptr.d.unary = expr;
+                obj_ptr = type_check_unary(obj_ptr, &token);
+            }
+
+            lexer_next_assert(lexer, &token, TOKEN_IDENTIFIER);
+            let name = token.value.as_string;
+            let _method = compound_find_method(struct_type, name);
+            if (_method == null)
+                die_loc(here, &token.loc, "Invalid method name for struct");
+            
+            expr = parse_function_call_args(lexer, _method, obj_ptr);
+            
         } else {
             running = false;
         }
@@ -696,7 +742,7 @@ fn parse_var_declaration(lexer: Lexer*): Node* {
     lexer_next_assert(lexer, &token, TOKEN_LET);
     lexer_next_assert(lexer, &token, TOKEN_IDENTIFIER);
 
-    if (identifier_exists(&token))
+    if (identifier_exists(token.value.as_string))
         die_loc2(here, &token.loc, "Identifier already defined: %s", token.value.as_string);
 
     let is_global = (p_current_function == null);
@@ -745,14 +791,15 @@ fn parse_function_params(lexer: Lexer*, func: Node*) {
     let token: Token;
     lexer_peek(lexer, &token);
 
-    func.d.func.args = vector_new();
+    if (!func.d.func.args)
+        func.d.func.args = vector_new();
 
     // TODO: Actually parse params
     while (token.typ != TOKEN_CLOSE_PAREN) {
         lexer_next_assert(lexer, &token, TOKEN_IDENTIFIER);
         let name = token.value.as_string;
         
-        if (identifier_exists(&token))
+        if (identifier_exists(token.value.as_string))
             die_loc2(here, &token.loc, "Identifier already defined: ", name);
         
         lexer_next_assert(lexer, &token, TOKEN_COLON);
@@ -928,7 +975,7 @@ fn parse_enum_declaration(lexer: Lexer*) {
     while (token.typ != TOKEN_CLOSE_BRACE) {
         lexer_next_assert(lexer, &token, TOKEN_IDENTIFIER);
 
-        if (identifier_exists(&token))
+        if (identifier_exists(token.value.as_string))
             die_loc(here, &token.loc, "Identifier already exists, enums just behave like numbered constants.");
 
         constant_push(token.value.as_string, enum_count);
@@ -957,6 +1004,7 @@ fn parse_struct_union_declaration(lexer: Lexer*, top_level: int): Type* {
     
     let compound = type_new(token.typ == TOKEN_STRUCT ? TYPE_STRUCT : TYPE_UNION);
     compound.fields = vector_new();
+    compound.methods = vector_new();
 
     lexer_peek(lexer, &token);
     
@@ -1021,6 +1069,60 @@ fn parse_struct_union_declaration(lexer: Lexer*, top_level: int): Type* {
     return compound;
 }
 
+// FIXME: Should probably combine this with `parse_function()`
+fn parse_method(lexer: Lexer*): Node* {
+    let token: Token;
+
+    lexer_next_assert(lexer, &token, TOKEN_METHOD);
+    lexer_next_assert(lexer, &token, TOKEN_IDENTIFIER);
+
+    let ctyp = find_compound_type(token.value.as_string);
+    if (ctyp == null)
+        die_loc2(here, &token.loc, "Could not find struct/union with name: ", token.value.as_string);
+
+    lexer_next_assert(lexer, &token, TOKEN_COLONCOLON);
+    lexer_next_assert(lexer, &token, TOKEN_IDENTIFIER);
+
+    let func = node_new(AST_FUNC);
+    func.d.func.name = token.value.as_string;
+    func.d.func.is_method = true;
+    func.d.func.method_of = ctyp;
+    func.d.func.args = vector_new();
+
+    let ptr_typ = type_new(TYPE_PTR);
+    ptr_typ.ptr = ctyp;
+
+    let self_var = variable_new("self", ptr_typ, 0);
+    vector_push(func.d.func.args, self_var);
+
+    // TODO: Check if this method exists in the struct already.
+    lexer_next_assert(lexer, &token, TOKEN_OPEN_PAREN);
+    parse_function_params(lexer, func);
+    lexer_next_assert(lexer, &token, TOKEN_CLOSE_PAREN);
+
+    lexer_peek(lexer, &token);
+    if (token.typ == TOKEN_COLON) {
+        lexer_next(lexer, &token);
+        func.etyp = parse_type(lexer);
+    lexer_peek(lexer, &token);
+    } else {
+        func.etyp = type_new(TYPE_VOID);
+    }
+
+    if (token.typ != TOKEN_OPEN_BRACE)
+        die_loc(here, &token.loc, "Expected a method body. Method declarations not supported.");
+
+    p_current_function = func;
+    func.d.func.body = parse_block(lexer);
+    p_current_function = null;
+
+    // We don't want to add this to `all_functions`, since we only want it to be accessible
+    // for the struct/union that it is a method of. We'll add it to the struct/union's
+    // `methods` vector instead.
+    vector_push(ctyp.methods, func);
+    return func;
+}
+
 fn parse_function(lexer: Lexer*): Node* {
     let token: Token;
 
@@ -1036,8 +1138,8 @@ fn parse_function(lexer: Lexer*): Node* {
     //  1. It's another variable / struct, which is an error.
     //  2. It's a function that's been defined, which is an error.
     //  3. It's a function that's been declared (but not defined), which is OK
-    if (identifier_exists(&token)) {
-        dfunc = find_function_definition(&token);
+    if (identifier_exists(token.value.as_string)) {
+        dfunc = find_function_definition(token.value.as_string);
         // Case 1
         if (dfunc == null)
             die_loc(here, &token.loc, "Function name already exists as an identifier");
@@ -1108,10 +1210,13 @@ fn parse_program(lexer: Lexer*): Node* {
     vector_push(p_lexer_stack, lexer);
 
     while (token.typ != TOKEN_EOF) {
+        let child = null;
         if (token.typ == TOKEN_FN) {
-            block_add_child(node, parse_function(lexer));
+            child = parse_function(lexer);
+        } else if (token.typ == TOKEN_METHOD) {
+            child = parse_method(lexer);
         } else if (token.typ == TOKEN_LET) {
-            block_add_child(node, parse_var_declaration(lexer));
+            child = parse_var_declaration(lexer);
         } else if (token.typ == TOKEN_SEMICOLON) {
             lexer_next(lexer, &token);
         } else if (token.typ == TOKEN_CONST) {
@@ -1129,6 +1234,9 @@ fn parse_program(lexer: Lexer*): Node* {
         } else {
             die_loc2(here, &token.loc, "unexpected token in parse_program: ", token_type_to_string(token.typ));
         }
+
+        if (child)
+            block_add_child(node, child);
 
         lexer_peek(lexer, &token);
         while (token.typ == TOKEN_EOF && p_lexer_stack.size > 1) {

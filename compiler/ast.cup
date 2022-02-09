@@ -76,6 +76,9 @@ struct Node {
             max_locals_size: int;
             args: Vector *; // Vector<Variable>
             is_defined: int;
+
+            is_method: int;
+            method_of: Type*;
         };
 
         block: struct {
@@ -487,6 +490,16 @@ fn compound_find_field(typ: Type*, name: char*): Variable* {
         let field: Variable* = typ.fields.data[i];
         if (streq(field.name, name)) {
             return field;
+        }
+    }
+    return null;
+}
+
+fn compound_find_method(typ: Type*, name: char*): Node* {
+    for (let i = 0; i < typ.methods.size; ++i) {
+        let _method: Node* = typ.methods.data[i];
+        if (streq(_method.d.func.name, name)) {
+            return _method;
         }
     }
     return null;

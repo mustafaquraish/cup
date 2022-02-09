@@ -283,7 +283,7 @@ fn run_command(args: char**, echo: int) {
 
     let pid = fork();
     if (pid == 0) {
-        execve(args[0], args, 0);
+        execve(args[0], args, null);
         die2(here, ": Error in execve()");
     }
     // Parent
