@@ -61,8 +61,7 @@ struct Node {
     typ: int;       // NodeType
     etyp: Type*;    // Expression type
 
-    // TODO: Anonymous union members so we can do `Node.binary`, etc.
-    d: union {
+    union {
         binary: struct {
             lhs: Node *;
             rhs: Node *;
@@ -150,7 +149,7 @@ fn node_new(typ: int): Node* {
 fn node_from_int_literal(val: int): Node* {
     let node: Node* = node_new(AST_LITERAL);
     node.etyp = type_new(TYPE_INT);
-    node.d.literal.as_int = val;
+    node.literal.as_int = val;
     return node;
 }
 
@@ -163,9 +162,9 @@ fn variable_new(name: char*, typ: Type*, offset: int): Variable* {
 }
 
 fn block_add_child(block: Node*, child: Node*) {
-    if (block.d.block.children == null)
-        block.d.block.children = vector_new();
-    vector_push(block.d.block.children, child);
+    if (block.block.children == null)
+        block.block.children = vector_new();
+    vector_push(block.block.children, child);
 }
 
 // TODO: Careful here, the input type here is the same as `type_to_string`
@@ -288,55 +287,55 @@ fn dump_ast(node: Node*, depth: int) {
         putc(' ');
     if (node.typ == AST_PROGRAM || node.typ == AST_BLOCK) {
         putsln(node_type_to_string(node.typ));
-        for (let i = 0; i < node.d.block.children.size; ++i) {
-            dump_ast(node.d.block.children.data[i], depth + 1);
+        for (let i = 0; i < node.block.children.size; ++i) {
+            dump_ast(node.block.children.data[i], depth + 1);
         }
     } else if (is_binary_op(node.typ)) {
         putsln(node_type_to_string(node.typ));
-        dump_ast(node.d.binary.lhs, depth + 1);
-        dump_ast(node.d.binary.rhs, depth + 1);
+        dump_ast(node.binary.lhs, depth + 1);
+        dump_ast(node.binary.rhs, depth + 1);
     } else if (is_unary_op(node.typ) || node.typ == AST_RETURN) {
         putsln(node_type_to_string(node.typ));
-        dump_ast(node.d.unary, depth + 1);
+        dump_ast(node.unary, depth + 1);
 
     } else if (node.typ == AST_CONDITIONAL || node.typ == AST_IF) {
         putsln(node_type_to_string(node.typ));
-        dump_ast(node.d.conditional.cond, depth + 1);
-        dump_ast(node.d.conditional.then, depth + 1);
-        if (node.d.conditional.els)
-            dump_ast(node.d.conditional.els, depth + 1);
+        dump_ast(node.conditional.cond, depth + 1);
+        dump_ast(node.conditional.then, depth + 1);
+        if (node.conditional.els)
+            dump_ast(node.conditional.els, depth + 1);
 
     } else if (node.typ == AST_LITERAL) {
         if (node.etyp.typ == TYPE_INT) {
-            putu(node.d.literal.as_int); putc('\n');
+            putu(node.literal.as_int); putc('\n');
         } else if (node.etyp.typ == TYPE_PTR) {
-            putc('"'); puts(node.d.literal.as_string); putc('"'); putc('\n');
+            putc('"'); puts(node.literal.as_string); putc('"'); putc('\n');
         } else if (node.etyp.typ == TYPE_CHAR) {
-            putc('\''); putc(node.d.literal.as_char); putc('\''); putc('\n');
+            putc('\''); putc(node.literal.as_char); putc('\''); putc('\n');
         } else {
             die("Unknown literal type in dump_ast");
         }
     } else if (node.typ == AST_FUNC) {
-        puts("func "); puts(node.d.func.name); puts("()\n");
-        dump_ast(node.d.func.body, depth + 1);
+        puts("func "); puts(node.func.name); puts("()\n");
+        dump_ast(node.func.body, depth + 1);
     } else if (node.typ == AST_VARDECL) {
-        puts("let "); puts(node.d.var_decl.var.name);
-        if (node.d.var_decl.var.typ == TYPE_PTR) {
+        puts("let "); puts(node.var_decl.var.name);
+        if (node.var_decl.var.typ == TYPE_PTR) {
             puts(": ");
-            puts(create_type_string(node.d.var_decl.var.typ));
+            puts(create_type_string(node.var_decl.var.typ));
         }
-        if (node.d.var_decl.init) {
+        if (node.var_decl.init) {
             puts(" =\n");
-            dump_ast(node.d.var_decl.init, depth + 1);
+            dump_ast(node.var_decl.init, depth + 1);
         } else {
             putc('\n');
         }
     } else if (node.typ == AST_ASSIGN) {
         putsln(node_type_to_string(node.typ));
-        dump_ast(node.d.assign.lhs, depth + 1);
-        dump_ast(node.d.assign.rhs, depth + 1);
+        dump_ast(node.assign.lhs, depth + 1);
+        dump_ast(node.assign.rhs, depth + 1);
     } else if (node.typ == AST_LOCAL_VAR || node.typ == AST_GLOBAL_VAR) {
-        putsln(node.d.variable.name);
+        putsln(node.variable.name);
     } else {
         putsln(node_type_to_string(node.typ));
     }
@@ -349,7 +348,7 @@ fn decay_array_to_pointer(node: Node*, token: Token*): Node* {
     // We can only take the address of an lvalue, so we need to ensure that
     if (is_lvalue(node.typ) && node.etyp.typ == TYPE_ARRAY) {
         let address = node_new(AST_ADDROF);
-        address.d.unary = node;
+        address.unary = node;
         address = type_check_unary(address, token);
         node = address;
     }
@@ -357,7 +356,7 @@ fn decay_array_to_pointer(node: Node*, token: Token*): Node* {
 }
 
 fn type_check_unary(node: Node*, token: Token*): Node* {
-    let old_type = node.d.unary.etyp;
+    let old_type = node.unary.etyp;
 
     if (node.typ != AST_ADDROF && old_type.typ == TYPE_STRUCT)
         die_loc(here, &token.loc, "Performing invalid unary operation on struct type");
@@ -389,8 +388,8 @@ fn type_check_unary(node: Node*, token: Token*): Node* {
 
 fn type_check_binary(node: Node*, token: Token*): Node*
 {
-    let lhs = node.d.binary.lhs.etyp;
-    let rhs = node.d.binary.rhs.etyp;
+    let lhs = node.binary.lhs.etyp;
+    let rhs = node.binary.rhs.etyp;
 
     if (lhs.typ == TYPE_STRUCT || rhs.typ == TYPE_STRUCT)
         die_loc(here, &token.loc, "Performing invalid binary operation on struct type");
@@ -403,18 +402,18 @@ fn type_check_binary(node: Node*, token: Token*): Node*
             // Pointer arithmetic!
             if (size_for_type(lhs.ptr) != 1) {
                 let mul = node_new(AST_MUL);
-                mul.d.binary.lhs = node.d.binary.rhs;
-                mul.d.binary.rhs = node_from_int_literal(size_for_type(lhs.ptr));
-                node.d.binary.rhs = mul;
+                mul.binary.lhs = node.binary.rhs;
+                mul.binary.rhs = node_from_int_literal(size_for_type(lhs.ptr));
+                node.binary.rhs = mul;
             }
         } else if (is_int_type(lhs) && rhs.typ == TYPE_PTR) {
             node.etyp = rhs;
             // Pointer arithmetic!
             if (size_for_type(rhs.ptr) != 1) {
                 let mul = node_new(AST_MUL);
-                mul.d.binary.lhs = node.d.binary.lhs;
-                mul.d.binary.rhs = node_from_int_literal(size_for_type(rhs.ptr));
-                node.d.binary.lhs = mul;
+                mul.binary.lhs = node.binary.lhs;
+                mul.binary.rhs = node_from_int_literal(size_for_type(rhs.ptr));
+                node.binary.lhs = mul;
             }
         } else {
             die_loc(here, &token.loc, "Cannot add non-integer types");
@@ -427,18 +426,18 @@ fn type_check_binary(node: Node*, token: Token*): Node*
             // Pointer arithmetic!
             if (size_for_type(lhs.ptr) != 1) {
                 let mul = node_new(AST_MUL);
-                mul.d.binary.lhs = node.d.binary.rhs;
-                mul.d.binary.rhs = node_from_int_literal(size_for_type(lhs.ptr));
-                node.d.binary.rhs = mul;
+                mul.binary.lhs = node.binary.rhs;
+                mul.binary.rhs = node_from_int_literal(size_for_type(lhs.ptr));
+                node.binary.rhs = mul;
             }
         } else if (is_int_type(lhs) && rhs.typ == TYPE_PTR) {
             node.etyp = rhs;
             // Pointer arithmetic!
             if (size_for_type(rhs.ptr) != 1) {
                 let mul = node_new(AST_MUL);
-                mul.d.binary.lhs = node.d.binary.lhs;
-                mul.d.binary.rhs = node_from_int_literal(size_for_type(rhs.ptr));
-                node.d.binary.lhs = mul;
+                mul.binary.lhs = node.binary.lhs;
+                mul.binary.rhs = node_from_int_literal(size_for_type(rhs.ptr));
+                node.binary.lhs = mul;
             }
         } else if (lhs.typ == TYPE_PTR && rhs.typ == TYPE_PTR) {
             node.etyp = type_new(TYPE_INT);
@@ -448,9 +447,9 @@ fn type_check_binary(node: Node*, token: Token*): Node*
             // Pointer arithmetic! (Divide by size of element)
             if (size_for_type(lhs.ptr) != 1) {
                 let mul = node_new(AST_MUL);
-                mul.d.binary.lhs = node.d.binary.lhs;
-                mul.d.binary.rhs = node_from_int_literal(size_for_type(lhs.ptr));
-                node.d.binary.lhs = mul;
+                mul.binary.lhs = node.binary.lhs;
+                mul.binary.rhs = node_from_int_literal(size_for_type(lhs.ptr));
+                node.binary.lhs = mul;
             }
         } else {
             die_loc(here, &token.loc, "Cannot subtract non-integer types");
@@ -529,7 +528,7 @@ fn compound_find_field(typ: Type*, name: char*): Variable* {
 fn compound_find_method(typ: Type*, name: char*): Node* {
     for (let i = 0; i < typ.methods.size; ++i) {
         let _method: Node* = typ.methods.data[i];
-        if (streq(_method.d.func.name, name)) {
+        if (streq(_method.func.name, name)) {
             return _method;
         }
     }
