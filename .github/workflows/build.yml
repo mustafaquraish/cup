@@ -1,0 +1,30 @@
+name: Test
+
+on: [push, pull_request]
+
+jobs:
+  build_ubuntu:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: "Install Ubuntu dependencies"
+
+        run: sudo apt-get install -y build-essential nasm
+
+      - name: Build
+        run: |
+          cd ${{ github.workspace }}
+          ./meta/bootstrap.sh && ./build/cupcc -r compiler/main.cup -r compiler/main.cup -r compiler/main.cup
+
+  build_macos:
+    runs-on: macos-10.15
+    steps:
+      - uses: actions/checkout@v2
+      - name: "Install MacOS dependencies"
+
+        run: brew install nasm
+
+      - name: Build
+        run: |
+          cd ${{ github.workspace }}
+          ./meta/bootstrap.sh && ./build/cupcc -r compiler/main.cup -r compiler/main.cup -r compiler/main.cup
