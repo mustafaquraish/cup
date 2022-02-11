@@ -19,6 +19,7 @@ struct Type {
     ptr: Type*;
     struct_name: char*;
     size: int;
+    base_offset: int;
     array_size: int;
 
     fields: Vector*; // Vector<Variable*>;

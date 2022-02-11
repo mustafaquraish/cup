@@ -67,9 +67,9 @@ struct Node {
             lhs: Node *;
             rhs: Node *;
         };
-        
+
         unary: Node *;
-        
+
         func: struct {
             name: char *;
             body: Node *;
@@ -212,7 +212,7 @@ fn node_type_to_string(typ: int): char* {
     if (typ == AST_PROGRAM) return "AST_PROGRAM";
     if (typ == AST_BLOCK) return "AST_BLOCK";
 
-    puts("Unknown node type in node_type_to_string: "); 
+    puts("Unknown node type in node_type_to_string: ");
     putu(typ); putc('\n');
     exit(1);
 }
@@ -298,14 +298,14 @@ fn dump_ast(node: Node*, depth: int) {
     } else if (is_unary_op(node.typ) || node.typ == AST_RETURN) {
         putsln(node_type_to_string(node.typ));
         dump_ast(node.d.unary, depth + 1);
-    
+
     } else if (node.typ == AST_CONDITIONAL || node.typ == AST_IF) {
         putsln(node_type_to_string(node.typ));
         dump_ast(node.d.conditional.cond, depth + 1);
         dump_ast(node.d.conditional.then, depth + 1);
         if (node.d.conditional.els)
             dump_ast(node.d.conditional.els, depth + 1);
-    
+
     } else if (node.typ == AST_LITERAL) {
         if (node.etyp.typ == TYPE_INT) {
             putu(node.d.literal.as_int); putc('\n');
@@ -320,13 +320,13 @@ fn dump_ast(node: Node*, depth: int) {
         puts("func "); puts(node.d.func.name); puts("()\n");
         dump_ast(node.d.func.body, depth + 1);
     } else if (node.typ == AST_VARDECL) {
-        puts("let "); puts(node.d.var_decl.var.name); 
+        puts("let "); puts(node.d.var_decl.var.name);
         if (node.d.var_decl.var.typ == TYPE_PTR) {
             puts(": ");
             puts(create_type_string(node.d.var_decl.var.typ));
         }
         if (node.d.var_decl.init) {
-            puts(" =\n"); 
+            puts(" =\n");
             dump_ast(node.d.var_decl.init, depth + 1);
         } else {
             putc('\n');
@@ -468,12 +468,37 @@ fn type_check_binary(node: Node*, token: Token*): Node*
     return node;
 }
 
+fn dump_rectype(typ: Type*, depth: int) {
+    while (typ.typ == TYPE_PTR || typ.typ == TYPE_ARRAY) {
+             if (typ.typ == TYPE_PTR) puts("*");
+        else if (typ.typ == TYPE_ARRAY) puts("[]");
+        typ = typ.ptr;
+    }
+         if (typ.typ == TYPE_INT) { putsln("int"); return; }
+    else if (typ.typ == TYPE_CHAR) { putsln("char"); return; }
+    else if (typ.typ == TYPE_VOID) { putsln("void"); return; }
+    else if (typ.typ == TYPE_ANY) { putsln("any"); return; }
+
+    puts(typ.typ == TYPE_STRUCT ? "struct " : "union ");
+    puts(typ.struct_name);
+    putsln(" {");
+    for (let i = 0; i < typ.fields.size; ++i) {
+        let field: Variable* = typ.fields.data[i];
+        for (let j = 0; j < depth; ++j) puts("  ");
+        puts("- "); puts(field.name); puts(" ("); putu(field.offset); puts("): ");
+        dump_rectype(field.typ, depth + 2);
+        puts("\n");
+    }
+    for (let i = 0; i < depth; ++i) puts("  ");
+    putsln("}");
+}
+
 // FIXME: These should be in `types.cup` ideally, but `Variable` is not defined
 //        there and we can't forward-declare types.
-fn compound_push_field(compound: Type*, name: char*, typ: Type*): int {
+fn compound_push_field(compound: Type*, name: char*, typ: Type*, base_offset: int): int {
     if (compound.typ != TYPE_STRUCT && compound.typ != TYPE_UNION)
         die("compound_push_field: not a compound type");
-    
+
     let is_union = compound.typ == TYPE_UNION;
 
     let field_size = size_for_type(typ);
@@ -481,7 +506,7 @@ fn compound_push_field(compound: Type*, name: char*, typ: Type*): int {
     let offset = is_union ? 0 : align_up(compound.size, offset_factor);
     compound.size = is_union ? max(field_size, compound.size) : offset + field_size;
 
-    vector_push(compound.fields, variable_new(name, typ, offset));
+    vector_push(compound.fields, variable_new(name, typ, base_offset + offset));
     return offset;
 }
 
@@ -490,6 +515,12 @@ fn compound_find_field(typ: Type*, name: char*): Variable* {
         let field: Variable* = typ.fields.data[i];
         if (streq(field.name, name)) {
             return field;
+        }
+
+        // If this is an anonymous field, we look inside it:
+        if (streq(field.name, "<anon>")) {
+            if (field = compound_find_field(field.typ, name))
+                return field;
         }
     }
     return null;
