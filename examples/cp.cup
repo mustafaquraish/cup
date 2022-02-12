@@ -1,0 +1,20 @@
+import "std/file.cup"
+
+fn main(argc: int, argv: char**) {
+    if (argc != 3)
+        die("Usage cp <input_file> <output_file>");
+    
+    let input = fopen(argv[1], 'r');
+    defer input::close();
+
+    let output = fopen(argv[2], 'w');
+    defer output::close();
+
+    let buf: char[1024];
+
+    let n = input::read(buf, 1024);
+    while (n > 0) {
+        output::write(buf, n);
+        n = input::read(buf, 1024);
+    }
+}

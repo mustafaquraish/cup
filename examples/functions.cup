@@ -9,5 +9,6 @@ fn sum(n: int): int {
 }
 
 fn main(): int {
-    return sum(10);
+    print(sum(10));
+    return 0;
 }

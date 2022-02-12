@@ -25,7 +25,6 @@ fn main() {
     let b: Vec2D;
     let c = &a;
 
-
     a.x = 1;
     a.y = 2;
     b.x = 3;

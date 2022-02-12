@@ -1,0 +1,16 @@
+import "std/file.cup";
+
+fn main(argc: int, argv: char**) {
+    for (let i = 1; i < argc; ++i) {
+        let file = fopen(argv[i], 'r');
+        defer file::close();    // Close the file at the end of the block (in each iteration)
+
+        let buf: char[1024];
+        let n = file::read(buf, 1024); // use file-specific functions
+        while (n > 0) {
+            write(0, buf, n); // Use raw system calls
+            n = file::read(buf, 1024);
+        }
+        // file closed here because of defer
+    }
+}
