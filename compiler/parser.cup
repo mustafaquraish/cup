@@ -700,7 +700,7 @@ fn parse_expression(lexer: Lexer*): Node* {
                 puts("- RHS type: "); putsln(create_type_string(rhs.etyp));
                 die_loc(here, &token.loc, "Type mismatch for variable assignment");
             }
-
+            node.etyp = lhs.etyp;
             node.assign.lhs = lhs;
             node.assign.rhs = rhs;
             lhs = node;
