@@ -1,11 +1,9 @@
 #!/bin/bash
 
 function assert_exit_status() {
-    build/cupcc -c "$1" -o build/test.nasm
-    make build/test.out -s
-
+    ./build/cupcc -c "$1" -o ./build/test -s
     set +e
-    build/test.out
+    ./build/test
     res=$?
     set -e
     if [ $res -ne $2 ]
@@ -28,7 +26,7 @@ function assert_exit_status_stdin() {
 function assert_compile_failure_stdin() {
     code=$(</dev/stdin)
     set +e
-    build/cupcc -c "$code" -o build/test.nasm >/dev/null 2>&1
+    ./build/cupcc -c "$code" -o ./build/test -s >/dev/null 2>&1
     res=$?
     set -e
     if [ $res -eq 0 ]
@@ -44,11 +42,10 @@ function assert_compile_failure_stdin() {
 }
 
 function assert_stdout_text() {
-    build/cupcc -c "$1" -o build/test.nasm
-    make build/test.out -s
+    ./build/cupcc -c "$1" -o ./build/test -s
 
     set +e
-    output=$(build/test.out)
+    output=$(build/test)
     res=$?
     set -e
     if [ $res -ne 0 ]
