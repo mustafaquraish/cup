@@ -75,9 +75,9 @@ fn find_global_variable(name: char*): Variable* {
     return null;
 }
 
-fn find_function_definition(name: char*): Node* {
-    for (let i = 0; i < p_all_functions.size; ++i) {
-        let func: Node* = p_all_functions.data[i];
+fn find_function_definition(name: char*, fn_list: Vector*): Node* {
+    for (let i = 0; i < fn_list.size; ++i) {
+        let func: Node* = fn_list.data[i];
         if (streq(name, func.func.name)) {
             return func;
         }
@@ -98,7 +98,7 @@ fn find_constant(name: char*): Node* {
 fn identifier_exists(name: char*): int {
     if (find_local_variable(name)) return true;
     if (find_global_variable(name)) return true;
-    if (find_function_definition(name)) return true;
+    if (find_function_definition(name, p_all_functions)) return true;
     if (find_builtin_function(name)) return true;
     if (find_compound_type(name)) return true;
     if (find_constant(name)) return true;
@@ -308,7 +308,7 @@ fn parse_identifier(lexer: Lexer*): Node* {
         return decay_array_to_pointer(node, &token);
     }
 
-    let func = find_function_definition(name);
+    let func = find_function_definition(name, p_all_functions);
     if (func != null) {
         return parse_function_call_args(lexer, func, null);
     }
@@ -1072,7 +1072,9 @@ fn parse_struct_union_declaration(lexer: Lexer*, top_level: int, base_offset: in
     return compound;
 }
 
-// FIXME: Should probably combine this with `parse_function()`
+// FIXME: Should probably combine this with `parse_function()`, there's a _lot_ of.
+// FIXME: Just implement a proper multi-pass compiler so we don't need to handle the
+//        stupid declarations separately.
 fn parse_method(lexer: Lexer*): Node* {
     let token: Token;
 
@@ -1086,11 +1088,32 @@ fn parse_method(lexer: Lexer*): Node* {
     lexer_next_assert(lexer, &token, TOKEN_COLONCOLON);
     lexer_next_assert(lexer, &token, TOKEN_IDENTIFIER);
 
+    // TODO: Check if identifier exists
     let func = node_new(AST_FUNC);
     func.func.name = token.value.as_string;
     func.func.is_method = true;
     func.func.method_of = ctyp;
     func.func.args = vector_new();
+
+    // If the identifier exists, there's 3 possible cases:
+    //  1. It's a method that's been defined, which is an error.
+    //  2. It's a method that's been declared (but not defined), which is OK
+    let dfunc = find_function_definition(token.value.as_string, ctyp.methods);
+    if (dfunc != null) {
+        // Case 1
+        if (dfunc.func.is_defined)
+            die_loc(here, &token.loc, "Method already defined earlier");
+
+        // TODO: Check if the method signature matches
+        // Case 2 (No error, just set the current function correctly)
+        p_current_function = func;
+    } else {
+        // We don't want to add this to `all_functions`, since we only want it to be accessible
+        // for the struct/union that it is a method of. We'll add it to the struct/union's
+        // `methods` vector instead.
+        vector_push(ctyp.methods, func);
+        p_current_function = func;
+    }
 
     let ptr_typ = type_new(TYPE_PTR);
     ptr_typ.ptr = ctyp;
@@ -1098,7 +1121,6 @@ fn parse_method(lexer: Lexer*): Node* {
     let self_var = variable_new("self", ptr_typ, 0);
     vector_push(func.func.args, self_var);
 
-    // TODO: Check if this method exists in the struct already.
     lexer_next_assert(lexer, &token, TOKEN_OPEN_PAREN);
     parse_function_params(lexer, func);
     lexer_next_assert(lexer, &token, TOKEN_CLOSE_PAREN);
@@ -1107,22 +1129,19 @@ fn parse_method(lexer: Lexer*): Node* {
     if (token.typ == TOKEN_COLON) {
         lexer_next(lexer, &token);
         func.etyp = parse_type(lexer);
-    lexer_peek(lexer, &token);
     } else {
         func.etyp = type_new(TYPE_VOID);
     }
 
-    if (token.typ != TOKEN_OPEN_BRACE)
-        die_loc(here, &token.loc, "Expected a method body. Method declarations not supported.");
+    lexer_peek(lexer, &token);
+    if (token.typ == TOKEN_OPEN_BRACE) {
+        func.func.body = parse_block(lexer);
+        func.func.is_defined = true;
+    } else {
+        func.func.is_defined = false;
+    }
 
-    p_current_function = func;
-    func.func.body = parse_block(lexer);
     p_current_function = null;
-
-    // We don't want to add this to `all_functions`, since we only want it to be accessible
-    // for the struct/union that it is a method of. We'll add it to the struct/union's
-    // `methods` vector instead.
-    vector_push(ctyp.methods, func);
     return func;
 }
 
@@ -1142,7 +1161,7 @@ fn parse_function(lexer: Lexer*): Node* {
     //  2. It's a function that's been defined, which is an error.
     //  3. It's a function that's been declared (but not defined), which is OK
     if (identifier_exists(token.value.as_string)) {
-        dfunc = find_function_definition(token.value.as_string);
+        dfunc = find_function_definition(token.value.as_string, p_all_functions);
         // Case 1
         if (dfunc == null)
             die_loc(here, &token.loc, "Function name already exists as an identifier");
