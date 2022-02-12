@@ -3,7 +3,7 @@ name: Test
 on: [push, pull_request]
 
 jobs:
-  build_ubuntu:
+  test_ubuntu:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -11,12 +11,18 @@ jobs:
 
         run: sudo apt-get install -y build-essential nasm
 
-      - name: Build
+      - name: Building from bootstrap
         run: |
           cd ${{ github.workspace }}
           ./meta/bootstrap.sh && ./build/cupcc -r compiler/main.cup -r compiler/main.cup -r compiler/main.cup
+      
+      - name: Running tests
+        run: |
+          cd ${{ github.workspace }}
+          ./meta/bootstrap.sh
+          ./meta/test.sh
 
-  build_macos:
+  test_macos:
     runs-on: macos-10.15
     steps:
       - uses: actions/checkout@v2
@@ -24,7 +30,13 @@ jobs:
 
         run: brew install nasm
 
-      - name: Build
+      - name: Building from bootstrap
         run: |
           cd ${{ github.workspace }}
           ./meta/bootstrap.sh && ./build/cupcc -r compiler/main.cup -r compiler/main.cup -r compiler/main.cup
+
+      - name: Running tests
+        run: |
+          cd ${{ github.workspace }}
+          ./meta/bootstrap.sh
+          ./meta/test.sh
