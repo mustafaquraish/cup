@@ -144,6 +144,21 @@ fn replace_extension(path: char*, new_ext: char*) {
     strcpy(path + idx, new_ext);
 }
 
+fn is_space(c: char): int {
+    return c == ' ' || c == '\t' || c == '\n' || c == '\r';
+}
+
+fn is_digit(c: char): int {
+    return c >= '0' && c <= '9';
+}
+
+fn is_alpha(c: char): int {
+    return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '_';
+}
+
+fn is_alnum(c: char): int {
+    return is_digit(c) || is_alpha(c);
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 // I/O

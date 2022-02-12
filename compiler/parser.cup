@@ -140,33 +140,33 @@ fn parse_expression(lexer: Lexer*): Node*;
 
 fn parse_constant_declaration(lexer: Lexer*): Node* {
     let token: Token;
-    lexer_next_assert(lexer, &token, TOKEN_CONST);
+    lexer::next_assert(&token, TOKEN_CONST);
 
-    lexer_next_assert(lexer, &token, TOKEN_IDENTIFIER);
+    lexer::next_assert(&token, TOKEN_IDENTIFIER);
     if (identifier_exists(token.value.as_string))
         die_loc2(here, &token.loc, "Identifier already exists: ", token.value.as_string);
     let constant_name = token.value.as_string;
 
-    lexer_peek(lexer, &token);
+    lexer::peek(&token);
     // All constants are implicitly `int`, but we'll allow it for consistency
     if (token.typ == TOKEN_COLON) {
-        lexer_next(lexer, &token);
+        lexer::next(&token);
         if (token.typ != TOKEN_INT)
             die_loc(here, &token.loc, "Expected 'int' type for constant");
-        lexer_peek(lexer, &token);
+        lexer::peek(&token);
     }
 
-    lexer_next_assert(lexer, &token, TOKEN_ASSIGN);
+    lexer::next_assert(&token, TOKEN_ASSIGN);
     let expr = parse_expression(lexer);
     let value = eval_constexp(expr);
     constant_push(constant_name, value);
 
-    lexer_next_assert(lexer, &token, TOKEN_SEMICOLON);
+    lexer::next_assert(&token, TOKEN_SEMICOLON);
 }
 
 fn parse_literal(lexer: Lexer*): Node* {
     let token: Token;
-    lexer_next(lexer, &token);
+    lexer::next(&token);
     let node = node_new(AST_LITERAL);
 
     if (token.typ == TOKEN_INTLIT) {
@@ -187,18 +187,18 @@ fn parse_literal(lexer: Lexer*): Node* {
 fn parse_type(lexer: Lexer*): Type* {
     let token: Token;
     let typ: Type *;
-    lexer_peek(lexer, &token);
+    lexer::peek(&token);
     if (token.typ == TOKEN_INT) {
-        lexer_next(lexer, &token);
+        lexer::next(&token);
         typ = type_new(TYPE_INT);
     } else if (token.typ == TOKEN_CHAR) {
-        lexer_next(lexer, &token);
+        lexer::next(&token);
         typ = type_new(TYPE_CHAR);
     } else if (token.typ == TOKEN_VOID) {
-        lexer_next(lexer, &token);
+        lexer::next(&token);
         typ = type_new(TYPE_VOID);
     } else {
-        lexer_next_assert(lexer, &token, TOKEN_IDENTIFIER);
+        lexer::next_assert(&token, TOKEN_IDENTIFIER);
         typ = find_compound_type(token.value.as_string);
         if (!typ)
             die_loc2(here, &token.loc, "Unknown token in parse_type: ", token.value.as_string);
@@ -206,18 +206,18 @@ fn parse_type(lexer: Lexer*): Type* {
 
     let running = true;
     while (running) {
-        lexer_peek(lexer, &token);
+        lexer::peek(&token);
         if (token.typ == TOKEN_STAR) {
-            lexer_next(lexer, &token);
+            lexer::next(&token);
             let ptr = type_new(TYPE_PTR);
             ptr.ptr = typ;
             typ = ptr;
         } else if (token.typ == TOKEN_OPEN_BRACKET) {
-            lexer_next(lexer, &token);
+            lexer::next(&token);
             let arr = type_new(TYPE_ARRAY);
             arr.ptr = typ;
 
-            lexer_next(lexer, &token);
+            lexer::next(&token);
             if (token.typ == TOKEN_INTLIT) {
                 arr.array_size = token.value.as_int;
             } else if (token.typ == TOKEN_IDENTIFIER) {
@@ -230,7 +230,7 @@ fn parse_type(lexer: Lexer*): Type* {
             } else {
                 die_loc(here, &token.loc, "Expected a constant expression for array size");
             }
-            lexer_next_assert(lexer, &token, TOKEN_CLOSE_BRACKET);
+            lexer::next_assert(&token, TOKEN_CLOSE_BRACKET);
             typ = arr;
 
         } else {
@@ -251,8 +251,8 @@ fn parse_function_call_args(lexer: Lexer*, func: Node*, obj_ptr: Node*): Node* {
     node.call.args = vector_new();
     node.etyp = func.etyp;
 
-    lexer_next_assert(lexer, &token, TOKEN_OPEN_PAREN);
-    lexer_peek(lexer, &token);
+    lexer::next_assert(&token, TOKEN_OPEN_PAREN);
+    lexer::peek(&token);
 
     if (obj_ptr)
         vector_push(node.call.args, obj_ptr);
@@ -262,14 +262,14 @@ fn parse_function_call_args(lexer: Lexer*, func: Node*, obj_ptr: Node*): Node* {
         let arg = parse_expression(lexer);
         vector_push(node.call.args, arg);
 
-        lexer_peek(lexer, &token);
+        lexer::peek(&token);
 
         if (token.typ == TOKEN_COMMA) {
-            lexer_next(lexer, &token);
-            lexer_peek(lexer, &token);
+            lexer::next(&token);
+            lexer::peek(&token);
         }
     }
-    lexer_next_assert(lexer, &token, TOKEN_CLOSE_PAREN);
+    lexer::next_assert(&token, TOKEN_CLOSE_PAREN);
 
     if (node.call.args.size != func.func.args.size)
         die_loc2(here, &token.loc, "Function call argument count mismatch: ", func.func.name);
@@ -288,7 +288,7 @@ fn parse_function_call_args(lexer: Lexer*, func: Node*, obj_ptr: Node*): Node* {
 
 fn parse_identifier(lexer: Lexer*): Node* {
     let token: Token;
-    lexer_next_assert(lexer, &token, TOKEN_IDENTIFIER);
+    lexer::next_assert(&token, TOKEN_IDENTIFIER);
     let name = token.value.as_string;
 
     let node: Node*;
@@ -331,22 +331,22 @@ fn parse_identifier(lexer: Lexer*): Node* {
 fn parse_factor(lexer: Lexer*): Node* {
     let token: Token;
     let expr: Node*;
-    lexer_peek(lexer, &token);
+    lexer::peek(&token);
 
     if (token.typ == TOKEN_MINUS) {
-        lexer_next(lexer, &token);
+        lexer::next(&token);
         expr = node_new(AST_NEG);
         expr.unary = parse_factor(lexer);
         expr = type_check_unary(expr, &token);
 
     } else if (token.typ == TOKEN_TILDE) {
-        lexer_next(lexer, &token);
+        lexer::next(&token);
         expr = node_new(AST_BWINV);
         expr.unary = parse_factor(lexer);
         expr = type_check_unary(expr, &token);
 
     } else if (token.typ == TOKEN_PLUSPLUS) {
-        lexer_next(lexer, &token);
+        lexer::next(&token);
         expr = node_new(AST_ASSIGN);
         expr.assign.lhs = parse_factor(lexer);
         if (!is_lvalue(expr.assign.lhs.typ))
@@ -360,7 +360,7 @@ fn parse_factor(lexer: Lexer*): Node* {
 
     // --x is changed to (x = x - 1)
     } else if (token.typ == TOKEN_MINUSMINUS) {
-        lexer_next(lexer, &token);
+        lexer::next(&token);
         expr = node_new(AST_ASSIGN);
         expr.assign.lhs = parse_factor(lexer);
         if (!is_lvalue(expr.assign.lhs.typ))
@@ -374,22 +374,22 @@ fn parse_factor(lexer: Lexer*): Node* {
 
     // FIXME: This should probably go somewhere else more appropriate
     } else if (token.typ == TOKEN_SIZEOF) {
-        lexer_next(lexer, &token);
-        lexer_next_assert(lexer, &token, TOKEN_OPEN_PAREN);
+        lexer::next(&token);
+        lexer::next_assert(&token, TOKEN_OPEN_PAREN);
         let typ = parse_type(lexer);
-        lexer_next_assert(lexer, &token, TOKEN_CLOSE_PAREN);
+        lexer::next_assert(&token, TOKEN_CLOSE_PAREN);
         expr = node_from_int_literal(size_for_type(typ));
 
     } else if (token.typ == TOKEN_EXCLAMATION) {
-        lexer_next(lexer, &token);
+        lexer::next(&token);
         expr = node_new(AST_NOT);
         expr.unary = parse_factor(lexer);
         expr = type_check_unary(expr, &token);
 
     } else if (token.typ == TOKEN_OPEN_PAREN) {
-        lexer_next(lexer, &token);
+        lexer::next(&token);
         expr = parse_expression(lexer);
-        lexer_next_assert(lexer, &token, TOKEN_CLOSE_PAREN);
+        lexer::next_assert(&token, TOKEN_CLOSE_PAREN);
 
     } else if (is_literal_token(token.typ)) {
         expr = parse_literal(lexer);
@@ -398,7 +398,7 @@ fn parse_factor(lexer: Lexer*): Node* {
         expr = parse_identifier(lexer);
 
     } else if (token.typ == TOKEN_AMPERSAND) {
-        lexer_next(lexer, &token);
+        lexer::next(&token);
         expr = node_new(AST_ADDROF);
         expr.unary = parse_factor(lexer);
         if (!is_lvalue(expr.unary.typ))
@@ -406,7 +406,7 @@ fn parse_factor(lexer: Lexer*): Node* {
         expr = type_check_unary(expr, &token);
 
     } else if (token.typ == TOKEN_STAR) {
-        lexer_next(lexer, &token);
+        lexer::next(&token);
         let subexp = parse_factor(lexer);
         if (subexp.etyp.typ != TYPE_PTR)
             die_loc(here, &token.loc, "Cannot dereference non-pointer type");
@@ -421,11 +421,11 @@ fn parse_factor(lexer: Lexer*): Node* {
 
     let running = true;
     while (running) {
-        lexer_peek(lexer, &token);
+        lexer::peek(&token);
         if (token.typ == TOKEN_OPEN_BRACKET) {
             if (expr.etyp.typ != TYPE_PTR)
                 die_loc(here, &token.loc, "Cannot index non-pointer/array type");
-            lexer_next(lexer, &token);
+            lexer::next(&token);
 
             let index = parse_expression(lexer);
 
@@ -438,10 +438,10 @@ fn parse_factor(lexer: Lexer*): Node* {
             expr.unary = offset;
             expr = type_check_unary(expr, &token);
 
-            lexer_next_assert(lexer, &token, TOKEN_CLOSE_BRACKET);
+            lexer::next_assert(&token, TOKEN_CLOSE_BRACKET);
 
         } else if (token.typ == TOKEN_DOT) {
-            lexer_next_assert(lexer, &token, TOKEN_DOT);
+            lexer::next_assert(&token, TOKEN_DOT);
             if (!is_struct_or_structptr(expr.etyp)) {
                 putsln(create_type_string(expr.etyp));
                 die_loc(here, &token.loc, "Cannot access member of non-struct type");
@@ -450,7 +450,7 @@ fn parse_factor(lexer: Lexer*): Node* {
             let is_ptr = expr.etyp.typ == TYPE_PTR;
             let struct_type = is_ptr ? expr.etyp.ptr : expr.etyp;
 
-            lexer_next_assert(lexer, &token, TOKEN_IDENTIFIER);
+            lexer::next_assert(&token, TOKEN_IDENTIFIER);
             let name = token.value.as_string;
             let field = compound_find_field(struct_type, name);
 
@@ -469,7 +469,7 @@ fn parse_factor(lexer: Lexer*): Node* {
             expr = decay_array_to_pointer(member, &token);
 
         } else if (token.typ == TOKEN_COLONCOLON) {
-            lexer_next(lexer, &token);
+            lexer::next(&token);
 
             if (!is_lvalue(expr.typ))
                 die_loc(here, &token.loc, "Cannot call method on non-lvalue");
@@ -489,7 +489,7 @@ fn parse_factor(lexer: Lexer*): Node* {
                 obj_ptr = type_check_unary(obj_ptr, &token);
             }
 
-            lexer_next_assert(lexer, &token, TOKEN_IDENTIFIER);
+            lexer::next_assert(&token, TOKEN_IDENTIFIER);
             let name = token.value.as_string;
             let _method = compound_find_method(struct_type, name);
             if (_method == null)
@@ -510,15 +510,15 @@ fn parse_term(lexer: Lexer*): Node* {
     let token: Token;
 
     let lhs = parse_factor(lexer);
-    lexer_peek(lexer, &token);
+    lexer::peek(&token);
     while (token.typ == TOKEN_STAR || token.typ == TOKEN_SLASH || token.typ == TOKEN_PERCENT) {
-        lexer_next(lexer, &token);
+        lexer::next(&token);
         let op = node_new(binary_token_to_op(token.typ));
         let rhs = parse_factor(lexer);
         op.binary.lhs = lhs;
         op.binary.rhs = rhs;
         lhs = type_check_binary(op, &token);
-        lexer_peek(lexer, &token);
+        lexer::peek(&token);
     }
     return lhs;
 }
@@ -527,15 +527,15 @@ fn parse_additive(lexer: Lexer*): Node* {
     let token: Token;
 
     let lhs = parse_term(lexer);
-    lexer_peek(lexer, &token);
+    lexer::peek(&token);
     while (token.typ == TOKEN_PLUS || token.typ == TOKEN_MINUS || token.typ == TOKEN_LSHIFT || token.typ == TOKEN_RSHIFT) {
-        lexer_next(lexer, &token);
+        lexer::next(&token);
         let op = node_new(binary_token_to_op(token.typ));
         let rhs = parse_term(lexer);
         op.binary.lhs = lhs;
         op.binary.rhs = rhs;
         lhs = type_check_binary(op, &token);
-        lexer_peek(lexer, &token);
+        lexer::peek(&token);
     }
     return lhs;
 }
@@ -544,16 +544,16 @@ fn parse_relational(lexer: Lexer*): Node* {
     let token: Token;
 
     let lhs = parse_additive(lexer);
-    lexer_peek(lexer, &token);
+    lexer::peek(&token);
     while (token.typ == TOKEN_LT || token.typ == TOKEN_LEQ ||
            token.typ == TOKEN_GT || token.typ == TOKEN_GEQ) {
-        lexer_next(lexer, &token);
+        lexer::next(&token);
         let op = node_new(binary_token_to_op(token.typ));
         let rhs = parse_additive(lexer);
         op.binary.lhs = lhs;
         op.binary.rhs = rhs;
         lhs = type_check_binary(op, &token);
-        lexer_peek(lexer, &token);
+        lexer::peek(&token);
     }
     return lhs;
 }
@@ -562,15 +562,15 @@ fn parse_equality(lexer: Lexer*): Node* {
     let token: Token;
 
     let lhs = parse_relational(lexer);
-    lexer_peek(lexer, &token);
+    lexer::peek(&token);
     while (token.typ == TOKEN_EQ || token.typ == TOKEN_NEQ) {
-        lexer_next(lexer, &token);
+        lexer::next(&token);
         let op = node_new(binary_token_to_op(token.typ));
         let rhs = parse_relational(lexer);
         op.binary.lhs = lhs;
         op.binary.rhs = rhs;
         lhs = type_check_binary(op, &token);
-        lexer_peek(lexer, &token);
+        lexer::peek(&token);
     }
     return lhs;
 }
@@ -579,15 +579,15 @@ fn parse_and(lexer: Lexer*): Node* {
     let token: Token;
 
     let lhs = parse_equality(lexer);
-    lexer_peek(lexer, &token);
+    lexer::peek(&token);
     while (token.typ == TOKEN_AMPERSAND) {
-        lexer_next(lexer, &token);
+        lexer::next(&token);
         let op = node_new(binary_token_to_op(token.typ));
         let rhs = parse_equality(lexer);
         op.binary.lhs = lhs;
         op.binary.rhs = rhs;
         lhs = type_check_binary(op, &token);
-        lexer_peek(lexer, &token);
+        lexer::peek(&token);
     }
     return lhs;
 }
@@ -596,15 +596,15 @@ fn parse_exclusive_or(lexer: Lexer*): Node* {
     let token: Token;
 
     let lhs = parse_and(lexer);
-    lexer_peek(lexer, &token);
+    lexer::peek(&token);
     while (token.typ == TOKEN_CARET) {
-        lexer_next(lexer, &token);
+        lexer::next(&token);
         let op = node_new(binary_token_to_op(token.typ));
         let rhs = parse_and(lexer);
         op.binary.lhs = lhs;
         op.binary.rhs = rhs;
         lhs = type_check_binary(op, &token);
-        lexer_peek(lexer, &token);
+        lexer::peek(&token);
     }
     return lhs;
 }
@@ -613,15 +613,15 @@ fn parse_inclusive_or(lexer: Lexer*): Node* {
     let token: Token;
 
     let lhs = parse_exclusive_or(lexer);
-    lexer_peek(lexer, &token);
+    lexer::peek(&token);
     while (token.typ == TOKEN_BAR) {
-        lexer_next(lexer, &token);
+        lexer::next(&token);
         let op = node_new(binary_token_to_op(token.typ));
         let rhs = parse_exclusive_or(lexer);
         op.binary.lhs = lhs;
         op.binary.rhs = rhs;
         lhs = type_check_binary(op, &token);
-        lexer_peek(lexer, &token);
+        lexer::peek(&token);
     }
     return lhs;
 }
@@ -630,15 +630,15 @@ fn parse_logical_and(lexer: Lexer*): Node* {
     let token: Token;
 
     let lhs = parse_inclusive_or(lexer);
-    lexer_peek(lexer, &token);
+    lexer::peek(&token);
     while (token.typ == TOKEN_AND) {
-        lexer_next(lexer, &token);
+        lexer::next(&token);
         let op = node_new(binary_token_to_op(token.typ));
         let rhs = parse_inclusive_or(lexer);
         op.binary.lhs = lhs;
         op.binary.rhs = rhs;
         lhs = type_check_binary(op, &token);
-        lexer_peek(lexer, &token);
+        lexer::peek(&token);
     }
     return lhs;
 }
@@ -647,15 +647,15 @@ fn parse_logical_or(lexer: Lexer*): Node* {
     let token: Token;
 
     let lhs = parse_logical_and(lexer);
-    lexer_peek(lexer, &token);
+    lexer::peek(&token);
     while (token.typ == TOKEN_OR) {
-        lexer_next(lexer, &token);
+        lexer::next(&token);
         let op = node_new(binary_token_to_op(token.typ));
         let rhs = parse_logical_and(lexer);
         op.binary.lhs = lhs;
         op.binary.rhs = rhs;
         lhs = type_check_binary(op, &token);
-        lexer_peek(lexer, &token);
+        lexer::peek(&token);
     }
     return lhs;
 }
@@ -664,11 +664,11 @@ fn parse_conditional_exp(lexer: Lexer*): Node* {
     let token: Token;
 
     let lhs = parse_logical_or(lexer);
-    lexer_peek(lexer, &token);
+    lexer::peek(&token);
     if (token.typ == TOKEN_QUESTION) {
-        lexer_next(lexer, &token);
+        lexer::next(&token);
         let then = parse_expression(lexer);
-        lexer_next_assert(lexer, &token, TOKEN_COLON);
+        lexer::next_assert(&token, TOKEN_COLON);
         let els = parse_expression(lexer);
 
         let cond = node_new(AST_CONDITIONAL);
@@ -689,9 +689,9 @@ fn parse_expression(lexer: Lexer*): Node* {
     let lhs = parse_conditional_exp(lexer);
     if (is_lvalue(lhs.typ)) {
         let token: Token;
-        lexer_peek(lexer, &token);
+        lexer::peek(&token);
         if (token.typ == TOKEN_ASSIGN) {
-            lexer_next(lexer, &token);
+            lexer::next(&token);
             let node = node_new(AST_ASSIGN);
             let rhs = parse_expression(lexer);
 
@@ -739,8 +739,8 @@ fn add_global_variable(var: Variable*) {
 fn parse_var_declaration(lexer: Lexer*): Node* {
 
     let token: Token;
-    lexer_next_assert(lexer, &token, TOKEN_LET);
-    lexer_next_assert(lexer, &token, TOKEN_IDENTIFIER);
+    lexer::next_assert(&token, TOKEN_LET);
+    lexer::next_assert(&token, TOKEN_IDENTIFIER);
 
     if (identifier_exists(token.value.as_string))
         die_loc2(here, &token.loc, "Identifier already defined: %s", token.value.as_string);
@@ -752,17 +752,17 @@ fn parse_var_declaration(lexer: Lexer*): Node* {
     let decl = &node.var_decl;
     decl.var.name = token.value.as_string;
 
-    lexer_peek(lexer, &token);
+    lexer::peek(&token);
     let missing_type = true;
     if (token.typ == TOKEN_COLON) {
-        lexer_next(lexer, &token);
+        lexer::next(&token);
         decl.var.typ = parse_type(lexer);
         missing_type = false;
-        lexer_peek(lexer, &token);
+        lexer::peek(&token);
     }
 
     if (token.typ == TOKEN_ASSIGN) {
-        lexer_next(lexer, &token);
+        lexer::next(&token);
         decl.init = parse_expression(lexer);
 
         if (missing_type) {
@@ -789,20 +789,20 @@ fn parse_var_declaration(lexer: Lexer*): Node* {
 
 fn parse_function_params(lexer: Lexer*, func: Node*) {
     let token: Token;
-    lexer_peek(lexer, &token);
+    lexer::peek(&token);
 
     if (!func.func.args)
         func.func.args = vector_new();
 
     // TODO: Actually parse params
     while (token.typ != TOKEN_CLOSE_PAREN) {
-        lexer_next_assert(lexer, &token, TOKEN_IDENTIFIER);
+        lexer::next_assert(&token, TOKEN_IDENTIFIER);
         let name = token.value.as_string;
 
         if (identifier_exists(token.value.as_string))
             die_loc2(here, &token.loc, "Identifier already defined: ", name);
 
-        lexer_next_assert(lexer, &token, TOKEN_COLON);
+        lexer::next_assert(&token, TOKEN_COLON);
         let typ = parse_type(lexer);
 
         let var: Variable* = malloc(sizeof(Variable));
@@ -810,10 +810,10 @@ fn parse_function_params(lexer: Lexer*, func: Node*) {
         var.typ = typ;
         vector_push(func.func.args, var);
 
-        lexer_peek(lexer, &token);
+        lexer::peek(&token);
         if (token.typ == TOKEN_COMMA) {
-            lexer_next(lexer, &token);
-            lexer_peek(lexer, &token);
+            lexer::next(&token);
+            lexer::peek(&token);
         }
     }
 
@@ -838,10 +838,10 @@ fn parse_statement(lexer: Lexer*): Node*;
 
 fn parse_for_loop(lexer: Lexer*): Node* {
     let token: Token;
-    lexer_next_assert(lexer, &token, TOKEN_FOR);
+    lexer::next_assert(&token, TOKEN_FOR);
 
     let looop = node_new(AST_FOR);
-    lexer_next_assert(lexer, &token, TOKEN_OPEN_PAREN);
+    lexer::next_assert(&token, TOKEN_OPEN_PAREN);
 
     // NOTE: We're going to put the for loop in it's own block
     //       so that any declarations in the init of the loop
@@ -854,22 +854,22 @@ fn parse_for_loop(lexer: Lexer*): Node* {
 
     // All of the expressions in the for loop are optional
 
-    lexer_peek(lexer, &token);
+    lexer::peek(&token);
     if (token.typ == TOKEN_LET)
         looop.looop.init = parse_var_declaration(lexer);
     else if (token.typ != TOKEN_SEMICOLON)
         looop.looop.init = parse_expression(lexer);
-    lexer_next_assert(lexer, &token, TOKEN_SEMICOLON);
+    lexer::next_assert(&token, TOKEN_SEMICOLON);
 
-    lexer_peek(lexer, &token);
+    lexer::peek(&token);
     if (token.typ != TOKEN_SEMICOLON)
         looop.looop.cond = parse_expression(lexer);
-    lexer_next_assert(lexer, &token, TOKEN_SEMICOLON);
+    lexer::next_assert(&token, TOKEN_SEMICOLON);
 
-    lexer_peek(lexer, &token);
+    lexer::peek(&token);
     if (token.typ != TOKEN_CLOSE_PAREN)
         looop.looop.step = parse_expression(lexer);
-    lexer_next_assert(lexer, &token, TOKEN_CLOSE_PAREN);
+    lexer::next_assert(&token, TOKEN_CLOSE_PAREN);
 
     looop.looop.body = parse_statement(lexer);
     block_stack_pop();
@@ -881,67 +881,67 @@ fn parse_statement(lexer: Lexer*): Node* {
     let node: Node*;
     let token: Token;
 
-    lexer_peek(lexer, &token);
+    lexer::peek(&token);
     if (token.typ == TOKEN_OPEN_BRACE) {
         node = parse_block(lexer);
 
     } else if (token.typ == TOKEN_RETURN) {
-        lexer_next(lexer, &token);
+        lexer::next(&token);
         node = node_new(AST_RETURN);
 
-        lexer_peek(lexer, &token);
+        lexer::peek(&token);
         if (token.typ != TOKEN_SEMICOLON) {
             node.unary = parse_expression(lexer);
         } else {
             node.unary = null; // empty return statment
         }
-        lexer_next_assert(lexer, &token, TOKEN_SEMICOLON);
+        lexer::next_assert(&token, TOKEN_SEMICOLON);
 
     } else if (token.typ == TOKEN_IF) {
-        lexer_next(lexer, &token);
+        lexer::next(&token);
 
         node = node_new(AST_IF);
 
-        lexer_next_assert(lexer, &token, TOKEN_OPEN_PAREN);
+        lexer::next_assert(&token, TOKEN_OPEN_PAREN);
         node.conditional.cond = parse_expression(lexer);
-        lexer_next_assert(lexer, &token, TOKEN_CLOSE_PAREN);
+        lexer::next_assert(&token, TOKEN_CLOSE_PAREN);
         node.conditional.then = parse_statement(lexer);
 
-        lexer_peek(lexer, &token);
+        lexer::peek(&token);
         if (token.typ == TOKEN_ELSE) {
-            lexer_next(lexer, &token);
+            lexer::next(&token);
             node.conditional.els = parse_statement(lexer);
         }
     } else if (token.typ == TOKEN_WHILE) {
-        lexer_next(lexer, &token);
+        lexer::next(&token);
         node = node_new(AST_WHILE);
-        lexer_next_assert(lexer, &token, TOKEN_OPEN_PAREN);
+        lexer::next_assert(&token, TOKEN_OPEN_PAREN);
         node.looop.cond = parse_expression(lexer);
-        lexer_next_assert(lexer, &token, TOKEN_CLOSE_PAREN);
+        lexer::next_assert(&token, TOKEN_CLOSE_PAREN);
         node.looop.body = parse_statement(lexer);
 
     } else if (token.typ == TOKEN_FOR) {
         node = parse_for_loop(lexer);
 
     } else if (token.typ == TOKEN_DEFER) {
-        lexer_next_assert(lexer, &token, TOKEN_DEFER);
+        lexer::next_assert(&token, TOKEN_DEFER);
         node = node_new(AST_DEFER);
         node.unary = parse_statement(lexer);
 
     } else if (token.typ == TOKEN_LET) {
         node = parse_var_declaration(lexer);
-        lexer_next_assert(lexer, &token, TOKEN_SEMICOLON);
+        lexer::next_assert(&token, TOKEN_SEMICOLON);
     } else {
         // Default to expression statement
         node = parse_expression(lexer);
-        lexer_next_assert(lexer, &token, TOKEN_SEMICOLON);
+        lexer::next_assert(&token, TOKEN_SEMICOLON);
     }
     return node;
 }
 
 fn parse_block(lexer: Lexer*): Node* {
     let token: Token;
-    lexer_next_assert(lexer, &token, TOKEN_OPEN_BRACE);
+    lexer::next_assert(&token, TOKEN_OPEN_BRACE);
 
     let block = node_new(AST_BLOCK);
     block.block.children = vector_new();
@@ -949,12 +949,12 @@ fn parse_block(lexer: Lexer*): Node* {
 
     block_stack_push(block);
 
-    lexer_peek(lexer, &token);
+    lexer::peek(&token);
     while (token.typ != TOKEN_CLOSE_BRACE) {
         block_add_child(block, parse_statement(lexer));
-        lexer_peek(lexer, &token);
+        lexer::peek(&token);
     }
-    lexer_next_assert(lexer, &token, TOKEN_CLOSE_BRACE);
+    lexer::next_assert(&token, TOKEN_CLOSE_BRACE);
 
     block_stack_pop();
     return block;
@@ -966,14 +966,14 @@ fn parse_enum_declaration(lexer: Lexer*) {
     // TODO: This is all a hack to automatically number
     //       Some constants. It does not behave like a type,
     //       and cannot be used as one. Fix this in the future.
-    lexer_next_assert(lexer, &token, TOKEN_ENUM);
-    lexer_next_assert(lexer, &token, TOKEN_IDENTIFIER); // Use this!
-    lexer_next_assert(lexer, &token, TOKEN_OPEN_BRACE);
+    lexer::next_assert(&token, TOKEN_ENUM);
+    lexer::next_assert(&token, TOKEN_IDENTIFIER); // Use this!
+    lexer::next_assert(&token, TOKEN_OPEN_BRACE);
 
     let enum_count = 0;
-    lexer_peek(lexer, &token);
+    lexer::peek(&token);
     while (token.typ != TOKEN_CLOSE_BRACE) {
-        lexer_next_assert(lexer, &token, TOKEN_IDENTIFIER);
+        lexer::next_assert(&token, TOKEN_IDENTIFIER);
 
         if (identifier_exists(token.value.as_string))
             die_loc(here, &token.loc, "Identifier already exists, enums just behave like numbered constants.");
@@ -981,15 +981,15 @@ fn parse_enum_declaration(lexer: Lexer*) {
         constant_push(token.value.as_string, enum_count);
         ++enum_count;
 
-        lexer_peek(lexer, &token);
+        lexer::peek(&token);
         if (token.typ == TOKEN_COMMA) {
-            lexer_next(lexer, &token);
-            lexer_peek(lexer, &token);
+            lexer::next(&token);
+            lexer::peek(&token);
         } else if (token.typ != TOKEN_CLOSE_BRACE) {
             die_loc(here, &token.loc, "Expected a comma or a closing brace.");
         }
     }
-    lexer_next_assert(lexer, &token, TOKEN_CLOSE_BRACE);
+    lexer::next_assert(&token, TOKEN_CLOSE_BRACE);
 }
 
 // FIXME: This should just be part of `parse_type()`, and we should be allowed
@@ -997,7 +997,7 @@ fn parse_enum_declaration(lexer: Lexer*) {
 //        between structs with similar embedded types.
 fn parse_struct_union_declaration(lexer: Lexer*, top_level: int, base_offset: int): Type* {
     let token: Token;
-    lexer_next(lexer, &token);
+    lexer::next(&token);
 
     if (token.typ != TOKEN_STRUCT && token.typ != TOKEN_UNION)
         die_loc(here, &token.loc, "Expected STRUCT or UNION in parse_struct_union_declaration");
@@ -1006,7 +1006,7 @@ fn parse_struct_union_declaration(lexer: Lexer*, top_level: int, base_offset: in
     compound.fields = vector_new();
     compound.methods = vector_new();
 
-    lexer_peek(lexer, &token);
+    lexer::peek(&token);
 
     // For nested temporary structs we don't need a name
     if (token.typ != TOKEN_IDENTIFIER && top_level)
@@ -1017,26 +1017,26 @@ fn parse_struct_union_declaration(lexer: Lexer*, top_level: int, base_offset: in
     if (token.typ == TOKEN_IDENTIFIER) {
         compound.struct_name = token.value.as_string;
         vector_push(p_compound_type_stack, compound);
-        lexer_next(lexer, &token);
+        lexer::next(&token);
     } else {
         compound.struct_name = "<anon>";
     }
 
-    lexer_next_assert(lexer, &token, TOKEN_OPEN_BRACE);
+    lexer::next_assert(&token, TOKEN_OPEN_BRACE);
 
-    lexer_peek(lexer, &token);
+    lexer::peek(&token);
     while (token.typ != TOKEN_CLOSE_BRACE) {
-        lexer_peek(lexer, &token);
+        lexer::peek(&token);
         let name: char* = null;
 
         // We have a named field.
         if (token.typ == TOKEN_IDENTIFIER) {
-            lexer_next(lexer, &token);
+            lexer::next(&token);
             // TODO: Make sure the name doesn't conflict with an existing field. This is a bit
             //       more annoying than it sounds because we have no-named types.
             name = token.value.as_string;
-            lexer_next_assert(lexer, &token, TOKEN_COLON);
-            lexer_peek(lexer, &token);
+            lexer::next_assert(&token, TOKEN_COLON);
+            lexer::peek(&token);
         }
 
 
@@ -1065,10 +1065,10 @@ fn parse_struct_union_declaration(lexer: Lexer*, top_level: int, base_offset: in
         }
 
         compound_push_field(compound, name, typ, base_offset);
-        lexer_next_assert(lexer, &token, TOKEN_SEMICOLON);
-        lexer_peek(lexer, &token);
+        lexer::next_assert(&token, TOKEN_SEMICOLON);
+        lexer::peek(&token);
     }
-    lexer_next_assert(lexer, &token, TOKEN_CLOSE_BRACE);
+    lexer::next_assert(&token, TOKEN_CLOSE_BRACE);
     return compound;
 }
 
@@ -1078,15 +1078,15 @@ fn parse_struct_union_declaration(lexer: Lexer*, top_level: int, base_offset: in
 fn parse_method(lexer: Lexer*): Node* {
     let token: Token;
 
-    lexer_next_assert(lexer, &token, TOKEN_METHOD);
-    lexer_next_assert(lexer, &token, TOKEN_IDENTIFIER);
+    lexer::next_assert(&token, TOKEN_METHOD);
+    lexer::next_assert(&token, TOKEN_IDENTIFIER);
 
     let ctyp = find_compound_type(token.value.as_string);
     if (ctyp == null)
         die_loc2(here, &token.loc, "Could not find struct/union with name: ", token.value.as_string);
 
-    lexer_next_assert(lexer, &token, TOKEN_COLONCOLON);
-    lexer_next_assert(lexer, &token, TOKEN_IDENTIFIER);
+    lexer::next_assert(&token, TOKEN_COLONCOLON);
+    lexer::next_assert(&token, TOKEN_IDENTIFIER);
 
     // TODO: Check if identifier exists
     let func = node_new(AST_FUNC);
@@ -1121,19 +1121,19 @@ fn parse_method(lexer: Lexer*): Node* {
     let self_var = variable_new("self", ptr_typ, 0);
     vector_push(func.func.args, self_var);
 
-    lexer_next_assert(lexer, &token, TOKEN_OPEN_PAREN);
+    lexer::next_assert(&token, TOKEN_OPEN_PAREN);
     parse_function_params(lexer, func);
-    lexer_next_assert(lexer, &token, TOKEN_CLOSE_PAREN);
+    lexer::next_assert(&token, TOKEN_CLOSE_PAREN);
 
-    lexer_peek(lexer, &token);
+    lexer::peek(&token);
     if (token.typ == TOKEN_COLON) {
-        lexer_next(lexer, &token);
+        lexer::next(&token);
         func.etyp = parse_type(lexer);
     } else {
         func.etyp = type_new(TYPE_VOID);
     }
 
-    lexer_peek(lexer, &token);
+    lexer::peek(&token);
     if (token.typ == TOKEN_OPEN_BRACE) {
         func.func.body = parse_block(lexer);
         func.func.is_defined = true;
@@ -1148,8 +1148,8 @@ fn parse_method(lexer: Lexer*): Node* {
 fn parse_function(lexer: Lexer*): Node* {
     let token: Token;
 
-    lexer_next_assert(lexer, &token, TOKEN_FN);
-    lexer_next_assert(lexer, &token, TOKEN_IDENTIFIER);
+    lexer::next_assert(&token, TOKEN_FN);
+    lexer::next_assert(&token, TOKEN_IDENTIFIER);
 
     // TODO: Check if identifier exists
     let func = node_new(AST_FUNC);
@@ -1177,19 +1177,19 @@ fn parse_function(lexer: Lexer*): Node* {
         p_current_function = func;
     }
 
-    lexer_next_assert(lexer, &token, TOKEN_OPEN_PAREN);
+    lexer::next_assert(&token, TOKEN_OPEN_PAREN);
     parse_function_params(lexer, func);
-    lexer_next_assert(lexer, &token, TOKEN_CLOSE_PAREN);
+    lexer::next_assert(&token, TOKEN_CLOSE_PAREN);
 
-    lexer_peek(lexer, &token);
+    lexer::peek(&token);
     if (token.typ == TOKEN_COLON) {
-        lexer_next(lexer, &token);
+        lexer::next(&token);
         func.etyp = parse_type(lexer);
     } else {
         func.etyp = type_new(TYPE_VOID);
     }
 
-    lexer_peek(lexer, &token);
+    lexer::peek(&token);
     if (token.typ == TOKEN_OPEN_BRACE) {
         func.func.body = parse_block(lexer);
         func.func.is_defined = true;
@@ -1228,7 +1228,7 @@ fn parse_program(lexer: Lexer*): Node* {
     node.block.children = vector_new();
 
     let token: Token;
-    lexer_peek(lexer, &token);
+    lexer::peek(&token);
     vector_push(p_lexer_stack, lexer);
 
     while (token.typ != TOKEN_EOF) {
@@ -1240,12 +1240,12 @@ fn parse_program(lexer: Lexer*): Node* {
         } else if (token.typ == TOKEN_LET) {
             child = parse_var_declaration(lexer);
         } else if (token.typ == TOKEN_SEMICOLON) {
-            lexer_next(lexer, &token);
+            lexer::next(&token);
         } else if (token.typ == TOKEN_CONST) {
             parse_constant_declaration(lexer);
         } else if (token.typ == TOKEN_IMPORT) {
-            lexer_next(lexer, &token);
-            lexer_next_assert(lexer, &token, TOKEN_STRINGLIT);
+            lexer::next(&token);
+            lexer::next_assert(&token, TOKEN_STRINGLIT);
             let path = token.value.as_string;
             parser_open_new_file(path);
             lexer = vector_top(p_lexer_stack);
@@ -1260,11 +1260,11 @@ fn parse_program(lexer: Lexer*): Node* {
         if (child)
             block_add_child(node, child);
 
-        lexer_peek(lexer, &token);
+        lexer::peek(&token);
         while (token.typ == TOKEN_EOF && p_lexer_stack.size > 1) {
             vector_pop(p_lexer_stack);
             lexer = vector_top(p_lexer_stack);
-            lexer_peek(lexer, &token);
+            lexer::peek(&token);
         }
     }
     return node;

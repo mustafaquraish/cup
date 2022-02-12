@@ -26,250 +26,234 @@ fn lexer_new_open_file(filename: char*): Lexer* {
     return lexer_new(filename, source, size);
 }
 
-fn lexer_loc(lexer: Lexer*, loc: Location*) {
-    loc.filename = lexer.filename;
-    loc.line = lexer.line;
-    loc.col = lexer.col;
+method Lexer::loc(loc: Location*) {
+    loc.filename = self.filename;
+    loc.line = self.line;
+    loc.col = self.col;
 }
 
-fn is_space(c: char): int {
-    return c == ' ' || c == '\t' || c == '\n' || c == '\r';
-}
-
-fn is_digit(c: char): int {
-    return c >= '0' && c <= '9';
-}
-
-fn is_alpha(c: char): int {
-    return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '_';
-}
-
-fn is_alnum(c: char): int {
-    return is_digit(c) || is_alpha(c);
-}
-
-fn lexer_skip_whitespace(lexer: Lexer*) {
-    while (lexer.pos < lexer.len && is_space(lexer.src[lexer.pos])) {
-        if (lexer.src[lexer.pos] == '\n') {
-            lexer.line = lexer.pos + 1;
-            lexer.col = 0;
+method Lexer::skip_whitespace() {
+    while (self.pos < self.len && is_space(self.src[self.pos])) {
+        if (self.src[self.pos] == '\n') {
+            self.line = self.pos + 1;
+            self.col = 0;
         } else {
-            lexer.col = lexer.col + 1;
+            self.col = self.col + 1;
         }
-        lexer.pos = lexer.pos + 1;
+        self.pos = self.pos + 1;
     }
 }
 
-fn lexer_starts_with(lexer: Lexer*, str: char*): int {
+method Lexer::starts_with(str: char*): int {
     let len = strlen(str);
-    if (lexer.len - lexer.pos < len)
+    if (self.len - self.pos < len)
         return 0;
     for (let i = 0; i < len; ++i)
-        if (lexer.src[lexer.pos + i] != str[i])
+        if (self.src[self.pos + i] != str[i])
             return 0;
-    let end_pos = lexer.pos + len;
-    if (end_pos == lexer.len)
+    let end_pos = self.pos + len;
+    if (end_pos == self.len)
         return len;
-    let end_char = lexer.src[end_pos];
+    let end_char = self.src[end_pos];
     return !(is_digit(end_char) || is_alpha(end_char));
 }
 
-fn lexer_advance(lexer: Lexer*, n: int) {
-    lexer.pos = lexer.pos + n;
-    lexer.col = lexer.col + n;
+method Lexer::advance(n: int) {
+    self.pos = self.pos + n;
+    self.col = self.col + n;
 }
 
-fn lexer_peek_char(lexer: Lexer*, n: int): char {
-    if (lexer.pos + n >= lexer.len)
+method Lexer::peek_char(n: int): char {
+    if (self.pos + n >= self.len)
         return 0;
-    return lexer.src[lexer.pos + n];
+    return self.src[self.pos + n];
 }
 
-fn lexer_make_token(lexer: Lexer*, token: Token*, typ: int, inc: int) {
-    lexer_loc(lexer, &token.loc);
-    lexer_advance(lexer, inc);
+method Lexer::make_token(token: Token*, typ: int, inc: int) {
+    self::loc(&token.loc);
+    self::advance(inc);
     token.typ = typ;
 }
 
-fn lexer_next(lexer: Lexer*, token: Token*) {
-    while (lexer.pos < lexer.len) {
-        let c = lexer.src[lexer.pos];
+method Lexer::next(token: Token*) {
+    while (self.pos < self.len) {
+        let c = self.src[self.pos];
 
-             if (c == '\n')   { ++lexer.line; lexer.col = 0; ++lexer.pos; }
-        else if (is_space(c)) { lexer_advance(lexer, 1); }
-        else if (c == '(') { return lexer_make_token(lexer, token, TOKEN_OPEN_PAREN, 1); }
-        else if (c == ')') { return lexer_make_token(lexer, token, TOKEN_CLOSE_PAREN, 1); }
-        else if (c == '{') { return lexer_make_token(lexer, token, TOKEN_OPEN_BRACE, 1); }
-        else if (c == '}') { return lexer_make_token(lexer, token, TOKEN_CLOSE_BRACE, 1); }
-        else if (c == '[') { return lexer_make_token(lexer, token, TOKEN_OPEN_BRACKET, 1); }
-        else if (c == ']') { return lexer_make_token(lexer, token, TOKEN_CLOSE_BRACKET, 1); }
-        else if (c == ';') { return lexer_make_token(lexer, token, TOKEN_SEMICOLON, 1); }
-        else if (c == '~') { return lexer_make_token(lexer, token, TOKEN_TILDE, 1); }
-        else if (c == '?') { return lexer_make_token(lexer, token, TOKEN_QUESTION, 1); }
-        else if (c == '^') { return lexer_make_token(lexer, token, TOKEN_CARET, 1); }
-        else if (c == '.') { return lexer_make_token(lexer, token, TOKEN_DOT, 1); }
-        else if (c == ',') { return lexer_make_token(lexer, token, TOKEN_COMMA, 1); }
-        else if (c == '*') { return lexer_make_token(lexer, token, TOKEN_STAR, 1); }
-        else if (c == '%') { return lexer_make_token(lexer, token, TOKEN_PERCENT, 1); }
+             if (c == '\n')   { ++self.line; self.col = 0; ++self.pos; }
+        else if (is_space(c)) { self::advance(1); }
+        else if (c == '(') { return self::make_token(token, TOKEN_OPEN_PAREN, 1); }
+        else if (c == ')') { return self::make_token(token, TOKEN_CLOSE_PAREN, 1); }
+        else if (c == '{') { return self::make_token(token, TOKEN_OPEN_BRACE, 1); }
+        else if (c == '}') { return self::make_token(token, TOKEN_CLOSE_BRACE, 1); }
+        else if (c == '[') { return self::make_token(token, TOKEN_OPEN_BRACKET, 1); }
+        else if (c == ']') { return self::make_token(token, TOKEN_CLOSE_BRACKET, 1); }
+        else if (c == ';') { return self::make_token(token, TOKEN_SEMICOLON, 1); }
+        else if (c == '~') { return self::make_token(token, TOKEN_TILDE, 1); }
+        else if (c == '?') { return self::make_token(token, TOKEN_QUESTION, 1); }
+        else if (c == '^') { return self::make_token(token, TOKEN_CARET, 1); }
+        else if (c == '.') { return self::make_token(token, TOKEN_DOT, 1); }
+        else if (c == ',') { return self::make_token(token, TOKEN_COMMA, 1); }
+        else if (c == '*') { return self::make_token(token, TOKEN_STAR, 1); }
+        else if (c == '%') { return self::make_token(token, TOKEN_PERCENT, 1); }
 
-        else if (c == '/' && lexer_peek_char(lexer, 1) == '/') {
-            lexer.pos = lexer.pos + 2;    // skip the '//'
-            while (lexer.pos < lexer.len && lexer.src[lexer.pos] != '\n')
-                ++lexer.pos;
+        else if (c == '/' && self::peek_char(1) == '/') {
+            self.pos = self.pos + 2;    // skip the '//'
+            while (self.pos < self.len && self.src[self.pos] != '\n')
+                ++self.pos;
             // Implicit `continue`
         }
 
         // This needs to go after the comment check.
         else if (c == '/') {
-            return lexer_make_token(lexer, token, TOKEN_SLASH, 1);
+            return self::make_token(token, TOKEN_SLASH, 1);
         }
 
         else if (c == ':') {
-            if (lexer_peek_char(lexer, 1) == ':')
-                return lexer_make_token(lexer, token, TOKEN_COLONCOLON, 2);
-            return lexer_make_token(lexer, token, TOKEN_COLON, 1);
+            if (self::peek_char(1) == ':')
+                return self::make_token(token, TOKEN_COLONCOLON, 2);
+            return self::make_token(token, TOKEN_COLON, 1);
         }
 
         else if (c == '&') {
-            if (lexer_peek_char(lexer, 1) == '&')
-                return lexer_make_token(lexer, token, TOKEN_AND, 2);
-            return lexer_make_token(lexer, token, TOKEN_AMPERSAND, 1);
+            if (self::peek_char(1) == '&')
+                return self::make_token(token, TOKEN_AND, 2);
+            return self::make_token(token, TOKEN_AMPERSAND, 1);
         }
 
         else if (c == '!') {
-            if (lexer_peek_char(lexer, 1) == '=')
-                return lexer_make_token(lexer, token, TOKEN_NEQ, 2);
-            return lexer_make_token(lexer, token, TOKEN_EXCLAMATION, 1);
+            if (self::peek_char(1) == '=')
+                return self::make_token(token, TOKEN_NEQ, 2);
+            return self::make_token(token, TOKEN_EXCLAMATION, 1);
         }
 
         else if (c == '<') {
-            if (lexer_peek_char(lexer, 1) == '<')
-                return lexer_make_token(lexer, token, TOKEN_LSHIFT, 2);
-            if (lexer_peek_char(lexer, 1) == '=')
-                return lexer_make_token(lexer, token, TOKEN_LEQ, 2);
-            return lexer_make_token(lexer, token, TOKEN_LT, 1);
+            if (self::peek_char(1) == '<')
+                return self::make_token(token, TOKEN_LSHIFT, 2);
+            if (self::peek_char(1) == '=')
+                return self::make_token(token, TOKEN_LEQ, 2);
+            return self::make_token(token, TOKEN_LT, 1);
         }
 
         else if (c == '>') {
-            if (lexer_peek_char(lexer, 1) == '>')
-                return lexer_make_token(lexer, token, TOKEN_RSHIFT, 2);
-            if (lexer_peek_char(lexer, 1) == '=')
-                return lexer_make_token(lexer, token, TOKEN_GEQ, 2);
-            return lexer_make_token(lexer, token, TOKEN_GT, 1);
+            if (self::peek_char(1) == '>')
+                return self::make_token(token, TOKEN_RSHIFT, 2);
+            if (self::peek_char(1) == '=')
+                return self::make_token(token, TOKEN_GEQ, 2);
+            return self::make_token(token, TOKEN_GT, 1);
         }
 
         else if (c == '=') {
-            if (lexer_peek_char(lexer, 1) == '=')
-                return lexer_make_token(lexer, token, TOKEN_EQ, 2);
-            return lexer_make_token(lexer, token, TOKEN_ASSIGN, 1);
+            if (self::peek_char(1) == '=')
+                return self::make_token(token, TOKEN_EQ, 2);
+            return self::make_token(token, TOKEN_ASSIGN, 1);
         }
 
         else if (c == '|') {
-            if (lexer_peek_char(lexer, 1) == '|')
-                return lexer_make_token(lexer, token, TOKEN_OR, 2);
-            return lexer_make_token(lexer, token, TOKEN_BAR, 1);
+            if (self::peek_char(1) == '|')
+                return self::make_token(token, TOKEN_OR, 2);
+            return self::make_token(token, TOKEN_BAR, 1);
         }
 
 
         else if (c == '+') {
-            if (lexer_peek_char(lexer, 1) == '+')
-                return lexer_make_token(lexer, token, TOKEN_PLUSPLUS, 2);
-            if (lexer_peek_char(lexer, 1) == '=')
-                return lexer_make_token(lexer, token, TOKEN_PLUSEQUALS, 2);
-            return lexer_make_token(lexer, token, TOKEN_PLUS, 1);
+            if (self::peek_char(1) == '+')
+                return self::make_token(token, TOKEN_PLUSPLUS, 2);
+            if (self::peek_char(1) == '=')
+                return self::make_token(token, TOKEN_PLUSEQUALS, 2);
+            return self::make_token(token, TOKEN_PLUS, 1);
         }
 
         else if (c == '-') {
-            if (lexer_peek_char(lexer, 1) == '-')
-                return lexer_make_token(lexer, token, TOKEN_MINUSMINUS, 2);
-            if (lexer_peek_char(lexer, 1) == '=')
-                return lexer_make_token(lexer, token, TOKEN_MINUSEQUALS, 2);
-            return lexer_make_token(lexer, token, TOKEN_MINUS, 1);
+            if (self::peek_char(1) == '-')
+                return self::make_token(token, TOKEN_MINUSMINUS, 2);
+            if (self::peek_char(1) == '=')
+                return self::make_token(token, TOKEN_MINUSEQUALS, 2);
+            return self::make_token(token, TOKEN_MINUS, 1);
         }
 
         else {
             // Handle the `here` keyword at lex-time
-            if (lexer_starts_with(lexer, "here")) {
+            if (self::starts_with("here")) {
                 let s: char* = malloc(sizeof(char) * 128); // Should be enough
                 // Print the location into the string
                 let buf: char[32];
-                strcpy(s, lexer.filename); strcat(s, ":");
-                putu_buffer(lexer.line+1, buf); strcat(s, buf); strcat(s, ":");
-                putu_buffer(lexer.col+1, buf); strcat(s, buf);
+                strcpy(s, self.filename); strcat(s, ":");
+                putu_buffer(self.line+1, buf); strcat(s, buf); strcat(s, ":");
+                putu_buffer(self.col+1, buf); strcat(s, buf);
 
                 // Make the token
                 let loc: Location;
-                lexer_loc(lexer, &loc);
-                lexer_advance(lexer, 4);
+                self::loc(&loc);
+                self::advance(4);
                 return token_from_string(token, s, &loc);
             }
 
             // Parse the keywords...
             for (let i = TOKEN__KEYWORD_BEGIN+1; i < TOKEN__KEYWORD_END; ++i) {
                 let str = keyword_to_string(i);
-                if (lexer_starts_with(lexer, str)) {
-                    return lexer_make_token(lexer, token, i, strlen(str));
+                if (self::starts_with(str)) {
+                    return self::make_token(token, i, strlen(str));
                 }
             }
 
             // Parse numbers:
             if (is_digit(c)) {
                 // TODO: Parse hex and octal numbers
-                let pos = lexer.pos;
-                while (pos < lexer.len && is_digit(lexer.src[pos]))
+                let pos = self.pos;
+                while (pos < self.len && is_digit(self.src[pos]))
                     ++pos;
                 let loc: Location;
-                lexer_loc(lexer, &loc);
-                token_from_int(token, atoi(lexer.src + lexer.pos), &loc);
-                lexer_advance(lexer, pos - lexer.pos);
+                self::loc(&loc);
+                token_from_int(token, atoi(self.src + self.pos), &loc);
+                self::advance(pos - self.pos);
                 return;
             }
 
             // Parse identifiers:
-            if (is_alpha(lexer.src[lexer.pos])) {
-                let pos = lexer.pos;
-                while (pos < lexer.len && is_alnum(lexer.src[pos]))
+            if (is_alpha(self.src[self.pos])) {
+                let pos = self.pos;
+                while (pos < self.len && is_alnum(self.src[pos]))
                     ++pos;
-                let str_len = pos - lexer.pos;
+                let str_len = pos - self.pos;
                 let str: char* = malloc(str_len + 1);
-                memcpy(str, lexer.src + lexer.pos, str_len);
+                memcpy(str, self.src + self.pos, str_len);
                 str[str_len] = '\0';
                 let loc: Location;
-                lexer_loc(lexer, &loc);
+                self::loc(&loc);
                 token_from_identifier(token, str, &loc);
-                lexer_advance(lexer, str_len);
+                self::advance(str_len);
                 return;
             }
 
             if (c == '"') {
-                let pos = lexer.pos + 1;
-                while (pos < lexer.len && lexer.src[pos] != '"')
+                let pos = self.pos + 1;
+                while (pos < self.len && self.src[pos] != '"')
                     ++pos;
 
                 let loc: Location;
-                lexer_loc(lexer, &loc);
+                self::loc(&loc);
 
-                if (pos == lexer.len)
+                if (pos == self.len)
                     die_loc(here, &loc, "EOF while parsing string literal");
 
                 // Careful with indexing here, because we want to skip opening and closing quotes
-                let str_len = pos - lexer.pos - 1;
+                let str_len = pos - self.pos - 1;
                 let str: char* = malloc(str_len + 1);
-                memcpy(str, lexer.src + lexer.pos + 1, str_len);
+                memcpy(str, self.src + self.pos + 1, str_len);
                 str[str_len] = '\0';
                 token_from_string(token, str, &loc);
-                lexer_advance(lexer, pos - lexer.pos + 1);
+                self::advance(pos - self.pos + 1);
                 return;
             }
 
             if (c == '\'') {
-                let pos = lexer.pos + 1;
+                let pos = self.pos + 1;
                 // TODO: Handle malformed / incomplete literals
                 // TODO: Handle escapes
-                c = lexer.src[pos];
+                c = self.src[pos];
                 if (c == '\\') {
                     ++pos;
-                    c = lexer.src[pos];
+                    c = self.src[pos];
                          if (c == 'n')  { c = '\n'; }
                     else if (c == 't')  { c = '\t'; }
                     else if (c == 'n')  { c = '\n'; }
@@ -281,9 +265,9 @@ fn lexer_next(lexer: Lexer*, token: Token*) {
                 }
 
                 let loc: Location;
-                lexer_loc(lexer, &loc);
+                self::loc(&loc);
                 token_from_char(token, c, &loc);
-                lexer_advance(lexer, pos - lexer.pos + 2);
+                self::advance(pos - self.pos + 2);
                 return;
             }
 
@@ -291,11 +275,11 @@ fn lexer_next(lexer: Lexer*, token: Token*) {
             die("Exiting");
         }
     }
-    return lexer_make_token(lexer, token, TOKEN_EOF, 0);
+    return self::make_token(token, TOKEN_EOF, 0);
 }
 
-fn lexer_next_assert(lexer: Lexer*, token: Token*, expected: int) {
-    lexer_next(lexer, token);
+method Lexer::next_assert(token: Token*, expected: int) {
+    self::next(token);
     if (token.typ != expected) {
         location_print(&token.loc);
         puts(": Expected "); puts(token_type_to_string(expected));
@@ -305,12 +289,12 @@ fn lexer_next_assert(lexer: Lexer*, token: Token*, expected: int) {
     }
 }
 
-fn lexer_peek(lexer: Lexer*, token: Token*) {
-    let pos = lexer.pos;
-    let col = lexer.col;
-    let line = lexer.line;
-    lexer_next(lexer, token);
-    lexer.pos = pos;
-    lexer.col = col;
-    lexer.line = line;
+method Lexer::peek(token: Token*) {
+    let pos = self.pos;
+    let col = self.col;
+    let line = self.line;
+    self::next(token);
+    self.pos = pos;
+    self.col = col;
+    self.line = line;
 }
