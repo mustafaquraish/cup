@@ -73,30 +73,6 @@ fn main() {
 }
 ```
 
-### File I/O
-
-For now, the file I/O API is essentially the same as in C. You'll find a buffered file in `std/file.cup`, but you can also just use the raw system calls to work with file descriptors.
-
-A simple implementation of `cat` is:
-```rust
-import "std/file.cup";
-
-fn main(argc: int, argv: char**) {
-    for (let i = 1; i < argc; ++i) {
-        let f = fopen(argv[i], 'r');
-        defer fclose(f);    // Close the file at the end of the block (in each iteration)
-
-        let buf: char[1024];
-        let n = fread(f, buf, 1024); // use file-specific functions
-        while (n > 0) {
-            write(0, buf, n); // Use raw system calls
-            n = fread(f, buf, 1024);
-        }
-        // file closed here because of defer
-    }
-}
-```
-
 ### Structs / Unions / Enums
 
 ```rust
@@ -148,6 +124,30 @@ fn main() {
     // Call methods using `::`
     v::inc(10);
     v_ptr::print(); // Also works for pointers
+}
+```
+
+### File I/O
+
+For now, the file I/O is very inspired by C, but it's wrapped using methods for the `File` object. Optionally, you can use the raw syscalls (which behave like C), to deal with file descriptors manually. However it's preferred to use the `File` object as it's more convenient and also provides buffered writes.
+
+A simple implementation of `cat` is:
+```rust
+import "std/file.cup";
+
+fn main(argc: int, argv: char**) {
+    for (let i = 1; i < argc; ++i) {
+        let file = fopen(argv[i], 'r');
+        defer file::close();    // Close the file at the end of the block (in each iteration)
+
+        let buf: char[1024];
+        let n = file::read(buf, 1024); // use file-specific functions
+        while (n > 0) {
+            write(0, buf, n); // Use raw system calls
+            n = file::read(buf, 1024);
+        }
+        // file closed here because of defer
+    }
 }
 ```
 
