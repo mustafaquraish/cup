@@ -164,7 +164,7 @@ fn variable_new(name: char*, typ: Type*, offset: int): Variable* {
 fn block_add_child(block: Node*, child: Node*) {
     if (block.block.children == null)
         block.block.children = vector_new();
-    vector_push(block.block.children, child);
+    block.block.children::push(child);
 }
 
 // TODO: Careful here, the input type here is the same as `type_to_string`
@@ -505,7 +505,7 @@ fn compound_push_field(compound: Type*, name: char*, typ: Type*, base_offset: in
     let offset = is_union ? 0 : align_up(compound.size, offset_factor);
     compound.size = is_union ? max(field_size, compound.size) : offset + field_size;
 
-    vector_push(compound.fields, variable_new(name, typ, base_offset + offset));
+    compound.fields::push(variable_new(name, typ, base_offset + offset));
     return offset;
 }
 

@@ -16,11 +16,11 @@ let p_constant_stack = vector_new();
 let p_compound_type_stack = vector_new();
 
 fn block_stack_push(block: Node*) {
-    vector_push(p_block_stack, block);
+    p_block_stack::push(block);
 }
 
 fn block_stack_pop() {
-    let block: Node* = vector_pop(p_block_stack);
+    let block: Node* = p_block_stack::pop();
     p_cur_stack_offset = p_cur_stack_offset - block.block.locals_size;
 }
 
@@ -28,16 +28,16 @@ fn constant_push(name: char*, value: int) {
     let node = node_new(AST_CONSTANT);
     node.constant.name = name;
     node.constant.value = node_from_int_literal(value);
-    vector_push(p_constant_stack, node);
+    p_constant_stack::push(node);
 }
 
 fn find_local_variable(name: char*): Variable* {
     if (p_current_function == null) return null;
 
     for (let i = p_block_stack.size - 1; i >= 0; --i) {
-        let block: Node* = p_block_stack.data[i];
+        let block: Node* = p_block_stack::at(i);
         for (let j = 0; j < block.block.locals.size; ++j) {
-            let var: Variable* = block.block.locals.data[j];
+            let var: Variable* = block.block.locals::at(j);
             if (streq(name, var.name)) {
                 return var;
             }
@@ -46,7 +46,7 @@ fn find_local_variable(name: char*): Variable* {
 
     let args = p_current_function.func.args;
     for (let i = 0; i < args.size; ++i) {
-        let var: Variable* = args.data[i];
+        let var: Variable* = args::at(i);
         if (streq(name, var.name)) {
             return var;
         }
@@ -57,7 +57,7 @@ fn find_local_variable(name: char*): Variable* {
 
 fn find_compound_type(name: char*): Type* {
     for (let i = p_compound_type_stack.size - 1; i >= 0; --i) {
-        let typ: Type* = p_compound_type_stack.data[i];
+        let typ: Type* = p_compound_type_stack::at(i);
         if (streq(name, typ.struct_name)) {
             return typ;
         }
@@ -67,7 +67,7 @@ fn find_compound_type(name: char*): Type* {
 
 fn find_global_variable(name: char*): Variable* {
     for (let i = 0; i < p_global_variables.size; ++i) {
-        let var: Variable* = p_global_variables.data[i];
+        let var: Variable* = p_global_variables::at(i);
         if (streq(name, var.name)) {
             return var;
         }
@@ -77,7 +77,7 @@ fn find_global_variable(name: char*): Variable* {
 
 fn find_function_definition(name: char*, fn_list: Vector*): Node* {
     for (let i = 0; i < fn_list.size; ++i) {
-        let func: Node* = fn_list.data[i];
+        let func: Node* = fn_list::at(i);
         if (streq(name, func.func.name)) {
             return func;
         }
@@ -87,7 +87,7 @@ fn find_function_definition(name: char*, fn_list: Vector*): Node* {
 
 fn find_constant(name: char*): Node* {
     for (let i = 0; i < p_constant_stack.size; ++i) {
-        let constant: Node* = p_constant_stack.data[i];
+        let constant: Node* = p_constant_stack::at(i);
         if (streq(name, constant.constant.name)) {
             return constant;
         }
@@ -255,12 +255,12 @@ fn parse_function_call_args(lexer: Lexer*, func: Node*, obj_ptr: Node*): Node* {
     lexer::peek(&token);
 
     if (obj_ptr)
-        vector_push(node.call.args, obj_ptr);
+        node.call.args::push(obj_ptr);
 
     while (token.typ != TOKEN_CLOSE_PAREN) {
         // TODO: Check types
         let arg = parse_expression(lexer);
-        vector_push(node.call.args, arg);
+        node.call.args::push(arg);
 
         lexer::peek(&token);
 
@@ -276,8 +276,8 @@ fn parse_function_call_args(lexer: Lexer*, func: Node*, obj_ptr: Node*): Node* {
 
     let n = func.func.args.size;
     for (let i = 0; i < n; ++i) {
-        let arg: Node* = node.call.args.data[i];
-        let var: Variable* = func.func.args.data[i];
+        let arg: Node* = node.call.args::at(i);
+        let var: Variable* = func.func.args::at(i);
 
         if (!is_convertible(var.typ, arg.etyp))
             die_loc2(here, &token.loc, "Function argument type mismatch: ", var.name);
@@ -711,12 +711,12 @@ fn parse_expression(lexer: Lexer*): Node* {
 
 fn add_variable_to_current_block(var: Variable*) {
     // Set offset for variable
-    let cur_block: Node* = vector_top(p_block_stack);
+    let cur_block: Node* = p_block_stack::top();
     let var_size = align_up(size_for_type(var.typ), 8);
 
     // Add to the block
     // FIXME: Use a map here
-    vector_push(cur_block.block.locals, var);
+    cur_block.block.locals::push(var);
 
     assert(p_current_function != null);
     // Update current stack offset (w.r.t function stack frame) and block size
@@ -733,7 +733,7 @@ fn add_global_variable(var: Variable*) {
     var.offset = p_global_offset;
     let var_size = align_up(size_for_type(var.typ), 8);
     p_global_offset = p_global_offset + var_size;
-    vector_push(p_global_variables, var);
+    p_global_variables::push(var);
 }
 
 fn parse_var_declaration(lexer: Lexer*): Node* {
@@ -808,7 +808,7 @@ fn parse_function_params(lexer: Lexer*, func: Node*) {
         let var: Variable* = malloc(sizeof(Variable));
         var.name = name;
         var.typ = typ;
-        vector_push(func.func.args, var);
+        func.func.args::push(var);
 
         lexer::peek(&token);
         if (token.typ == TOKEN_COMMA) {
@@ -824,7 +824,7 @@ fn parse_function_params(lexer: Lexer*, func: Node*) {
     let offset = -16;
     let n = func.func.args.size;
     for (let i = 0; i < n; ++i) {
-        let var: Variable* = func.func.args.data[i];
+        let var: Variable* = func.func.args::at(i);
         var.offset = offset;
         // TODO: (Here and other uses of `size_for_type`):
         //      Should we only align to max(8, type.size) instead?
@@ -1016,7 +1016,7 @@ fn parse_struct_union_declaration(lexer: Lexer*, top_level: int, base_offset: in
     // it can referenced internally.
     if (token.typ == TOKEN_IDENTIFIER) {
         compound.struct_name = token.value.as_string;
-        vector_push(p_compound_type_stack, compound);
+        p_compound_type_stack::push(compound);
         lexer::next(&token);
     } else {
         compound.struct_name = "<anon>";
@@ -1111,7 +1111,7 @@ fn parse_method(lexer: Lexer*): Node* {
         // We don't want to add this to `all_functions`, since we only want it to be accessible
         // for the struct/union that it is a method of. We'll add it to the struct/union's
         // `methods` vector instead.
-        vector_push(ctyp.methods, func);
+        ctyp.methods::push(func);
         p_current_function = func;
     }
 
@@ -1119,7 +1119,7 @@ fn parse_method(lexer: Lexer*): Node* {
     ptr_typ.ptr = ctyp;
 
     let self_var = variable_new("self", ptr_typ, 0);
-    vector_push(func.func.args, self_var);
+    func.func.args::push(self_var);
 
     lexer::next_assert(&token, TOKEN_OPEN_PAREN);
     parse_function_params(lexer, func);
@@ -1173,7 +1173,7 @@ fn parse_function(lexer: Lexer*): Node* {
         p_current_function = func;
     } else {
         // We don't have a declaration yet, push this.
-        vector_push(p_all_functions, func);
+        p_all_functions::push(func);
         p_current_function = func;
     }
 
@@ -1205,20 +1205,20 @@ let p_opened_files = vector_new();
 
 fn parser_open_new_file(path: char*) {
     for (let i = 0; i < p_lexer_stack.size; i = i + 1) {
-        let lex: Lexer* = p_lexer_stack.data[i];
+        let lex: Lexer* = p_lexer_stack::at(i);
         if (streq(lex.filename, path)) {
             puts("Found a circular import dependency in: "); puts(path); putsln(": Exiting.");
             exit(1);
         }
     }
     for (let i = 0; i < p_opened_files.size; i = i + 1) {
-        if (streq(p_opened_files.data[i], path)) {
+        if (streq(p_opened_files::at(i), path)) {
             // Already opened this file, ignore
             return;
         }
     }
-    vector_push(p_opened_files, path);
-    vector_push(p_lexer_stack, lexer_new_open_file(path));
+    p_opened_files::push(path);
+    p_lexer_stack::push(lexer_new_open_file(path));
 }
 
 fn parse_program(lexer: Lexer*): Node* {
@@ -1229,7 +1229,7 @@ fn parse_program(lexer: Lexer*): Node* {
 
     let token: Token;
     lexer::peek(&token);
-    vector_push(p_lexer_stack, lexer);
+    p_lexer_stack::push(lexer);
 
     while (token.typ != TOKEN_EOF) {
         let child = null;
@@ -1248,7 +1248,7 @@ fn parse_program(lexer: Lexer*): Node* {
             lexer::next_assert(&token, TOKEN_STRINGLIT);
             let path = token.value.as_string;
             parser_open_new_file(path);
-            lexer = vector_top(p_lexer_stack);
+            lexer = p_lexer_stack::top();
         } else if (token.typ == TOKEN_STRUCT || token.typ == TOKEN_UNION) {
             parse_struct_union_declaration(lexer, true, 0);
         } else if (token.typ == TOKEN_ENUM) {
@@ -1262,8 +1262,8 @@ fn parse_program(lexer: Lexer*): Node* {
 
         lexer::peek(&token);
         while (token.typ == TOKEN_EOF && p_lexer_stack.size > 1) {
-            vector_pop(p_lexer_stack);
-            lexer = vector_top(p_lexer_stack);
+            p_lexer_stack::pop();
+            lexer = p_lexer_stack::top();
             lexer::peek(&token);
         }
     }

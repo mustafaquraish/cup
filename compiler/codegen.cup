@@ -10,25 +10,25 @@ let gen_string_literals = vector_new();
 let gen_defer_stack = vector_new();
 
 fn emit_asm4(msg1: char*, msg2: char*, msg3: char*, msg4: char*) {
-    fwrite(gen_out_file, msg1, strlen(msg1));
-    fwrite(gen_out_file, msg2, strlen(msg2));
-    fwrite(gen_out_file, msg3, strlen(msg3));
-    fwrite(gen_out_file, msg4, strlen(msg4));
+    gen_out_file::write(msg1, strlen(msg1));
+    gen_out_file::write(msg2, strlen(msg2));
+    gen_out_file::write(msg3, strlen(msg3));
+    gen_out_file::write(msg4, strlen(msg4));
 }
 
 fn emit_asm3(msg1: char*, msg2: char*, msg3: char*) {
-    fwrite(gen_out_file, msg1, strlen(msg1));
-    fwrite(gen_out_file, msg2, strlen(msg2));
-    fwrite(gen_out_file, msg3, strlen(msg3));
+    gen_out_file::write(msg1, strlen(msg1));
+    gen_out_file::write(msg2, strlen(msg2));
+    gen_out_file::write(msg3, strlen(msg3));
 }
 
 fn emit_asm2(msg1: char*, msg2: char*) {
-    fwrite(gen_out_file, msg1, strlen(msg1));
-    fwrite(gen_out_file, msg2, strlen(msg2));
+    gen_out_file::write(msg1, strlen(msg1));
+    gen_out_file::write(msg2, strlen(msg2));
 }
 
 fn emit_asm(msg: char*) {
-    fwrite(gen_out_file, msg, strlen(msg));
+    gen_out_file::write(msg, strlen(msg));
 }
 
 fn emit_num(num: int) {
@@ -37,7 +37,7 @@ fn emit_num(num: int) {
         emit_asm("-");
         num = -num;
     }
-    fputu(gen_out_file, num);
+    gen_out_file::putu(num);
 }
 
 fn generate_syscall(num: int) {
@@ -109,7 +109,7 @@ fn generate_function_call(node: Node*) {
     let total_size = 0;
     let n = node.call.args.size;
     for (let i = n-1; i >= 0; --i) {
-        let expr: Node* = node.call.args.data[i];
+        let expr: Node* = node.call.args::at(i);
         generate_expr_into_rax(expr);
         emit_asm("    push rax\n");
         // TODO: this might be an issue if we pass structs some day
@@ -129,7 +129,7 @@ fn generate_expr_into_rax(node: Node*) {
         } else if (node.etyp.typ == TYPE_PTR) {
             let s = node.literal.as_string;
             let idx = gen_string_literals.size;
-            vector_push(gen_string_literals, s);
+            gen_string_literals::push(s);
             emit_asm("    mov rax, global_string_"); emit_num(idx); emit_asm("\n");
         } else {
             die("Unsupported literal type in generate_expr_into_rax");
@@ -359,7 +359,7 @@ fn generate_statement(node: Node*) {
         // forever, but we'll restore it after the generating these
         let prev_defer_count = gen_defer_stack.size;
         while (gen_defer_stack.size > 0) {
-            generate_statement(vector_pop(gen_defer_stack));
+            generate_statement(gen_defer_stack::pop());
         }
         gen_defer_stack.size = prev_defer_count;
         emit_asm("    pop rax\n");
@@ -377,7 +377,7 @@ fn generate_statement(node: Node*) {
         generate_block(node);
 
     } else if (node.typ == AST_DEFER) {
-        vector_push(gen_defer_stack, node.unary);
+        gen_defer_stack::push(node.unary);
 
     } else if (node.typ == AST_IF) {
         let label = ++gen_label_counter;
@@ -436,12 +436,12 @@ fn generate_block(node: Node*) {
 
     let n = node.block.children.size;
     for (let i = 0; i < n; ++i) {
-        generate_statement(node.block.children.data[i]);
+        generate_statement(node.block.children::at(i));
     }
 
     // Undo the defer stack
     while (gen_defer_stack.size > prev_defer_count) {
-        generate_statement(vector_pop(gen_defer_stack));
+        generate_statement(gen_defer_stack::pop());
     }
 }
 
@@ -471,7 +471,7 @@ fn generate_program(ast: Node*, file: File*) {
 
     let n = ast.block.children.size;
     for (let i = 0; i < n; ++i) {
-        let node: Node* = ast.block.children.data[i];
+        let node: Node* = ast.block.children::at(i);
         if (node.typ == AST_FUNC) {
             generate_function(node);
         } else if (node.typ == AST_VARDECL) {
@@ -506,7 +506,7 @@ fn generate_program(ast: Node*, file: File*) {
 
     // Initialize all the global variables
     for (let i = 0; i < n; ++i) {
-        let node: Node* = ast.block.children.data[i];
+        let node: Node* = ast.block.children::at(i);
         if (node.typ == AST_VARDECL && node.var_decl.init) {
             let expr = node.var_decl.init;
             generate_expr_into_rax(node.var_decl.init);
@@ -533,6 +533,6 @@ fn generate_program(ast: Node*, file: File*) {
     //       byte values.
     for (let i = 0; i < gen_string_literals.size; ++i) {
         emit_asm("    global_string_"); emit_num(i);
-        emit_asm(": db \`"); emit_asm(gen_string_literals.data[i]); emit_asm("\`, 0\n");
+        emit_asm(": db \`"); emit_asm(gen_string_literals::at(i)); emit_asm("\`, 0\n");
     }
 }

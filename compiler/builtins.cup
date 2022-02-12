@@ -8,11 +8,11 @@ fn builtin_create_syscall(name: char*, num_args: int) {
     node.etyp = type_new(TYPE_ANY);
     node.func.name = name;
     node.func.args = vector_new_sized(num_args+1); // +1 for syscall number
-    vector_push(node.func.args, variable_new("val", type_new(TYPE_INT), 0));
+    node.func.args::push(variable_new("val", type_new(TYPE_INT), 0));
     for (let i = 0; i < num_args; i = i + 1) {
-        vector_push(node.func.args, variable_new("arg", type_new(TYPE_ANY), 0));
+        node.func.args::push(variable_new("arg", type_new(TYPE_ANY), 0));
     }
-    vector_push(all_builtins, node);
+    all_builtins::push(node);
 }
 
 // Defined in `parser.cup`
@@ -72,8 +72,8 @@ fn initialize_builtins() {
     node.etyp = type_new(TYPE_VOID);
     node.func.name = "print";
     node.func.args = vector_new_sized(1);
-    vector_push(node.func.args, variable_new("val", type_new(TYPE_ANY), 0));
-    vector_push(all_builtins, node);
+    node.func.args::push(variable_new("val", type_new(TYPE_ANY), 0));
+    all_builtins::push(node);
 
     // The return value of fork() is weird on macOS, parent/child is returned in rdx
     // and the child pid is returned in rax, so we'll make our own wrapper.
@@ -81,7 +81,7 @@ fn initialize_builtins() {
     node.etyp = type_new(TYPE_INT);
     node.func.name = "fork";
     node.func.args = vector_new_sized(0);
-    vector_push(all_builtins, node);
+    all_builtins::push(node);
 
     builtin_create_syscall("syscall0", 0);
     builtin_create_syscall("syscall1", 1);

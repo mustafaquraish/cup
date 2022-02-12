@@ -20,9 +20,9 @@ fn lexer_new(filename: char*, src: char*, len: int): Lexer* {
 
 fn lexer_new_open_file(filename: char*): Lexer* {
     let file = fopen(filename, 'r');
-    defer fclose(file);
+    defer file::close();
     let size = 0;
-    let source = fread_to_string(file, &size);
+    let source = file::slurp(&size);
     return lexer_new(filename, source, size);
 }
 

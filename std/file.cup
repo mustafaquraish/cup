@@ -25,74 +25,75 @@ fn fopen(name: char*, mode: char): File* {
     return f;
 }
 
-fn fflush(f: File*) {
-    if (f.buffer_size > 0) {
-        let n = write(f.fd, f.buffer, f.buffer_size);
+method File::flush() {
+    if (self.buffer_size > 0) {
+        let n = write(self.fd, self.buffer, self.buffer_size);
         if (n < 0)
             die("Could not write to file");
-        f.buffer_size = 0;
+        self.buffer_size = 0;
     }
 }
 
-fn fwrite(f: File*, buf: char*, size: int) {
-    if (f.buffer_size + size > __FILE_BUFFER_CAP)
-        fflush(f);
+method File::write(buf: char*, size: int) {
+    if (self.buffer_size + size > __FILE_BUFFER_CAP)
+        self::flush();
     if (size > __FILE_BUFFER_CAP) {
-        write(f.fd, buf, size);
+        write(self.fd, buf, size);
     } else {
-        memcpy(f.buffer + f.buffer_size, buf, size);
-        f.buffer_size = f.buffer_size + size;
+        memcpy(self.buffer + self.buffer_size, buf, size);
+        self.buffer_size = self.buffer_size + size;
     }
 }
 
-fn fread(f: File*, buf: char*, size: int): int {
-    let n = read(f.fd, buf, size);
+method File::read(buf: char*, size: int): int {
+    let n = read(self.fd, buf, size);
     if (n < 0)
         die("Could not read from file");
     return n;
 }
 
-fn fclose(f: File*) {
-    fflush(f);
-    close(f.fd);
+method File::close() {
+    self::flush();
+    close(self.fd);
+    self.fd = -1;
 }
 
-fn fputs(f: File*, s: char*) {
-    fwrite(f, s, strlen(s));
+method File::puts(s: char*) {
+    self::write(s, strlen(s));
 }
 
-fn fputc(f: File*, c: char) {
-    fwrite(f, &c, 1);
+method File::putc(c: char) {
+    self::write(&c, 1);
 }
 
-fn fputu(f: File*, n: int) {
+method File::putu(n: int) {
     let buf: char[32];
     let len = putu_buffer(n, buf);
-    fwrite(f, buf, len);
+    self::write(buf, len);
 }
 
 // Resets file position to the beginning of the file
-fn fsize(f: File*): int {
-    let pos = lseek(f.fd, 0, SEEK_CUR);
-    let size = lseek(f.fd, 0, SEEK_END);
-    lseek(f.fd, pos, SEEK_SET);
+method File::size(): int {
+    let pos = lseek(self.fd, 0, SEEK_CUR);
+    let size = lseek(self.fd, 0, SEEK_END);
+    lseek(self.fd, pos, SEEK_SET);
     return size;
 }
 
 // Map file to memory and return pointer
-fn fmap(f: File*, sizeptr: int*): char* {
-    let size = fsize(f);
-    let ptr = mmap(null, size, PROT_READ, MAP_PRIVATE, f.fd, 0);
+method File::map(sizeptr: int*): char* {
+    let size = self::size();
+    let ptr = mmap(null, size, PROT_READ, MAP_PRIVATE, self.fd, 0);
     if (ptr == MAP_FAILED)
         die("Could not map file");
     if (sizeptr) *sizeptr = size;
     return ptr;
 }
 
-fn fread_to_string(f: File*, sizeptr: int*): char* {
-    let size = fsize(f);
+method File::slurp(sizeptr: int*): char* {
+    let size = self::size();
     let text: char* = malloc(size + 1);
-    fread(f, text, size);
+    self::read(text, size);
     text[size] = 0;
     if (sizeptr) *sizeptr = size;
     return text;

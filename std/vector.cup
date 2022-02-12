@@ -19,29 +19,35 @@ fn vector_new(): Vector* {
     return vector_new_sized(initial_default_capacity);
 }
 
-fn vector_push(vec: Vector*, item: void*) {
-    if (vec.size == vec.capacity) {
-        let new_capacity = vec.capacity * 2;
-        let new_data = malloc(new_capacity * sizeof(void*));
-        memcpy(new_data, vec.data, vec.capacity * sizeof(void*));
-        vec.data = new_data;
-        vec.capacity = new_capacity;
-    }
-    vec.data[vec.size] = item;
-    vec.size = vec.size + 1;
+method Vector::at(index: int): void* {
+    if (index < 0 || index >= self.size)
+        die("Vector::at: index out of bounds");
+    return self.data[index];
 }
 
-fn vector_pop(vec: Vector*): void* {
-    if (vec.size == 0)
+method Vector::push(item: void*) {
+    if (self.size == self.capacity) {
+        let new_capacity = self.capacity * 2;
+        let new_data = malloc(new_capacity * sizeof(void*));
+        memcpy(new_data, self.data, self.capacity * sizeof(void*));
+        self.data = new_data;
+        self.capacity = new_capacity;
+    }
+    self.data[self.size] = item;
+    self.size = self.size + 1;
+}
+
+method Vector::pop(): void* {
+    if (self.size == 0)
         die("Vector is empty, nothing to pop.");
 
-    vec.size = vec.size - 1;
-    return vec.data[vec.size];
+    self.size = self.size - 1;
+    return self.data[self.size];
 }
 
-fn vector_top(vec: Vector*): void* {
-    if (vec.size == 0)
+method Vector::top(): void* {
+    if (self.size == 0)
         die("Vector is empty, nothing to return.");
 
-    return vec.data[vec.size - 1];
+    return self.data[self.size - 1];
 }

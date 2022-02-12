@@ -60,8 +60,8 @@ fn parse_cli_args(argc: int, argv: char**): char** {
             } else {
                 m_filename = argv[i];
                 let file = fopen(m_filename, 'r');
-                m_source = fread_to_string(file, &m_source_len);
-                fclose(file);
+                m_source = file::slurp(&m_source_len);
+                file::close();
             }
         } else if (!m_run_exec) {
             // No `-r` option passed, we shouldn't have any extra args.
@@ -92,7 +92,7 @@ fn main(argc: int, argv: char **): int {
 
     let out_file = fopen(asm_filename, 'w');
     generate_program(ast, out_file);
-    fclose(out_file);   // Want to flush before we assemble.
+    out_file::close();   // Want to flush before we assemble.
 
     let obj_filename: char[256];
     strcpy(obj_filename, m_output_filename);
