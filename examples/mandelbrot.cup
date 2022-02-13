@@ -1,0 +1,66 @@
+import "std/common.cup"
+import "std/image.cup"
+
+struct Vec2D {
+    x: f64;
+    y: f64;
+}
+
+method Vec2D::add(other: Vec2D*) {
+    self.x = self.x + other.x;
+    self.y = self.y + other.y;
+}
+
+method Vec2D::length(): f64 {
+    return sqrt(self.x * self.x + self.y * self.y);
+}
+
+method Vec2D::complex_mult(other: Vec2D*) {
+    let x: f64 = self.x * other.x - self.y * other.y;
+    let y: f64 = self.x * other.y + self.y * other.x;
+    self.x = x;
+    self.y = y;
+}
+
+fn mandelbrot(x: f64, y: f64, max_iters: int): int {
+    let z: Vec2D; z.x = 0; z.y = 0;
+    let c: Vec2D; c.x = x; c.y = y;
+    for (let i = 0; i < max_iters; ++i) {
+        z::complex_mult(&z);
+        z::add(&c);
+        if (z::length() > 2.0)
+            return 1;
+    }
+    return 0;
+}
+
+fn main(): i64 { 
+    let v: Vec2D;
+
+    let WIDTH = 1000;
+    let HEIGHT = 800;
+    let MAX_ITER = 50;
+
+    let dy = 2.0 / HEIGHT;
+    let dx = 3.0 / WIDTH;
+
+    let image = new_image(WIDTH, HEIGHT);
+    let col: Color8;
+
+    let py = 0;
+    for (let y: f64 = -1; y < 1.0; y = y + dy) {
+        let px = 0;
+        for (let x: f64 = -2; x < 1.0; x = x + dx) {
+            let n = mandelbrot(x, y, MAX_ITER);
+            if (n == 1)
+                col.r = col.g = col.b = 0;
+            else
+                col.r = col.g = col.b = 255;
+            image::set(px, py, &col);
+            ++px;
+        }
+        ++py;
+    }
+
+    image::save("mandelbrot.ppm");
+}
