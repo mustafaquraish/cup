@@ -82,6 +82,64 @@ fn get_func_name(func: Node*): char* {
 
 fn generate_expr_into_rax(node: Node*);
 
+fn generate_binop_int_arith(node: Node*) {
+    generate_expr_into_rax(node.binary.rhs);
+    emit_asm("    push rax\n");
+    generate_expr_into_rax(node.binary.lhs);
+    emit_asm("    pop rcx\n");
+
+    let op: char* = null;
+         if (node.typ == AST_PLUS) op = "add";
+    else if (node.typ == AST_MINUS) op = "sub";
+    else if (node.typ == AST_LSHIFT) op = "shl";
+    else if (node.typ == AST_RSHIFT) op = "shr";
+    else if (node.typ == AST_BWAND) op = "and";
+    else if (node.typ == AST_BWOR) op = "or";
+    else if (node.typ == AST_XOR) op = "xor";
+    else if (node.typ == AST_MUL) op = "imul";
+    else if (node.typ == AST_DIV) op = "idiv";
+    else if (node.typ == AST_MOD) op = "idiv";
+    else {
+        putsln(node_type_to_string(node.typ));
+        die2(here, "Unsupported binary op in generate_binop_int_arith");
+    }
+
+    if (node.typ == AST_DIV || node.typ == AST_MOD) {
+        emit_asm("    cqo\n");
+        emit_asm("    idiv rcx\n");
+        if (node.typ == AST_MOD)
+            emit_asm("    mov rax, rdx\n");
+    } else if (node.typ == AST_LSHIFT || node.typ == AST_RSHIFT) {
+        emit_asm3("    ", op, " rax, cl\n");
+
+    } else {
+        emit_asm3("    ", op, " rax, rcx\n");
+    }
+}
+
+fn generate_binop(node: Node*) {
+    let cmp_op: char*;
+         if (node.typ == AST_EQ) cmp_op = "sete";
+    else if (node.typ == AST_LT) cmp_op = "setl";
+    else if (node.typ == AST_GT) cmp_op = "setg";
+    else if (node.typ == AST_NEQ) cmp_op = "setne";
+    else if (node.typ == AST_LEQ) cmp_op = "setle";
+    else if (node.typ == AST_GEQ) cmp_op = "setge";
+    else {
+        // Assume it's a an arithmetic operation
+        return generate_binop_int_arith(node);
+    }
+
+    generate_expr_into_rax(node.binary.rhs);
+    emit_asm("    push rax\n");
+    generate_expr_into_rax(node.binary.lhs);
+    emit_asm("    pop rcx\n");
+    emit_asm("    cmp rax, rcx\n");
+    emit_asm3("    ", cmp_op, " al\n");
+    emit_asm("    movzx rax, al\n");
+}
+
+
 fn generate_lvalue_into_rax(node: Node*) {
     if (node.typ == AST_LOCAL_VAR) {
         let offset = node.variable.offset;
@@ -148,147 +206,6 @@ fn generate_expr_into_rax(node: Node*) {
         generate_expr_into_rax(node.conditional.els);
         emit_asm(".cond_end_"); emit_num(label); emit_asm(":\n");
 
-    } else if (node.typ == AST_PLUS) {
-        generate_expr_into_rax(node.binary.rhs);
-        emit_asm("    push rax\n");
-        generate_expr_into_rax(node.binary.lhs);
-        emit_asm("    pop rbx\n");
-        emit_asm("    add rax, rbx\n");
-
-    } else if (node.typ == AST_MINUS) {
-        generate_expr_into_rax(node.binary.rhs);
-        emit_asm("    push rax\n");
-        generate_expr_into_rax(node.binary.lhs);
-        emit_asm("    pop rbx\n");
-        emit_asm("    sub rax, rbx\n");
-
-    } else if (node.typ == AST_LSHIFT) {
-        generate_expr_into_rax(node.binary.rhs);
-        emit_asm("    push rax\n");
-        generate_expr_into_rax(node.binary.lhs);
-        emit_asm("    pop rcx\n");
-        emit_asm("    shl rax, cl\n");
-        
-    } else if (node.typ == AST_RSHIFT) {
-        generate_expr_into_rax(node.binary.rhs);
-        emit_asm("    push rax\n");
-        generate_expr_into_rax(node.binary.lhs);
-        emit_asm("    pop rcx\n");
-        emit_asm("    shr rax, cl\n");
-
-    } else if (node.typ == AST_DIV) {
-        generate_expr_into_rax(node.binary.rhs);
-        emit_asm("    push rax\n");
-        generate_expr_into_rax(node.binary.lhs);
-        emit_asm("    pop rbx\n");
-        emit_asm("    cqo\n");
-        emit_asm("    idiv rbx\n");
-
-    } else if (node.typ == AST_MOD) {
-        generate_expr_into_rax(node.binary.rhs);
-        emit_asm("    push rax\n");
-        generate_expr_into_rax(node.binary.lhs);
-        emit_asm("    pop rbx\n");
-        emit_asm("    cqo\n");
-        emit_asm("    idiv rbx\n");
-        emit_asm("    mov rax, rdx\n");
-
-    } else if (node.typ == AST_MUL) {
-        generate_expr_into_rax(node.binary.rhs);
-        emit_asm("    push rax\n");
-        generate_expr_into_rax(node.binary.lhs);
-        emit_asm("    pop rbx\n");
-        emit_asm("    imul rbx\n");
-
-    } else if (node.typ == AST_EQ) {
-        generate_expr_into_rax(node.binary.rhs);
-        emit_asm("    push rax\n");
-        generate_expr_into_rax(node.binary.lhs);
-        emit_asm("    pop rbx\n");
-        emit_asm("    cmp rax, rbx\n");
-        emit_asm("    sete al\n");
-        emit_asm("    movzx rax, al\n");
-
-    } else if (node.typ == AST_NEQ) {
-        generate_expr_into_rax(node.binary.rhs);
-        emit_asm("    push rax\n");
-        generate_expr_into_rax(node.binary.lhs);
-        emit_asm("    pop rbx\n");
-        emit_asm("    cmp rax, rbx\n");
-        emit_asm("    setne al\n");
-        emit_asm("    movzx rax, al\n");
-
-    } else if (node.typ == AST_LT) {
-        generate_expr_into_rax(node.binary.rhs);
-        emit_asm("    push rax\n");
-        generate_expr_into_rax(node.binary.lhs);
-        emit_asm("    pop rbx\n");
-        emit_asm("    cmp rax, rbx\n");
-        emit_asm("    setl al\n");
-        emit_asm("    movzx rax, al\n");
-
-    } else if (node.typ == AST_LEQ) {
-        generate_expr_into_rax(node.binary.rhs);
-        emit_asm("    push rax\n");
-        generate_expr_into_rax(node.binary.lhs);
-        emit_asm("    pop rbx\n");
-        emit_asm("    cmp rax, rbx\n");
-        emit_asm("    setle al\n");
-        emit_asm("    movzx rax, al\n");
-
-    } else if (node.typ == AST_GT) {
-        generate_expr_into_rax(node.binary.rhs);
-        emit_asm("    push rax\n");
-        generate_expr_into_rax(node.binary.lhs);
-        emit_asm("    pop rbx\n");
-        emit_asm("    cmp rax, rbx\n");
-        emit_asm("    setg al\n");
-        emit_asm("    movzx rax, al\n");
-
-    } else if (node.typ == AST_GEQ) {
-        generate_expr_into_rax(node.binary.rhs);
-        emit_asm("    push rax\n");
-        generate_expr_into_rax(node.binary.lhs);
-        emit_asm("    pop rbx\n");
-        emit_asm("    cmp rax, rbx\n");
-        emit_asm("    setge al\n");
-        emit_asm("    movzx rax, al\n");
-
-    } else if (node.typ == AST_BWAND) {
-        generate_expr_into_rax(node.binary.rhs);
-        emit_asm("    push rax\n");
-        generate_expr_into_rax(node.binary.lhs);
-        emit_asm("    pop rbx\n");
-        emit_asm("    and rax, rbx\n");
-
-    } else if (node.typ == AST_BWOR) {
-        generate_expr_into_rax(node.binary.rhs);
-        emit_asm("    push rax\n");
-        generate_expr_into_rax(node.binary.lhs);
-        emit_asm("    pop rbx\n");
-        emit_asm("    or rax, rbx\n");
-
-    } else if (node.typ == AST_XOR) {
-        generate_expr_into_rax(node.binary.rhs);
-        emit_asm("    push rax\n");
-        generate_expr_into_rax(node.binary.lhs);
-        emit_asm("    pop rbx\n");
-        emit_asm("    xor rax, rbx\n");
-
-    } else if (node.typ == AST_BWINV) {
-        generate_expr_into_rax(node.unary);
-        emit_asm("    not rax\n");
-
-    } else if (node.typ == AST_NEG) {
-        generate_expr_into_rax(node.unary);
-        emit_asm("    neg rax\n");
-
-    } else if (node.typ == AST_NOT) {
-        generate_expr_into_rax(node.unary);
-        emit_asm("    cmp rax, 0\n");
-        emit_asm("    sete al\n");
-        emit_asm("    movzx rax, al\n");
-
     } else if (node.typ == AST_OR) {
         // With short circuiting!
         let label = ++gen_label_counter;
@@ -328,13 +245,30 @@ fn generate_expr_into_rax(node: Node*) {
             emit_asm3("    movsx rax, ", specifier_for_type(node.etyp), " [rax]\n");
         }
 
+    } else if (is_binary_op(node.typ)) {
+        generate_binop(node);
+
+    } else if (node.typ == AST_BWINV) {
+        generate_expr_into_rax(node.unary);
+        emit_asm("    not rax\n");
+
+    } else if (node.typ == AST_NEG) {
+        generate_expr_into_rax(node.unary);
+        emit_asm("    neg rax\n");
+
+    } else if (node.typ == AST_NOT) {
+        generate_expr_into_rax(node.unary);
+        emit_asm("    cmp rax, 0\n");
+        emit_asm("    sete al\n");
+        emit_asm("    movzx rax, al\n");
+
     } else if (node.typ == AST_ASSIGN) {
         let var = node.assign.lhs;
         generate_lvalue_into_rax(var);
         emit_asm("    push rax\n");
         generate_expr_into_rax(node.assign.rhs);
-        emit_asm("    pop rbx\n");
-        emit_asm3("    mov [rbx], ", subregister_for_type(var.etyp), "\n");
+        emit_asm("    pop rcx\n");
+        emit_asm3("    mov [rcx], ", subregister_for_type(var.etyp), "\n");
 
     } else if (node.typ == AST_FUNCCALL) {
         generate_function_call(node);
@@ -511,9 +445,9 @@ fn generate_program(ast: Node*, file: File*) {
             let expr = node.var_decl.init;
             generate_expr_into_rax(node.var_decl.init);
             let offset = node.var_decl.var.offset;
-            emit_asm("    mov rbx, global_vars\n");
-            emit_asm("    add rbx, "); emit_num(offset); emit_asm("\n");
-            emit_asm3("    mov [rbx], ", subregister_for_type(expr.etyp), "\n");
+            emit_asm("    mov rcx, global_vars\n");
+            emit_asm("    add rcx, "); emit_num(offset); emit_asm("\n");
+            emit_asm3("    mov [rcx], ", subregister_for_type(expr.etyp), "\n");
         }
     }
 
