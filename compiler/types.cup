@@ -2,16 +2,23 @@ import "std/common.cup"
 import "std/vector.cup"
 
 enum BaseType {
+    TYPE_INT,   // TODO: Remove this in favour of sized types
+    TYPE_CHAR,
+
+    TYPE_I8,
+    TYPE_I16,
+    TYPE_I32,
+    TYPE_I64,
+
     TYPE_VOID,
     TYPE_ANY,
+
+    TYPE__BASE_COUNT, // Just to denote the end of "base" types
 
     TYPE_PTR,
     TYPE_ARRAY,
     TYPE_STRUCT,
     TYPE_UNION,
-
-    TYPE_INT,
-    TYPE_CHAR,
 };
 
 struct Type {
@@ -26,38 +33,63 @@ struct Type {
     methods: Vector*; // Vector<Node(AST_FUNC)*>;
 };
 
-fn size_for_base_type(type: int): int {
-    if (type == TYPE_INT) return 8;
-    if (type == TYPE_PTR) return 8;
-    if (type == TYPE_CHAR) return 1;
-    // Need to be initialized explicitly for compound types 
-    return 0; 
+fn size_for_base_type(typ: int): int {
+    if (typ == TYPE_INT) return 8;
+    if (typ == TYPE_PTR) return 8;
+    if (typ == TYPE_VOID) return 0;
+    if (typ == TYPE_CHAR) return 1;
+    if (typ == TYPE_ANY) return 8;
+
+    if (typ == TYPE_I8) return 1;
+    if (typ == TYPE_I16) return 2;
+    if (typ == TYPE_I32) return 4;
+    if (typ == TYPE_I64) return 8;
+    // Need to be initialized explicitly for compound types
+    return 0;
 }
 
 fn size_for_type(typ: Type*): int {
-    if (typ.typ == TYPE_INT) return 8;
-    if (typ.typ == TYPE_PTR) return 8;
-    if (typ.typ == TYPE_CHAR) return 1;
+    if (typ.typ < TYPE__BASE_COUNT)
+        return typ.size;
     if (typ.typ == TYPE_ARRAY) return typ.array_size * size_for_type(typ.ptr);
     if (typ.typ == TYPE_STRUCT) return typ.size;
     if (typ.typ == TYPE_UNION) return typ.size;
-    if (typ.typ == TYPE_VOID) return 0;
-    if (typ.typ == TYPE_ANY) return 8;
+    if (typ.typ == TYPE_PTR) return typ.size;
     die("Unknown type in size_for_type");
 }
 
+// TODO: Probably use an array for these
 let _type_int: Type* = null;
+let _type_i8: Type* = null;
+let _type_i16: Type* = null;
+let _type_i32: Type* = null;
+let _type_i64: Type* = null;
 let _type_char: Type* = null;
 let _type_void: Type* = null;
 let _type_any: Type* = null;
 
+fn create_new_base_type(typ: int): Type* {
+    let res: Type* = malloc(sizeof(Type));
+    res.typ = typ;
+    res.size = size_for_base_type(typ);
+    return res;
+}
+
 fn type_new(typ: int): Type* {
-    if (_type_int == null) { _type_int = malloc(sizeof(Type)); _type_int.typ = TYPE_INT; _type_int.size = 8; }
-    if (_type_char == null) { _type_char = malloc(sizeof(Type)); _type_char.typ = TYPE_CHAR; _type_char.size = 1; }
-    if (_type_void == null) { _type_void = malloc(sizeof(Type)); _type_void.typ = TYPE_VOID; _type_void.size = 0; }
-    if (_type_any == null) { _type_any = malloc(sizeof(Type)); _type_any.typ = TYPE_ANY; _type_any.size = 8; }
-    
+    if (_type_int == null) { _type_int = create_new_base_type(TYPE_INT); }
+    if (_type_i8 == null) { _type_i8 = create_new_base_type(TYPE_I8); }
+    if (_type_i16 == null) { _type_i16 = create_new_base_type(TYPE_I16); }
+    if (_type_i32 == null) { _type_i32 = create_new_base_type(TYPE_I32); }
+    if (_type_i64 == null) { _type_i64 = create_new_base_type(TYPE_I64); }
+    if (_type_char == null) { _type_char = create_new_base_type(TYPE_CHAR); }
+    if (_type_void == null) { _type_void = create_new_base_type(TYPE_VOID); }
+    if (_type_any == null) { _type_any = create_new_base_type(TYPE_ANY); }
+
     if (typ == TYPE_INT) return _type_int;
+    if (typ == TYPE_I8) return _type_i8;
+    if (typ == TYPE_I16) return _type_i16;
+    if (typ == TYPE_I32) return _type_i32;
+    if (typ == TYPE_I64) return _type_i64;
     if (typ == TYPE_CHAR) return _type_char;
     if (typ == TYPE_VOID) return _type_void;
     if (typ == TYPE_ANY) return _type_any;
@@ -83,6 +115,10 @@ fn create_type_string(typ: Type *): char* {
     }
 
          if (typ.typ == TYPE_INT) strcat(buf, "int");
+    else if (typ.typ == TYPE_I8) strcat(buf, "i8");
+    else if (typ.typ == TYPE_I16) strcat(buf, "i16");
+    else if (typ.typ == TYPE_I32) strcat(buf, "i32");
+    else if (typ.typ == TYPE_I64) strcat(buf, "i64");
     else if (typ.typ == TYPE_CHAR) strcat(buf, "char");
     else if (typ.typ == TYPE_VOID) strcat(buf, "void");
     else if (typ.typ == TYPE_ANY) strcat(buf, "any");
@@ -94,6 +130,10 @@ fn create_type_string(typ: Type *): char* {
 
 fn is_int_type(typ: Type*): int {
     if (typ.typ == TYPE_INT) return true;
+    if (typ.typ == TYPE_I8) return true;
+    if (typ.typ == TYPE_I16) return true;
+    if (typ.typ == TYPE_I32) return true;
+    if (typ.typ == TYPE_I64) return true;
     if (typ.typ == TYPE_CHAR) return true;
     return false;
 }

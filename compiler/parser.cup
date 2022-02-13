@@ -187,18 +187,18 @@ fn parse_literal(lexer: Lexer*): Node* {
 fn parse_type(lexer: Lexer*): Type* {
     let token: Token;
     let typ: Type *;
-    lexer::peek(&token);
-    if (token.typ == TOKEN_INT) {
-        lexer::next(&token);
-        typ = type_new(TYPE_INT);
-    } else if (token.typ == TOKEN_CHAR) {
-        lexer::next(&token);
-        typ = type_new(TYPE_CHAR);
-    } else if (token.typ == TOKEN_VOID) {
-        lexer::next(&token);
-        typ = type_new(TYPE_VOID);
-    } else {
-        lexer::next_assert(&token, TOKEN_IDENTIFIER);
+    lexer::next(&token);
+         if (token.typ == TOKEN_INT) typ = type_new(TYPE_INT);
+    else if (token.typ == TOKEN_I8) typ = type_new(TYPE_I8);
+    else if (token.typ == TOKEN_I16) typ = type_new(TYPE_I16);
+    else if (token.typ == TOKEN_I32) typ = type_new(TYPE_I32);
+    else if (token.typ == TOKEN_I64) typ = type_new(TYPE_I64);
+    else if (token.typ == TOKEN_CHAR) typ = type_new(TYPE_CHAR);
+    else if (token.typ == TOKEN_VOID) typ = type_new(TYPE_VOID);
+
+    else {
+        if (token.typ != TOKEN_IDENTIFIER)
+            die_loc2(here, &token.loc, "Unexpected token in parse_type: ", token_type_to_string(token.typ));
         typ = find_compound_type(token.value.as_string);
         if (!typ)
             die_loc2(here, &token.loc, "Unknown token in parse_type: ", token.value.as_string);
@@ -892,9 +892,16 @@ fn parse_statement(lexer: Lexer*): Node* {
         lexer::peek(&token);
         if (token.typ != TOKEN_SEMICOLON) {
             node.unary = parse_expression(lexer);
+            if (!is_convertible(node.unary.etyp, p_current_function.etyp))
+                die_loc(here, &token.loc, "Returned expression cannot be implicitly converted to function's return type.");
         } else {
             node.unary = null; // empty return statment
+            if (p_current_function.etyp.typ != TYPE_VOID) {
+                puts("Expected return type: "); putsln(create_type_string(p_current_function.etyp));
+                die_loc(here, &token.loc, "Can't have an empty return statement in a non-void function");
+            }
         }
+        node.etyp = p_current_function.etyp;
         lexer::next_assert(&token, TOKEN_SEMICOLON);
 
     } else if (token.typ == TOKEN_IF) {

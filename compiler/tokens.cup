@@ -56,6 +56,10 @@ enum TokenType {
     TOKEN_FOR,
     TOKEN_IF,
     TOKEN_INT,
+    TOKEN_I8,
+    TOKEN_I16,
+    TOKEN_I32,
+    TOKEN_I64,
     TOKEN_LET,
     TOKEN_METHOD,
     TOKEN_RETURN,
@@ -137,6 +141,10 @@ fn token_type_to_string(typ: int): char* {
     if (typ == TOKEN_FOR) return "TOKEN_FOR";
     if (typ == TOKEN_IF) return "TOKEN_IF";
     if (typ == TOKEN_INT) return "TOKEN_INT";
+    if (typ == TOKEN_I8) return "TOKEN_I8";
+    if (typ == TOKEN_I16) return "TOKEN_I16";
+    if (typ == TOKEN_I32) return "TOKEN_I32";
+    if (typ == TOKEN_I64) return "TOKEN_I64";
     if (typ == TOKEN_LET) return "TOKEN_LET";
     if (typ == TOKEN_METHOD) return "TOKEN_METHOD";
     if (typ == TOKEN_RETURN) return "TOKEN_RETURN";
@@ -161,6 +169,10 @@ fn keyword_to_string(typ: int): char* {
     if (typ == TOKEN_FOR) return "for";
     if (typ == TOKEN_IF) return "if";
     if (typ == TOKEN_INT) return "int";
+    if (typ == TOKEN_I8) return "i8";
+    if (typ == TOKEN_I16) return "i16";
+    if (typ == TOKEN_I32) return "i32";
+    if (typ == TOKEN_I64) return "i64";
     if (typ == TOKEN_LET) return "let";
     if (typ == TOKEN_METHOD) return "method";
     if (typ == TOKEN_RETURN) return "return";
