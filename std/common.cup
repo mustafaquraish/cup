@@ -160,6 +160,10 @@ fn is_alnum(c: char): int {
     return is_digit(c) || is_alpha(c);
 }
 
+fn is_hex(c: char): int {
+    return is_digit(c) || (c >= 'a' && c <= 'f') || (c >= 'A' && c <= 'F');
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 // I/O
 
