@@ -34,7 +34,7 @@ method File::flush() {
     }
 }
 
-method File::write(buf: char*, size: int) {
+method File::write(buf: void*, size: int) {
     if (self.buffer_size + size > __FILE_BUFFER_CAP)
         self::flush();
     if (size > __FILE_BUFFER_CAP) {
@@ -45,7 +45,7 @@ method File::write(buf: char*, size: int) {
     }
 }
 
-method File::read(buf: char*, size: int): int {
+method File::read(buf: void*, size: int): int {
     let n = read(self.fd, buf, size);
     if (n < 0)
         die("Could not read from file");
