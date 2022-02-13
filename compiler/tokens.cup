@@ -17,6 +17,7 @@ enum TokenType {
     TOKEN_EOF,
     TOKEN_EQ,
     TOKEN_EXCLAMATION,
+    TOKEN_FLOATLIT,
     TOKEN_GEQ,
     TOKEN_GT,
     TOKEN_IDENTIFIER,
@@ -52,6 +53,7 @@ enum TokenType {
     TOKEN_ENUM,
     TOKEN_ELSE,
     TOKEN_DEFER,
+    TOKEN_F64,
     TOKEN_FN,
     TOKEN_FOR,
     TOKEN_IF,
@@ -85,6 +87,7 @@ struct Token {
         as_int: int;
         as_string: char*;
         as_char: char;
+        as_float_str: char*;
     };
 };
 
@@ -108,6 +111,7 @@ fn token_type_to_string(typ: int): char* {
     if (typ == TOKEN_GEQ) return "TOKEN_GEQ";
     if (typ == TOKEN_GT) return "TOKEN_GT";
     if (typ == TOKEN_IDENTIFIER) return "TOKEN_IDENTIFIER";
+    if (typ == TOKEN_FLOATLIT) return "TOKEN_FLOATLIT";
     if (typ == TOKEN_INTLIT) return "TOKEN_INTLIT";
     if (typ == TOKEN_LEQ) return "TOKEN_LEQ";
     if (typ == TOKEN_LSHIFT) return "TOKEN_LSHIFT";
@@ -137,6 +141,7 @@ fn token_type_to_string(typ: int): char* {
     if (typ == TOKEN_ENUM) return "TOKEN_ENUM";
     if (typ == TOKEN_ELSE) return "TOKEN_ELSE";
     if (typ == TOKEN_DEFER) return "TOKEN_DEFER";
+    if (typ == TOKEN_F64) return "TOKEN_F64";
     if (typ == TOKEN_FN) return "TOKEN_FN";
     if (typ == TOKEN_FOR) return "TOKEN_FOR";
     if (typ == TOKEN_IF) return "TOKEN_IF";
@@ -165,6 +170,7 @@ fn keyword_to_string(typ: int): char* {
     if (typ == TOKEN_ENUM) return "enum";
     if (typ == TOKEN_ELSE) return "else";
     if (typ == TOKEN_DEFER) return "defer";
+    if (typ == TOKEN_F64) return "f64";
     if (typ == TOKEN_FN) return "fn";
     if (typ == TOKEN_FOR) return "for";
     if (typ == TOKEN_IF) return "if";
@@ -256,5 +262,6 @@ fn is_literal_token(typ: int): int {
     if (typ == TOKEN_INTLIT) return true;
     if (typ == TOKEN_CHARLIT) return true;
     if (typ == TOKEN_STRINGLIT) return true;
+    if (typ == TOKEN_FLOATLIT) return true;
     return false;
 }

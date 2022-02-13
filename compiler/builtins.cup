@@ -75,6 +75,14 @@ fn initialize_builtins() {
     node.func.args::push(variable_new("val", type_new(TYPE_ANY), 0));
     all_builtins::push(node);
 
+    // This is very annoying to do by hand.
+    node = node_new(AST_BUILTIN);
+    node.etyp = type_new(TYPE_F64);
+    node.func.name = "sqrt";
+    node.func.args = vector_new_sized(1);
+    node.func.args::push(variable_new("val", type_new(TYPE_F64), 0));
+    all_builtins::push(node);
+
     // The return value of fork() is weird on macOS, parent/child is returned in rdx
     // and the child pid is returned in rax, so we'll make our own wrapper.
     node = node_new(AST_BUILTIN);
@@ -178,5 +186,11 @@ fn generate_builtins() {
         emit_asm("    mov rax, 0\n");
         emit_asm(".L1:\n");
     }
+    emit_asm("    ret\n");
+
+
+    emit_asm("func_sqrt:\n");
+    emit_asm("    movsd xmm0, [rsp+8]\n");
+    emit_asm("    sqrtsd xmm0, xmm0\n");
     emit_asm("    ret\n");
 }

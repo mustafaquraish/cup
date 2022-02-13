@@ -200,6 +200,7 @@ method Lexer::next(token: Token*) {
             if (is_digit(c)) {
                 let pos = self.pos;
                 let val = 0;
+                let is_float = false;
 
                 // Hex numbers
                 if (c == '0' && self::peek_char(1) == 'x') {
@@ -227,13 +228,31 @@ method Lexer::next(token: Token*) {
                 } else {
                     while (pos < self.len && is_digit(self.src[pos]))
                         ++pos;
-                    val = atoi(self.src + self.pos);
+                    if (pos < self.len && self.src[pos] == '.') {
+                        ++pos;
+                        while (pos < self.len && is_digit(self.src[pos]))
+                            ++pos;
+                        is_float = true;
+                    // Regular number
+                    } else {
+                        val = atoi(self.src + self.pos);
+                    }
                 }
 
                 // TODO: Parse octal numbers?
                 let loc: Location;
                 self::loc(&loc);
-                token_from_int(token, val, &loc);
+                if (!is_float) {
+                    token_from_int(token, val, &loc);
+                } else {
+                    let str_len = pos - self.pos;
+                    let flt_str: char* = malloc(str_len+1);
+                    memcpy(flt_str, self.src + self.pos, str_len);
+                    flt_str[str_len] = '\0';
+
+                    token_from_string(token, flt_str, &loc);
+                    token.typ = TOKEN_FLOATLIT;
+                }
                 self::advance(pos - self.pos);
                 return;
             }

@@ -35,6 +35,7 @@ enum NodeType {
     // AST types
     AST_LITERAL,
     AST_CONSTANT,
+    AST_CONVERT,
     AST_FUNCCALL,
     AST_CONDITIONAL,
     AST_IF,
@@ -153,6 +154,36 @@ fn node_from_int_literal(val: int): Node* {
     return node;
 }
 
+fn type_check_unary(node: Node*, token: Token*): Node*;
+fn type_check_binary(node: Node*, token: Token*): Node*;
+
+fn node_new_binop(typ: int, lhs: Node*, rhs: Node*): Node* {
+    let node = node_new(typ);
+    node.binary.lhs = lhs;
+    node.binary.rhs = rhs;
+    return type_check_binary(node, null);
+}
+
+fn convert_to_float(node: Node*): Node* {
+    if (is_float_type(node.etyp))
+        return node;
+    let conv = node_new(AST_CONVERT);
+    conv.etyp = type_new(TYPE_F64);
+    conv.unary = node;
+    return conv;
+}
+
+fn convert_to_int(node: Node*): Node* {
+    if (is_int_type(node.etyp))
+        return node;
+    if (!is_float_type(node.etyp))
+        die2("Cannot convert non-numeric type to int: ", create_type_string(node.etyp));
+    let conv = node_new(AST_CONVERT);
+    conv.etyp = type_new(TYPE_INT);
+    conv.unary = node;
+    return conv;
+}
+
 fn variable_new(name: char*, typ: Type*, offset: int): Variable* {
     let v: Variable* = malloc(sizeof(Variable));
     v.name = name;
@@ -196,6 +227,7 @@ fn node_type_to_string(typ: int): char* {
     if (typ == AST_MEMBER) return "AST_MEMBER";
     if (typ == AST_LITERAL) return "AST_LITERAL";
     if (typ == AST_CONSTANT) return "AST_CONSTANT";
+    if (typ == AST_CONVERT) return "AST_CONVERT";
     if (typ == AST_FUNCCALL) return "AST_FUNCCALL";
     if (typ == AST_CONDITIONAL) return "AST_CONDITIONAL";
     if (typ == AST_IF) return "AST_IF";
@@ -312,12 +344,15 @@ fn dump_ast(node: Node*, depth: int) {
             putc('"'); puts(node.literal.as_string); putc('"'); putc('\n');
         } else if (node.etyp.typ == TYPE_CHAR) {
             putc('\''); putc(node.literal.as_char); putc('\''); putc('\n');
+        } else if (node.etyp.typ == TYPE_F64) {
+            putsln(node.literal.as_string);
         } else {
             die("Unknown literal type in dump_ast");
         }
     } else if (node.typ == AST_FUNC) {
         puts("func "); puts(node.func.name); puts("()\n");
-        dump_ast(node.func.body, depth + 1);
+        if (node.func.body)
+            dump_ast(node.func.body, depth + 1);
     } else if (node.typ == AST_VARDECL) {
         puts("let "); puts(node.var_decl.var.name);
         if (node.var_decl.var.typ == TYPE_PTR) {
@@ -336,6 +371,9 @@ fn dump_ast(node: Node*, depth: int) {
         dump_ast(node.assign.rhs, depth + 1);
     } else if (node.typ == AST_LOCAL_VAR || node.typ == AST_GLOBAL_VAR) {
         putsln(node.variable.name);
+    } else if (node.typ == AST_CONVERT) {
+        puts("("); puts(create_type_string(node.etyp)); putsln(")");
+        dump_ast(node.unary, depth + 1);
     } else {
         putsln(node_type_to_string(node.typ));
     }
@@ -361,6 +399,11 @@ fn type_check_unary(node: Node*, token: Token*): Node* {
     if (node.typ != AST_ADDROF && old_type.typ == TYPE_STRUCT)
         die_loc(here, &token.loc, "Performing invalid unary operation on struct type");
 
+    if (is_float_type(old_type)) {
+        if (node.typ != AST_ADDROF && node.typ != AST_NEG)
+            die_loc2(here, &token.loc, "Performing invalid unary operation on float type: ", node_type_to_string(node.typ));
+    }
+
     if (node.typ == AST_NOT) {
         node.etyp = type_new(TYPE_INT);
     } else if (node.typ == AST_ADDROF) {
@@ -376,9 +419,9 @@ fn type_check_unary(node: Node*, token: Token*): Node* {
         // pointer to the first element.
         node = decay_array_to_pointer(node, token);
     } else if (node.typ == AST_NEG) {
-        if (old_type.typ != TYPE_INT)
+        if (!is_int_type(old_type) && !is_float_type(old_type))
             die_loc(here, &token.loc, "Cannot negate non-integer type");
-        node.etyp = type_new(TYPE_INT);
+        node.etyp = old_type;
     } else {
         // Default to not changing the type
         node.etyp = old_type;
@@ -386,8 +429,7 @@ fn type_check_unary(node: Node*, token: Token*): Node* {
     return node;
 }
 
-fn type_check_binary(node: Node*, token: Token*): Node*
-{
+fn type_check_binary(node: Node*, token: Token*): Node* {
     let lhs = node.binary.lhs.etyp;
     let rhs = node.binary.rhs.etyp;
 
@@ -397,26 +439,35 @@ fn type_check_binary(node: Node*, token: Token*): Node*
     if (node.typ == AST_PLUS) {
         if (is_int_type(lhs) && is_int_type(rhs)) {
             node.etyp = type_new(TYPE_INT);
-        } else if (lhs.typ == TYPE_PTR && is_int_type(rhs)) {
+        } else if (lhs.typ == TYPE_PTR) {
+            if (!is_int_type(rhs))
+                die_loc(here, &token.loc, "Cannot add non-integer to pointer");
+
             node.etyp = lhs;
             // Pointer arithmetic!
             if (size_for_type(lhs.ptr) != 1) {
-                let mul = node_new(AST_MUL);
-                mul.binary.lhs = node.binary.rhs;
-                mul.binary.rhs = node_from_int_literal(size_for_type(lhs.ptr));
+                let mul = node_new_binop(AST_MUL, node.binary.rhs, node_from_int_literal(size_for_type(lhs.ptr)));
                 node.binary.rhs = mul;
             }
-        } else if (is_int_type(lhs) && rhs.typ == TYPE_PTR) {
+        } else if (rhs.typ == TYPE_PTR) {
+            if (!is_int_type(lhs))
+                die_loc(here, &token.loc, "Cannot add non-integer to pointer");
+
             node.etyp = rhs;
             // Pointer arithmetic!
             if (size_for_type(rhs.ptr) != 1) {
-                let mul = node_new(AST_MUL);
-                mul.binary.lhs = node.binary.lhs;
-                mul.binary.rhs = node_from_int_literal(size_for_type(rhs.ptr));
+                let mul = node_new_binop(AST_MUL, node.binary.lhs, node_from_int_literal(size_for_type(rhs.ptr)));
                 node.binary.lhs = mul;
             }
+        } else if (is_float_type(lhs) || is_float_type(rhs)) {
+            // TODO: Handle different sized floats
+            node.etyp = type_new(TYPE_F64);
+            node.binary.lhs = convert_to_float(node.binary.lhs);
+            node.binary.rhs = convert_to_float(node.binary.rhs);
         } else {
-            die_loc(here, &token.loc, "Cannot add non-integer types");
+            puts("lhs: "); puts(create_type_string(lhs)); putc('\n');
+            puts("rhs: "); puts(create_type_string(rhs)); putc('\n');
+            die_loc(here, &token.loc, "Incompatible types for addition");
         }
     } else if (node.typ == AST_MINUS) {
         if (is_int_type(lhs) && is_int_type(rhs)) {
@@ -425,18 +476,14 @@ fn type_check_binary(node: Node*, token: Token*): Node*
             node.etyp = lhs;
             // Pointer arithmetic!
             if (size_for_type(lhs.ptr) != 1) {
-                let mul = node_new(AST_MUL);
-                mul.binary.lhs = node.binary.rhs;
-                mul.binary.rhs = node_from_int_literal(size_for_type(lhs.ptr));
+                let mul = node_new_binop(AST_MUL, node.binary.rhs, node_from_int_literal(size_for_type(lhs.ptr)));
                 node.binary.rhs = mul;
             }
         } else if (is_int_type(lhs) && rhs.typ == TYPE_PTR) {
             node.etyp = rhs;
             // Pointer arithmetic!
             if (size_for_type(rhs.ptr) != 1) {
-                let mul = node_new(AST_MUL);
-                mul.binary.lhs = node.binary.lhs;
-                mul.binary.rhs = node_from_int_literal(size_for_type(rhs.ptr));
+                let mul = node_new_binop(AST_MUL, node.binary.lhs, node_from_int_literal(size_for_type(rhs.ptr)));
                 node.binary.lhs = mul;
             }
         } else if (lhs.typ == TYPE_PTR && rhs.typ == TYPE_PTR) {
@@ -446,23 +493,38 @@ fn type_check_binary(node: Node*, token: Token*): Node*
 
             // Pointer arithmetic! (Divide by size of element)
             if (size_for_type(lhs.ptr) != 1) {
-                let mul = node_new(AST_MUL);
-                mul.binary.lhs = node.binary.lhs;
-                mul.binary.rhs = node_from_int_literal(size_for_type(lhs.ptr));
+                let mul = node_new_binop(AST_MUL, node.binary.lhs, node_from_int_literal(size_for_type(lhs.ptr)));
                 node.binary.lhs = mul;
             }
+        } else if (is_float_type(lhs) || is_float_type(rhs)) {
+            // TODO: Handle different sized floats
+            node.etyp = type_new(TYPE_F64);
+            node.binary.lhs = convert_to_float(node.binary.lhs);
+            node.binary.rhs = convert_to_float(node.binary.rhs);
         } else {
             die_loc(here, &token.loc, "Cannot subtract non-integer types");
         }
     } else if (node.typ == AST_MUL || node.typ == AST_DIV || node.typ == AST_MOD) {
         if (is_int_type(lhs) && is_int_type(rhs)) {
             node.etyp = lhs;
+        } else if (is_float_type(lhs) || is_float_type(rhs)) {
+            if (node.typ == AST_MOD)
+                die_loc(here, &token.loc, "Cannot modulo floats");
+
+            // TODO: Handle different sized floats
+            node.etyp = type_new(TYPE_F64);
+            node.binary.lhs = convert_to_float(node.binary.lhs);
+            node.binary.rhs = convert_to_float(node.binary.rhs);
         } else {
             die_loc2(here, &token.loc, "Cannot do operation non-integer types:", node_type_to_string(node.typ));
         }
     } else {
         // FIXME: This isn't very correct, but it's probably good enough for now
         node.etyp = type_new(TYPE_INT);
+        if (is_float_type(lhs) || is_float_type(rhs)) {
+            node.binary.lhs = convert_to_float(node.binary.lhs);
+            node.binary.rhs = convert_to_float(node.binary.rhs);
+        }
     }
     return node;
 }
@@ -494,6 +556,13 @@ fn dump_rectype(typ: Type*, depth: int) {
 
 fn convert_type(to: Type*, from_node: Node*): Node* {
     let from = from_node.etyp;
+
+    if (is_float_type(from) && is_int_type(to))
+        return convert_to_int(from_node);
+    
+    if (is_float_type(to) && is_int_type(from))
+        return convert_to_float(from_node);
+
     if (from.typ == TYPE_ANY || to.typ == TYPE_ANY)
         return from_node;
 

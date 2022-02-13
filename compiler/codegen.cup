@@ -117,25 +117,69 @@ fn generate_binop_int_arith(node: Node*) {
     }
 }
 
-fn generate_binop(node: Node*) {
-    let cmp_op: char*;
-         if (node.typ == AST_EQ) cmp_op = "sete";
-    else if (node.typ == AST_LT) cmp_op = "setl";
-    else if (node.typ == AST_GT) cmp_op = "setg";
-    else if (node.typ == AST_NEQ) cmp_op = "setne";
-    else if (node.typ == AST_LEQ) cmp_op = "setle";
-    else if (node.typ == AST_GEQ) cmp_op = "setge";
+fn generate_binop_float_arith(node: Node*) {
+    generate_expression(node.binary.rhs);
+    emit_asm("    sub rsp, 8\n");
+    emit_asm("    movsd [rsp], xmm0\n");
+    generate_expression(node.binary.lhs);
+    emit_asm("    movsd xmm1, [rsp]\n");
+    emit_asm("    add rsp, 8\n");
+
+    let op: char* = null;
+         if (node.typ == AST_PLUS) op = "addsd";
+    else if (node.typ == AST_MINUS) op = "subsd";
+    else if (node.typ == AST_MUL) op = "mulsd";
+    else if (node.typ == AST_DIV) op = "divsd";
     else {
-        // Assume it's a an arithmetic operation
-        return generate_binop_int_arith(node);
+        putsln(node_type_to_string(node.typ));
+        die2(here, "Unsupported binary op in generate_binop_float_arith");
     }
 
+    emit_asm3("    ", op, " xmm0, xmm1\n");
+}
+
+fn generate_cmp_int(node: Node*) {
     generate_expression(node.binary.rhs);
     emit_asm("    push rax\n");
     generate_expression(node.binary.lhs);
     emit_asm("    pop rcx\n");
     emit_asm("    cmp rax, rcx\n");
-    emit_asm3("    ", cmp_op, " al\n");
+}
+
+fn generate_cmp_float(node: Node*) {
+    generate_expression(node.binary.rhs);
+    emit_asm("    sub rsp, 8\n");
+    emit_asm("    movsd [rsp], xmm0\n");
+    generate_expression(node.binary.lhs);
+    emit_asm("    movsd xmm1, [rsp]\n");
+    emit_asm("    add rsp, 8\n");
+    emit_asm("    ucomisd xmm0, xmm1\n");
+}
+
+fn generate_binop(node: Node*) {
+    let s_op: char*;
+    let u_op: char*;
+         if (node.typ == AST_EQ) { s_op = "sete"; u_op = "sete"; }
+    else if (node.typ == AST_LT) { s_op = "setl"; u_op = "setb"; }
+    else if (node.typ == AST_GT) { s_op = "setg"; u_op = "seta"; }
+    else if (node.typ == AST_NEQ) { s_op = "setne"; u_op = "setne"; }
+    else if (node.typ == AST_LEQ) { s_op = "setle"; u_op = "setna"; }
+    else if (node.typ == AST_GEQ) { s_op = "setge"; u_op = "setnb"; }
+    else {
+        if (is_float_type(node.etyp)) {
+            return generate_binop_float_arith(node);
+        }
+        // Assume it's a an arithmetic operation
+        return generate_binop_int_arith(node);
+    }
+
+    if (is_float_type(node.binary.rhs.etyp)) {
+        generate_cmp_float(node);
+        emit_asm3("    ", u_op, " al\n");
+    } else {
+        generate_cmp_int(node);
+        emit_asm3("    ", s_op, " al\n");
+    }
     emit_asm("    movzx rax, al\n");
 }
 
@@ -169,7 +213,13 @@ fn generate_function_call(node: Node*) {
     for (let i = n-1; i >= 0; --i) {
         let expr: Node* = node.call.args::at(i);
         generate_expression(expr);
-        emit_asm("    push rax\n");
+        if (is_float_type(expr.etyp)) {
+            emit_asm("    sub rsp, 8\n");
+            emit_asm("    movsd [rsp], xmm0\n");
+        } else {
+            emit_asm("    push rax\n");
+        }
+
         // TODO: this might be an issue if we pass structs some day
         total_size = total_size + 8;
     }
@@ -189,8 +239,15 @@ fn generate_expression(node: Node*) {
             let idx = gen_string_literals.size;
             gen_string_literals::push(s);
             emit_asm("    mov rax, global_string_"); emit_num(idx); emit_asm("\n");
+        } else if (node.etyp.typ == TYPE_F64) {
+            let s = node.literal.as_string;
+            let idx = gen_string_literals.size;
+            gen_string_literals::push(s);
+            emit_asm3("    mov rax, __float64__(", s,")\n");
+            emit_asm("    mov [rsp-8], rax\n");
+            emit_asm("    movsd xmm0, [rsp-8]\n");
         } else {
-            die("Unsupported literal type in generate_expression");
+            die2(here, ": Unsupported literal type in generate_expression");
         }
     } else if (node.typ == AST_ADDROF) {
         generate_lvalue_into_rax(node.unary);
@@ -239,7 +296,9 @@ fn generate_expression(node: Node*) {
 
     } else if (is_lvalue(node.typ)) {
         generate_lvalue_into_rax(node);
-        if (size_for_type(node.etyp) == 8) {
+        if (is_float_type(node.etyp)) {
+            emit_asm("    movsd xmm0, [rax]\n");
+        } else if (size_for_type(node.etyp) == 8) {
             emit_asm("    mov rax, [rax]\n");
         } else {
             emit_asm3("    movsx rax, ", specifier_for_type(node.etyp), " [rax]\n");
@@ -254,7 +313,13 @@ fn generate_expression(node: Node*) {
 
     } else if (node.typ == AST_NEG) {
         generate_expression(node.unary);
-        emit_asm("    neg rax\n");
+        if (is_float_type(node.unary.etyp)) {
+            emit_asm("    xorps xmm1, xmm1\n");
+            emit_asm("    subps xmm1, xmm0\n");
+            emit_asm("    movsd xmm0, xmm1\n");
+        } else {
+            emit_asm("    neg rax\n");
+        }
 
     } else if (node.typ == AST_NOT) {
         generate_expression(node.unary);
@@ -268,11 +333,25 @@ fn generate_expression(node: Node*) {
         emit_asm("    push rax\n");
         generate_expression(node.assign.rhs);
         emit_asm("    pop rcx\n");
-        emit_asm3("    mov [rcx], ", subregister_for_type(var.etyp), "\n");
+        if (is_float_type(node.assign.rhs.etyp)) {
+            emit_asm("    movsd [rcx], xmm0\n");
+        } else {
+            emit_asm3("    mov [rcx], ", subregister_for_type(var.etyp), "\n");
+        }
 
     } else if (node.typ == AST_FUNCCALL) {
         generate_function_call(node);
 
+    } else if (node.typ == AST_CONVERT) {
+        if (is_int_type(node.etyp) && is_float_type(node.unary.etyp)) {
+            generate_expression(node.unary);
+            emit_asm("    cvttsd2si rax, xmm0\n");
+        } else if (is_float_type(node.etyp) && is_int_type(node.unary.etyp)) {
+            generate_expression(node.unary);
+            emit_asm("    cvtsi2sd xmm0, eax\n");
+        } else {
+            die("Unsupported conversion");
+        }
     } else {
         die2("Unsupported node type in generate_expression: ", node_type_to_string(node.typ));
     }
@@ -305,7 +384,11 @@ fn generate_statement(node: Node*) {
         if (node.var_decl.init) {
             generate_expression(node.var_decl.init);
             let offset = node.var_decl.var.offset;
-            emit_asm("    mov [rbp-"); emit_num(offset); emit_asm3("], ", subregister_for_type(node.var_decl.var.typ), "\n");
+            if (is_float_type(node.var_decl.init.etyp)) {
+                emit_asm("    movsd [rbp-"); emit_num(offset); emit_asm("], xmm0\n");
+            } else {
+                emit_asm("    mov [rbp-"); emit_num(offset); emit_asm3("], ", subregister_for_type(node.var_decl.var.typ), "\n");
+            }
         }
     } else if (node.typ == AST_BLOCK) {
         generate_block(node);

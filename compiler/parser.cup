@@ -178,6 +178,9 @@ fn parse_literal(lexer: Lexer*): Node* {
     } else if (token.typ == TOKEN_CHARLIT) {
         node.literal.as_char = token.value.as_char;
         node.etyp = type_new(TYPE_CHAR);
+    } else if (token.typ == TOKEN_FLOATLIT) {
+        node.literal.as_string = token.value.as_float_str;
+        node.etyp = type_new(TYPE_F64);
     } else {
         die_loc2(here, &token.loc, "Unexpected token in parse_literal: ", token_type_to_string(token.typ));
     }
@@ -193,6 +196,7 @@ fn parse_type(lexer: Lexer*): Type* {
     else if (token.typ == TOKEN_I16) typ = type_new(TYPE_I16);
     else if (token.typ == TOKEN_I32) typ = type_new(TYPE_I32);
     else if (token.typ == TOKEN_I64) typ = type_new(TYPE_I64);
+    else if (token.typ == TOKEN_F64) typ = type_new(TYPE_F64);
     else if (token.typ == TOKEN_CHAR) typ = type_new(TYPE_CHAR);
     else if (token.typ == TOKEN_VOID) typ = type_new(TYPE_VOID);
 
@@ -283,7 +287,7 @@ fn parse_function_call_args(lexer: Lexer*, func: Node*, obj_ptr: Node*): Node* {
         if (!conv)
             die_loc2(here, &token.loc, "Function argument type mismatch: ", var.name);
         
-        func.func.args.data[i] = var;
+        node.call.args.data[i] = conv;
     }
 
     return node;
