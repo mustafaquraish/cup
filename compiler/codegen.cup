@@ -371,7 +371,7 @@ fn generate_statement(node: Node*) {
         if (node.var_decl.init) {
             generate_expr_into_rax(node.var_decl.init);
             let offset = node.var_decl.var.offset;
-            emit_asm("    mov [rbp-"); emit_num(offset); emit_asm("], rax\n");
+            emit_asm("    mov [rbp-"); emit_num(offset); emit_asm3("], ", subregister_for_type(node.var_decl.var.typ), "\n");
         }
     } else if (node.typ == AST_BLOCK) {
         generate_block(node);
