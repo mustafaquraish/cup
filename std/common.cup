@@ -208,6 +208,23 @@ fn putu(n: int) {
     write(stdout, buf, len);
 }
 
+fn putflt(f: f64) {
+    let before: i64 = f;
+    let after: f64 = f - before;
+    if (before < 0) {
+        putc('-');
+        before = -before;
+        after = -after;
+    }
+    putu(before);
+    putc('.');
+    for (let i = 0; i < 5; ++i) {
+        let d: int = after * 10;
+        putc(d + '0');
+        after = after * 10 - d;
+    }
+}
+
 fn die(msg: char *) {
     putsln(msg);
     exit(1);
