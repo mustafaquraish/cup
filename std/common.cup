@@ -309,11 +309,16 @@ fn run_command(args: char**, echo: int) {
     let status: int;
     if (wait(&status) < 0)
         die2(here, ": Error in wait()");
-    
+
     if (!WIFEXITED(status))
         die2(here, ": Child did not exit normally");
-    
-    if (WEXITSTATUS(status) != 0)
-        die2(here, ": Child exited with non-zero status");
+
+    let exit_status = WEXITSTATUS(status);
+    if (exit_status != 0) {
+        puts(here); puts(": Child exited with non-zero status: (");
+        putu(exit_status);
+        putsln(")");
+        exit(exit_status);
+    }
 }
 
