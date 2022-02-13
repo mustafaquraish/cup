@@ -279,8 +279,11 @@ fn parse_function_call_args(lexer: Lexer*, func: Node*, obj_ptr: Node*): Node* {
         let arg: Node* = node.call.args::at(i);
         let var: Variable* = func.func.args::at(i);
 
-        if (!is_convertible(var.typ, arg.etyp))
+        let conv = convert_type(var.typ, arg);
+        if (!conv)
             die_loc2(here, &token.loc, "Function argument type mismatch: ", var.name);
+        
+        func.func.args.data[i] = var;
     }
 
     return node;
@@ -676,7 +679,7 @@ fn parse_conditional_exp(lexer: Lexer*): Node* {
         cond.conditional.then = then;
         cond.conditional.els = els;
 
-        if (!is_convertible(then.etyp, els.etyp))
+        if (!types_equal(then.etyp, els.etyp))
             die_loc(here, &token.loc, "THEN and ELSE branches of conditional expression have different types");
 
         lhs = cond;
@@ -695,14 +698,15 @@ fn parse_expression(lexer: Lexer*): Node* {
             let node = node_new(AST_ASSIGN);
             let rhs = parse_expression(lexer);
 
-            if (!is_convertible(lhs.etyp, rhs.etyp)) {
+            let conv = convert_type(lhs.etyp, rhs);
+            if (!conv) {
                 puts("- LHS type: "); putsln(create_type_string(lhs.etyp));
                 puts("- RHS type: "); putsln(create_type_string(rhs.etyp));
                 die_loc(here, &token.loc, "Type mismatch for variable assignment");
             }
             node.etyp = lhs.etyp;
             node.assign.lhs = lhs;
-            node.assign.rhs = rhs;
+            node.assign.rhs = conv;
             lhs = node;
         }
     }
@@ -767,10 +771,14 @@ fn parse_var_declaration(lexer: Lexer*): Node* {
 
         if (missing_type) {
             decl.var.typ = decl.init.etyp;
-        } else if (!is_convertible(decl.var.typ, decl.init.etyp)) {
-            puts("- Variable type: "); putsln(create_type_string(decl.var.typ));
-            puts("- Value type: "); putsln(create_type_string(decl.init.etyp));
-            die_loc2(here, &token.loc, "Type mismatch for variable declaration: ", decl.var.name);
+        } else {
+            let conv = convert_type(decl.var.typ, decl.init);
+            if (!conv) {
+                puts("- Variable type: "); putsln(create_type_string(decl.var.typ));
+                puts("- Value type: "); putsln(create_type_string(decl.init.etyp));
+                die_loc2(here, &token.loc, "Type mismatch for variable declaration: ", decl.var.name);
+            }
+            decl.init = conv;
         }
 
         node.etyp = decl.init.etyp;
@@ -892,8 +900,10 @@ fn parse_statement(lexer: Lexer*): Node* {
         lexer::peek(&token);
         if (token.typ != TOKEN_SEMICOLON) {
             node.unary = parse_expression(lexer);
-            if (!is_convertible(node.unary.etyp, p_current_function.etyp))
+            let conv = convert_type(p_current_function.etyp, node.unary);
+            if (!conv)
                 die_loc(here, &token.loc, "Returned expression cannot be implicitly converted to function's return type.");
+            node.unary = conv;
         } else {
             node.unary = null; // empty return statment
             if (p_current_function.etyp.typ != TYPE_VOID) {

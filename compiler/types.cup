@@ -146,23 +146,14 @@ fn types_equal(a: Type*, b: Type*): int {
         return false;
     if (a.typ == TYPE_ANY || b.typ == TYPE_ANY)
         return true;
-    return a.typ == b.typ && types_equal(a.ptr, b.ptr);
-}
 
-fn is_convertible(from: Type*, to: Type*): int {
-    if (from.typ == TYPE_ANY || to.typ == TYPE_ANY)
-        return true;
-
-    // Allow converstions to and from void* to any other pointer type
-    if (from.typ == TYPE_PTR && to.typ == TYPE_PTR)
-        if (from.ptr.typ == TYPE_VOID || to.ptr.typ == TYPE_VOID)
-            return true;
-
-    // TODO: Should we rause a warning if the target type is narrower
-    //       than the source type?
-    if (is_int_type(from) && is_int_type(to))
-        return true;
-    return types_equal(from, to);
+    if (a.typ == b.typ) {
+        // FIXME: if both are <anon> this might not be correct
+        if (a.typ == TYPE_STRUCT || a.typ == TYPE_UNION)
+            return streq(a.struct_name, b.struct_name);
+        return types_equal(a.ptr, b.ptr);
+    }
+    return false;
 }
 
 fn is_struct_or_structptr(typ: Type*): int {

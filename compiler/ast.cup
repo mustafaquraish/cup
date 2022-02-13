@@ -492,6 +492,27 @@ fn dump_rectype(typ: Type*, depth: int) {
     putsln("}");
 }
 
+fn convert_type(to: Type*, from_node: Node*): Node* {
+    let from = from_node.etyp;
+    if (from.typ == TYPE_ANY || to.typ == TYPE_ANY)
+        return from_node;
+
+    // Allow converstions to and from void* to any other pointer type
+    if (from.typ == TYPE_PTR && to.typ == TYPE_PTR)
+        if (from.ptr.typ == TYPE_VOID || to.ptr.typ == TYPE_VOID)
+            return from_node;
+
+    // TODO: Should we rause a warning if the target type is narrower
+    //       than the source type?
+    if (is_int_type(from) && is_int_type(to))
+        return from_node;
+
+    if (types_equal(from, to))
+        return from_node;
+
+    return null;
+}
+
 // FIXME: These should be in `types.cup` ideally, but `Variable` is not defined
 //        there and we can't forward-declare types.
 fn compound_push_field(compound: Type*, name: char*, typ: Type*, base_offset: int): int {
