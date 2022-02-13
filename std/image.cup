@@ -1,0 +1,50 @@
+import "std/common.cup"
+import "std/file.cup"
+
+struct Color8 {
+    r: i8;
+    g: i8;
+    b: i8;
+};
+
+struct Image {
+    width: i32;
+    height: i32;
+    data: Color8*;
+}
+
+fn new_image(width: i32, height: i32): Image* {
+    let img: Image* = malloc(sizeof(Image));
+    img.width = width;
+    img.height = height;
+    img.data = malloc(width * height * sizeof(Color8));
+    return img;
+}
+
+method Image::set(x: i32, y: i32, color: Color8*) {
+    let idx = y * self.width + x;
+    self.data[idx].r = color.r;
+    self.data[idx].g = color.g;
+    self.data[idx].b = color.b;
+}
+
+method Image::get(x: i32, y: i32, color: Color8*) {
+    let idx = y * self.width + x;
+    color.r = self.data[idx].r;
+    color.g = self.data[idx].g;
+    color.b = self.data[idx].b;
+}
+
+method Image::save(filename: char*) {
+    let file = fopen(filename, 'w');
+    defer file::close();
+
+    file::puts("P6\n");
+    file::putu(self.width);
+    file::putc(' ');
+    file::putu(self.height);
+    file::putc('\n');
+    file::putu(255);
+    file::putc('\n');
+    file::write(self.data, self.width * self.height * sizeof(Color8));
+}
