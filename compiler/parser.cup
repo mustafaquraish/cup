@@ -109,9 +109,11 @@ fn identifier_exists(name: char*): int {
 
 fn eval_constexp(node: Node*, token: Token*): int {
     if (node.typ == AST_LITERAL) {
-        if (node.etyp.typ != TYPE_INT)
+        if (node.etyp.typ != TYPE_INT && node.etyp.typ != TYPE_CHAR)
             die_loc(here, &token.loc, "Constant expressions can only contain integer literals/constants.");
-        return node.literal.as_int;
+        if (node.etyp.typ == TYPE_INT) return node.literal.as_int;
+        if (node.etyp.typ == TYPE_CHAR) return node.literal.as_char;
+        die2(here, "Should not reach here.");
     } else if (is_binary_op(node.typ)) {
         let left = eval_constexp(node.binary.lhs, token);
         let right = eval_constexp(node.binary.rhs, token);

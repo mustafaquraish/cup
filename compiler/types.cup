@@ -131,6 +131,7 @@ fn create_type_string(typ: Type *): char* {
     else if (typ.typ == TYPE_VOID) strcat(buf, "void");
     else if (typ.typ == TYPE_ANY) strcat(buf, "any");
     else if (typ.typ == TYPE_STRUCT) strcat(buf, typ.struct_name);
+    else if (typ.typ == TYPE_UNION) strcat(buf, typ.struct_name);
     else  {
         putu(typ.typ);
         die("create_type_string: unknown type");
