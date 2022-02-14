@@ -109,35 +109,32 @@ fn identifier_exists(name: char*): int {
 
 fn eval_constexp(node: Node*, token: Token*): int {
     if (node.typ == AST_LITERAL) {
-        if (node.etyp.typ != TYPE_INT && node.etyp.typ != TYPE_CHAR)
-            die_loc(here, &token.loc, "Constant expressions can only contain integer literals/constants.");
-        if (node.etyp.typ == TYPE_INT) return node.literal.as_int;
-        if (node.etyp.typ == TYPE_CHAR) return node.literal.as_char;
-        die2(here, "Should not reach here.");
+        switch (node.etyp.typ) {
+            case TYPE_INT: return node.literal.as_int;
+            case TYPE_CHAR:  return node.literal.as_char;
+        }
+        die_loc(here, &token.loc, "Constant expressions can only contain integer literals/constants.");
     } else if (is_binary_op(node.typ)) {
         let left = eval_constexp(node.binary.lhs, token);
         let right = eval_constexp(node.binary.rhs, token);
-             if (node.typ == AST_PLUS) return left + right;
-        else if (node.typ == AST_MINUS) return left - right;
-        else if (node.typ == AST_BWOR) return left | right;
-        else if (node.typ == AST_BWAND) return left & right;
-        else if (node.typ == AST_XOR) return left ^ right;
-        else if (node.typ == AST_MUL) return left * right;
-        else if (node.typ == AST_DIV) return left / right;
-        else if (node.typ == AST_MOD) return left % right;
-        else if (node.typ == AST_MUL) return left * right;
-        else if (node.typ == AST_MUL) return left * right;
-        else {
-            die_loc(here, &token.loc, "Unsupported binary operator in constant expression.");
+        switch (node.typ) {
+            case AST_PLUS: return left + right;
+            case AST_MINUS: return left - right;
+            case AST_BWOR: return left | right;
+            case AST_BWAND: return left & right;
+            case AST_XOR: return left ^ right;
+            case AST_MUL: return left * right;
+            case AST_DIV: return left / right;
+            case AST_MOD: return left % right;
+            case AST_MUL: return left * right;
+            case AST_MUL: return left * right;
         }
+        die_loc(here, &token.loc, "Unsupported binary operator in constant expression.");
     }
-    else if (node.typ == AST_NEG) return -eval_constexp(node.unary, token);
-    else if (node.typ == AST_BWINV) return ~eval_constexp(node.unary, token);
-    else if (node.typ == AST_NOT) return !eval_constexp(node.unary, token);
-    else {
-        die_loc(here, &token.loc, "Unsupported constant expression.");
-    }
-    return 0;
+    if (node.typ == AST_NEG) return -eval_constexp(node.unary, token);
+    if (node.typ == AST_BWINV) return ~eval_constexp(node.unary, token);
+    if (node.typ == AST_NOT) return !eval_constexp(node.unary, token);
+    die_loc(here, &token.loc, "Unsupported constant expression.");
 }
 
 fn parse_expression(lexer: Lexer*): Node*;
@@ -178,20 +175,25 @@ fn parse_literal(lexer: Lexer*): Node* {
     lexer::next(&token);
     let node = node_new(AST_LITERAL);
 
-    if (token.typ == TOKEN_INTLIT) {
-        node.literal.as_int = token.value.as_int;
-        node.etyp = type_new(TYPE_INT);
-    } else if (token.typ == TOKEN_STRINGLIT) {
-        node.literal.as_string = token.value.as_string;
-        node.etyp = type_new_ptr(TYPE_CHAR);
-    } else if (token.typ == TOKEN_CHARLIT) {
-        node.literal.as_char = token.value.as_char;
-        node.etyp = type_new(TYPE_CHAR);
-    } else if (token.typ == TOKEN_FLOATLIT) {
-        node.literal.as_string = token.value.as_float_str;
-        node.etyp = type_new(TYPE_F64);
-    } else {
-        die_loc2(here, &token.loc, "Unexpected token in parse_literal: ", token_type_to_string(token.typ));
+    switch (token.typ) {
+        case TOKEN_INTLIT:
+            node.literal.as_int = token.value.as_int;
+            node.etyp = type_new(TYPE_INT);
+            break;
+        case TOKEN_STRINGLIT:
+            node.literal.as_string = token.value.as_string;
+            node.etyp = type_new_ptr(TYPE_CHAR);
+            break;
+        case TOKEN_CHARLIT:
+            node.literal.as_char = token.value.as_char;
+            node.etyp = type_new(TYPE_CHAR);
+            break;
+        case TOKEN_FLOATLIT:
+            node.literal.as_string = token.value.as_float_str;
+            node.etyp = type_new(TYPE_F64);
+            break;
+        default:
+            die_loc2(here, &token.loc, "Unexpected token in parse_literal: ", token_type_to_string(token.typ));
     }
     return node;
 }
@@ -200,21 +202,23 @@ fn parse_type(lexer: Lexer*): Type* {
     let token: Token;
     let typ: Type *;
     lexer::next(&token);
-         if (token.typ == TOKEN_INT) typ = type_new(TYPE_INT);
-    else if (token.typ == TOKEN_I8) typ = type_new(TYPE_I8);
-    else if (token.typ == TOKEN_I16) typ = type_new(TYPE_I16);
-    else if (token.typ == TOKEN_I32) typ = type_new(TYPE_I32);
-    else if (token.typ == TOKEN_I64) typ = type_new(TYPE_I64);
-    else if (token.typ == TOKEN_F64) typ = type_new(TYPE_F64);
-    else if (token.typ == TOKEN_CHAR) typ = type_new(TYPE_CHAR);
-    else if (token.typ == TOKEN_VOID) typ = type_new(TYPE_VOID);
 
-    else {
-        if (token.typ != TOKEN_IDENTIFIER)
-            die_loc2(here, &token.loc, "Unexpected token in parse_type: ", token_type_to_string(token.typ));
-        typ = find_compound_type(token.value.as_string);
-        if (!typ)
-            die_loc2(here, &token.loc, "Unknown token in parse_type: ", token.value.as_string);
+    switch (token.typ) {
+        case TOKEN_INT:  typ = type_new(TYPE_INT);  break;
+        case TOKEN_I8:   typ = type_new(TYPE_I8);   break;
+        case TOKEN_I16:  typ = type_new(TYPE_I16);  break;
+        case TOKEN_I32:  typ = type_new(TYPE_I32);  break;
+        case TOKEN_I64:  typ = type_new(TYPE_I64);  break;
+        case TOKEN_F64:  typ = type_new(TYPE_F64);  break;
+        case TOKEN_CHAR: typ = type_new(TYPE_CHAR); break;
+        case TOKEN_VOID: typ = type_new(TYPE_VOID); break;
+        default: {
+            if (token.typ != TOKEN_IDENTIFIER)
+                die_loc2(here, &token.loc, "Unexpected token in parse_type: ", token_type_to_string(token.typ));
+            typ = find_compound_type(token.value.as_string);
+            if (!typ)
+                die_loc2(here, &token.loc, "Unknown token in parse_type: ", token.value.as_string);
+        }
     }
 
     let running = true;
@@ -873,8 +877,8 @@ fn parse_switch_statement(lexer: Lexer*): Node* {
 
             lexer::next_assert(&token, TOKEN_COLON);
             lexer::peek(&token);
-            while (token.typ != TOKEN_CASE && 
-                   token.typ != TOKEN_DEFAULT && 
+            while (token.typ != TOKEN_CASE &&
+                   token.typ != TOKEN_DEFAULT &&
                    token.typ != TOKEN_CLOSE_BRACE) {
                 let stmt = parse_statement(lexer);
                 case_stmt.case_stmt.children::push(stmt);
@@ -889,8 +893,8 @@ fn parse_switch_statement(lexer: Lexer*): Node* {
             lexer::next(&token);
             lexer::next_assert(&token, TOKEN_COLON);
             lexer::peek(&token);
-            while (token.typ != TOKEN_CASE && 
-                   token.typ != TOKEN_DEFAULT && 
+            while (token.typ != TOKEN_CASE &&
+                   token.typ != TOKEN_DEFAULT &&
                    token.typ != TOKEN_CLOSE_BRACE) {
                 let stmt = parse_statement(lexer);
                 node.switch_stmt.defolt::push(stmt);
