@@ -49,8 +49,10 @@ enum TokenType {
     // Keywords go below:
     TOKEN__KEYWORD_BEGIN,
     TOKEN_BREAK,
+    TOKEN_CASE,
     TOKEN_CHAR,
     TOKEN_CONST,
+    TOKEN_DEFAULT,
     TOKEN_ENUM,
     TOKEN_ELSE,
     TOKEN_DEFER,
@@ -68,6 +70,7 @@ enum TokenType {
     TOKEN_RETURN,
     TOKEN_SIZEOF,
     TOKEN_STRUCT,
+    TOKEN_SWITCH,
     TOKEN_UNION,
     TOKEN_VOID,
     TOKEN_WHILE,
@@ -139,8 +142,10 @@ fn token_type_to_string(typ: int): char* {
     if (typ == TOKEN_XOR) return "TOKEN_XOR";
 
     if (typ == TOKEN_BREAK) return "TOKEN_BREAK";
+    if (typ == TOKEN_CASE) return "TOKEN_CASE";
     if (typ == TOKEN_CHAR) return "TOKEN_CHAR";
     if (typ == TOKEN_CONST) return "TOKEN_CONST";
+    if (typ == TOKEN_DEFAULT) return "TOKEN_DEFAULT";
     if (typ == TOKEN_ENUM) return "TOKEN_ENUM";
     if (typ == TOKEN_ELSE) return "TOKEN_ELSE";
     if (typ == TOKEN_DEFER) return "TOKEN_DEFER";
@@ -158,6 +163,7 @@ fn token_type_to_string(typ: int): char* {
     if (typ == TOKEN_RETURN) return "TOKEN_RETURN";
     if (typ == TOKEN_SIZEOF) return "TOKEN_SIZEOF";
     if (typ == TOKEN_STRUCT) return "TOKEN_STRUCT";
+    if (typ == TOKEN_SWITCH) return "TOKEN_SWITCH";
     if (typ == TOKEN_UNION) return "TOKEN_UNION";
     if (typ == TOKEN_VOID) return "TOKEN_VOID";
     if (typ == TOKEN_WHILE) return "TOKEN_WHILE";
@@ -169,8 +175,10 @@ fn token_type_to_string(typ: int): char* {
 
 fn keyword_to_string(typ: int): char* {
     if (typ == TOKEN_BREAK) return "break";
+    if (typ == TOKEN_CASE) return "case";
     if (typ == TOKEN_CHAR) return "char";
     if (typ == TOKEN_CONST) return "const";
+    if (typ == TOKEN_DEFAULT) return "default";
     if (typ == TOKEN_ENUM) return "enum";
     if (typ == TOKEN_ELSE) return "else";
     if (typ == TOKEN_DEFER) return "defer";
@@ -188,6 +196,7 @@ fn keyword_to_string(typ: int): char* {
     if (typ == TOKEN_RETURN) return "return";
     if (typ == TOKEN_SIZEOF) return "sizeof";
     if (typ == TOKEN_STRUCT) return "struct";
+    if (typ == TOKEN_SWITCH) return "switch";
     if (typ == TOKEN_UNION) return "union";
     if (typ == TOKEN_VOID) return "void";
     if (typ == TOKEN_WHILE) return "while";

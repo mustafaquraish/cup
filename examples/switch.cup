@@ -1,0 +1,30 @@
+import "std/common.cup"
+
+enum DataType {
+    TYPE_INT,
+    TYPE_FLOAT,
+    TYPE_CHARPOINTER,
+    TYPE_STRING,
+}
+
+fn t2s(t: int): char* {
+    switch (t) {
+        case TYPE_INT: return "integer";
+        case TYPE_FLOAT: return "float";
+        
+        case TYPE_CHARPOINTER:
+        case TYPE_STRING: 
+            return "string";
+        
+        default:
+            return "<unknown>";
+    }
+}
+
+fn main() {
+    putsln(t2s(TYPE_INT));
+    putsln(t2s(TYPE_FLOAT));
+    putsln(t2s(TYPE_CHARPOINTER));
+    putsln(t2s(TYPE_STRING));
+    putsln(t2s(100)); // clearly bad
+}

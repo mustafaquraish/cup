@@ -359,6 +359,43 @@ fn generate_expression(node: Node*) {
 }
 
 fn generate_block(node: Node*);
+fn generate_statement(node: Node*);
+
+fn generate_switch_statement(node: Node*) {
+    let label = ++gen_label_counter;
+    let prev_break = gen_current_break;
+    gen_current_break = label;
+
+    generate_expression(node.switch_stmt.expr); // Guaranteed to be an integer in `rax`
+    let all_cases = node.switch_stmt.cases;
+    for (let i = 0; i < all_cases.size; ++i) {
+        let cur_case: Node* = all_cases::at(i);
+        let case_value = cur_case.case_stmt.val;
+        emit_asm("    cmp rax, "); emit_num(case_value); emit_asm("\n");
+        emit_asm("    je .case_"); emit_num(label); emit_asm("_"); emit_num(i); emit_asm("\n");
+    }
+    emit_asm("    jmp .default_"); emit_num(label); emit_asm("\n");
+
+    for (let i = 0; i < all_cases.size; ++i) {
+        let cur_case: Node* = all_cases::at(i);
+        let case_value = cur_case.case_stmt.val;
+        emit_asm(".case_"); emit_num(label); emit_asm("_"); emit_num(i); emit_asm(":\n");
+
+        let stmts = cur_case.case_stmt.children;
+        for (let j = 0; j < stmts.size; ++j)
+            generate_statement(stmts::at(j));
+    }
+    emit_asm(".default_"); emit_num(label); emit_asm(":\n");
+    let defolt = node.switch_stmt.defolt;
+    if (defolt) {
+        for (let i = 0; i < defolt.size; ++i)
+            generate_statement(defolt::at(i));
+    }
+    emit_asm("    .break_"); emit_num(label); emit_asm(":\n");
+
+    gen_current_break = label;
+} 
+
 
 fn generate_statement(node: Node*) {
     if (node.typ == AST_RETURN) {
@@ -439,6 +476,9 @@ fn generate_statement(node: Node*) {
         emit_asm(".break_"); emit_num(label); emit_asm(":\n");
         emit_asm(".loop_end_"); emit_num(label); emit_asm(":\n");
         gen_current_break = prev_break;
+
+    } else if (node.typ == AST_SWITCH) {
+        generate_switch_statement(node);
 
     } else if (node.typ == AST_FOR) {
         let label = ++gen_label_counter;

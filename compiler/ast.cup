@@ -42,6 +42,8 @@ enum NodeType {
     AST_WHILE,
     AST_DEFER,
     AST_FOR,
+    AST_SWITCH,
+    AST_CASE,
     AST_VARDECL,
     AST_LOCAL_VAR,
     AST_GLOBAL_VAR,
@@ -135,6 +137,17 @@ struct Node {
         constant: struct {
             name: char *;
             value: Node *; // Must be int literal
+        };
+
+        switch_stmt: struct {
+            expr: Node *;
+            cases: Vector *; // Vector<CaseStatement *>
+            defolt: Vector *; // Vector<Node *>
+        };
+
+        case_stmt: struct {
+            val: i64;
+            children: Vector *;
         };
     };
 };
@@ -235,6 +248,8 @@ fn node_type_to_string(typ: int): char* {
     if (typ == AST_WHILE) return "AST_WHILE";
     if (typ == AST_DEFER) return "AST_DEFER";
     if (typ == AST_FOR) return "AST_FOR";
+    if (typ == AST_SWITCH) return "AST_SWITCH";
+    if (typ == AST_CASE) return "AST_CASE";
     if (typ == AST_VARDECL) return "AST_VARDECL";
     if (typ == AST_LOCAL_VAR) return "AST_LOCAL_VAR";
     if (typ == AST_GLOBAL_VAR) return "AST_GLOBAL_VAR";
@@ -376,6 +391,25 @@ fn dump_ast(node: Node*, depth: int) {
     } else if (node.typ == AST_CONVERT) {
         puts("("); puts(create_type_string(node.etyp)); putsln(")");
         dump_ast(node.unary, depth + 1);
+    } else if (node.typ == AST_CASE) {
+        puts("case "); putu(node.case_stmt.val); putsln(":");
+        for (let i = 0; i < node.case_stmt.children.size; ++i) {
+            dump_ast(node.case_stmt.children.data[i], depth + 1);
+        }
+    } else if (node.typ == AST_SWITCH) {
+        putsln("SWITCH"); 
+        dump_ast(node.switch_stmt.expr, depth + 1);
+        for (let i = 0; i < node.switch_stmt.cases.size; ++i) {
+            dump_ast(node.switch_stmt.cases.data[i], depth + 2);
+        }
+        if (node.switch_stmt.defolt) {
+            for (let i = 0; i < 2*(depth+2); ++i)
+                putc(' ');
+            putsln("default:");
+            for (let i = 0; i < node.switch_stmt.defolt.size; ++i) {
+                dump_ast(node.switch_stmt.defolt.data[i], depth + 3);
+            }
+        }
     } else {
         putsln(node_type_to_string(node.typ));
     }

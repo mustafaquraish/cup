@@ -166,9 +166,7 @@ fn parse_constant_declaration(lexer: Lexer*): Node* {
     }
 
     lexer::next_assert(&token, TOKEN_ASSIGN);
-    let expr = parse_expression(lexer);
-    let value = eval_constexp(expr, &token);
-    constant_push(constant_name, value);
+    constant_push(constant_name, parse_constant_expression(lexer));
 
     lexer::next_assert(&token, TOKEN_SEMICOLON);
 }
@@ -844,6 +842,71 @@ fn parse_function_params(lexer: Lexer*, func: Node*) {
 fn parse_block(lexer: Lexer*): Node*;
 fn parse_statement(lexer: Lexer*): Node*;
 
+fn parse_switch_statement(lexer: Lexer*): Node* {
+    let token: Token;
+    lexer::next_assert(&token, TOKEN_SWITCH);
+
+    let node = node_new(AST_SWITCH);
+    lexer::next_assert(&token, TOKEN_OPEN_PAREN);
+    node.switch_stmt.expr = parse_expression(lexer);
+
+    if (!is_int_type(node.switch_stmt.expr.etyp))
+        die_loc(here, &token.loc, "Expected integer-like expression for switch statement");
+
+    node.switch_stmt.cases = vector_new();
+    p_breakable_stack::push(node);
+
+    lexer::next_assert(&token, TOKEN_CLOSE_PAREN);
+
+    lexer::next_assert(&token, TOKEN_OPEN_BRACE);
+
+    lexer::peek(&token);
+    while (token.typ != TOKEN_CLOSE_BRACE) {
+        if (token.typ == TOKEN_CASE) {
+            lexer::next(&token);
+
+            let case_stmt = node_new(AST_CASE);
+            case_stmt.case_stmt.val = parse_constant_expression(lexer);
+            case_stmt.case_stmt.children = vector_new();
+
+            lexer::next_assert(&token, TOKEN_COLON);
+            lexer::peek(&token);
+            while (token.typ != TOKEN_CASE && 
+                   token.typ != TOKEN_DEFAULT && 
+                   token.typ != TOKEN_CLOSE_BRACE) {
+                let stmt = parse_statement(lexer);
+                case_stmt.case_stmt.children::push(stmt);
+                lexer::peek(&token);
+            }
+
+            node.switch_stmt.cases::push(case_stmt);
+
+        } else if (token.typ == TOKEN_DEFAULT) {
+            node.switch_stmt.defolt = vector_new();
+
+            lexer::next(&token);
+            lexer::next_assert(&token, TOKEN_COLON);
+            lexer::peek(&token);
+            while (token.typ != TOKEN_CASE && 
+                   token.typ != TOKEN_DEFAULT && 
+                   token.typ != TOKEN_CLOSE_BRACE) {
+                let stmt = parse_statement(lexer);
+                node.switch_stmt.defolt::push(stmt);
+                lexer::peek(&token);
+            }
+            if (token.typ != TOKEN_CLOSE_BRACE)
+                die_loc(here, &token.loc, "Shouldn't have any more case statments after 'default'. Expected '}'");
+
+        } else {
+            die_loc(here, &token.loc, "Expected 'case' or 'default'");
+        }
+    }
+
+    p_breakable_stack::pop();
+    lexer::next_assert(&token, TOKEN_CLOSE_BRACE);
+    return node;
+}
+
 fn parse_for_loop(lexer: Lexer*): Node* {
     let token: Token;
     lexer::next_assert(&token, TOKEN_FOR);
@@ -894,6 +957,9 @@ fn parse_statement(lexer: Lexer*): Node* {
     lexer::peek(&token);
     if (token.typ == TOKEN_OPEN_BRACE) {
         node = parse_block(lexer);
+        lexer::peek(&token);
+        if (token.typ == TOKEN_SEMICOLON)
+            lexer::next(&token);
 
     } else if (token.typ == TOKEN_RETURN) {
         lexer::next(&token);
@@ -945,10 +1011,13 @@ fn parse_statement(lexer: Lexer*): Node* {
     } else if (token.typ == TOKEN_FOR) {
         node = parse_for_loop(lexer);
 
+    } else if (token.typ == TOKEN_SWITCH) {
+        node = parse_switch_statement(lexer);
+
     } else if (token.typ == TOKEN_BREAK) {
         lexer::next(&token);
         if (p_breakable_stack::empty())
-            die_loc(here, &token.loc, "Can't break outside of a loop.");
+            die_loc(here, &token.loc, "Can't break outside of a loop / switch statement");
         node = node_new(AST_BREAK);
         lexer::next_assert(&token, TOKEN_SEMICOLON);
 
