@@ -48,6 +48,7 @@ enum TokenType {
 
     // Keywords go below:
     TOKEN__KEYWORD_BEGIN,
+    TOKEN_BREAK,
     TOKEN_CHAR,
     TOKEN_CONST,
     TOKEN_ENUM,
@@ -136,6 +137,8 @@ fn token_type_to_string(typ: int): char* {
     if (typ == TOKEN_STRINGLIT) return "TOKEN_STRINGLIT";
     if (typ == TOKEN_TILDE) return "TOKEN_TILDE";
     if (typ == TOKEN_XOR) return "TOKEN_XOR";
+
+    if (typ == TOKEN_BREAK) return "TOKEN_BREAK";
     if (typ == TOKEN_CHAR) return "TOKEN_CHAR";
     if (typ == TOKEN_CONST) return "TOKEN_CONST";
     if (typ == TOKEN_ENUM) return "TOKEN_ENUM";
@@ -165,6 +168,7 @@ fn token_type_to_string(typ: int): char* {
 }
 
 fn keyword_to_string(typ: int): char* {
+    if (typ == TOKEN_BREAK) return "break";
     if (typ == TOKEN_CHAR) return "char";
     if (typ == TOKEN_CONST) return "const";
     if (typ == TOKEN_ENUM) return "enum";

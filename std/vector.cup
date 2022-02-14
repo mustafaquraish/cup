@@ -19,6 +19,10 @@ fn vector_new(): Vector* {
     return vector_new_sized(initial_default_capacity);
 }
 
+method Vector::empty(): int {
+    return self.size == 0;
+}
+
 method Vector::at(index: int): void* {
     if (index < 0 || index >= self.size)
         die("Vector::at: index out of bounds");

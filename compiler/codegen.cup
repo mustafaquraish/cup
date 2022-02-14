@@ -6,8 +6,9 @@ let gen_out_file: File*;
 let gen_label_counter = -1; // So the labels start at 0
 
 let gen_string_literals = vector_new();
-
 let gen_defer_stack = vector_new();
+
+let gen_current_break = -2;
 
 fn emit_asm4(msg1: char*, msg2: char*, msg3: char*, msg4: char*) {
     gen_out_file::write(msg1, strlen(msg1));
@@ -396,6 +397,16 @@ fn generate_statement(node: Node*) {
     } else if (node.typ == AST_DEFER) {
         gen_defer_stack::push(node.unary);
 
+    } else if (node.typ == AST_BREAK) {
+        if (gen_current_break < 0)
+            die2(here, "Break outside of loop, should have been caught by parser.");
+
+        // FIXME: Need to run defers here before exiting the scopes.
+        if (gen_defer_stack.size > 0)
+            putsln("WARNING: 'defer' does not work in loops with break statements, you have been warned.");
+
+        emit_asm("    jmp .break_"); emit_num(gen_current_break); emit_asm("\n");
+
     } else if (node.typ == AST_IF) {
         let label = ++gen_label_counter;
         generate_expression(node.conditional.cond);
@@ -416,6 +427,8 @@ fn generate_statement(node: Node*) {
         }
     } else if (node.typ == AST_WHILE) {
         let label = ++gen_label_counter;
+        let prev_break = gen_current_break;
+        gen_current_break = label;
         emit_asm(".loop_start_"); emit_num(label); emit_asm(":\n");
         emit_asm(".loop_continue_"); emit_num(label); emit_asm(":\n");
         generate_expression(node.looop.cond);
@@ -423,10 +436,14 @@ fn generate_statement(node: Node*) {
         emit_asm("    je .loop_end_"); emit_num(label); emit_asm("\n");
         generate_statement(node.looop.body);
         emit_asm("    jmp .loop_start_"); emit_num(label); emit_asm("\n");
+        emit_asm(".break_"); emit_num(label); emit_asm(":\n");
         emit_asm(".loop_end_"); emit_num(label); emit_asm(":\n");
+        gen_current_break = prev_break;
 
     } else if (node.typ == AST_FOR) {
         let label = ++gen_label_counter;
+        let prev_break = gen_current_break;
+        gen_current_break = label;
         if (node.looop.init)
             generate_statement(node.looop.init);
         emit_asm(".loop_start_"); emit_num(label); emit_asm(":\n");
@@ -440,7 +457,9 @@ fn generate_statement(node: Node*) {
         if (node.looop.step)
             generate_statement(node.looop.step);
         emit_asm("    jmp .loop_start_"); emit_num(label); emit_asm("\n");
+        emit_asm(".break_"); emit_num(label); emit_asm(":\n");
         emit_asm(".loop_end_"); emit_num(label); emit_asm(":\n");
+        gen_current_break = prev_break;
 
     } else {
         // Default to a simple expression statement

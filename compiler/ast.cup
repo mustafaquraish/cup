@@ -46,6 +46,7 @@ enum NodeType {
     AST_LOCAL_VAR,
     AST_GLOBAL_VAR,
     AST_RETURN,
+    AST_BREAK,
     AST_FUNC,
     AST_BUILTIN,
     AST_PROGRAM,
@@ -239,6 +240,7 @@ fn node_type_to_string(typ: int): char* {
     if (typ == AST_GLOBAL_VAR) return "AST_GLOBAL_VAR";
     if (typ == AST_RETURN) return "AST_RETURN";
     if (typ == AST_FUNC) return "AST_FUNC";
+    if (typ == AST_BREAK) return "AST_BREAK";
     if (typ == AST_BUILTIN) return "AST_BUILTIN";
     if (typ == AST_PROGRAM) return "AST_PROGRAM";
     if (typ == AST_BLOCK) return "AST_BLOCK";
@@ -559,7 +561,7 @@ fn convert_type(to: Type*, from_node: Node*): Node* {
 
     if (is_float_type(from) && is_int_type(to))
         return convert_to_int(from_node);
-    
+
     if (is_float_type(to) && is_int_type(from))
         return convert_to_float(from_node);
 

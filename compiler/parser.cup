@@ -15,6 +15,8 @@ let p_lexer_stack = vector_new();
 let p_constant_stack = vector_new();
 let p_compound_type_stack = vector_new();
 
+let p_breakable_stack = vector_new();
+
 fn block_stack_push(block: Node*) {
     p_block_stack::push(block);
 }
@@ -286,7 +288,7 @@ fn parse_function_call_args(lexer: Lexer*, func: Node*, obj_ptr: Node*): Node* {
         let conv = convert_type(var.typ, arg);
         if (!conv)
             die_loc2(here, &token.loc, "Function argument type mismatch: ", var.name);
-        
+
         node.call.args.data[i] = conv;
     }
 
@@ -883,7 +885,9 @@ fn parse_for_loop(lexer: Lexer*): Node* {
         looop.looop.step = parse_expression(lexer);
     lexer::next_assert(&token, TOKEN_CLOSE_PAREN);
 
+    p_breakable_stack::push(looop);
     looop.looop.body = parse_statement(lexer);
+    p_breakable_stack::pop();
     block_stack_pop();
 
     return node;
@@ -939,10 +943,20 @@ fn parse_statement(lexer: Lexer*): Node* {
         lexer::next_assert(&token, TOKEN_OPEN_PAREN);
         node.looop.cond = parse_expression(lexer);
         lexer::next_assert(&token, TOKEN_CLOSE_PAREN);
+
+        p_breakable_stack::push(node);
         node.looop.body = parse_statement(lexer);
+        p_breakable_stack::pop();
 
     } else if (token.typ == TOKEN_FOR) {
         node = parse_for_loop(lexer);
+
+    } else if (token.typ == TOKEN_BREAK) {
+        lexer::next(&token);
+        if (p_breakable_stack::empty())
+            die_loc(here, &token.loc, "Can't break outside of a loop.");
+        node = node_new(AST_BREAK);
+        lexer::next_assert(&token, TOKEN_SEMICOLON);
 
     } else if (token.typ == TOKEN_DEFER) {
         lexer::next_assert(&token, TOKEN_DEFER);
@@ -952,6 +966,7 @@ fn parse_statement(lexer: Lexer*): Node* {
     } else if (token.typ == TOKEN_LET) {
         node = parse_var_declaration(lexer);
         lexer::next_assert(&token, TOKEN_SEMICOLON);
+
     } else {
         // Default to expression statement
         node = parse_expression(lexer);
