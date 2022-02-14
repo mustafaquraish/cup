@@ -107,14 +107,14 @@ fn identifier_exists(name: char*): int {
     return false;
 }
 
-fn eval_constexp(node: Node*): int {
+fn eval_constexp(node: Node*, token: Token*): int {
     if (node.typ == AST_LITERAL) {
         if (node.etyp.typ != TYPE_INT)
-            die("Constant expressions can only contain integer literals/constants.");
+            die_loc(here, &token.loc, "Constant expressions can only contain integer literals/constants.");
         return node.literal.as_int;
     } else if (is_binary_op(node.typ)) {
-        let left = eval_constexp(node.binary.lhs);
-        let right = eval_constexp(node.binary.rhs);
+        let left = eval_constexp(node.binary.lhs, token);
+        let right = eval_constexp(node.binary.rhs, token);
              if (node.typ == AST_PLUS) return left + right;
         else if (node.typ == AST_MINUS) return left - right;
         else if (node.typ == AST_BWOR) return left | right;
@@ -126,19 +126,26 @@ fn eval_constexp(node: Node*): int {
         else if (node.typ == AST_MUL) return left * right;
         else if (node.typ == AST_MUL) return left * right;
         else {
-            die("Unsupported binary operator in constant expression.");
+            die_loc(here, &token.loc, "Unsupported binary operator in constant expression.");
         }
     }
-    else if (node.typ == AST_NEG) return -eval_constexp(node.unary);
-    else if (node.typ == AST_BWINV) return ~eval_constexp(node.unary);
-    else if (node.typ == AST_NOT) return !eval_constexp(node.unary);
+    else if (node.typ == AST_NEG) return -eval_constexp(node.unary, token);
+    else if (node.typ == AST_BWINV) return ~eval_constexp(node.unary, token);
+    else if (node.typ == AST_NOT) return !eval_constexp(node.unary, token);
     else {
-        die("Unsupported constant expression.");
+        die_loc(here, &token.loc, "Unsupported constant expression.");
     }
     return 0;
 }
 
 fn parse_expression(lexer: Lexer*): Node*;
+
+fn parse_constant_expression(lexer: Lexer*): i64 {
+    let token: Token;
+    lexer::peek(&token);
+    let node = parse_expression(lexer);
+    return eval_constexp(node, &token);
+}
 
 fn parse_constant_declaration(lexer: Lexer*): Node* {
     let token: Token;
@@ -160,7 +167,7 @@ fn parse_constant_declaration(lexer: Lexer*): Node* {
 
     lexer::next_assert(&token, TOKEN_ASSIGN);
     let expr = parse_expression(lexer);
-    let value = eval_constexp(expr);
+    let value = eval_constexp(expr, &token);
     constant_push(constant_name, value);
 
     lexer::next_assert(&token, TOKEN_SEMICOLON);
@@ -222,20 +229,7 @@ fn parse_type(lexer: Lexer*): Type* {
             lexer::next(&token);
             let arr = type_new(TYPE_ARRAY);
             arr.ptr = typ;
-
-            lexer::next(&token);
-            if (token.typ == TOKEN_INTLIT) {
-                arr.array_size = token.value.as_int;
-            } else if (token.typ == TOKEN_IDENTIFIER) {
-                let constant = find_constant(token.value.as_string);
-                if (!constant)
-                    die_loc2(here, &token.loc, "Could not find constant: ", token.value.as_string);
-                // FIXME: This is a complete mess.
-                let value = constant.constant.value;
-                arr.array_size = value.literal.as_int;
-            } else {
-                die_loc(here, &token.loc, "Expected a constant expression for array size");
-            }
+            arr.array_size = parse_constant_expression(lexer);
             lexer::next_assert(&token, TOKEN_CLOSE_BRACKET);
             typ = arr;
 
