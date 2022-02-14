@@ -343,6 +343,7 @@ func_strlen:
     pop rcx
     mov [rcx], rax
     jmp .loop_start_0
+.break_0:
 .loop_end_0:
     mov rax, rbp
     sub rax, 8
@@ -410,6 +411,7 @@ func_strcpy:
     pop rcx
     mov [rcx], rax
     jmp .loop_start_1
+.break_1:
 .loop_end_1:
     mov rax, rbp
     sub rax, -16
@@ -454,6 +456,7 @@ func_strcat:
     pop rcx
     mov [rcx], rax
     jmp .loop_start_2
+.break_2:
 .loop_end_2:
 .loop_start_3:
 .loop_continue_3:
@@ -504,6 +507,7 @@ func_strcat:
     pop rcx
     mov [rcx], rax
     jmp .loop_start_3
+.break_3:
 .loop_end_3:
     mov rax, rbp
     sub rax, -16
@@ -600,6 +604,7 @@ func_streq:
     pop rcx
     mov [rcx], rax
     jmp .loop_start_4
+.break_4:
 .loop_end_4:
     mov rax, rbp
     sub rax, -24
@@ -733,6 +738,7 @@ func_strrev:
     pop rcx
     mov [rcx], rax
     jmp .loop_start_7
+.break_7:
 .loop_end_7:
     mov rsp, rbp
     pop rbp
@@ -847,6 +853,7 @@ func_atoi_end:
     pop rcx
     mov [rcx], rax
     jmp .loop_start_9
+.break_9:
 .loop_end_9:
     mov rax, rbp
     sub rax, -24
@@ -998,6 +1005,7 @@ func_find_extension_start:
     pop rcx
     mov [rcx], rax
     jmp .loop_start_11
+.break_11:
 .loop_end_11:
     mov rax, rbp
     sub rax, 8
@@ -1506,6 +1514,7 @@ func_putu_buffer:
     pop rcx
     mov [rcx], rax
     jmp .loop_start_27
+.break_27:
 .loop_end_27:
     mov rax, 0
     push rax
@@ -1760,6 +1769,7 @@ func_putflt:
     pop rcx
     mov [rcx], rax
     jmp .loop_start_31
+.break_31:
 .loop_end_31:
     mov rsp, rbp
     pop rbp
@@ -2022,6 +2032,7 @@ func_factorial:
     pop rcx
     mov [rcx], rax
     jmp .loop_start_37
+.break_37:
 .loop_end_37:
     mov rax, rbp
     sub rax, 8
@@ -2138,6 +2149,7 @@ func_memcpy:
     pop rcx
     mov [rcx], rax
     jmp .loop_start_38
+.break_38:
 .loop_end_38:
     mov rsp, rbp
     pop rbp
@@ -2320,6 +2332,7 @@ func_run_command:
     pop rcx
     mov [rcx], rax
     jmp .loop_start_41
+.break_41:
 .loop_end_41:
     mov rax, global_string_4
     push rax
@@ -3134,1213 +3147,652 @@ func_token_type_to_string:
     push rbp
     mov rbp, rsp
     sub rsp, 0
-    mov rax, 0
-    push rax
     mov rax, rbp
     sub rax, -16
     mov rax, [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
     cmp rax, 0
-    je .if_end_57
+    je .case_57_0
+    cmp rax, 1
+    je .case_57_1
+    cmp rax, 2
+    je .case_57_2
+    cmp rax, 3
+    je .case_57_3
+    cmp rax, 4
+    je .case_57_4
+    cmp rax, 5
+    je .case_57_5
+    cmp rax, 6
+    je .case_57_6
+    cmp rax, 7
+    je .case_57_7
+    cmp rax, 8
+    je .case_57_8
+    cmp rax, 9
+    je .case_57_9
+    cmp rax, 10
+    je .case_57_10
+    cmp rax, 11
+    je .case_57_11
+    cmp rax, 12
+    je .case_57_12
+    cmp rax, 13
+    je .case_57_13
+    cmp rax, 14
+    je .case_57_14
+    cmp rax, 15
+    je .case_57_15
+    cmp rax, 17
+    je .case_57_16
+    cmp rax, 18
+    je .case_57_17
+    cmp rax, 19
+    je .case_57_18
+    cmp rax, 16
+    je .case_57_19
+    cmp rax, 20
+    je .case_57_20
+    cmp rax, 21
+    je .case_57_21
+    cmp rax, 22
+    je .case_57_22
+    cmp rax, 23
+    je .case_57_23
+    cmp rax, 24
+    je .case_57_24
+    cmp rax, 25
+    je .case_57_25
+    cmp rax, 26
+    je .case_57_26
+    cmp rax, 27
+    je .case_57_27
+    cmp rax, 28
+    je .case_57_28
+    cmp rax, 29
+    je .case_57_29
+    cmp rax, 30
+    je .case_57_30
+    cmp rax, 31
+    je .case_57_31
+    cmp rax, 32
+    je .case_57_32
+    cmp rax, 33
+    je .case_57_33
+    cmp rax, 34
+    je .case_57_34
+    cmp rax, 35
+    je .case_57_35
+    cmp rax, 36
+    je .case_57_36
+    cmp rax, 37
+    je .case_57_37
+    cmp rax, 38
+    je .case_57_38
+    cmp rax, 39
+    je .case_57_39
+    cmp rax, 40
+    je .case_57_40
+    cmp rax, 41
+    je .case_57_41
+    cmp rax, 42
+    je .case_57_42
+    cmp rax, 43
+    je .case_57_43
+    cmp rax, 45
+    je .case_57_44
+    cmp rax, 46
+    je .case_57_45
+    cmp rax, 47
+    je .case_57_46
+    cmp rax, 48
+    je .case_57_47
+    cmp rax, 49
+    je .case_57_48
+    cmp rax, 50
+    je .case_57_49
+    cmp rax, 51
+    je .case_57_50
+    cmp rax, 52
+    je .case_57_51
+    cmp rax, 53
+    je .case_57_52
+    cmp rax, 54
+    je .case_57_53
+    cmp rax, 55
+    je .case_57_54
+    cmp rax, 56
+    je .case_57_55
+    cmp rax, 57
+    je .case_57_56
+    cmp rax, 58
+    je .case_57_57
+    cmp rax, 59
+    je .case_57_58
+    cmp rax, 60
+    je .case_57_59
+    cmp rax, 61
+    je .case_57_60
+    cmp rax, 62
+    je .case_57_61
+    cmp rax, 63
+    je .case_57_62
+    cmp rax, 64
+    je .case_57_63
+    cmp rax, 65
+    je .case_57_64
+    cmp rax, 66
+    je .case_57_65
+    cmp rax, 67
+    je .case_57_66
+    cmp rax, 68
+    je .case_57_67
+    cmp rax, 69
+    je .case_57_68
+    cmp rax, 70
+    je .case_57_69
+    cmp rax, 71
+    je .case_57_70
+    jmp .default_57
+.case_57_0:
     mov rax, global_string_19
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_57:
-    mov rax, 1
-    push rax
-    mov rax, rbp
-    sub rax, -16
-    mov rax, [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
-    cmp rax, 0
-    je .if_end_58
+.case_57_1:
     mov rax, global_string_20
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_58:
-    mov rax, 2
-    push rax
-    mov rax, rbp
-    sub rax, -16
-    mov rax, [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
-    cmp rax, 0
-    je .if_end_59
+.case_57_2:
     mov rax, global_string_21
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_59:
-    mov rax, 3
-    push rax
-    mov rax, rbp
-    sub rax, -16
-    mov rax, [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
-    cmp rax, 0
-    je .if_end_60
+.case_57_3:
     mov rax, global_string_22
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_60:
-    mov rax, 4
-    push rax
-    mov rax, rbp
-    sub rax, -16
-    mov rax, [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
-    cmp rax, 0
-    je .if_end_61
+.case_57_4:
     mov rax, global_string_23
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_61:
-    mov rax, 5
-    push rax
-    mov rax, rbp
-    sub rax, -16
-    mov rax, [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
-    cmp rax, 0
-    je .if_end_62
+.case_57_5:
     mov rax, global_string_24
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_62:
-    mov rax, 6
-    push rax
-    mov rax, rbp
-    sub rax, -16
-    mov rax, [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
-    cmp rax, 0
-    je .if_end_63
+.case_57_6:
     mov rax, global_string_25
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_63:
-    mov rax, 7
-    push rax
-    mov rax, rbp
-    sub rax, -16
-    mov rax, [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
-    cmp rax, 0
-    je .if_end_64
+.case_57_7:
     mov rax, global_string_26
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_64:
-    mov rax, 8
-    push rax
-    mov rax, rbp
-    sub rax, -16
-    mov rax, [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
-    cmp rax, 0
-    je .if_end_65
+.case_57_8:
     mov rax, global_string_27
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_65:
-    mov rax, 9
-    push rax
-    mov rax, rbp
-    sub rax, -16
-    mov rax, [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
-    cmp rax, 0
-    je .if_end_66
+.case_57_9:
     mov rax, global_string_28
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_66:
-    mov rax, 10
-    push rax
-    mov rax, rbp
-    sub rax, -16
-    mov rax, [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
-    cmp rax, 0
-    je .if_end_67
+.case_57_10:
     mov rax, global_string_29
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_67:
-    mov rax, 11
-    push rax
-    mov rax, rbp
-    sub rax, -16
-    mov rax, [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
-    cmp rax, 0
-    je .if_end_68
+.case_57_11:
     mov rax, global_string_30
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_68:
-    mov rax, 12
-    push rax
-    mov rax, rbp
-    sub rax, -16
-    mov rax, [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
-    cmp rax, 0
-    je .if_end_69
+.case_57_12:
     mov rax, global_string_31
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_69:
-    mov rax, 13
-    push rax
-    mov rax, rbp
-    sub rax, -16
-    mov rax, [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
-    cmp rax, 0
-    je .if_end_70
+.case_57_13:
     mov rax, global_string_32
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_70:
-    mov rax, 14
-    push rax
-    mov rax, rbp
-    sub rax, -16
-    mov rax, [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
-    cmp rax, 0
-    je .if_end_71
+.case_57_14:
     mov rax, global_string_33
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_71:
-    mov rax, 15
-    push rax
-    mov rax, rbp
-    sub rax, -16
-    mov rax, [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
-    cmp rax, 0
-    je .if_end_72
+.case_57_15:
     mov rax, global_string_34
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_72:
-    mov rax, 17
-    push rax
-    mov rax, rbp
-    sub rax, -16
-    mov rax, [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
-    cmp rax, 0
-    je .if_end_73
+.case_57_16:
     mov rax, global_string_35
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_73:
-    mov rax, 18
-    push rax
-    mov rax, rbp
-    sub rax, -16
-    mov rax, [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
-    cmp rax, 0
-    je .if_end_74
+.case_57_17:
     mov rax, global_string_36
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_74:
-    mov rax, 19
-    push rax
-    mov rax, rbp
-    sub rax, -16
-    mov rax, [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
-    cmp rax, 0
-    je .if_end_75
+.case_57_18:
     mov rax, global_string_37
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_75:
-    mov rax, 16
-    push rax
-    mov rax, rbp
-    sub rax, -16
-    mov rax, [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
-    cmp rax, 0
-    je .if_end_76
+.case_57_19:
     mov rax, global_string_38
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_76:
-    mov rax, 20
-    push rax
-    mov rax, rbp
-    sub rax, -16
-    mov rax, [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
-    cmp rax, 0
-    je .if_end_77
+.case_57_20:
     mov rax, global_string_39
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_77:
-    mov rax, 21
-    push rax
-    mov rax, rbp
-    sub rax, -16
-    mov rax, [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
-    cmp rax, 0
-    je .if_end_78
+.case_57_21:
     mov rax, global_string_40
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_78:
-    mov rax, 22
-    push rax
-    mov rax, rbp
-    sub rax, -16
-    mov rax, [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
-    cmp rax, 0
-    je .if_end_79
+.case_57_22:
     mov rax, global_string_41
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_79:
-    mov rax, 23
-    push rax
-    mov rax, rbp
-    sub rax, -16
-    mov rax, [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
-    cmp rax, 0
-    je .if_end_80
+.case_57_23:
     mov rax, global_string_42
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_80:
-    mov rax, 24
-    push rax
-    mov rax, rbp
-    sub rax, -16
-    mov rax, [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
-    cmp rax, 0
-    je .if_end_81
+.case_57_24:
     mov rax, global_string_43
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_81:
-    mov rax, 25
-    push rax
-    mov rax, rbp
-    sub rax, -16
-    mov rax, [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
-    cmp rax, 0
-    je .if_end_82
+.case_57_25:
     mov rax, global_string_44
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_82:
-    mov rax, 26
-    push rax
-    mov rax, rbp
-    sub rax, -16
-    mov rax, [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
-    cmp rax, 0
-    je .if_end_83
+.case_57_26:
     mov rax, global_string_45
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_83:
-    mov rax, 27
-    push rax
-    mov rax, rbp
-    sub rax, -16
-    mov rax, [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
-    cmp rax, 0
-    je .if_end_84
+.case_57_27:
     mov rax, global_string_46
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_84:
-    mov rax, 28
-    push rax
-    mov rax, rbp
-    sub rax, -16
-    mov rax, [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
-    cmp rax, 0
-    je .if_end_85
+.case_57_28:
     mov rax, global_string_47
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_85:
-    mov rax, 29
-    push rax
-    mov rax, rbp
-    sub rax, -16
-    mov rax, [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
-    cmp rax, 0
-    je .if_end_86
+.case_57_29:
     mov rax, global_string_48
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_86:
-    mov rax, 30
-    push rax
-    mov rax, rbp
-    sub rax, -16
-    mov rax, [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
-    cmp rax, 0
-    je .if_end_87
+.case_57_30:
     mov rax, global_string_49
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_87:
-    mov rax, 31
-    push rax
-    mov rax, rbp
-    sub rax, -16
-    mov rax, [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
-    cmp rax, 0
-    je .if_end_88
+.case_57_31:
     mov rax, global_string_50
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_88:
-    mov rax, 32
-    push rax
-    mov rax, rbp
-    sub rax, -16
-    mov rax, [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
-    cmp rax, 0
-    je .if_end_89
+.case_57_32:
     mov rax, global_string_51
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_89:
-    mov rax, 33
-    push rax
-    mov rax, rbp
-    sub rax, -16
-    mov rax, [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
-    cmp rax, 0
-    je .if_end_90
+.case_57_33:
     mov rax, global_string_52
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_90:
-    mov rax, 34
-    push rax
-    mov rax, rbp
-    sub rax, -16
-    mov rax, [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
-    cmp rax, 0
-    je .if_end_91
+.case_57_34:
     mov rax, global_string_53
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_91:
-    mov rax, 35
-    push rax
-    mov rax, rbp
-    sub rax, -16
-    mov rax, [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
-    cmp rax, 0
-    je .if_end_92
+.case_57_35:
     mov rax, global_string_54
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_92:
-    mov rax, 36
-    push rax
-    mov rax, rbp
-    sub rax, -16
-    mov rax, [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
-    cmp rax, 0
-    je .if_end_93
+.case_57_36:
     mov rax, global_string_55
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_93:
-    mov rax, 37
-    push rax
-    mov rax, rbp
-    sub rax, -16
-    mov rax, [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
-    cmp rax, 0
-    je .if_end_94
+.case_57_37:
     mov rax, global_string_56
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_94:
-    mov rax, 38
-    push rax
-    mov rax, rbp
-    sub rax, -16
-    mov rax, [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
-    cmp rax, 0
-    je .if_end_95
+.case_57_38:
     mov rax, global_string_57
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_95:
-    mov rax, 39
-    push rax
-    mov rax, rbp
-    sub rax, -16
-    mov rax, [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
-    cmp rax, 0
-    je .if_end_96
+.case_57_39:
     mov rax, global_string_58
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_96:
-    mov rax, 40
-    push rax
-    mov rax, rbp
-    sub rax, -16
-    mov rax, [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
-    cmp rax, 0
-    je .if_end_97
+.case_57_40:
     mov rax, global_string_59
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_97:
-    mov rax, 41
-    push rax
-    mov rax, rbp
-    sub rax, -16
-    mov rax, [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
-    cmp rax, 0
-    je .if_end_98
+.case_57_41:
     mov rax, global_string_60
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_98:
-    mov rax, 42
-    push rax
-    mov rax, rbp
-    sub rax, -16
-    mov rax, [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
-    cmp rax, 0
-    je .if_end_99
+.case_57_42:
     mov rax, global_string_61
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_99:
-    mov rax, 43
-    push rax
-    mov rax, rbp
-    sub rax, -16
-    mov rax, [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
-    cmp rax, 0
-    je .if_end_100
+.case_57_43:
     mov rax, global_string_62
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_100:
-    mov rax, 45
-    push rax
-    mov rax, rbp
-    sub rax, -16
-    mov rax, [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
-    cmp rax, 0
-    je .if_end_101
+.case_57_44:
     mov rax, global_string_63
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_101:
-    mov rax, 46
-    push rax
-    mov rax, rbp
-    sub rax, -16
-    mov rax, [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
-    cmp rax, 0
-    je .if_end_102
+.case_57_45:
     mov rax, global_string_64
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_102:
-    mov rax, 47
-    push rax
-    mov rax, rbp
-    sub rax, -16
-    mov rax, [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
-    cmp rax, 0
-    je .if_end_103
+.case_57_46:
     mov rax, global_string_65
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_103:
-    mov rax, 48
-    push rax
-    mov rax, rbp
-    sub rax, -16
-    mov rax, [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
-    cmp rax, 0
-    je .if_end_104
+.case_57_47:
     mov rax, global_string_66
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_104:
-    mov rax, 49
-    push rax
-    mov rax, rbp
-    sub rax, -16
-    mov rax, [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
-    cmp rax, 0
-    je .if_end_105
+.case_57_48:
     mov rax, global_string_67
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_105:
-    mov rax, 50
-    push rax
-    mov rax, rbp
-    sub rax, -16
-    mov rax, [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
-    cmp rax, 0
-    je .if_end_106
+.case_57_49:
     mov rax, global_string_68
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_106:
-    mov rax, 51
-    push rax
-    mov rax, rbp
-    sub rax, -16
-    mov rax, [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
-    cmp rax, 0
-    je .if_end_107
+.case_57_50:
     mov rax, global_string_69
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_107:
-    mov rax, 52
-    push rax
-    mov rax, rbp
-    sub rax, -16
-    mov rax, [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
-    cmp rax, 0
-    je .if_end_108
+.case_57_51:
     mov rax, global_string_70
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_108:
-    mov rax, 53
-    push rax
-    mov rax, rbp
-    sub rax, -16
-    mov rax, [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
-    cmp rax, 0
-    je .if_end_109
+.case_57_52:
     mov rax, global_string_71
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_109:
-    mov rax, 54
-    push rax
-    mov rax, rbp
-    sub rax, -16
-    mov rax, [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
-    cmp rax, 0
-    je .if_end_110
+.case_57_53:
     mov rax, global_string_72
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_110:
-    mov rax, 55
-    push rax
-    mov rax, rbp
-    sub rax, -16
-    mov rax, [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
-    cmp rax, 0
-    je .if_end_111
+.case_57_54:
     mov rax, global_string_73
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_111:
-    mov rax, 56
-    push rax
-    mov rax, rbp
-    sub rax, -16
-    mov rax, [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
-    cmp rax, 0
-    je .if_end_112
+.case_57_55:
     mov rax, global_string_74
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_112:
-    mov rax, 57
-    push rax
-    mov rax, rbp
-    sub rax, -16
-    mov rax, [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
-    cmp rax, 0
-    je .if_end_113
+.case_57_56:
     mov rax, global_string_75
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_113:
-    mov rax, 58
-    push rax
-    mov rax, rbp
-    sub rax, -16
-    mov rax, [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
-    cmp rax, 0
-    je .if_end_114
+.case_57_57:
     mov rax, global_string_76
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_114:
-    mov rax, 59
-    push rax
-    mov rax, rbp
-    sub rax, -16
-    mov rax, [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
-    cmp rax, 0
-    je .if_end_115
+.case_57_58:
     mov rax, global_string_77
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_115:
-    mov rax, 60
-    push rax
-    mov rax, rbp
-    sub rax, -16
-    mov rax, [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
-    cmp rax, 0
-    je .if_end_116
+.case_57_59:
     mov rax, global_string_78
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_116:
-    mov rax, 61
-    push rax
-    mov rax, rbp
-    sub rax, -16
-    mov rax, [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
-    cmp rax, 0
-    je .if_end_117
+.case_57_60:
     mov rax, global_string_79
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_117:
-    mov rax, 62
-    push rax
-    mov rax, rbp
-    sub rax, -16
-    mov rax, [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
-    cmp rax, 0
-    je .if_end_118
+.case_57_61:
     mov rax, global_string_80
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_118:
-    mov rax, 63
-    push rax
-    mov rax, rbp
-    sub rax, -16
-    mov rax, [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
-    cmp rax, 0
-    je .if_end_119
+.case_57_62:
     mov rax, global_string_81
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_119:
-    mov rax, 64
-    push rax
-    mov rax, rbp
-    sub rax, -16
-    mov rax, [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
-    cmp rax, 0
-    je .if_end_120
+.case_57_63:
     mov rax, global_string_82
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_120:
-    mov rax, 65
-    push rax
-    mov rax, rbp
-    sub rax, -16
-    mov rax, [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
-    cmp rax, 0
-    je .if_end_121
+.case_57_64:
     mov rax, global_string_83
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_121:
-    mov rax, 66
-    push rax
-    mov rax, rbp
-    sub rax, -16
-    mov rax, [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
-    cmp rax, 0
-    je .if_end_122
+.case_57_65:
     mov rax, global_string_84
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_122:
-    mov rax, 67
-    push rax
-    mov rax, rbp
-    sub rax, -16
-    mov rax, [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
-    cmp rax, 0
-    je .if_end_123
+.case_57_66:
     mov rax, global_string_85
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_123:
+.case_57_67:
     mov rax, global_string_86
+    push rax
+    pop rax
+    mov rsp, rbp
+    pop rbp
+    ret
+.case_57_68:
+    mov rax, global_string_87
+    push rax
+    pop rax
+    mov rsp, rbp
+    pop rbp
+    ret
+.case_57_69:
+    mov rax, global_string_88
+    push rax
+    pop rax
+    mov rsp, rbp
+    pop rbp
+    ret
+.case_57_70:
+    mov rax, global_string_89
+    push rax
+    pop rax
+    mov rsp, rbp
+    pop rbp
+    ret
+.default_57:
+    .break_57:
+    mov rax, global_string_90
     push rax
     call func_putsln
     add rsp, 8
@@ -4363,421 +3815,256 @@ func_keyword_to_string:
     push rbp
     mov rbp, rsp
     sub rsp, 0
-    mov rax, 45
-    push rax
     mov rax, rbp
     sub rax, -16
     mov rax, [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
-    cmp rax, 0
-    je .if_end_124
-    mov rax, global_string_87
-    push rax
-    pop rax
-    mov rsp, rbp
-    pop rbp
-    ret
-.if_end_124:
-    mov rax, 46
-    push rax
-    mov rax, rbp
-    sub rax, -16
-    mov rax, [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
-    cmp rax, 0
-    je .if_end_125
-    mov rax, global_string_88
-    push rax
-    pop rax
-    mov rsp, rbp
-    pop rbp
-    ret
-.if_end_125:
-    mov rax, 47
-    push rax
-    mov rax, rbp
-    sub rax, -16
-    mov rax, [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
-    cmp rax, 0
-    je .if_end_126
-    mov rax, global_string_89
-    push rax
-    pop rax
-    mov rsp, rbp
-    pop rbp
-    ret
-.if_end_126:
-    mov rax, 48
-    push rax
-    mov rax, rbp
-    sub rax, -16
-    mov rax, [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
-    cmp rax, 0
-    je .if_end_127
-    mov rax, global_string_90
-    push rax
-    pop rax
-    mov rsp, rbp
-    pop rbp
-    ret
-.if_end_127:
-    mov rax, 49
-    push rax
-    mov rax, rbp
-    sub rax, -16
-    mov rax, [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
-    cmp rax, 0
-    je .if_end_128
+    cmp rax, 45
+    je .case_58_0
+    cmp rax, 46
+    je .case_58_1
+    cmp rax, 47
+    je .case_58_2
+    cmp rax, 48
+    je .case_58_3
+    cmp rax, 49
+    je .case_58_4
+    cmp rax, 50
+    je .case_58_5
+    cmp rax, 51
+    je .case_58_6
+    cmp rax, 52
+    je .case_58_7
+    cmp rax, 53
+    je .case_58_8
+    cmp rax, 54
+    je .case_58_9
+    cmp rax, 55
+    je .case_58_10
+    cmp rax, 56
+    je .case_58_11
+    cmp rax, 57
+    je .case_58_12
+    cmp rax, 58
+    je .case_58_13
+    cmp rax, 59
+    je .case_58_14
+    cmp rax, 60
+    je .case_58_15
+    cmp rax, 61
+    je .case_58_16
+    cmp rax, 62
+    je .case_58_17
+    cmp rax, 63
+    je .case_58_18
+    cmp rax, 64
+    je .case_58_19
+    cmp rax, 65
+    je .case_58_20
+    cmp rax, 66
+    je .case_58_21
+    cmp rax, 67
+    je .case_58_22
+    cmp rax, 68
+    je .case_58_23
+    cmp rax, 69
+    je .case_58_24
+    cmp rax, 70
+    je .case_58_25
+    cmp rax, 71
+    je .case_58_26
+    jmp .default_58
+.case_58_0:
     mov rax, global_string_91
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_128:
-    mov rax, 50
-    push rax
-    mov rax, rbp
-    sub rax, -16
-    mov rax, [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
-    cmp rax, 0
-    je .if_end_129
+.case_58_1:
     mov rax, global_string_92
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_129:
-    mov rax, 51
-    push rax
-    mov rax, rbp
-    sub rax, -16
-    mov rax, [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
-    cmp rax, 0
-    je .if_end_130
+.case_58_2:
     mov rax, global_string_93
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_130:
-    mov rax, 52
-    push rax
-    mov rax, rbp
-    sub rax, -16
-    mov rax, [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
-    cmp rax, 0
-    je .if_end_131
+.case_58_3:
     mov rax, global_string_94
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_131:
-    mov rax, 53
-    push rax
-    mov rax, rbp
-    sub rax, -16
-    mov rax, [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
-    cmp rax, 0
-    je .if_end_132
+.case_58_4:
     mov rax, global_string_95
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_132:
-    mov rax, 54
-    push rax
-    mov rax, rbp
-    sub rax, -16
-    mov rax, [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
-    cmp rax, 0
-    je .if_end_133
+.case_58_5:
     mov rax, global_string_96
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_133:
-    mov rax, 55
-    push rax
-    mov rax, rbp
-    sub rax, -16
-    mov rax, [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
-    cmp rax, 0
-    je .if_end_134
+.case_58_6:
     mov rax, global_string_97
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_134:
-    mov rax, 56
-    push rax
-    mov rax, rbp
-    sub rax, -16
-    mov rax, [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
-    cmp rax, 0
-    je .if_end_135
+.case_58_7:
     mov rax, global_string_98
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_135:
-    mov rax, 57
-    push rax
-    mov rax, rbp
-    sub rax, -16
-    mov rax, [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
-    cmp rax, 0
-    je .if_end_136
+.case_58_8:
     mov rax, global_string_99
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_136:
-    mov rax, 58
-    push rax
-    mov rax, rbp
-    sub rax, -16
-    mov rax, [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
-    cmp rax, 0
-    je .if_end_137
+.case_58_9:
     mov rax, global_string_100
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_137:
-    mov rax, 59
-    push rax
-    mov rax, rbp
-    sub rax, -16
-    mov rax, [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
-    cmp rax, 0
-    je .if_end_138
+.case_58_10:
     mov rax, global_string_101
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_138:
-    mov rax, 60
-    push rax
-    mov rax, rbp
-    sub rax, -16
-    mov rax, [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
-    cmp rax, 0
-    je .if_end_139
+.case_58_11:
     mov rax, global_string_102
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_139:
-    mov rax, 61
-    push rax
-    mov rax, rbp
-    sub rax, -16
-    mov rax, [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
-    cmp rax, 0
-    je .if_end_140
+.case_58_12:
     mov rax, global_string_103
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_140:
-    mov rax, 62
-    push rax
-    mov rax, rbp
-    sub rax, -16
-    mov rax, [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
-    cmp rax, 0
-    je .if_end_141
+.case_58_13:
     mov rax, global_string_104
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_141:
-    mov rax, 63
-    push rax
-    mov rax, rbp
-    sub rax, -16
-    mov rax, [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
-    cmp rax, 0
-    je .if_end_142
+.case_58_14:
     mov rax, global_string_105
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_142:
-    mov rax, 64
-    push rax
-    mov rax, rbp
-    sub rax, -16
-    mov rax, [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
-    cmp rax, 0
-    je .if_end_143
+.case_58_15:
     mov rax, global_string_106
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_143:
-    mov rax, 65
-    push rax
-    mov rax, rbp
-    sub rax, -16
-    mov rax, [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
-    cmp rax, 0
-    je .if_end_144
+.case_58_16:
     mov rax, global_string_107
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_144:
-    mov rax, 66
-    push rax
-    mov rax, rbp
-    sub rax, -16
-    mov rax, [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
-    cmp rax, 0
-    je .if_end_145
+.case_58_17:
     mov rax, global_string_108
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_145:
-    mov rax, 67
-    push rax
-    mov rax, rbp
-    sub rax, -16
-    mov rax, [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
-    cmp rax, 0
-    je .if_end_146
+.case_58_18:
     mov rax, global_string_109
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_146:
+.case_58_19:
     mov rax, global_string_110
+    push rax
+    pop rax
+    mov rsp, rbp
+    pop rbp
+    ret
+.case_58_20:
+    mov rax, global_string_111
+    push rax
+    pop rax
+    mov rsp, rbp
+    pop rbp
+    ret
+.case_58_21:
+    mov rax, global_string_112
+    push rax
+    pop rax
+    mov rsp, rbp
+    pop rbp
+    ret
+.case_58_22:
+    mov rax, global_string_113
+    push rax
+    pop rax
+    mov rsp, rbp
+    pop rbp
+    ret
+.case_58_23:
+    mov rax, global_string_114
+    push rax
+    pop rax
+    mov rsp, rbp
+    pop rbp
+    ret
+.case_58_24:
+    mov rax, global_string_115
+    push rax
+    pop rax
+    mov rsp, rbp
+    pop rbp
+    ret
+.case_58_25:
+    mov rax, global_string_116
+    push rax
+    pop rax
+    mov rsp, rbp
+    pop rbp
+    ret
+.case_58_26:
+    mov rax, global_string_117
+    push rax
+    pop rax
+    mov rsp, rbp
+    pop rbp
+    ret
+.default_58:
+    .break_58:
+    mov rax, global_string_118
     push rax
     call func_puts
     add rsp, 8
@@ -4897,7 +4184,7 @@ func_die_loc2:
     push rax
     call func_location_print
     add rsp, 8
-    mov rax, global_string_111
+    mov rax, global_string_119
     push rax
     call func_puts
     add rsp, 8
@@ -4913,7 +4200,7 @@ func_die_loc2:
     push rax
     call func_putsln
     add rsp, 8
-    mov rax, global_string_112
+    mov rax, global_string_120
     push rax
     call func_puts
     add rsp, 8
@@ -4936,7 +4223,7 @@ func_die_loc:
     push rbp
     mov rbp, rsp
     sub rsp, 0
-    mov rax, global_string_113
+    mov rax, global_string_121
     push rax
     mov rax, rbp
     sub rax, -32
@@ -5248,84 +4535,36 @@ func_is_literal_token:
     push rbp
     mov rbp, rsp
     sub rsp, 0
-    mov rax, 20
-    push rax
     mov rax, rbp
     sub rax, -16
     mov rax, [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
-    cmp rax, 0
-    je .if_end_147
+    cmp rax, 20
+    je .case_59_0
+    cmp rax, 5
+    je .case_59_1
+    cmp rax, 41
+    je .case_59_2
+    cmp rax, 16
+    je .case_59_3
+    jmp .default_59
+.case_59_0:
+.case_59_1:
+.case_59_2:
+.case_59_3:
     mov rax, 1
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_147:
-    mov rax, 5
-    push rax
-    mov rax, rbp
-    sub rax, -16
-    mov rax, [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
-    cmp rax, 0
-    je .if_end_148
-    mov rax, 1
-    push rax
-    pop rax
-    mov rsp, rbp
-    pop rbp
-    ret
-.if_end_148:
-    mov rax, 41
-    push rax
-    mov rax, rbp
-    sub rax, -16
-    mov rax, [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
-    cmp rax, 0
-    je .if_end_149
-    mov rax, 1
-    push rax
-    pop rax
-    mov rsp, rbp
-    pop rbp
-    ret
-.if_end_149:
-    mov rax, 16
-    push rax
-    mov rax, rbp
-    sub rax, -16
-    mov rax, [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
-    cmp rax, 0
-    je .if_end_150
-    mov rax, 1
-    push rax
-    pop rax
-    mov rsp, rbp
-    pop rbp
-    ret
-.if_end_150:
+.default_59:
     mov rax, 0
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
+    .break_59:
     mov rsp, rbp
     pop rbp
     mov qword rax, 0
@@ -5409,6 +4648,31 @@ func_vector_new:
     pop rbp
     mov qword rax, 0
     ret
+global _Vector_method_empty
+_Vector_method_empty:
+    push rbp
+    mov rbp, rsp
+    sub rsp, 0
+    mov rax, 0
+    push rax
+    mov rax, rbp
+    sub rax, -16
+    mov rax, [rax]
+    add rax, 0
+    mov rax, [rax]
+    pop rcx
+    cmp rax, rcx
+    sete al
+    movzx rax, al
+    push rax
+    pop rax
+    mov rsp, rbp
+    pop rbp
+    ret
+    mov rsp, rbp
+    pop rbp
+    mov qword rax, 0
+    ret
 global _Vector_method_at
 _Vector_method_at:
     push rbp
@@ -5424,10 +4688,10 @@ _Vector_method_at:
     setl al
     movzx rax, al
     cmp rax, 0
-    je .or_right_152
+    je .or_right_61
     mov rax, 1
-    jmp .or_end_152
-.or_right_152:
+    jmp .or_end_61
+.or_right_61:
     mov rax, rbp
     sub rax, -16
     mov rax, [rax]
@@ -5443,14 +4707,14 @@ _Vector_method_at:
     movzx rax, al
     cmp rax, 0
     setne al
-.or_end_152:
+.or_end_61:
     cmp rax, 0
-    je .if_end_151
-    mov rax, global_string_114
+    je .if_end_60
+    mov rax, global_string_122
     push rax
     call func_die
     add rsp, 8
-.if_end_151:
+.if_end_60:
     mov rax, 8
     push rax
     mov rax, rbp
@@ -5497,7 +4761,7 @@ _Vector_method_push:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_end_153
+    je .if_end_62
     mov rax, 2
     push rax
     mov rax, rbp
@@ -5561,7 +4825,7 @@ _Vector_method_push:
     mov rax, [rax]
     pop rcx
     mov [rcx], rax
-.if_end_153:
+.if_end_62:
     mov rax, 8
     push rax
     mov rax, rbp
@@ -5622,12 +4886,12 @@ _Vector_method_pop:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_end_154
-    mov rax, global_string_115
+    je .if_end_63
+    mov rax, global_string_123
     push rax
     call func_die
     add rsp, 8
-.if_end_154:
+.if_end_63:
     mov rax, rbp
     sub rax, -16
     mov rax, [rax]
@@ -5688,12 +4952,12 @@ _Vector_method_top:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_end_155
-    mov rax, global_string_116
+    je .if_end_64
+    mov rax, global_string_124
     push rax
     call func_die
     add rsp, 8
-.if_end_155:
+.if_end_64:
     mov rax, 8
     push rax
     mov rax, 1
@@ -5730,186 +4994,63 @@ func_size_for_base_type:
     push rbp
     mov rbp, rsp
     sub rsp, 0
-    mov rax, 0
-    push rax
     mov rax, rbp
     sub rax, -16
     mov rax, [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
     cmp rax, 0
-    je .if_end_156
+    je .case_65_0
+    cmp rax, 10
+    je .case_65_1
+    cmp rax, 5
+    je .case_65_2
+    cmp rax, 6
+    je .case_65_3
+    cmp rax, 8
+    je .case_65_4
+    cmp rax, 1
+    je .case_65_5
+    cmp rax, 2
+    je .case_65_6
+    cmp rax, 4
+    je .case_65_7
+    cmp rax, 3
+    je .case_65_8
+    jmp .default_65
+.case_65_0:
+.case_65_1:
+.case_65_2:
+.case_65_3:
+.case_65_4:
     mov rax, 8
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_156:
-    mov rax, 10
-    push rax
-    mov rax, rbp
-    sub rax, -16
-    mov rax, [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
-    cmp rax, 0
-    je .if_end_157
-    mov rax, 8
-    push rax
-    pop rax
-    mov rsp, rbp
-    pop rbp
-    ret
-.if_end_157:
-    mov rax, 7
-    push rax
-    mov rax, rbp
-    sub rax, -16
-    mov rax, [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
-    cmp rax, 0
-    je .if_end_158
-    mov rax, 0
-    push rax
-    pop rax
-    mov rsp, rbp
-    pop rbp
-    ret
-.if_end_158:
-    mov rax, 1
-    push rax
-    mov rax, rbp
-    sub rax, -16
-    mov rax, [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
-    cmp rax, 0
-    je .if_end_159
+.case_65_5:
+.case_65_6:
     mov rax, 1
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_159:
-    mov rax, 8
-    push rax
-    mov rax, rbp
-    sub rax, -16
-    mov rax, [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
-    cmp rax, 0
-    je .if_end_160
-    mov rax, 8
-    push rax
-    pop rax
-    mov rsp, rbp
-    pop rbp
-    ret
-.if_end_160:
-    mov rax, 2
-    push rax
-    mov rax, rbp
-    sub rax, -16
-    mov rax, [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
-    cmp rax, 0
-    je .if_end_161
-    mov rax, 1
-    push rax
-    pop rax
-    mov rsp, rbp
-    pop rbp
-    ret
-.if_end_161:
-    mov rax, 3
-    push rax
-    mov rax, rbp
-    sub rax, -16
-    mov rax, [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
-    cmp rax, 0
-    je .if_end_162
-    mov rax, 2
-    push rax
-    pop rax
-    mov rsp, rbp
-    pop rbp
-    ret
-.if_end_162:
-    mov rax, 4
-    push rax
-    mov rax, rbp
-    sub rax, -16
-    mov rax, [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
-    cmp rax, 0
-    je .if_end_163
+.case_65_7:
     mov rax, 4
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_163:
-    mov rax, 5
-    push rax
-    mov rax, rbp
-    sub rax, -16
-    mov rax, [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
-    cmp rax, 0
-    je .if_end_164
-    mov rax, 8
+.case_65_8:
+    mov rax, 2
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_164:
-    mov rax, 6
-    push rax
-    mov rax, rbp
-    sub rax, -16
-    mov rax, [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
-    cmp rax, 0
-    je .if_end_165
-    mov rax, 8
-    push rax
-    pop rax
-    mov rsp, rbp
-    pop rbp
-    ret
-.if_end_165:
+.default_65:
+    .break_65:
     mov rax, 0
     push rax
     pop rax
@@ -5937,7 +5078,7 @@ func_size_for_type:
     setl al
     movzx rax, al
     cmp rax, 0
-    je .if_end_166
+    je .if_end_66
     mov rax, rbp
     sub rax, -16
     mov rax, [rax]
@@ -5948,7 +5089,7 @@ func_size_for_type:
     mov rsp, rbp
     pop rbp
     ret
-.if_end_166:
+.if_end_66:
     mov rax, 11
     push rax
     mov rax, rbp
@@ -5961,7 +5102,7 @@ func_size_for_type:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_end_167
+    je .if_end_67
     mov rax, rbp
     sub rax, -16
     mov rax, [rax]
@@ -5983,7 +5124,7 @@ func_size_for_type:
     mov rsp, rbp
     pop rbp
     ret
-.if_end_167:
+.if_end_67:
     mov rax, 12
     push rax
     mov rax, rbp
@@ -5996,7 +5137,7 @@ func_size_for_type:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_end_168
+    je .if_end_68
     mov rax, rbp
     sub rax, -16
     mov rax, [rax]
@@ -6007,7 +5148,7 @@ func_size_for_type:
     mov rsp, rbp
     pop rbp
     ret
-.if_end_168:
+.if_end_68:
     mov rax, 13
     push rax
     mov rax, rbp
@@ -6020,7 +5161,7 @@ func_size_for_type:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_end_169
+    je .if_end_69
     mov rax, rbp
     sub rax, -16
     mov rax, [rax]
@@ -6031,7 +5172,7 @@ func_size_for_type:
     mov rsp, rbp
     pop rbp
     ret
-.if_end_169:
+.if_end_69:
     mov rax, 10
     push rax
     mov rax, rbp
@@ -6044,7 +5185,7 @@ func_size_for_type:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_end_170
+    je .if_end_70
     mov rax, rbp
     sub rax, -16
     mov rax, [rax]
@@ -6055,8 +5196,8 @@ func_size_for_type:
     mov rsp, rbp
     pop rbp
     ret
-.if_end_170:
-    mov rax, global_string_117
+.if_end_70:
+    mov rax, global_string_125
     push rax
     call func_die
     add rsp, 8
@@ -6126,7 +5267,7 @@ func_type_new:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_end_171
+    je .if_end_71
     mov rax, global_vars
     add rax, 1073741840
     push rax
@@ -6136,7 +5277,7 @@ func_type_new:
     add rsp, 8
     pop rcx
     mov [rcx], rax
-.if_end_171:
+.if_end_71:
     mov rax, global_vars
     add rax, 0
     mov rax, [rax]
@@ -6149,7 +5290,7 @@ func_type_new:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_end_172
+    je .if_end_72
     mov rax, global_vars
     add rax, 1073741848
     push rax
@@ -6159,7 +5300,7 @@ func_type_new:
     add rsp, 8
     pop rcx
     mov [rcx], rax
-.if_end_172:
+.if_end_72:
     mov rax, global_vars
     add rax, 0
     mov rax, [rax]
@@ -6172,7 +5313,7 @@ func_type_new:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_end_173
+    je .if_end_73
     mov rax, global_vars
     add rax, 1073741856
     push rax
@@ -6182,7 +5323,7 @@ func_type_new:
     add rsp, 8
     pop rcx
     mov [rcx], rax
-.if_end_173:
+.if_end_73:
     mov rax, global_vars
     add rax, 0
     mov rax, [rax]
@@ -6195,7 +5336,7 @@ func_type_new:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_end_174
+    je .if_end_74
     mov rax, global_vars
     add rax, 1073741864
     push rax
@@ -6205,7 +5346,7 @@ func_type_new:
     add rsp, 8
     pop rcx
     mov [rcx], rax
-.if_end_174:
+.if_end_74:
     mov rax, global_vars
     add rax, 0
     mov rax, [rax]
@@ -6218,7 +5359,7 @@ func_type_new:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_end_175
+    je .if_end_75
     mov rax, global_vars
     add rax, 1073741872
     push rax
@@ -6228,7 +5369,7 @@ func_type_new:
     add rsp, 8
     pop rcx
     mov [rcx], rax
-.if_end_175:
+.if_end_75:
     mov rax, global_vars
     add rax, 0
     mov rax, [rax]
@@ -6241,7 +5382,7 @@ func_type_new:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_end_176
+    je .if_end_76
     mov rax, global_vars
     add rax, 1073741880
     push rax
@@ -6251,7 +5392,7 @@ func_type_new:
     add rsp, 8
     pop rcx
     mov [rcx], rax
-.if_end_176:
+.if_end_76:
     mov rax, global_vars
     add rax, 0
     mov rax, [rax]
@@ -6264,7 +5405,7 @@ func_type_new:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_end_177
+    je .if_end_77
     mov rax, global_vars
     add rax, 1073741888
     push rax
@@ -6274,7 +5415,7 @@ func_type_new:
     add rsp, 8
     pop rcx
     mov [rcx], rax
-.if_end_177:
+.if_end_77:
     mov rax, global_vars
     add rax, 0
     mov rax, [rax]
@@ -6287,7 +5428,7 @@ func_type_new:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_end_178
+    je .if_end_78
     mov rax, global_vars
     add rax, 1073741896
     push rax
@@ -6297,7 +5438,7 @@ func_type_new:
     add rsp, 8
     pop rcx
     mov [rcx], rax
-.if_end_178:
+.if_end_78:
     mov rax, global_vars
     add rax, 0
     mov rax, [rax]
@@ -6310,7 +5451,7 @@ func_type_new:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_end_179
+    je .if_end_79
     mov rax, global_vars
     add rax, 1073741904
     push rax
@@ -6320,18 +5461,30 @@ func_type_new:
     add rsp, 8
     pop rcx
     mov [rcx], rax
-.if_end_179:
-    mov rax, 0
-    push rax
+.if_end_79:
     mov rax, rbp
     sub rax, -16
     mov rax, [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
     cmp rax, 0
-    je .if_end_180
+    je .case_80_0
+    cmp rax, 2
+    je .case_80_1
+    cmp rax, 3
+    je .case_80_2
+    cmp rax, 4
+    je .case_80_3
+    cmp rax, 5
+    je .case_80_4
+    cmp rax, 6
+    je .case_80_5
+    cmp rax, 1
+    je .case_80_6
+    cmp rax, 7
+    je .case_80_7
+    cmp rax, 8
+    je .case_80_8
+    jmp .default_80
+.case_80_0:
     mov rax, global_vars
     add rax, 1073741840
     mov rax, [rax]
@@ -6340,18 +5493,7 @@ func_type_new:
     mov rsp, rbp
     pop rbp
     ret
-.if_end_180:
-    mov rax, 2
-    push rax
-    mov rax, rbp
-    sub rax, -16
-    mov rax, [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
-    cmp rax, 0
-    je .if_end_181
+.case_80_1:
     mov rax, global_vars
     add rax, 1073741848
     mov rax, [rax]
@@ -6360,18 +5502,7 @@ func_type_new:
     mov rsp, rbp
     pop rbp
     ret
-.if_end_181:
-    mov rax, 3
-    push rax
-    mov rax, rbp
-    sub rax, -16
-    mov rax, [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
-    cmp rax, 0
-    je .if_end_182
+.case_80_2:
     mov rax, global_vars
     add rax, 1073741856
     mov rax, [rax]
@@ -6380,18 +5511,7 @@ func_type_new:
     mov rsp, rbp
     pop rbp
     ret
-.if_end_182:
-    mov rax, 4
-    push rax
-    mov rax, rbp
-    sub rax, -16
-    mov rax, [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
-    cmp rax, 0
-    je .if_end_183
+.case_80_3:
     mov rax, global_vars
     add rax, 1073741864
     mov rax, [rax]
@@ -6400,18 +5520,7 @@ func_type_new:
     mov rsp, rbp
     pop rbp
     ret
-.if_end_183:
-    mov rax, 5
-    push rax
-    mov rax, rbp
-    sub rax, -16
-    mov rax, [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
-    cmp rax, 0
-    je .if_end_184
+.case_80_4:
     mov rax, global_vars
     add rax, 1073741872
     mov rax, [rax]
@@ -6420,18 +5529,7 @@ func_type_new:
     mov rsp, rbp
     pop rbp
     ret
-.if_end_184:
-    mov rax, 6
-    push rax
-    mov rax, rbp
-    sub rax, -16
-    mov rax, [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
-    cmp rax, 0
-    je .if_end_185
+.case_80_5:
     mov rax, global_vars
     add rax, 1073741880
     mov rax, [rax]
@@ -6440,18 +5538,7 @@ func_type_new:
     mov rsp, rbp
     pop rbp
     ret
-.if_end_185:
-    mov rax, 1
-    push rax
-    mov rax, rbp
-    sub rax, -16
-    mov rax, [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
-    cmp rax, 0
-    je .if_end_186
+.case_80_6:
     mov rax, global_vars
     add rax, 1073741888
     mov rax, [rax]
@@ -6460,18 +5547,7 @@ func_type_new:
     mov rsp, rbp
     pop rbp
     ret
-.if_end_186:
-    mov rax, 7
-    push rax
-    mov rax, rbp
-    sub rax, -16
-    mov rax, [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
-    cmp rax, 0
-    je .if_end_187
+.case_80_7:
     mov rax, global_vars
     add rax, 1073741896
     mov rax, [rax]
@@ -6480,18 +5556,7 @@ func_type_new:
     mov rsp, rbp
     pop rbp
     ret
-.if_end_187:
-    mov rax, 8
-    push rax
-    mov rax, rbp
-    sub rax, -16
-    mov rax, [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
-    cmp rax, 0
-    je .if_end_188
+.case_80_8:
     mov rax, global_vars
     add rax, 1073741904
     mov rax, [rax]
@@ -6500,7 +5565,8 @@ func_type_new:
     mov rsp, rbp
     pop rbp
     ret
-.if_end_188:
+.default_80:
+    .break_80:
     mov rax, 64
     push rax
     call func_malloc
@@ -6586,8 +5652,8 @@ func_create_type_string:
     call func_malloc
     add rsp, 8
     mov [rbp-8], rax
-.loop_start_189:
-.loop_continue_189:
+.loop_start_81:
+.loop_continue_81:
     mov rax, 10
     push rax
     mov rax, rbp
@@ -6600,10 +5666,10 @@ func_create_type_string:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .or_right_190
+    je .or_right_82
     mov rax, 1
-    jmp .or_end_190
-.or_right_190:
+    jmp .or_end_82
+.or_right_82:
     mov rax, 11
     push rax
     mov rax, rbp
@@ -6617,9 +5683,9 @@ func_create_type_string:
     movzx rax, al
     cmp rax, 0
     setne al
-.or_end_190:
+.or_end_82:
     cmp rax, 0
-    je .loop_end_189
+    je .loop_end_81
     mov rax, 10
     push rax
     mov rax, rbp
@@ -6632,12 +5698,12 @@ func_create_type_string:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .cond_else_191
-    mov rax, global_string_118
-    jmp .cond_end_191
-.cond_else_191:
-    mov rax, global_string_119
-.cond_end_191:
+    je .cond_else_83
+    mov rax, global_string_126
+    jmp .cond_end_83
+.cond_else_83:
+    mov rax, global_string_127
+.cond_end_83:
     push rax
     mov rax, rbp
     sub rax, 8
@@ -6655,205 +5721,38 @@ func_create_type_string:
     mov rax, [rax]
     pop rcx
     mov [rcx], rax
-    jmp .loop_start_189
-.loop_end_189:
-    mov rax, 0
-    push rax
+    jmp .loop_start_81
+.break_81:
+.loop_end_81:
     mov rax, rbp
     sub rax, -16
     mov rax, [rax]
     add rax, 0
     mov rax, [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
     cmp rax, 0
-    je .if_else_192
-    mov rax, global_string_120
-    push rax
-    mov rax, rbp
-    sub rax, 8
-    mov rax, [rax]
-    push rax
-    call func_strcat
-    add rsp, 16
-    jmp .if_end_192
-.if_else_192:
-    mov rax, 2
-    push rax
-    mov rax, rbp
-    sub rax, -16
-    mov rax, [rax]
-    add rax, 0
-    mov rax, [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
-    cmp rax, 0
-    je .if_else_193
-    mov rax, global_string_121
-    push rax
-    mov rax, rbp
-    sub rax, 8
-    mov rax, [rax]
-    push rax
-    call func_strcat
-    add rsp, 16
-    jmp .if_end_193
-.if_else_193:
-    mov rax, 3
-    push rax
-    mov rax, rbp
-    sub rax, -16
-    mov rax, [rax]
-    add rax, 0
-    mov rax, [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
-    cmp rax, 0
-    je .if_else_194
-    mov rax, global_string_122
-    push rax
-    mov rax, rbp
-    sub rax, 8
-    mov rax, [rax]
-    push rax
-    call func_strcat
-    add rsp, 16
-    jmp .if_end_194
-.if_else_194:
-    mov rax, 4
-    push rax
-    mov rax, rbp
-    sub rax, -16
-    mov rax, [rax]
-    add rax, 0
-    mov rax, [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
-    cmp rax, 0
-    je .if_else_195
-    mov rax, global_string_123
-    push rax
-    mov rax, rbp
-    sub rax, 8
-    mov rax, [rax]
-    push rax
-    call func_strcat
-    add rsp, 16
-    jmp .if_end_195
-.if_else_195:
-    mov rax, 5
-    push rax
-    mov rax, rbp
-    sub rax, -16
-    mov rax, [rax]
-    add rax, 0
-    mov rax, [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
-    cmp rax, 0
-    je .if_else_196
-    mov rax, global_string_124
-    push rax
-    mov rax, rbp
-    sub rax, 8
-    mov rax, [rax]
-    push rax
-    call func_strcat
-    add rsp, 16
-    jmp .if_end_196
-.if_else_196:
-    mov rax, 6
-    push rax
-    mov rax, rbp
-    sub rax, -16
-    mov rax, [rax]
-    add rax, 0
-    mov rax, [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
-    cmp rax, 0
-    je .if_else_197
-    mov rax, global_string_125
-    push rax
-    mov rax, rbp
-    sub rax, 8
-    mov rax, [rax]
-    push rax
-    call func_strcat
-    add rsp, 16
-    jmp .if_end_197
-.if_else_197:
-    mov rax, 1
-    push rax
-    mov rax, rbp
-    sub rax, -16
-    mov rax, [rax]
-    add rax, 0
-    mov rax, [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
-    cmp rax, 0
-    je .if_else_198
-    mov rax, global_string_126
-    push rax
-    mov rax, rbp
-    sub rax, 8
-    mov rax, [rax]
-    push rax
-    call func_strcat
-    add rsp, 16
-    jmp .if_end_198
-.if_else_198:
-    mov rax, 7
-    push rax
-    mov rax, rbp
-    sub rax, -16
-    mov rax, [rax]
-    add rax, 0
-    mov rax, [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
-    cmp rax, 0
-    je .if_else_199
-    mov rax, global_string_127
-    push rax
-    mov rax, rbp
-    sub rax, 8
-    mov rax, [rax]
-    push rax
-    call func_strcat
-    add rsp, 16
-    jmp .if_end_199
-.if_else_199:
-    mov rax, 8
-    push rax
-    mov rax, rbp
-    sub rax, -16
-    mov rax, [rax]
-    add rax, 0
-    mov rax, [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
-    cmp rax, 0
-    je .if_else_200
+    je .case_84_0
+    cmp rax, 2
+    je .case_84_1
+    cmp rax, 3
+    je .case_84_2
+    cmp rax, 4
+    je .case_84_3
+    cmp rax, 5
+    je .case_84_4
+    cmp rax, 6
+    je .case_84_5
+    cmp rax, 1
+    je .case_84_6
+    cmp rax, 7
+    je .case_84_7
+    cmp rax, 8
+    je .case_84_8
+    cmp rax, 12
+    je .case_84_9
+    cmp rax, 13
+    je .case_84_10
+    jmp .default_84
+.case_84_0:
     mov rax, global_string_128
     push rax
     mov rax, rbp
@@ -6862,21 +5761,88 @@ func_create_type_string:
     push rax
     call func_strcat
     add rsp, 16
-    jmp .if_end_200
-.if_else_200:
-    mov rax, 12
+    jmp .break_84
+.case_84_1:
+    mov rax, global_string_129
     push rax
     mov rax, rbp
-    sub rax, -16
+    sub rax, 8
     mov rax, [rax]
-    add rax, 0
+    push rax
+    call func_strcat
+    add rsp, 16
+    jmp .break_84
+.case_84_2:
+    mov rax, global_string_130
+    push rax
+    mov rax, rbp
+    sub rax, 8
     mov rax, [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
-    cmp rax, 0
-    je .if_else_201
+    push rax
+    call func_strcat
+    add rsp, 16
+    jmp .break_84
+.case_84_3:
+    mov rax, global_string_131
+    push rax
+    mov rax, rbp
+    sub rax, 8
+    mov rax, [rax]
+    push rax
+    call func_strcat
+    add rsp, 16
+    jmp .break_84
+.case_84_4:
+    mov rax, global_string_132
+    push rax
+    mov rax, rbp
+    sub rax, 8
+    mov rax, [rax]
+    push rax
+    call func_strcat
+    add rsp, 16
+    jmp .break_84
+.case_84_5:
+    mov rax, global_string_133
+    push rax
+    mov rax, rbp
+    sub rax, 8
+    mov rax, [rax]
+    push rax
+    call func_strcat
+    add rsp, 16
+    jmp .break_84
+.case_84_6:
+    mov rax, global_string_134
+    push rax
+    mov rax, rbp
+    sub rax, 8
+    mov rax, [rax]
+    push rax
+    call func_strcat
+    add rsp, 16
+    jmp .break_84
+.case_84_7:
+    mov rax, global_string_135
+    push rax
+    mov rax, rbp
+    sub rax, 8
+    mov rax, [rax]
+    push rax
+    call func_strcat
+    add rsp, 16
+    jmp .break_84
+.case_84_8:
+    mov rax, global_string_136
+    push rax
+    mov rax, rbp
+    sub rax, 8
+    mov rax, [rax]
+    push rax
+    call func_strcat
+    add rsp, 16
+    jmp .break_84
+.case_84_9:
     mov rax, rbp
     sub rax, -16
     mov rax, [rax]
@@ -6889,30 +5855,27 @@ func_create_type_string:
     push rax
     call func_strcat
     add rsp, 16
-    jmp .if_end_201
-.if_else_201:
+    jmp .break_84
+.case_84_10:
     mov rax, rbp
     sub rax, -16
     mov rax, [rax]
-    add rax, 0
+    add rax, 16
     mov rax, [rax]
     push rax
-    call func_putu
-    add rsp, 8
-    mov rax, global_string_129
+    mov rax, rbp
+    sub rax, 8
+    mov rax, [rax]
+    push rax
+    call func_strcat
+    add rsp, 16
+    jmp .break_84
+.default_84:
+    mov rax, global_string_137
     push rax
     call func_die
     add rsp, 8
-.if_end_201:
-.if_end_200:
-.if_end_199:
-.if_end_198:
-.if_end_197:
-.if_end_196:
-.if_end_195:
-.if_end_194:
-.if_end_193:
-.if_end_192:
+    .break_84:
     mov rax, rbp
     sub rax, 8
     mov rax, [rax]
@@ -6930,126 +5893,38 @@ func_is_int_type:
     push rbp
     mov rbp, rsp
     sub rsp, 0
-    mov rax, 0
-    push rax
     mov rax, rbp
     sub rax, -16
     mov rax, [rax]
     add rax, 0
     mov rax, [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
     cmp rax, 0
-    je .if_end_202
+    je .case_85_0
+    cmp rax, 2
+    je .case_85_1
+    cmp rax, 3
+    je .case_85_2
+    cmp rax, 4
+    je .case_85_3
+    cmp rax, 5
+    je .case_85_4
+    cmp rax, 1
+    je .case_85_5
+    jmp .default_85
+.case_85_0:
+.case_85_1:
+.case_85_2:
+.case_85_3:
+.case_85_4:
+.case_85_5:
     mov rax, 1
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_202:
-    mov rax, 2
-    push rax
-    mov rax, rbp
-    sub rax, -16
-    mov rax, [rax]
-    add rax, 0
-    mov rax, [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
-    cmp rax, 0
-    je .if_end_203
-    mov rax, 1
-    push rax
-    pop rax
-    mov rsp, rbp
-    pop rbp
-    ret
-.if_end_203:
-    mov rax, 3
-    push rax
-    mov rax, rbp
-    sub rax, -16
-    mov rax, [rax]
-    add rax, 0
-    mov rax, [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
-    cmp rax, 0
-    je .if_end_204
-    mov rax, 1
-    push rax
-    pop rax
-    mov rsp, rbp
-    pop rbp
-    ret
-.if_end_204:
-    mov rax, 4
-    push rax
-    mov rax, rbp
-    sub rax, -16
-    mov rax, [rax]
-    add rax, 0
-    mov rax, [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
-    cmp rax, 0
-    je .if_end_205
-    mov rax, 1
-    push rax
-    pop rax
-    mov rsp, rbp
-    pop rbp
-    ret
-.if_end_205:
-    mov rax, 5
-    push rax
-    mov rax, rbp
-    sub rax, -16
-    mov rax, [rax]
-    add rax, 0
-    mov rax, [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
-    cmp rax, 0
-    je .if_end_206
-    mov rax, 1
-    push rax
-    pop rax
-    mov rsp, rbp
-    pop rbp
-    ret
-.if_end_206:
-    mov rax, 1
-    push rax
-    mov rax, rbp
-    sub rax, -16
-    mov rax, [rax]
-    add rax, 0
-    mov rax, [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
-    cmp rax, 0
-    je .if_end_207
-    mov rax, 1
-    push rax
-    pop rax
-    mov rsp, rbp
-    pop rbp
-    ret
-.if_end_207:
+.default_85:
+    .break_85:
     mov rax, 0
     push rax
     pop rax
@@ -7076,16 +5951,6 @@ func_is_float_type:
     cmp rax, rcx
     sete al
     movzx rax, al
-    cmp rax, 0
-    je .if_end_208
-    mov rax, 1
-    push rax
-    pop rax
-    mov rsp, rbp
-    pop rbp
-    ret
-.if_end_208:
-    mov rax, 0
     push rax
     pop rax
     mov rsp, rbp
@@ -7112,10 +5977,10 @@ func_types_equal:
     sete al
     movzx rax, al
     cmp rax, 0
-    jne .and_right_210
+    jne .and_right_87
     mov rax, 0
-    jmp .and_end_210
-.and_right_210:
+    jmp .and_end_87
+.and_right_87:
     mov rax, global_vars
     add rax, 0
     mov rax, [rax]
@@ -7129,16 +5994,16 @@ func_types_equal:
     movzx rax, al
     cmp rax, 0
     setne al
-.and_end_210:
+.and_end_87:
     cmp rax, 0
-    je .if_end_209
+    je .if_end_86
     mov rax, 1
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_209:
+.if_end_86:
     mov rax, global_vars
     add rax, 0
     mov rax, [rax]
@@ -7151,10 +6016,10 @@ func_types_equal:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .or_right_212
+    je .or_right_89
     mov rax, 1
-    jmp .or_end_212
-.or_right_212:
+    jmp .or_end_89
+.or_right_89:
     mov rax, global_vars
     add rax, 0
     mov rax, [rax]
@@ -7168,16 +6033,16 @@ func_types_equal:
     movzx rax, al
     cmp rax, 0
     setne al
-.or_end_212:
+.or_end_89:
     cmp rax, 0
-    je .if_end_211
+    je .if_end_88
     mov rax, 0
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_211:
+.if_end_88:
     mov rax, 8
     push rax
     mov rax, rbp
@@ -7190,10 +6055,10 @@ func_types_equal:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .or_right_214
+    je .or_right_91
     mov rax, 1
-    jmp .or_end_214
-.or_right_214:
+    jmp .or_end_91
+.or_right_91:
     mov rax, 8
     push rax
     mov rax, rbp
@@ -7207,16 +6072,16 @@ func_types_equal:
     movzx rax, al
     cmp rax, 0
     setne al
-.or_end_214:
+.or_end_91:
     cmp rax, 0
-    je .if_end_213
+    je .if_end_90
     mov rax, 1
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_213:
+.if_end_90:
     mov rax, rbp
     sub rax, -24
     mov rax, [rax]
@@ -7233,7 +6098,7 @@ func_types_equal:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_end_215
+    je .if_end_92
     mov rax, 12
     push rax
     mov rax, rbp
@@ -7246,10 +6111,10 @@ func_types_equal:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .or_right_217
+    je .or_right_94
     mov rax, 1
-    jmp .or_end_217
-.or_right_217:
+    jmp .or_end_94
+.or_right_94:
     mov rax, 13
     push rax
     mov rax, rbp
@@ -7263,9 +6128,9 @@ func_types_equal:
     movzx rax, al
     cmp rax, 0
     setne al
-.or_end_217:
+.or_end_94:
     cmp rax, 0
-    je .if_end_216
+    je .if_end_93
     mov rax, rbp
     sub rax, -24
     mov rax, [rax]
@@ -7285,7 +6150,7 @@ func_types_equal:
     mov rsp, rbp
     pop rbp
     ret
-.if_end_216:
+.if_end_93:
     mov rax, rbp
     sub rax, -24
     mov rax, [rax]
@@ -7305,7 +6170,7 @@ func_types_equal:
     mov rsp, rbp
     pop rbp
     ret
-.if_end_215:
+.if_end_92:
     mov rax, 0
     push rax
     pop rax
@@ -7333,10 +6198,10 @@ func_is_struct_or_structptr:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .or_right_219
+    je .or_right_96
     mov rax, 1
-    jmp .or_end_219
-.or_right_219:
+    jmp .or_end_96
+.or_right_96:
     mov rax, 13
     push rax
     mov rax, rbp
@@ -7350,16 +6215,16 @@ func_is_struct_or_structptr:
     movzx rax, al
     cmp rax, 0
     setne al
-.or_end_219:
+.or_end_96:
     cmp rax, 0
-    je .if_end_218
+    je .if_end_95
     mov rax, 1
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_218:
+.if_end_95:
     mov rax, 10
     push rax
     mov rax, rbp
@@ -7372,7 +6237,7 @@ func_is_struct_or_structptr:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_end_220
+    je .if_end_97
     mov rax, 12
     push rax
     mov rax, rbp
@@ -7387,10 +6252,10 @@ func_is_struct_or_structptr:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .or_right_222
+    je .or_right_99
     mov rax, 1
-    jmp .or_end_222
-.or_right_222:
+    jmp .or_end_99
+.or_right_99:
     mov rax, 13
     push rax
     mov rax, rbp
@@ -7406,17 +6271,17 @@ func_is_struct_or_structptr:
     movzx rax, al
     cmp rax, 0
     setne al
-.or_end_222:
+.or_end_99:
     cmp rax, 0
-    je .if_end_221
+    je .if_end_98
     mov rax, 1
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_221:
-.if_end_220:
+.if_end_98:
+.if_end_97:
     mov rax, 0
     push rax
     pop rax
@@ -7582,7 +6447,7 @@ func_convert_to_float:
     call func_is_float_type
     add rsp, 8
     cmp rax, 0
-    je .if_end_223
+    je .if_end_100
     mov rax, rbp
     sub rax, -16
     mov rax, [rax]
@@ -7591,7 +6456,7 @@ func_convert_to_float:
     mov rsp, rbp
     pop rbp
     ret
-.if_end_223:
+.if_end_100:
     mov rax, 27
     push rax
     call func_node_new
@@ -7644,7 +6509,7 @@ func_convert_to_int:
     call func_is_int_type
     add rsp, 8
     cmp rax, 0
-    je .if_end_224
+    je .if_end_101
     mov rax, rbp
     sub rax, -16
     mov rax, [rax]
@@ -7653,7 +6518,7 @@ func_convert_to_int:
     mov rsp, rbp
     pop rbp
     ret
-.if_end_224:
+.if_end_101:
     mov rax, rbp
     sub rax, -16
     mov rax, [rax]
@@ -7666,7 +6531,7 @@ func_convert_to_int:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_end_225
+    je .if_end_102
     mov rax, rbp
     sub rax, -16
     mov rax, [rax]
@@ -7676,11 +6541,11 @@ func_convert_to_int:
     call func_create_type_string
     add rsp, 8
     push rax
-    mov rax, global_string_130
+    mov rax, global_string_138
     push rax
     call func_die2
     add rsp, 16
-.if_end_225:
+.if_end_102:
     mov rax, 27
     push rax
     call func_node_new
@@ -7791,7 +6656,7 @@ func_block_add_child:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_end_226
+    je .if_end_103
     mov rax, rbp
     sub rax, -16
     mov rax, [rax]
@@ -7802,7 +6667,7 @@ func_block_add_child:
     add rsp, 0
     pop rcx
     mov [rcx], rax
-.if_end_226:
+.if_end_103:
     mov rax, rbp
     sub rax, -24
     mov rax, [rax]
@@ -7835,14 +6700,14 @@ func_node_type_to_string:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_end_227
-    mov rax, global_string_131
+    je .if_end_104
+    mov rax, global_string_139
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_227:
+.if_end_104:
     mov rax, 1
     push rax
     mov rax, rbp
@@ -7853,14 +6718,14 @@ func_node_type_to_string:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_end_228
-    mov rax, global_string_132
+    je .if_end_105
+    mov rax, global_string_140
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_228:
+.if_end_105:
     mov rax, 2
     push rax
     mov rax, rbp
@@ -7871,14 +6736,14 @@ func_node_type_to_string:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_end_229
-    mov rax, global_string_133
+    je .if_end_106
+    mov rax, global_string_141
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_229:
+.if_end_106:
     mov rax, 3
     push rax
     mov rax, rbp
@@ -7889,14 +6754,14 @@ func_node_type_to_string:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_end_230
-    mov rax, global_string_134
+    je .if_end_107
+    mov rax, global_string_142
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_230:
+.if_end_107:
     mov rax, 4
     push rax
     mov rax, rbp
@@ -7907,14 +6772,14 @@ func_node_type_to_string:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_end_231
-    mov rax, global_string_135
+    je .if_end_108
+    mov rax, global_string_143
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_231:
+.if_end_108:
     mov rax, 5
     push rax
     mov rax, rbp
@@ -7925,14 +6790,14 @@ func_node_type_to_string:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_end_232
-    mov rax, global_string_136
+    je .if_end_109
+    mov rax, global_string_144
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_232:
+.if_end_109:
     mov rax, 6
     push rax
     mov rax, rbp
@@ -7943,14 +6808,14 @@ func_node_type_to_string:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_end_233
-    mov rax, global_string_137
+    je .if_end_110
+    mov rax, global_string_145
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_233:
+.if_end_110:
     mov rax, 7
     push rax
     mov rax, rbp
@@ -7961,14 +6826,14 @@ func_node_type_to_string:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_end_234
-    mov rax, global_string_138
+    je .if_end_111
+    mov rax, global_string_146
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_234:
+.if_end_111:
     mov rax, 8
     push rax
     mov rax, rbp
@@ -7979,14 +6844,14 @@ func_node_type_to_string:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_end_235
-    mov rax, global_string_139
+    je .if_end_112
+    mov rax, global_string_147
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_235:
+.if_end_112:
     mov rax, 9
     push rax
     mov rax, rbp
@@ -7997,14 +6862,14 @@ func_node_type_to_string:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_end_236
-    mov rax, global_string_140
+    je .if_end_113
+    mov rax, global_string_148
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_236:
+.if_end_113:
     mov rax, 10
     push rax
     mov rax, rbp
@@ -8015,14 +6880,14 @@ func_node_type_to_string:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_end_237
-    mov rax, global_string_141
+    je .if_end_114
+    mov rax, global_string_149
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_237:
+.if_end_114:
     mov rax, 11
     push rax
     mov rax, rbp
@@ -8033,14 +6898,14 @@ func_node_type_to_string:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_end_238
-    mov rax, global_string_142
+    je .if_end_115
+    mov rax, global_string_150
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_238:
+.if_end_115:
     mov rax, 12
     push rax
     mov rax, rbp
@@ -8051,14 +6916,14 @@ func_node_type_to_string:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_end_239
-    mov rax, global_string_143
+    je .if_end_116
+    mov rax, global_string_151
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_239:
+.if_end_116:
     mov rax, 13
     push rax
     mov rax, rbp
@@ -8069,14 +6934,14 @@ func_node_type_to_string:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_end_240
-    mov rax, global_string_144
+    je .if_end_117
+    mov rax, global_string_152
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_240:
+.if_end_117:
     mov rax, 14
     push rax
     mov rax, rbp
@@ -8087,14 +6952,14 @@ func_node_type_to_string:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_end_241
-    mov rax, global_string_145
+    je .if_end_118
+    mov rax, global_string_153
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_241:
+.if_end_118:
     mov rax, 15
     push rax
     mov rax, rbp
@@ -8105,14 +6970,14 @@ func_node_type_to_string:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_end_242
-    mov rax, global_string_146
+    je .if_end_119
+    mov rax, global_string_154
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_242:
+.if_end_119:
     mov rax, 16
     push rax
     mov rax, rbp
@@ -8123,14 +6988,14 @@ func_node_type_to_string:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_end_243
-    mov rax, global_string_147
+    je .if_end_120
+    mov rax, global_string_155
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_243:
+.if_end_120:
     mov rax, 17
     push rax
     mov rax, rbp
@@ -8141,14 +7006,14 @@ func_node_type_to_string:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_end_244
-    mov rax, global_string_148
+    je .if_end_121
+    mov rax, global_string_156
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_244:
+.if_end_121:
     mov rax, 18
     push rax
     mov rax, rbp
@@ -8159,14 +7024,14 @@ func_node_type_to_string:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_end_245
-    mov rax, global_string_149
+    je .if_end_122
+    mov rax, global_string_157
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_245:
+.if_end_122:
     mov rax, 19
     push rax
     mov rax, rbp
@@ -8177,14 +7042,14 @@ func_node_type_to_string:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_end_246
-    mov rax, global_string_150
+    je .if_end_123
+    mov rax, global_string_158
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_246:
+.if_end_123:
     mov rax, 20
     push rax
     mov rax, rbp
@@ -8195,14 +7060,14 @@ func_node_type_to_string:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_end_247
-    mov rax, global_string_151
+    je .if_end_124
+    mov rax, global_string_159
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_247:
+.if_end_124:
     mov rax, 21
     push rax
     mov rax, rbp
@@ -8213,14 +7078,14 @@ func_node_type_to_string:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_end_248
-    mov rax, global_string_152
+    je .if_end_125
+    mov rax, global_string_160
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_248:
+.if_end_125:
     mov rax, 22
     push rax
     mov rax, rbp
@@ -8231,14 +7096,14 @@ func_node_type_to_string:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_end_249
-    mov rax, global_string_153
+    je .if_end_126
+    mov rax, global_string_161
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_249:
+.if_end_126:
     mov rax, 23
     push rax
     mov rax, rbp
@@ -8249,14 +7114,14 @@ func_node_type_to_string:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_end_250
-    mov rax, global_string_154
+    je .if_end_127
+    mov rax, global_string_162
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_250:
+.if_end_127:
     mov rax, 24
     push rax
     mov rax, rbp
@@ -8267,14 +7132,14 @@ func_node_type_to_string:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_end_251
-    mov rax, global_string_155
+    je .if_end_128
+    mov rax, global_string_163
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_251:
+.if_end_128:
     mov rax, 25
     push rax
     mov rax, rbp
@@ -8285,14 +7150,14 @@ func_node_type_to_string:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_end_252
-    mov rax, global_string_156
+    je .if_end_129
+    mov rax, global_string_164
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_252:
+.if_end_129:
     mov rax, 26
     push rax
     mov rax, rbp
@@ -8303,14 +7168,14 @@ func_node_type_to_string:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_end_253
-    mov rax, global_string_157
+    je .if_end_130
+    mov rax, global_string_165
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_253:
+.if_end_130:
     mov rax, 27
     push rax
     mov rax, rbp
@@ -8321,14 +7186,14 @@ func_node_type_to_string:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_end_254
-    mov rax, global_string_158
+    je .if_end_131
+    mov rax, global_string_166
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_254:
+.if_end_131:
     mov rax, 28
     push rax
     mov rax, rbp
@@ -8339,14 +7204,14 @@ func_node_type_to_string:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_end_255
-    mov rax, global_string_159
+    je .if_end_132
+    mov rax, global_string_167
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_255:
+.if_end_132:
     mov rax, 29
     push rax
     mov rax, rbp
@@ -8357,14 +7222,14 @@ func_node_type_to_string:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_end_256
-    mov rax, global_string_160
+    je .if_end_133
+    mov rax, global_string_168
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_256:
+.if_end_133:
     mov rax, 30
     push rax
     mov rax, rbp
@@ -8375,14 +7240,14 @@ func_node_type_to_string:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_end_257
-    mov rax, global_string_161
+    je .if_end_134
+    mov rax, global_string_169
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_257:
+.if_end_134:
     mov rax, 31
     push rax
     mov rax, rbp
@@ -8393,14 +7258,14 @@ func_node_type_to_string:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_end_258
-    mov rax, global_string_162
+    je .if_end_135
+    mov rax, global_string_170
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_258:
+.if_end_135:
     mov rax, 32
     push rax
     mov rax, rbp
@@ -8411,14 +7276,14 @@ func_node_type_to_string:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_end_259
-    mov rax, global_string_163
+    je .if_end_136
+    mov rax, global_string_171
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_259:
+.if_end_136:
     mov rax, 33
     push rax
     mov rax, rbp
@@ -8429,14 +7294,14 @@ func_node_type_to_string:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_end_260
-    mov rax, global_string_164
+    je .if_end_137
+    mov rax, global_string_172
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_260:
+.if_end_137:
     mov rax, 34
     push rax
     mov rax, rbp
@@ -8447,14 +7312,14 @@ func_node_type_to_string:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_end_261
-    mov rax, global_string_165
+    je .if_end_138
+    mov rax, global_string_173
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_261:
+.if_end_138:
     mov rax, 35
     push rax
     mov rax, rbp
@@ -8465,14 +7330,14 @@ func_node_type_to_string:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_end_262
-    mov rax, global_string_166
+    je .if_end_139
+    mov rax, global_string_174
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_262:
+.if_end_139:
     mov rax, 36
     push rax
     mov rax, rbp
@@ -8483,14 +7348,14 @@ func_node_type_to_string:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_end_263
-    mov rax, global_string_167
+    je .if_end_140
+    mov rax, global_string_175
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_263:
+.if_end_140:
     mov rax, 37
     push rax
     mov rax, rbp
@@ -8501,14 +7366,14 @@ func_node_type_to_string:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_end_264
-    mov rax, global_string_168
+    je .if_end_141
+    mov rax, global_string_176
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_264:
+.if_end_141:
     mov rax, 38
     push rax
     mov rax, rbp
@@ -8519,14 +7384,14 @@ func_node_type_to_string:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_end_265
-    mov rax, global_string_169
+    je .if_end_142
+    mov rax, global_string_177
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_265:
+.if_end_142:
     mov rax, 39
     push rax
     mov rax, rbp
@@ -8537,32 +7402,14 @@ func_node_type_to_string:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_end_266
-    mov rax, global_string_170
+    je .if_end_143
+    mov rax, global_string_178
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_266:
-    mov rax, 40
-    push rax
-    mov rax, rbp
-    sub rax, -16
-    mov rax, [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
-    cmp rax, 0
-    je .if_end_267
-    mov rax, global_string_171
-    push rax
-    pop rax
-    mov rsp, rbp
-    pop rbp
-    ret
-.if_end_267:
+.if_end_143:
     mov rax, 41
     push rax
     mov rax, rbp
@@ -8573,15 +7420,87 @@ func_node_type_to_string:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_end_268
-    mov rax, global_string_172
+    je .if_end_144
+    mov rax, global_string_179
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_268:
-    mov rax, global_string_173
+.if_end_144:
+    mov rax, 40
+    push rax
+    mov rax, rbp
+    sub rax, -16
+    mov rax, [rax]
+    pop rcx
+    cmp rax, rcx
+    sete al
+    movzx rax, al
+    cmp rax, 0
+    je .if_end_145
+    mov rax, global_string_180
+    push rax
+    pop rax
+    mov rsp, rbp
+    pop rbp
+    ret
+.if_end_145:
+    mov rax, 42
+    push rax
+    mov rax, rbp
+    sub rax, -16
+    mov rax, [rax]
+    pop rcx
+    cmp rax, rcx
+    sete al
+    movzx rax, al
+    cmp rax, 0
+    je .if_end_146
+    mov rax, global_string_181
+    push rax
+    pop rax
+    mov rsp, rbp
+    pop rbp
+    ret
+.if_end_146:
+    mov rax, 43
+    push rax
+    mov rax, rbp
+    sub rax, -16
+    mov rax, [rax]
+    pop rcx
+    cmp rax, rcx
+    sete al
+    movzx rax, al
+    cmp rax, 0
+    je .if_end_147
+    mov rax, global_string_182
+    push rax
+    pop rax
+    mov rsp, rbp
+    pop rbp
+    ret
+.if_end_147:
+    mov rax, 44
+    push rax
+    mov rax, rbp
+    sub rax, -16
+    mov rax, [rax]
+    pop rcx
+    cmp rax, rcx
+    sete al
+    movzx rax, al
+    cmp rax, 0
+    je .if_end_148
+    mov rax, global_string_183
+    push rax
+    pop rax
+    mov rsp, rbp
+    pop rbp
+    ret
+.if_end_148:
+    mov rax, global_string_184
     push rax
     call func_puts
     add rsp, 8
@@ -8618,14 +7537,14 @@ func_is_binary_op:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_end_269
+    je .if_end_149
     mov rax, 1
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_269:
+.if_end_149:
     mov rax, 6
     push rax
     mov rax, rbp
@@ -8636,14 +7555,14 @@ func_is_binary_op:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_end_270
+    je .if_end_150
     mov rax, 1
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_270:
+.if_end_150:
     mov rax, 7
     push rax
     mov rax, rbp
@@ -8654,14 +7573,14 @@ func_is_binary_op:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_end_271
+    je .if_end_151
     mov rax, 1
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_271:
+.if_end_151:
     mov rax, 8
     push rax
     mov rax, rbp
@@ -8672,14 +7591,14 @@ func_is_binary_op:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_end_272
+    je .if_end_152
     mov rax, 1
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_272:
+.if_end_152:
     mov rax, 9
     push rax
     mov rax, rbp
@@ -8690,14 +7609,14 @@ func_is_binary_op:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_end_273
+    je .if_end_153
     mov rax, 1
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_273:
+.if_end_153:
     mov rax, 10
     push rax
     mov rax, rbp
@@ -8708,14 +7627,14 @@ func_is_binary_op:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_end_274
+    je .if_end_154
     mov rax, 1
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_274:
+.if_end_154:
     mov rax, 11
     push rax
     mov rax, rbp
@@ -8726,14 +7645,14 @@ func_is_binary_op:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_end_275
+    je .if_end_155
     mov rax, 1
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_275:
+.if_end_155:
     mov rax, 12
     push rax
     mov rax, rbp
@@ -8744,14 +7663,14 @@ func_is_binary_op:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_end_276
+    je .if_end_156
     mov rax, 1
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_276:
+.if_end_156:
     mov rax, 13
     push rax
     mov rax, rbp
@@ -8762,14 +7681,14 @@ func_is_binary_op:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_end_277
+    je .if_end_157
     mov rax, 1
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_277:
+.if_end_157:
     mov rax, 14
     push rax
     mov rax, rbp
@@ -8780,14 +7699,14 @@ func_is_binary_op:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_end_278
+    je .if_end_158
     mov rax, 1
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_278:
+.if_end_158:
     mov rax, 15
     push rax
     mov rax, rbp
@@ -8798,14 +7717,14 @@ func_is_binary_op:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_end_279
+    je .if_end_159
     mov rax, 1
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_279:
+.if_end_159:
     mov rax, 16
     push rax
     mov rax, rbp
@@ -8816,14 +7735,14 @@ func_is_binary_op:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_end_280
+    je .if_end_160
     mov rax, 1
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_280:
+.if_end_160:
     mov rax, 17
     push rax
     mov rax, rbp
@@ -8834,14 +7753,14 @@ func_is_binary_op:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_end_281
+    je .if_end_161
     mov rax, 1
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_281:
+.if_end_161:
     mov rax, 18
     push rax
     mov rax, rbp
@@ -8852,14 +7771,14 @@ func_is_binary_op:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_end_282
+    je .if_end_162
     mov rax, 1
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_282:
+.if_end_162:
     mov rax, 19
     push rax
     mov rax, rbp
@@ -8870,14 +7789,14 @@ func_is_binary_op:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_end_283
+    je .if_end_163
     mov rax, 1
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_283:
+.if_end_163:
     mov rax, 20
     push rax
     mov rax, rbp
@@ -8888,14 +7807,14 @@ func_is_binary_op:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_end_284
+    je .if_end_164
     mov rax, 1
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_284:
+.if_end_164:
     mov rax, 21
     push rax
     mov rax, rbp
@@ -8906,14 +7825,14 @@ func_is_binary_op:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_end_285
+    je .if_end_165
     mov rax, 1
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_285:
+.if_end_165:
     mov rax, 22
     push rax
     mov rax, rbp
@@ -8924,14 +7843,14 @@ func_is_binary_op:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_end_286
+    je .if_end_166
     mov rax, 1
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_286:
+.if_end_166:
     mov rax, 0
     push rax
     pop rax
@@ -8957,14 +7876,14 @@ func_is_unary_op:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_end_287
+    je .if_end_167
     mov rax, 1
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_287:
+.if_end_167:
     mov rax, 1
     push rax
     mov rax, rbp
@@ -8975,14 +7894,14 @@ func_is_unary_op:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_end_288
+    je .if_end_168
     mov rax, 1
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_288:
+.if_end_168:
     mov rax, 2
     push rax
     mov rax, rbp
@@ -8993,14 +7912,14 @@ func_is_unary_op:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_end_289
+    je .if_end_169
     mov rax, 1
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_289:
+.if_end_169:
     mov rax, 3
     push rax
     mov rax, rbp
@@ -9011,14 +7930,14 @@ func_is_unary_op:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_end_290
+    je .if_end_170
     mov rax, 1
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_290:
+.if_end_170:
     mov rax, 4
     push rax
     mov rax, rbp
@@ -9029,14 +7948,14 @@ func_is_unary_op:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_end_291
+    je .if_end_171
     mov rax, 1
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_291:
+.if_end_171:
     mov rax, 0
     push rax
     pop rax
@@ -9052,7 +7971,7 @@ func_is_lvalue:
     push rbp
     mov rbp, rsp
     sub rsp, 0
-    mov rax, 35
+    mov rax, 37
     push rax
     mov rax, rbp
     sub rax, -16
@@ -9062,15 +7981,15 @@ func_is_lvalue:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_end_292
+    je .if_end_172
     mov rax, 1
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_292:
-    mov rax, 36
+.if_end_172:
+    mov rax, 38
     push rax
     mov rax, rbp
     sub rax, -16
@@ -9080,14 +7999,14 @@ func_is_lvalue:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_end_293
+    je .if_end_173
     mov rax, 1
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_293:
+.if_end_173:
     mov rax, 24
     push rax
     mov rax, rbp
@@ -9098,14 +8017,14 @@ func_is_lvalue:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_end_294
+    je .if_end_174
     mov rax, 1
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_294:
+.if_end_174:
     mov rax, 4
     push rax
     mov rax, rbp
@@ -9116,14 +8035,14 @@ func_is_lvalue:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_end_295
+    je .if_end_175
     mov rax, 1
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_295:
+.if_end_175:
     mov rax, 0
     push rax
     pop rax
@@ -9149,14 +8068,14 @@ func_binary_token_to_op:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_end_296
+    je .if_end_176
     mov rax, 5
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_296:
+.if_end_176:
     mov rax, 24
     push rax
     mov rax, rbp
@@ -9167,14 +8086,14 @@ func_binary_token_to_op:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_end_297
+    je .if_end_177
     mov rax, 6
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_297:
+.if_end_177:
     mov rax, 40
     push rax
     mov rax, rbp
@@ -9185,14 +8104,14 @@ func_binary_token_to_op:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_end_298
+    je .if_end_178
     mov rax, 7
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_298:
+.if_end_178:
     mov rax, 39
     push rax
     mov rax, rbp
@@ -9203,14 +8122,14 @@ func_binary_token_to_op:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_end_299
+    je .if_end_179
     mov rax, 8
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_299:
+.if_end_179:
     mov rax, 32
     push rax
     mov rax, rbp
@@ -9221,14 +8140,14 @@ func_binary_token_to_op:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_end_300
+    je .if_end_180
     mov rax, 9
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_300:
+.if_end_180:
     mov rax, 22
     push rax
     mov rax, rbp
@@ -9239,14 +8158,14 @@ func_binary_token_to_op:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_end_301
+    je .if_end_181
     mov rax, 10
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_301:
+.if_end_181:
     mov rax, 37
     push rax
     mov rax, rbp
@@ -9257,14 +8176,14 @@ func_binary_token_to_op:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_end_302
+    je .if_end_182
     mov rax, 11
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_302:
+.if_end_182:
     mov rax, 1
     push rax
     mov rax, rbp
@@ -9275,14 +8194,14 @@ func_binary_token_to_op:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_end_303
+    je .if_end_183
     mov rax, 12
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_303:
+.if_end_183:
     mov rax, 31
     push rax
     mov rax, rbp
@@ -9293,14 +8212,14 @@ func_binary_token_to_op:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_end_304
+    je .if_end_184
     mov rax, 14
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_304:
+.if_end_184:
     mov rax, 43
     push rax
     mov rax, rbp
@@ -9311,14 +8230,14 @@ func_binary_token_to_op:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_end_305
+    je .if_end_185
     mov rax, 16
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_305:
+.if_end_185:
     mov rax, 14
     push rax
     mov rax, rbp
@@ -9329,14 +8248,14 @@ func_binary_token_to_op:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_end_306
+    je .if_end_186
     mov rax, 17
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_306:
+.if_end_186:
     mov rax, 27
     push rax
     mov rax, rbp
@@ -9347,14 +8266,14 @@ func_binary_token_to_op:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_end_307
+    je .if_end_187
     mov rax, 18
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_307:
+.if_end_187:
     mov rax, 23
     push rax
     mov rax, rbp
@@ -9365,14 +8284,14 @@ func_binary_token_to_op:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_end_308
+    je .if_end_188
     mov rax, 19
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_308:
+.if_end_188:
     mov rax, 21
     push rax
     mov rax, rbp
@@ -9383,14 +8302,14 @@ func_binary_token_to_op:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_end_309
+    je .if_end_189
     mov rax, 20
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_309:
+.if_end_189:
     mov rax, 18
     push rax
     mov rax, rbp
@@ -9401,14 +8320,14 @@ func_binary_token_to_op:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_end_310
+    je .if_end_190
     mov rax, 21
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_310:
+.if_end_190:
     mov rax, 17
     push rax
     mov rax, rbp
@@ -9419,14 +8338,14 @@ func_binary_token_to_op:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_end_311
+    je .if_end_191
     mov rax, 22
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_311:
+.if_end_191:
     mov rax, 0
     push rax
     mov rax, rbp
@@ -9437,14 +8356,14 @@ func_binary_token_to_op:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_end_312
+    je .if_end_192
     mov rax, 13
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_312:
+.if_end_192:
     mov rax, 3
     push rax
     mov rax, rbp
@@ -9455,14 +8374,14 @@ func_binary_token_to_op:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_end_313
+    je .if_end_193
     mov rax, 15
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_313:
+.if_end_193:
     mov rax, 4
     push rax
     mov rax, rbp
@@ -9473,15 +8392,15 @@ func_binary_token_to_op:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_end_314
+    je .if_end_194
     mov rax, 16
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_314:
-    mov rax, global_string_174
+.if_end_194:
+    mov rax, global_string_185
     push rax
     call func_puts
     add rsp, 8
@@ -9509,7 +8428,7 @@ func_dump_ast:
     sub rsp, 8
     mov rax, 0
     mov [rbp-8], rax
-.loop_start_315:
+.loop_start_195:
     mov rax, rbp
     sub rax, -24
     mov rax, [rax]
@@ -9526,12 +8445,12 @@ func_dump_ast:
     setl al
     movzx rax, al
     cmp rax, 0
-    je .loop_end_315
+    je .loop_end_195
     mov rax, 32
     push rax
     call func_putc
     add rsp, 8
-.loop_continue_315:
+.loop_continue_195:
     mov rax, rbp
     sub rax, 8
     push rax
@@ -9544,9 +8463,10 @@ func_dump_ast:
     add rax, rcx
     pop rcx
     mov [rcx], rax
-    jmp .loop_start_315
-.loop_end_315:
-    mov rax, 40
+    jmp .loop_start_195
+.break_195:
+.loop_end_195:
+    mov rax, 43
     push rax
     mov rax, rbp
     sub rax, -16
@@ -9558,11 +8478,11 @@ func_dump_ast:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .or_right_317
+    je .or_right_197
     mov rax, 1
-    jmp .or_end_317
-.or_right_317:
-    mov rax, 41
+    jmp .or_end_197
+.or_right_197:
+    mov rax, 44
     push rax
     mov rax, rbp
     sub rax, -16
@@ -9575,9 +8495,9 @@ func_dump_ast:
     movzx rax, al
     cmp rax, 0
     setne al
-.or_end_317:
+.or_end_197:
     cmp rax, 0
-    je .if_else_316
+    je .if_else_196
     mov rax, rbp
     sub rax, -16
     mov rax, [rax]
@@ -9591,7 +8511,7 @@ func_dump_ast:
     add rsp, 8
     mov rax, 0
     mov [rbp-8], rax
-.loop_start_318:
+.loop_start_198:
     mov rax, rbp
     sub rax, -16
     mov rax, [rax]
@@ -9609,7 +8529,7 @@ func_dump_ast:
     setl al
     movzx rax, al
     cmp rax, 0
-    je .loop_end_318
+    je .loop_end_198
     mov rax, 1
     push rax
     mov rax, rbp
@@ -9640,7 +8560,7 @@ func_dump_ast:
     push rax
     call func_dump_ast
     add rsp, 16
-.loop_continue_318:
+.loop_continue_198:
     mov rax, rbp
     sub rax, 8
     push rax
@@ -9653,10 +8573,11 @@ func_dump_ast:
     add rax, rcx
     pop rcx
     mov [rcx], rax
-    jmp .loop_start_318
-.loop_end_318:
-    jmp .if_end_316
-.if_else_316:
+    jmp .loop_start_198
+.break_198:
+.loop_end_198:
+    jmp .if_end_196
+.if_else_196:
     mov rax, rbp
     sub rax, -16
     mov rax, [rax]
@@ -9666,7 +8587,7 @@ func_dump_ast:
     call func_is_binary_op
     add rsp, 8
     cmp rax, 0
-    je .if_else_319
+    je .if_else_199
     mov rax, rbp
     sub rax, -16
     mov rax, [rax]
@@ -9712,8 +8633,8 @@ func_dump_ast:
     push rax
     call func_dump_ast
     add rsp, 16
-    jmp .if_end_319
-.if_else_319:
+    jmp .if_end_199
+.if_else_199:
     mov rax, rbp
     sub rax, -16
     mov rax, [rax]
@@ -9723,11 +8644,11 @@ func_dump_ast:
     call func_is_unary_op
     add rsp, 8
     cmp rax, 0
-    je .or_right_321
+    je .or_right_201
     mov rax, 1
-    jmp .or_end_321
-.or_right_321:
-    mov rax, 37
+    jmp .or_end_201
+.or_right_201:
+    mov rax, 39
     push rax
     mov rax, rbp
     sub rax, -16
@@ -9740,9 +8661,9 @@ func_dump_ast:
     movzx rax, al
     cmp rax, 0
     setne al
-.or_end_321:
+.or_end_201:
     cmp rax, 0
-    je .if_else_320
+    je .if_else_200
     mov rax, rbp
     sub rax, -16
     mov rax, [rax]
@@ -9770,8 +8691,8 @@ func_dump_ast:
     push rax
     call func_dump_ast
     add rsp, 16
-    jmp .if_end_320
-.if_else_320:
+    jmp .if_end_200
+.if_else_200:
     mov rax, 29
     push rax
     mov rax, rbp
@@ -9784,10 +8705,10 @@ func_dump_ast:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .or_right_323
+    je .or_right_203
     mov rax, 1
-    jmp .or_end_323
-.or_right_323:
+    jmp .or_end_203
+.or_right_203:
     mov rax, 30
     push rax
     mov rax, rbp
@@ -9801,9 +8722,9 @@ func_dump_ast:
     movzx rax, al
     cmp rax, 0
     setne al
-.or_end_323:
+.or_end_203:
     cmp rax, 0
-    je .if_else_322
+    je .if_else_202
     mov rax, rbp
     sub rax, -16
     mov rax, [rax]
@@ -9856,7 +8777,7 @@ func_dump_ast:
     add rax, 16
     mov rax, [rax]
     cmp rax, 0
-    je .if_end_324
+    je .if_end_204
     mov rax, 1
     push rax
     mov rax, rbp
@@ -9874,9 +8795,9 @@ func_dump_ast:
     push rax
     call func_dump_ast
     add rsp, 16
-.if_end_324:
-    jmp .if_end_322
-.if_else_322:
+.if_end_204:
+    jmp .if_end_202
+.if_else_202:
     mov rax, 25
     push rax
     mov rax, rbp
@@ -9889,7 +8810,7 @@ func_dump_ast:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_else_325
+    je .if_else_205
     mov rax, 0
     push rax
     mov rax, rbp
@@ -9904,7 +8825,7 @@ func_dump_ast:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_else_326
+    je .if_else_206
     mov rax, rbp
     sub rax, -16
     mov rax, [rax]
@@ -9918,8 +8839,8 @@ func_dump_ast:
     push rax
     call func_putc
     add rsp, 8
-    jmp .if_end_326
-.if_else_326:
+    jmp .if_end_206
+.if_else_206:
     mov rax, 10
     push rax
     mov rax, rbp
@@ -9934,7 +8855,7 @@ func_dump_ast:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_else_327
+    je .if_else_207
     mov rax, 34
     push rax
     call func_putc
@@ -9956,8 +8877,8 @@ func_dump_ast:
     push rax
     call func_putc
     add rsp, 8
-    jmp .if_end_327
-.if_else_327:
+    jmp .if_end_207
+.if_else_207:
     mov rax, 1
     push rax
     mov rax, rbp
@@ -9972,7 +8893,7 @@ func_dump_ast:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_else_328
+    je .if_else_208
     mov rax, 39
     push rax
     call func_putc
@@ -9994,8 +8915,8 @@ func_dump_ast:
     push rax
     call func_putc
     add rsp, 8
-    jmp .if_end_328
-.if_else_328:
+    jmp .if_end_208
+.if_else_208:
     mov rax, 6
     push rax
     mov rax, rbp
@@ -10010,7 +8931,7 @@ func_dump_ast:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_else_329
+    je .if_else_209
     mov rax, rbp
     sub rax, -16
     mov rax, [rax]
@@ -10020,19 +8941,19 @@ func_dump_ast:
     push rax
     call func_putsln
     add rsp, 8
-    jmp .if_end_329
-.if_else_329:
-    mov rax, global_string_175
+    jmp .if_end_209
+.if_else_209:
+    mov rax, global_string_186
     push rax
     call func_die
     add rsp, 8
-.if_end_329:
-.if_end_328:
-.if_end_327:
-.if_end_326:
-    jmp .if_end_325
-.if_else_325:
-    mov rax, 38
+.if_end_209:
+.if_end_208:
+.if_end_207:
+.if_end_206:
+    jmp .if_end_205
+.if_else_205:
+    mov rax, 41
     push rax
     mov rax, rbp
     sub rax, -16
@@ -10044,8 +8965,8 @@ func_dump_ast:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_else_330
-    mov rax, global_string_176
+    je .if_else_210
+    mov rax, global_string_187
     push rax
     call func_puts
     add rsp, 8
@@ -10058,7 +8979,7 @@ func_dump_ast:
     push rax
     call func_puts
     add rsp, 8
-    mov rax, global_string_177
+    mov rax, global_string_188
     push rax
     call func_puts
     add rsp, 8
@@ -10069,7 +8990,7 @@ func_dump_ast:
     add rax, 8
     mov rax, [rax]
     cmp rax, 0
-    je .if_end_331
+    je .if_end_211
     mov rax, 1
     push rax
     mov rax, rbp
@@ -10087,183 +9008,9 @@ func_dump_ast:
     push rax
     call func_dump_ast
     add rsp, 16
-.if_end_331:
-    jmp .if_end_330
-.if_else_330:
-    mov rax, 34
-    push rax
-    mov rax, rbp
-    sub rax, -16
-    mov rax, [rax]
-    add rax, 0
-    mov rax, [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
-    cmp rax, 0
-    je .if_else_332
-    mov rax, global_string_178
-    push rax
-    call func_puts
-    add rsp, 8
-    mov rax, rbp
-    sub rax, -16
-    mov rax, [rax]
-    add rax, 16
-    add rax, 0
-    add rax, 0
-    mov rax, [rax]
-    push rax
-    call func_puts
-    add rsp, 8
-    mov rax, 10
-    push rax
-    mov rax, rbp
-    sub rax, -16
-    mov rax, [rax]
-    add rax, 16
-    add rax, 0
-    add rax, 8
-    mov rax, [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
-    cmp rax, 0
-    je .if_end_333
-    mov rax, global_string_179
-    push rax
-    call func_puts
-    add rsp, 8
-    mov rax, rbp
-    sub rax, -16
-    mov rax, [rax]
-    add rax, 16
-    add rax, 0
-    add rax, 8
-    mov rax, [rax]
-    push rax
-    call func_create_type_string
-    add rsp, 8
-    push rax
-    call func_puts
-    add rsp, 8
-.if_end_333:
-    mov rax, rbp
-    sub rax, -16
-    mov rax, [rax]
-    add rax, 16
-    add rax, 24
-    mov rax, [rax]
-    cmp rax, 0
-    je .if_else_334
-    mov rax, global_string_180
-    push rax
-    call func_puts
-    add rsp, 8
-    mov rax, 1
-    push rax
-    mov rax, rbp
-    sub rax, -24
-    mov rax, [rax]
-    pop rcx
-    add rax, rcx
-    push rax
-    mov rax, rbp
-    sub rax, -16
-    mov rax, [rax]
-    add rax, 16
-    add rax, 24
-    mov rax, [rax]
-    push rax
-    call func_dump_ast
-    add rsp, 16
-    jmp .if_end_334
-.if_else_334:
-    mov rax, 10
-    push rax
-    call func_putc
-    add rsp, 8
-.if_end_334:
-    jmp .if_end_332
-.if_else_332:
-    mov rax, 23
-    push rax
-    mov rax, rbp
-    sub rax, -16
-    mov rax, [rax]
-    add rax, 0
-    mov rax, [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
-    cmp rax, 0
-    je .if_else_335
-    mov rax, rbp
-    sub rax, -16
-    mov rax, [rax]
-    add rax, 0
-    mov rax, [rax]
-    push rax
-    call func_node_type_to_string
-    add rsp, 8
-    push rax
-    call func_putsln
-    add rsp, 8
-    mov rax, 1
-    push rax
-    mov rax, rbp
-    sub rax, -24
-    mov rax, [rax]
-    pop rcx
-    add rax, rcx
-    push rax
-    mov rax, rbp
-    sub rax, -16
-    mov rax, [rax]
-    add rax, 16
-    add rax, 0
-    mov rax, [rax]
-    push rax
-    call func_dump_ast
-    add rsp, 16
-    mov rax, 1
-    push rax
-    mov rax, rbp
-    sub rax, -24
-    mov rax, [rax]
-    pop rcx
-    add rax, rcx
-    push rax
-    mov rax, rbp
-    sub rax, -16
-    mov rax, [rax]
-    add rax, 16
-    add rax, 8
-    mov rax, [rax]
-    push rax
-    call func_dump_ast
-    add rsp, 16
-    jmp .if_end_335
-.if_else_335:
-    mov rax, 35
-    push rax
-    mov rax, rbp
-    sub rax, -16
-    mov rax, [rax]
-    add rax, 0
-    mov rax, [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
-    cmp rax, 0
-    je .or_right_337
-    mov rax, 1
-    jmp .or_end_337
-.or_right_337:
+.if_end_211:
+    jmp .if_end_210
+.if_else_210:
     mov rax, 36
     push rax
     mov rax, rbp
@@ -10276,10 +9023,184 @@ func_dump_ast:
     sete al
     movzx rax, al
     cmp rax, 0
-    setne al
-.or_end_337:
+    je .if_else_212
+    mov rax, global_string_189
+    push rax
+    call func_puts
+    add rsp, 8
+    mov rax, rbp
+    sub rax, -16
+    mov rax, [rax]
+    add rax, 16
+    add rax, 0
+    add rax, 0
+    mov rax, [rax]
+    push rax
+    call func_puts
+    add rsp, 8
+    mov rax, 10
+    push rax
+    mov rax, rbp
+    sub rax, -16
+    mov rax, [rax]
+    add rax, 16
+    add rax, 0
+    add rax, 8
+    mov rax, [rax]
+    pop rcx
+    cmp rax, rcx
+    sete al
+    movzx rax, al
     cmp rax, 0
-    je .if_else_336
+    je .if_end_213
+    mov rax, global_string_190
+    push rax
+    call func_puts
+    add rsp, 8
+    mov rax, rbp
+    sub rax, -16
+    mov rax, [rax]
+    add rax, 16
+    add rax, 0
+    add rax, 8
+    mov rax, [rax]
+    push rax
+    call func_create_type_string
+    add rsp, 8
+    push rax
+    call func_puts
+    add rsp, 8
+.if_end_213:
+    mov rax, rbp
+    sub rax, -16
+    mov rax, [rax]
+    add rax, 16
+    add rax, 24
+    mov rax, [rax]
+    cmp rax, 0
+    je .if_else_214
+    mov rax, global_string_191
+    push rax
+    call func_puts
+    add rsp, 8
+    mov rax, 1
+    push rax
+    mov rax, rbp
+    sub rax, -24
+    mov rax, [rax]
+    pop rcx
+    add rax, rcx
+    push rax
+    mov rax, rbp
+    sub rax, -16
+    mov rax, [rax]
+    add rax, 16
+    add rax, 24
+    mov rax, [rax]
+    push rax
+    call func_dump_ast
+    add rsp, 16
+    jmp .if_end_214
+.if_else_214:
+    mov rax, 10
+    push rax
+    call func_putc
+    add rsp, 8
+.if_end_214:
+    jmp .if_end_212
+.if_else_212:
+    mov rax, 23
+    push rax
+    mov rax, rbp
+    sub rax, -16
+    mov rax, [rax]
+    add rax, 0
+    mov rax, [rax]
+    pop rcx
+    cmp rax, rcx
+    sete al
+    movzx rax, al
+    cmp rax, 0
+    je .if_else_215
+    mov rax, rbp
+    sub rax, -16
+    mov rax, [rax]
+    add rax, 0
+    mov rax, [rax]
+    push rax
+    call func_node_type_to_string
+    add rsp, 8
+    push rax
+    call func_putsln
+    add rsp, 8
+    mov rax, 1
+    push rax
+    mov rax, rbp
+    sub rax, -24
+    mov rax, [rax]
+    pop rcx
+    add rax, rcx
+    push rax
+    mov rax, rbp
+    sub rax, -16
+    mov rax, [rax]
+    add rax, 16
+    add rax, 0
+    mov rax, [rax]
+    push rax
+    call func_dump_ast
+    add rsp, 16
+    mov rax, 1
+    push rax
+    mov rax, rbp
+    sub rax, -24
+    mov rax, [rax]
+    pop rcx
+    add rax, rcx
+    push rax
+    mov rax, rbp
+    sub rax, -16
+    mov rax, [rax]
+    add rax, 16
+    add rax, 8
+    mov rax, [rax]
+    push rax
+    call func_dump_ast
+    add rsp, 16
+    jmp .if_end_215
+.if_else_215:
+    mov rax, 37
+    push rax
+    mov rax, rbp
+    sub rax, -16
+    mov rax, [rax]
+    add rax, 0
+    mov rax, [rax]
+    pop rcx
+    cmp rax, rcx
+    sete al
+    movzx rax, al
+    cmp rax, 0
+    je .or_right_217
+    mov rax, 1
+    jmp .or_end_217
+.or_right_217:
+    mov rax, 38
+    push rax
+    mov rax, rbp
+    sub rax, -16
+    mov rax, [rax]
+    add rax, 0
+    mov rax, [rax]
+    pop rcx
+    cmp rax, rcx
+    sete al
+    movzx rax, al
+    cmp rax, 0
+    setne al
+.or_end_217:
+    cmp rax, 0
+    je .if_else_216
     mov rax, rbp
     sub rax, -16
     mov rax, [rax]
@@ -10290,8 +9211,8 @@ func_dump_ast:
     push rax
     call func_putsln
     add rsp, 8
-    jmp .if_end_336
-.if_else_336:
+    jmp .if_end_216
+.if_else_216:
     mov rax, 27
     push rax
     mov rax, rbp
@@ -10304,8 +9225,8 @@ func_dump_ast:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_else_338
-    mov rax, global_string_181
+    je .if_else_218
+    mov rax, global_string_192
     push rax
     call func_puts
     add rsp, 8
@@ -10320,7 +9241,7 @@ func_dump_ast:
     push rax
     call func_puts
     add rsp, 8
-    mov rax, global_string_182
+    mov rax, global_string_193
     push rax
     call func_putsln
     add rsp, 8
@@ -10340,8 +9261,334 @@ func_dump_ast:
     push rax
     call func_dump_ast
     add rsp, 16
-    jmp .if_end_338
-.if_else_338:
+    jmp .if_end_218
+.if_else_218:
+    mov rax, 35
+    push rax
+    mov rax, rbp
+    sub rax, -16
+    mov rax, [rax]
+    add rax, 0
+    mov rax, [rax]
+    pop rcx
+    cmp rax, rcx
+    sete al
+    movzx rax, al
+    cmp rax, 0
+    je .if_else_219
+    mov rax, global_string_194
+    push rax
+    call func_puts
+    add rsp, 8
+    mov rax, rbp
+    sub rax, -16
+    mov rax, [rax]
+    add rax, 16
+    add rax, 0
+    mov rax, [rax]
+    push rax
+    call func_putu
+    add rsp, 8
+    mov rax, global_string_195
+    push rax
+    call func_putsln
+    add rsp, 8
+    mov rax, 0
+    mov [rbp-8], rax
+.loop_start_220:
+    mov rax, rbp
+    sub rax, -16
+    mov rax, [rax]
+    add rax, 16
+    add rax, 8
+    mov rax, [rax]
+    add rax, 0
+    mov rax, [rax]
+    push rax
+    mov rax, rbp
+    sub rax, 8
+    mov rax, [rax]
+    pop rcx
+    cmp rax, rcx
+    setl al
+    movzx rax, al
+    cmp rax, 0
+    je .loop_end_220
+    mov rax, 1
+    push rax
+    mov rax, rbp
+    sub rax, -24
+    mov rax, [rax]
+    pop rcx
+    add rax, rcx
+    push rax
+    mov rax, 8
+    push rax
+    mov rax, rbp
+    sub rax, 8
+    mov rax, [rax]
+    pop rcx
+    imul rax, rcx
+    push rax
+    mov rax, rbp
+    sub rax, -16
+    mov rax, [rax]
+    add rax, 16
+    add rax, 8
+    mov rax, [rax]
+    add rax, 16
+    mov rax, [rax]
+    pop rcx
+    add rax, rcx
+    mov rax, [rax]
+    push rax
+    call func_dump_ast
+    add rsp, 16
+.loop_continue_220:
+    mov rax, rbp
+    sub rax, 8
+    push rax
+    mov rax, 1
+    push rax
+    mov rax, rbp
+    sub rax, 8
+    mov rax, [rax]
+    pop rcx
+    add rax, rcx
+    pop rcx
+    mov [rcx], rax
+    jmp .loop_start_220
+.break_220:
+.loop_end_220:
+    jmp .if_end_219
+.if_else_219:
+    mov rax, 34
+    push rax
+    mov rax, rbp
+    sub rax, -16
+    mov rax, [rax]
+    add rax, 0
+    mov rax, [rax]
+    pop rcx
+    cmp rax, rcx
+    sete al
+    movzx rax, al
+    cmp rax, 0
+    je .if_else_221
+    mov rax, global_string_196
+    push rax
+    call func_putsln
+    add rsp, 8
+    mov rax, 1
+    push rax
+    mov rax, rbp
+    sub rax, -24
+    mov rax, [rax]
+    pop rcx
+    add rax, rcx
+    push rax
+    mov rax, rbp
+    sub rax, -16
+    mov rax, [rax]
+    add rax, 16
+    add rax, 0
+    mov rax, [rax]
+    push rax
+    call func_dump_ast
+    add rsp, 16
+    mov rax, 0
+    mov [rbp-8], rax
+.loop_start_222:
+    mov rax, rbp
+    sub rax, -16
+    mov rax, [rax]
+    add rax, 16
+    add rax, 8
+    mov rax, [rax]
+    add rax, 0
+    mov rax, [rax]
+    push rax
+    mov rax, rbp
+    sub rax, 8
+    mov rax, [rax]
+    pop rcx
+    cmp rax, rcx
+    setl al
+    movzx rax, al
+    cmp rax, 0
+    je .loop_end_222
+    mov rax, 2
+    push rax
+    mov rax, rbp
+    sub rax, -24
+    mov rax, [rax]
+    pop rcx
+    add rax, rcx
+    push rax
+    mov rax, 8
+    push rax
+    mov rax, rbp
+    sub rax, 8
+    mov rax, [rax]
+    pop rcx
+    imul rax, rcx
+    push rax
+    mov rax, rbp
+    sub rax, -16
+    mov rax, [rax]
+    add rax, 16
+    add rax, 8
+    mov rax, [rax]
+    add rax, 16
+    mov rax, [rax]
+    pop rcx
+    add rax, rcx
+    mov rax, [rax]
+    push rax
+    call func_dump_ast
+    add rsp, 16
+.loop_continue_222:
+    mov rax, rbp
+    sub rax, 8
+    push rax
+    mov rax, 1
+    push rax
+    mov rax, rbp
+    sub rax, 8
+    mov rax, [rax]
+    pop rcx
+    add rax, rcx
+    pop rcx
+    mov [rcx], rax
+    jmp .loop_start_222
+.break_222:
+.loop_end_222:
+    mov rax, rbp
+    sub rax, -16
+    mov rax, [rax]
+    add rax, 16
+    add rax, 16
+    mov rax, [rax]
+    cmp rax, 0
+    je .if_end_223
+    mov rax, 0
+    mov [rbp-8], rax
+.loop_start_224:
+    mov rax, 2
+    push rax
+    mov rax, rbp
+    sub rax, -24
+    mov rax, [rax]
+    pop rcx
+    add rax, rcx
+    push rax
+    mov rax, 2
+    pop rcx
+    imul rax, rcx
+    push rax
+    mov rax, rbp
+    sub rax, 8
+    mov rax, [rax]
+    pop rcx
+    cmp rax, rcx
+    setl al
+    movzx rax, al
+    cmp rax, 0
+    je .loop_end_224
+    mov rax, 32
+    push rax
+    call func_putc
+    add rsp, 8
+.loop_continue_224:
+    mov rax, rbp
+    sub rax, 8
+    push rax
+    mov rax, 1
+    push rax
+    mov rax, rbp
+    sub rax, 8
+    mov rax, [rax]
+    pop rcx
+    add rax, rcx
+    pop rcx
+    mov [rcx], rax
+    jmp .loop_start_224
+.break_224:
+.loop_end_224:
+    mov rax, global_string_197
+    push rax
+    call func_putsln
+    add rsp, 8
+    mov rax, 0
+    mov [rbp-8], rax
+.loop_start_225:
+    mov rax, rbp
+    sub rax, -16
+    mov rax, [rax]
+    add rax, 16
+    add rax, 16
+    mov rax, [rax]
+    add rax, 0
+    mov rax, [rax]
+    push rax
+    mov rax, rbp
+    sub rax, 8
+    mov rax, [rax]
+    pop rcx
+    cmp rax, rcx
+    setl al
+    movzx rax, al
+    cmp rax, 0
+    je .loop_end_225
+    mov rax, 3
+    push rax
+    mov rax, rbp
+    sub rax, -24
+    mov rax, [rax]
+    pop rcx
+    add rax, rcx
+    push rax
+    mov rax, 8
+    push rax
+    mov rax, rbp
+    sub rax, 8
+    mov rax, [rax]
+    pop rcx
+    imul rax, rcx
+    push rax
+    mov rax, rbp
+    sub rax, -16
+    mov rax, [rax]
+    add rax, 16
+    add rax, 16
+    mov rax, [rax]
+    add rax, 16
+    mov rax, [rax]
+    pop rcx
+    add rax, rcx
+    mov rax, [rax]
+    push rax
+    call func_dump_ast
+    add rsp, 16
+.loop_continue_225:
+    mov rax, rbp
+    sub rax, 8
+    push rax
+    mov rax, 1
+    push rax
+    mov rax, rbp
+    sub rax, 8
+    mov rax, [rax]
+    pop rcx
+    add rax, rcx
+    pop rcx
+    mov [rcx], rax
+    jmp .loop_start_225
+.break_225:
+.loop_end_225:
+.if_end_223:
+    jmp .if_end_221
+.if_else_221:
     mov rax, rbp
     sub rax, -16
     mov rax, [rax]
@@ -10353,16 +9600,18 @@ func_dump_ast:
     push rax
     call func_putsln
     add rsp, 8
-.if_end_338:
-.if_end_336:
-.if_end_335:
-.if_end_332:
-.if_end_330:
-.if_end_325:
-.if_end_322:
-.if_end_320:
-.if_end_319:
-.if_end_316:
+.if_end_221:
+.if_end_219:
+.if_end_218:
+.if_end_216:
+.if_end_215:
+.if_end_212:
+.if_end_210:
+.if_end_205:
+.if_end_202:
+.if_end_200:
+.if_end_199:
+.if_end_196:
     mov rsp, rbp
     pop rbp
     mov qword rax, 0
@@ -10381,10 +9630,10 @@ func_decay_array_to_pointer:
     call func_is_lvalue
     add rsp, 8
     cmp rax, 0
-    jne .and_right_340
+    jne .and_right_227
     mov rax, 0
-    jmp .and_end_340
-.and_right_340:
+    jmp .and_end_227
+.and_right_227:
     mov rax, 11
     push rax
     mov rax, rbp
@@ -10400,9 +9649,9 @@ func_decay_array_to_pointer:
     movzx rax, al
     cmp rax, 0
     setne al
-.and_end_340:
+.and_end_227:
     cmp rax, 0
-    je .if_end_339
+    je .if_end_226
     mov rax, 3
     push rax
     call func_node_new
@@ -10441,7 +9690,7 @@ func_decay_array_to_pointer:
     mov rax, [rax]
     pop rcx
     mov [rcx], rax
-.if_end_339:
+.if_end_226:
     mov rax, rbp
     sub rax, -16
     mov rax, [rax]
@@ -10479,10 +9728,10 @@ func_type_check_unary:
     setne al
     movzx rax, al
     cmp rax, 0
-    jne .and_right_342
+    jne .and_right_229
     mov rax, 0
-    jmp .and_end_342
-.and_right_342:
+    jmp .and_end_229
+.and_right_229:
     mov rax, 12
     push rax
     mov rax, rbp
@@ -10496,21 +9745,21 @@ func_type_check_unary:
     movzx rax, al
     cmp rax, 0
     setne al
-.and_end_342:
+.and_end_229:
     cmp rax, 0
-    je .if_end_341
-    mov rax, global_string_183
+    je .if_end_228
+    mov rax, global_string_198
     push rax
     mov rax, rbp
     sub rax, -24
     mov rax, [rax]
     add rax, 8
     push rax
-    mov rax, global_string_184
+    mov rax, global_string_199
     push rax
     call func_die_loc
     add rsp, 24
-.if_end_341:
+.if_end_228:
     mov rax, rbp
     sub rax, 8
     mov rax, [rax]
@@ -10518,7 +9767,7 @@ func_type_check_unary:
     call func_is_float_type
     add rsp, 8
     cmp rax, 0
-    je .if_end_343
+    je .if_end_230
     mov rax, 3
     push rax
     mov rax, rbp
@@ -10531,10 +9780,10 @@ func_type_check_unary:
     setne al
     movzx rax, al
     cmp rax, 0
-    jne .and_right_345
+    jne .and_right_232
     mov rax, 0
-    jmp .and_end_345
-.and_right_345:
+    jmp .and_end_232
+.and_right_232:
     mov rax, 0
     push rax
     mov rax, rbp
@@ -10548,9 +9797,9 @@ func_type_check_unary:
     movzx rax, al
     cmp rax, 0
     setne al
-.and_end_345:
+.and_end_232:
     cmp rax, 0
-    je .if_end_344
+    je .if_end_231
     mov rax, rbp
     sub rax, -16
     mov rax, [rax]
@@ -10560,19 +9809,19 @@ func_type_check_unary:
     call func_node_type_to_string
     add rsp, 8
     push rax
-    mov rax, global_string_185
+    mov rax, global_string_200
     push rax
     mov rax, rbp
     sub rax, -24
     mov rax, [rax]
     add rax, 8
     push rax
-    mov rax, global_string_186
+    mov rax, global_string_201
     push rax
     call func_die_loc2
     add rsp, 32
-.if_end_344:
-.if_end_343:
+.if_end_231:
+.if_end_230:
     mov rax, 1
     push rax
     mov rax, rbp
@@ -10585,7 +9834,7 @@ func_type_check_unary:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_else_346
+    je .if_else_233
     mov rax, rbp
     sub rax, -16
     mov rax, [rax]
@@ -10597,8 +9846,8 @@ func_type_check_unary:
     add rsp, 8
     pop rcx
     mov [rcx], rax
-    jmp .if_end_346
-.if_else_346:
+    jmp .if_end_233
+.if_else_233:
     mov rax, 3
     push rax
     mov rax, rbp
@@ -10611,7 +9860,7 @@ func_type_check_unary:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_else_347
+    je .if_else_234
     mov rax, 10
     push rax
     call func_type_new
@@ -10634,18 +9883,18 @@ func_type_check_unary:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .cond_else_348
+    je .cond_else_235
     mov rax, rbp
     sub rax, 8
     mov rax, [rax]
     add rax, 8
     mov rax, [rax]
-    jmp .cond_end_348
-.cond_else_348:
+    jmp .cond_end_235
+.cond_else_235:
     mov rax, rbp
     sub rax, 8
     mov rax, [rax]
-.cond_end_348:
+.cond_end_235:
     pop rcx
     mov [rcx], rax
     mov rax, rbp
@@ -10658,8 +9907,8 @@ func_type_check_unary:
     mov rax, [rax]
     pop rcx
     mov [rcx], rax
-    jmp .if_end_347
-.if_else_347:
+    jmp .if_end_234
+.if_else_234:
     mov rax, 4
     push rax
     mov rax, rbp
@@ -10672,7 +9921,7 @@ func_type_check_unary:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_else_349
+    je .if_else_236
     mov rax, 10
     push rax
     mov rax, rbp
@@ -10685,19 +9934,19 @@ func_type_check_unary:
     setne al
     movzx rax, al
     cmp rax, 0
-    je .if_end_350
-    mov rax, global_string_187
+    je .if_end_237
+    mov rax, global_string_202
     push rax
     mov rax, rbp
     sub rax, -24
     mov rax, [rax]
     add rax, 8
     push rax
-    mov rax, global_string_188
+    mov rax, global_string_203
     push rax
     call func_die_loc
     add rsp, 24
-.if_end_350:
+.if_end_237:
     mov rax, rbp
     sub rax, -16
     mov rax, [rax]
@@ -10725,8 +9974,8 @@ func_type_check_unary:
     add rsp, 16
     pop rcx
     mov [rcx], rax
-    jmp .if_end_349
-.if_else_349:
+    jmp .if_end_236
+.if_else_236:
     mov rax, 0
     push rax
     mov rax, rbp
@@ -10739,7 +9988,7 @@ func_type_check_unary:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_else_351
+    je .if_else_238
     mov rax, rbp
     sub rax, 8
     mov rax, [rax]
@@ -10750,10 +9999,10 @@ func_type_check_unary:
     sete al
     movzx rax, al
     cmp rax, 0
-    jne .and_right_353
+    jne .and_right_240
     mov rax, 0
-    jmp .and_end_353
-.and_right_353:
+    jmp .and_end_240
+.and_right_240:
     mov rax, rbp
     sub rax, 8
     mov rax, [rax]
@@ -10765,21 +10014,21 @@ func_type_check_unary:
     movzx rax, al
     cmp rax, 0
     setne al
-.and_end_353:
+.and_end_240:
     cmp rax, 0
-    je .if_end_352
-    mov rax, global_string_189
+    je .if_end_239
+    mov rax, global_string_204
     push rax
     mov rax, rbp
     sub rax, -24
     mov rax, [rax]
     add rax, 8
     push rax
-    mov rax, global_string_190
+    mov rax, global_string_205
     push rax
     call func_die_loc
     add rsp, 24
-.if_end_352:
+.if_end_239:
     mov rax, rbp
     sub rax, -16
     mov rax, [rax]
@@ -10790,8 +10039,8 @@ func_type_check_unary:
     mov rax, [rax]
     pop rcx
     mov [rcx], rax
-    jmp .if_end_351
-.if_else_351:
+    jmp .if_end_238
+.if_else_238:
     mov rax, rbp
     sub rax, -16
     mov rax, [rax]
@@ -10802,10 +10051,10 @@ func_type_check_unary:
     mov rax, [rax]
     pop rcx
     mov [rcx], rax
-.if_end_351:
-.if_end_349:
-.if_end_347:
-.if_end_346:
+.if_end_238:
+.if_end_236:
+.if_end_234:
+.if_end_233:
     mov rax, rbp
     sub rax, -16
     mov rax, [rax]
@@ -10853,10 +10102,10 @@ func_type_check_binary:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .or_right_355
+    je .or_right_242
     mov rax, 1
-    jmp .or_end_355
-.or_right_355:
+    jmp .or_end_242
+.or_right_242:
     mov rax, 12
     push rax
     mov rax, rbp
@@ -10870,21 +10119,21 @@ func_type_check_binary:
     movzx rax, al
     cmp rax, 0
     setne al
-.or_end_355:
+.or_end_242:
     cmp rax, 0
-    je .if_end_354
-    mov rax, global_string_191
+    je .if_end_241
+    mov rax, global_string_206
     push rax
     mov rax, rbp
     sub rax, -24
     mov rax, [rax]
     add rax, 8
     push rax
-    mov rax, global_string_192
+    mov rax, global_string_207
     push rax
     call func_die_loc
     add rsp, 24
-.if_end_354:
+.if_end_241:
     mov rax, 5
     push rax
     mov rax, rbp
@@ -10897,7 +10146,7 @@ func_type_check_binary:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_else_356
+    je .if_else_243
     mov rax, rbp
     sub rax, 8
     mov rax, [rax]
@@ -10905,10 +10154,10 @@ func_type_check_binary:
     call func_is_int_type
     add rsp, 8
     cmp rax, 0
-    jne .and_right_358
+    jne .and_right_245
     mov rax, 0
-    jmp .and_end_358
-.and_right_358:
+    jmp .and_end_245
+.and_right_245:
     mov rax, rbp
     sub rax, 16
     mov rax, [rax]
@@ -10917,9 +10166,9 @@ func_type_check_binary:
     add rsp, 8
     cmp rax, 0
     setne al
-.and_end_358:
+.and_end_245:
     cmp rax, 0
-    je .if_else_357
+    je .if_else_244
     mov rax, rbp
     sub rax, -16
     mov rax, [rax]
@@ -10931,8 +10180,8 @@ func_type_check_binary:
     add rsp, 8
     pop rcx
     mov [rcx], rax
-    jmp .if_end_357
-.if_else_357:
+    jmp .if_end_244
+.if_else_244:
     mov rax, 10
     push rax
     mov rax, rbp
@@ -10945,7 +10194,7 @@ func_type_check_binary:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_else_359
+    je .if_else_246
     mov rax, rbp
     sub rax, 16
     mov rax, [rax]
@@ -10956,19 +10205,19 @@ func_type_check_binary:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_end_360
-    mov rax, global_string_193
+    je .if_end_247
+    mov rax, global_string_208
     push rax
     mov rax, rbp
     sub rax, -24
     mov rax, [rax]
     add rax, 8
     push rax
-    mov rax, global_string_194
+    mov rax, global_string_209
     push rax
     call func_die_loc
     add rsp, 24
-.if_end_360:
+.if_end_247:
     mov rax, rbp
     sub rax, -16
     mov rax, [rax]
@@ -10994,7 +10243,7 @@ func_type_check_binary:
     setne al
     movzx rax, al
     cmp rax, 0
-    je .if_end_361
+    je .if_end_248
     mov rax, rbp
     sub rax, 8
     mov rax, [rax]
@@ -11030,9 +10279,9 @@ func_type_check_binary:
     mov rax, [rax]
     pop rcx
     mov [rcx], rax
-.if_end_361:
-    jmp .if_end_359
-.if_else_359:
+.if_end_248:
+    jmp .if_end_246
+.if_else_246:
     mov rax, 10
     push rax
     mov rax, rbp
@@ -11045,7 +10294,7 @@ func_type_check_binary:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_else_362
+    je .if_else_249
     mov rax, rbp
     sub rax, 8
     mov rax, [rax]
@@ -11056,19 +10305,19 @@ func_type_check_binary:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_end_363
-    mov rax, global_string_195
+    je .if_end_250
+    mov rax, global_string_210
     push rax
     mov rax, rbp
     sub rax, -24
     mov rax, [rax]
     add rax, 8
     push rax
-    mov rax, global_string_196
+    mov rax, global_string_211
     push rax
     call func_die_loc
     add rsp, 24
-.if_end_363:
+.if_end_250:
     mov rax, rbp
     sub rax, -16
     mov rax, [rax]
@@ -11094,7 +10343,7 @@ func_type_check_binary:
     setne al
     movzx rax, al
     cmp rax, 0
-    je .if_end_364
+    je .if_end_251
     mov rax, rbp
     sub rax, 16
     mov rax, [rax]
@@ -11130,9 +10379,9 @@ func_type_check_binary:
     mov rax, [rax]
     pop rcx
     mov [rcx], rax
-.if_end_364:
-    jmp .if_end_362
-.if_else_362:
+.if_end_251:
+    jmp .if_end_249
+.if_else_249:
     mov rax, rbp
     sub rax, 8
     mov rax, [rax]
@@ -11140,10 +10389,10 @@ func_type_check_binary:
     call func_is_float_type
     add rsp, 8
     cmp rax, 0
-    je .or_right_366
+    je .or_right_253
     mov rax, 1
-    jmp .or_end_366
-.or_right_366:
+    jmp .or_end_253
+.or_right_253:
     mov rax, rbp
     sub rax, 16
     mov rax, [rax]
@@ -11152,9 +10401,9 @@ func_type_check_binary:
     add rsp, 8
     cmp rax, 0
     setne al
-.or_end_366:
+.or_end_253:
     cmp rax, 0
-    je .if_else_365
+    je .if_else_252
     mov rax, rbp
     sub rax, -16
     mov rax, [rax]
@@ -11200,9 +10449,9 @@ func_type_check_binary:
     add rsp, 8
     pop rcx
     mov [rcx], rax
-    jmp .if_end_365
-.if_else_365:
-    mov rax, global_string_197
+    jmp .if_end_252
+.if_else_252:
+    mov rax, global_string_212
     push rax
     call func_puts
     add rsp, 8
@@ -11219,7 +10468,7 @@ func_type_check_binary:
     push rax
     call func_putc
     add rsp, 8
-    mov rax, global_string_198
+    mov rax, global_string_213
     push rax
     call func_puts
     add rsp, 8
@@ -11236,23 +10485,23 @@ func_type_check_binary:
     push rax
     call func_putc
     add rsp, 8
-    mov rax, global_string_199
+    mov rax, global_string_214
     push rax
     mov rax, rbp
     sub rax, -24
     mov rax, [rax]
     add rax, 8
     push rax
-    mov rax, global_string_200
+    mov rax, global_string_215
     push rax
     call func_die_loc
     add rsp, 24
-.if_end_365:
-.if_end_362:
-.if_end_359:
-.if_end_357:
-    jmp .if_end_356
-.if_else_356:
+.if_end_252:
+.if_end_249:
+.if_end_246:
+.if_end_244:
+    jmp .if_end_243
+.if_else_243:
     mov rax, 6
     push rax
     mov rax, rbp
@@ -11265,7 +10514,7 @@ func_type_check_binary:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_else_367
+    je .if_else_254
     mov rax, rbp
     sub rax, 8
     mov rax, [rax]
@@ -11273,10 +10522,10 @@ func_type_check_binary:
     call func_is_int_type
     add rsp, 8
     cmp rax, 0
-    jne .and_right_369
+    jne .and_right_256
     mov rax, 0
-    jmp .and_end_369
-.and_right_369:
+    jmp .and_end_256
+.and_right_256:
     mov rax, rbp
     sub rax, 16
     mov rax, [rax]
@@ -11285,9 +10534,9 @@ func_type_check_binary:
     add rsp, 8
     cmp rax, 0
     setne al
-.and_end_369:
+.and_end_256:
     cmp rax, 0
-    je .if_else_368
+    je .if_else_255
     mov rax, rbp
     sub rax, -16
     mov rax, [rax]
@@ -11299,8 +10548,8 @@ func_type_check_binary:
     add rsp, 8
     pop rcx
     mov [rcx], rax
-    jmp .if_end_368
-.if_else_368:
+    jmp .if_end_255
+.if_else_255:
     mov rax, 10
     push rax
     mov rax, rbp
@@ -11313,10 +10562,10 @@ func_type_check_binary:
     sete al
     movzx rax, al
     cmp rax, 0
-    jne .and_right_371
+    jne .and_right_258
     mov rax, 0
-    jmp .and_end_371
-.and_right_371:
+    jmp .and_end_258
+.and_right_258:
     mov rax, rbp
     sub rax, 16
     mov rax, [rax]
@@ -11325,9 +10574,9 @@ func_type_check_binary:
     add rsp, 8
     cmp rax, 0
     setne al
-.and_end_371:
+.and_end_258:
     cmp rax, 0
-    je .if_else_370
+    je .if_else_257
     mov rax, rbp
     sub rax, -16
     mov rax, [rax]
@@ -11353,7 +10602,7 @@ func_type_check_binary:
     setne al
     movzx rax, al
     cmp rax, 0
-    je .if_end_372
+    je .if_end_259
     mov rax, rbp
     sub rax, 8
     mov rax, [rax]
@@ -11389,9 +10638,9 @@ func_type_check_binary:
     mov rax, [rax]
     pop rcx
     mov [rcx], rax
-.if_end_372:
-    jmp .if_end_370
-.if_else_370:
+.if_end_259:
+    jmp .if_end_257
+.if_else_257:
     mov rax, rbp
     sub rax, 8
     mov rax, [rax]
@@ -11399,10 +10648,10 @@ func_type_check_binary:
     call func_is_int_type
     add rsp, 8
     cmp rax, 0
-    jne .and_right_374
+    jne .and_right_261
     mov rax, 0
-    jmp .and_end_374
-.and_right_374:
+    jmp .and_end_261
+.and_right_261:
     mov rax, 10
     push rax
     mov rax, rbp
@@ -11416,9 +10665,9 @@ func_type_check_binary:
     movzx rax, al
     cmp rax, 0
     setne al
-.and_end_374:
+.and_end_261:
     cmp rax, 0
-    je .if_else_373
+    je .if_else_260
     mov rax, rbp
     sub rax, -16
     mov rax, [rax]
@@ -11444,7 +10693,7 @@ func_type_check_binary:
     setne al
     movzx rax, al
     cmp rax, 0
-    je .if_end_375
+    je .if_end_262
     mov rax, rbp
     sub rax, 16
     mov rax, [rax]
@@ -11480,9 +10729,9 @@ func_type_check_binary:
     mov rax, [rax]
     pop rcx
     mov [rcx], rax
-.if_end_375:
-    jmp .if_end_373
-.if_else_373:
+.if_end_262:
+    jmp .if_end_260
+.if_else_260:
     mov rax, 10
     push rax
     mov rax, rbp
@@ -11495,10 +10744,10 @@ func_type_check_binary:
     sete al
     movzx rax, al
     cmp rax, 0
-    jne .and_right_377
+    jne .and_right_264
     mov rax, 0
-    jmp .and_end_377
-.and_right_377:
+    jmp .and_end_264
+.and_right_264:
     mov rax, 10
     push rax
     mov rax, rbp
@@ -11512,9 +10761,9 @@ func_type_check_binary:
     movzx rax, al
     cmp rax, 0
     setne al
-.and_end_377:
+.and_end_264:
     cmp rax, 0
-    je .if_else_376
+    je .if_else_263
     mov rax, rbp
     sub rax, -16
     mov rax, [rax]
@@ -11544,19 +10793,19 @@ func_type_check_binary:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_end_378
-    mov rax, global_string_201
+    je .if_end_265
+    mov rax, global_string_216
     push rax
     mov rax, rbp
     sub rax, -24
     mov rax, [rax]
     add rax, 8
     push rax
-    mov rax, global_string_202
+    mov rax, global_string_217
     push rax
     call func_die_loc
     add rsp, 24
-.if_end_378:
+.if_end_265:
     mov rax, 1
     push rax
     mov rax, rbp
@@ -11572,7 +10821,7 @@ func_type_check_binary:
     setne al
     movzx rax, al
     cmp rax, 0
-    je .if_end_379
+    je .if_end_266
     mov rax, rbp
     sub rax, 8
     mov rax, [rax]
@@ -11608,9 +10857,9 @@ func_type_check_binary:
     mov rax, [rax]
     pop rcx
     mov [rcx], rax
-.if_end_379:
-    jmp .if_end_376
-.if_else_376:
+.if_end_266:
+    jmp .if_end_263
+.if_else_263:
     mov rax, rbp
     sub rax, 8
     mov rax, [rax]
@@ -11618,10 +10867,10 @@ func_type_check_binary:
     call func_is_float_type
     add rsp, 8
     cmp rax, 0
-    je .or_right_381
+    je .or_right_268
     mov rax, 1
-    jmp .or_end_381
-.or_right_381:
+    jmp .or_end_268
+.or_right_268:
     mov rax, rbp
     sub rax, 16
     mov rax, [rax]
@@ -11630,9 +10879,9 @@ func_type_check_binary:
     add rsp, 8
     cmp rax, 0
     setne al
-.or_end_381:
+.or_end_268:
     cmp rax, 0
-    je .if_else_380
+    je .if_else_267
     mov rax, rbp
     sub rax, -16
     mov rax, [rax]
@@ -11678,26 +10927,26 @@ func_type_check_binary:
     add rsp, 8
     pop rcx
     mov [rcx], rax
-    jmp .if_end_380
-.if_else_380:
-    mov rax, global_string_203
+    jmp .if_end_267
+.if_else_267:
+    mov rax, global_string_218
     push rax
     mov rax, rbp
     sub rax, -24
     mov rax, [rax]
     add rax, 8
     push rax
-    mov rax, global_string_204
+    mov rax, global_string_219
     push rax
     call func_die_loc
     add rsp, 24
-.if_end_380:
-.if_end_376:
-.if_end_373:
-.if_end_370:
-.if_end_368:
-    jmp .if_end_367
-.if_else_367:
+.if_end_267:
+.if_end_263:
+.if_end_260:
+.if_end_257:
+.if_end_255:
+    jmp .if_end_254
+.if_else_254:
     mov rax, 7
     push rax
     mov rax, rbp
@@ -11710,10 +10959,10 @@ func_type_check_binary:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .or_right_384
+    je .or_right_271
     mov rax, 1
-    jmp .or_end_384
-.or_right_384:
+    jmp .or_end_271
+.or_right_271:
     mov rax, 8
     push rax
     mov rax, rbp
@@ -11727,12 +10976,12 @@ func_type_check_binary:
     movzx rax, al
     cmp rax, 0
     setne al
-.or_end_384:
+.or_end_271:
     cmp rax, 0
-    je .or_right_383
+    je .or_right_270
     mov rax, 1
-    jmp .or_end_383
-.or_right_383:
+    jmp .or_end_270
+.or_right_270:
     mov rax, 9
     push rax
     mov rax, rbp
@@ -11746,9 +10995,9 @@ func_type_check_binary:
     movzx rax, al
     cmp rax, 0
     setne al
-.or_end_383:
+.or_end_270:
     cmp rax, 0
-    je .if_else_382
+    je .if_else_269
     mov rax, rbp
     sub rax, 8
     mov rax, [rax]
@@ -11756,10 +11005,10 @@ func_type_check_binary:
     call func_is_int_type
     add rsp, 8
     cmp rax, 0
-    jne .and_right_386
+    jne .and_right_273
     mov rax, 0
-    jmp .and_end_386
-.and_right_386:
+    jmp .and_end_273
+.and_right_273:
     mov rax, rbp
     sub rax, 16
     mov rax, [rax]
@@ -11768,9 +11017,9 @@ func_type_check_binary:
     add rsp, 8
     cmp rax, 0
     setne al
-.and_end_386:
+.and_end_273:
     cmp rax, 0
-    je .if_else_385
+    je .if_else_272
     mov rax, rbp
     sub rax, -16
     mov rax, [rax]
@@ -11781,8 +11030,8 @@ func_type_check_binary:
     mov rax, [rax]
     pop rcx
     mov [rcx], rax
-    jmp .if_end_385
-.if_else_385:
+    jmp .if_end_272
+.if_else_272:
     mov rax, rbp
     sub rax, 8
     mov rax, [rax]
@@ -11790,10 +11039,10 @@ func_type_check_binary:
     call func_is_float_type
     add rsp, 8
     cmp rax, 0
-    je .or_right_388
+    je .or_right_275
     mov rax, 1
-    jmp .or_end_388
-.or_right_388:
+    jmp .or_end_275
+.or_right_275:
     mov rax, rbp
     sub rax, 16
     mov rax, [rax]
@@ -11802,9 +11051,9 @@ func_type_check_binary:
     add rsp, 8
     cmp rax, 0
     setne al
-.or_end_388:
+.or_end_275:
     cmp rax, 0
-    je .if_else_387
+    je .if_else_274
     mov rax, 9
     push rax
     mov rax, rbp
@@ -11817,19 +11066,19 @@ func_type_check_binary:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_end_389
-    mov rax, global_string_205
+    je .if_end_276
+    mov rax, global_string_220
     push rax
     mov rax, rbp
     sub rax, -24
     mov rax, [rax]
     add rax, 8
     push rax
-    mov rax, global_string_206
+    mov rax, global_string_221
     push rax
     call func_die_loc
     add rsp, 24
-.if_end_389:
+.if_end_276:
     mov rax, rbp
     sub rax, -16
     mov rax, [rax]
@@ -11875,8 +11124,8 @@ func_type_check_binary:
     add rsp, 8
     pop rcx
     mov [rcx], rax
-    jmp .if_end_387
-.if_else_387:
+    jmp .if_end_274
+.if_else_274:
     mov rax, rbp
     sub rax, -16
     mov rax, [rax]
@@ -11886,21 +11135,21 @@ func_type_check_binary:
     call func_node_type_to_string
     add rsp, 8
     push rax
-    mov rax, global_string_207
+    mov rax, global_string_222
     push rax
     mov rax, rbp
     sub rax, -24
     mov rax, [rax]
     add rax, 8
     push rax
-    mov rax, global_string_208
+    mov rax, global_string_223
     push rax
     call func_die_loc2
     add rsp, 32
-.if_end_387:
-.if_end_385:
-    jmp .if_end_382
-.if_else_382:
+.if_end_274:
+.if_end_272:
+    jmp .if_end_269
+.if_else_269:
     mov rax, rbp
     sub rax, -16
     mov rax, [rax]
@@ -11919,10 +11168,10 @@ func_type_check_binary:
     call func_is_float_type
     add rsp, 8
     cmp rax, 0
-    je .or_right_391
+    je .or_right_278
     mov rax, 1
-    jmp .or_end_391
-.or_right_391:
+    jmp .or_end_278
+.or_right_278:
     mov rax, rbp
     sub rax, 16
     mov rax, [rax]
@@ -11931,9 +11180,9 @@ func_type_check_binary:
     add rsp, 8
     cmp rax, 0
     setne al
-.or_end_391:
+.or_end_278:
     cmp rax, 0
-    je .if_end_390
+    je .if_end_277
     mov rax, rbp
     sub rax, -16
     mov rax, [rax]
@@ -11968,10 +11217,10 @@ func_type_check_binary:
     add rsp, 8
     pop rcx
     mov [rcx], rax
-.if_end_390:
-.if_end_382:
-.if_end_367:
-.if_end_356:
+.if_end_277:
+.if_end_269:
+.if_end_254:
+.if_end_243:
     mov rax, rbp
     sub rax, -16
     mov rax, [rax]
@@ -11989,8 +11238,8 @@ func_dump_rectype:
     push rbp
     mov rbp, rsp
     sub rsp, 24
-.loop_start_392:
-.loop_continue_392:
+.loop_start_279:
+.loop_continue_279:
     mov rax, 10
     push rax
     mov rax, rbp
@@ -12003,10 +11252,10 @@ func_dump_rectype:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .or_right_393
+    je .or_right_280
     mov rax, 1
-    jmp .or_end_393
-.or_right_393:
+    jmp .or_end_280
+.or_right_280:
     mov rax, 11
     push rax
     mov rax, rbp
@@ -12020,9 +11269,9 @@ func_dump_rectype:
     movzx rax, al
     cmp rax, 0
     setne al
-.or_end_393:
+.or_end_280:
     cmp rax, 0
-    je .loop_end_392
+    je .loop_end_279
     mov rax, 10
     push rax
     mov rax, rbp
@@ -12035,13 +11284,13 @@ func_dump_rectype:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_else_394
-    mov rax, global_string_209
+    je .if_else_281
+    mov rax, global_string_224
     push rax
     call func_puts
     add rsp, 8
-    jmp .if_end_394
-.if_else_394:
+    jmp .if_end_281
+.if_else_281:
     mov rax, 11
     push rax
     mov rax, rbp
@@ -12054,13 +11303,13 @@ func_dump_rectype:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_end_395
-    mov rax, global_string_210
+    je .if_end_282
+    mov rax, global_string_225
     push rax
     call func_puts
     add rsp, 8
-.if_end_395:
-.if_end_394:
+.if_end_282:
+.if_end_281:
     mov rax, rbp
     sub rax, -16
     push rax
@@ -12071,8 +11320,9 @@ func_dump_rectype:
     mov rax, [rax]
     pop rcx
     mov [rcx], rax
-    jmp .loop_start_392
-.loop_end_392:
+    jmp .loop_start_279
+.break_279:
+.loop_end_279:
     mov rax, 0
     push rax
     mov rax, rbp
@@ -12085,8 +11335,8 @@ func_dump_rectype:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_else_396
-    mov rax, global_string_211
+    je .if_else_283
+    mov rax, global_string_226
     push rax
     call func_putsln
     add rsp, 8
@@ -12096,8 +11346,8 @@ func_dump_rectype:
     mov rsp, rbp
     pop rbp
     ret
-    jmp .if_end_396
-.if_else_396:
+    jmp .if_end_283
+.if_else_283:
     mov rax, 1
     push rax
     mov rax, rbp
@@ -12110,8 +11360,8 @@ func_dump_rectype:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_else_397
-    mov rax, global_string_212
+    je .if_else_284
+    mov rax, global_string_227
     push rax
     call func_putsln
     add rsp, 8
@@ -12121,8 +11371,8 @@ func_dump_rectype:
     mov rsp, rbp
     pop rbp
     ret
-    jmp .if_end_397
-.if_else_397:
+    jmp .if_end_284
+.if_else_284:
     mov rax, 7
     push rax
     mov rax, rbp
@@ -12135,8 +11385,8 @@ func_dump_rectype:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_else_398
-    mov rax, global_string_213
+    je .if_else_285
+    mov rax, global_string_228
     push rax
     call func_putsln
     add rsp, 8
@@ -12146,8 +11396,8 @@ func_dump_rectype:
     mov rsp, rbp
     pop rbp
     ret
-    jmp .if_end_398
-.if_else_398:
+    jmp .if_end_285
+.if_else_285:
     mov rax, 8
     push rax
     mov rax, rbp
@@ -12160,8 +11410,8 @@ func_dump_rectype:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_end_399
-    mov rax, global_string_214
+    je .if_end_286
+    mov rax, global_string_229
     push rax
     call func_putsln
     add rsp, 8
@@ -12171,10 +11421,10 @@ func_dump_rectype:
     mov rsp, rbp
     pop rbp
     ret
-.if_end_399:
-.if_end_398:
-.if_end_397:
-.if_end_396:
+.if_end_286:
+.if_end_285:
+.if_end_284:
+.if_end_283:
     mov rax, 12
     push rax
     mov rax, rbp
@@ -12187,12 +11437,12 @@ func_dump_rectype:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .cond_else_400
-    mov rax, global_string_215
-    jmp .cond_end_400
-.cond_else_400:
-    mov rax, global_string_216
-.cond_end_400:
+    je .cond_else_287
+    mov rax, global_string_230
+    jmp .cond_end_287
+.cond_else_287:
+    mov rax, global_string_231
+.cond_end_287:
     push rax
     call func_puts
     add rsp, 8
@@ -12204,13 +11454,13 @@ func_dump_rectype:
     push rax
     call func_puts
     add rsp, 8
-    mov rax, global_string_217
+    mov rax, global_string_232
     push rax
     call func_putsln
     add rsp, 8
     mov rax, 0
     mov [rbp-8], rax
-.loop_start_401:
+.loop_start_288:
     mov rax, rbp
     sub rax, -16
     mov rax, [rax]
@@ -12227,7 +11477,7 @@ func_dump_rectype:
     setl al
     movzx rax, al
     cmp rax, 0
-    je .loop_end_401
+    je .loop_end_288
     mov rax, 8
     push rax
     mov rax, rbp
@@ -12249,7 +11499,7 @@ func_dump_rectype:
     mov [rbp-16], rax
     mov rax, 0
     mov [rbp-24], rax
-.loop_start_402:
+.loop_start_289:
     mov rax, rbp
     sub rax, -24
     mov rax, [rax]
@@ -12262,12 +11512,12 @@ func_dump_rectype:
     setl al
     movzx rax, al
     cmp rax, 0
-    je .loop_end_402
-    mov rax, global_string_218
+    je .loop_end_289
+    mov rax, global_string_233
     push rax
     call func_puts
     add rsp, 8
-.loop_continue_402:
+.loop_continue_289:
     mov rax, rbp
     sub rax, 24
     push rax
@@ -12280,9 +11530,10 @@ func_dump_rectype:
     add rax, rcx
     pop rcx
     mov [rcx], rax
-    jmp .loop_start_402
-.loop_end_402:
-    mov rax, global_string_219
+    jmp .loop_start_289
+.break_289:
+.loop_end_289:
+    mov rax, global_string_234
     push rax
     call func_puts
     add rsp, 8
@@ -12294,7 +11545,7 @@ func_dump_rectype:
     push rax
     call func_puts
     add rsp, 8
-    mov rax, global_string_220
+    mov rax, global_string_235
     push rax
     call func_puts
     add rsp, 8
@@ -12306,7 +11557,7 @@ func_dump_rectype:
     push rax
     call func_putu
     add rsp, 8
-    mov rax, global_string_221
+    mov rax, global_string_236
     push rax
     call func_puts
     add rsp, 8
@@ -12326,11 +11577,11 @@ func_dump_rectype:
     push rax
     call func_dump_rectype
     add rsp, 16
-    mov rax, global_string_222
+    mov rax, global_string_237
     push rax
     call func_puts
     add rsp, 8
-.loop_continue_401:
+.loop_continue_288:
     mov rax, rbp
     sub rax, 8
     push rax
@@ -12343,11 +11594,12 @@ func_dump_rectype:
     add rax, rcx
     pop rcx
     mov [rcx], rax
-    jmp .loop_start_401
-.loop_end_401:
+    jmp .loop_start_288
+.break_288:
+.loop_end_288:
     mov rax, 0
     mov [rbp-8], rax
-.loop_start_403:
+.loop_start_290:
     mov rax, rbp
     sub rax, -24
     mov rax, [rax]
@@ -12360,12 +11612,12 @@ func_dump_rectype:
     setl al
     movzx rax, al
     cmp rax, 0
-    je .loop_end_403
-    mov rax, global_string_223
+    je .loop_end_290
+    mov rax, global_string_238
     push rax
     call func_puts
     add rsp, 8
-.loop_continue_403:
+.loop_continue_290:
     mov rax, rbp
     sub rax, 8
     push rax
@@ -12378,9 +11630,10 @@ func_dump_rectype:
     add rax, rcx
     pop rcx
     mov [rcx], rax
-    jmp .loop_start_403
-.loop_end_403:
-    mov rax, global_string_224
+    jmp .loop_start_290
+.break_290:
+.loop_end_290:
+    mov rax, global_string_239
     push rax
     call func_putsln
     add rsp, 8
@@ -12406,10 +11659,10 @@ func_convert_type:
     call func_is_float_type
     add rsp, 8
     cmp rax, 0
-    jne .and_right_405
+    jne .and_right_292
     mov rax, 0
-    jmp .and_end_405
-.and_right_405:
+    jmp .and_end_292
+.and_right_292:
     mov rax, rbp
     sub rax, -16
     mov rax, [rax]
@@ -12418,9 +11671,9 @@ func_convert_type:
     add rsp, 8
     cmp rax, 0
     setne al
-.and_end_405:
+.and_end_292:
     cmp rax, 0
-    je .if_end_404
+    je .if_end_291
     mov rax, rbp
     sub rax, -24
     mov rax, [rax]
@@ -12432,7 +11685,7 @@ func_convert_type:
     mov rsp, rbp
     pop rbp
     ret
-.if_end_404:
+.if_end_291:
     mov rax, rbp
     sub rax, -16
     mov rax, [rax]
@@ -12440,10 +11693,10 @@ func_convert_type:
     call func_is_float_type
     add rsp, 8
     cmp rax, 0
-    jne .and_right_407
+    jne .and_right_294
     mov rax, 0
-    jmp .and_end_407
-.and_right_407:
+    jmp .and_end_294
+.and_right_294:
     mov rax, rbp
     sub rax, 8
     mov rax, [rax]
@@ -12452,9 +11705,9 @@ func_convert_type:
     add rsp, 8
     cmp rax, 0
     setne al
-.and_end_407:
+.and_end_294:
     cmp rax, 0
-    je .if_end_406
+    je .if_end_293
     mov rax, rbp
     sub rax, -24
     mov rax, [rax]
@@ -12466,7 +11719,7 @@ func_convert_type:
     mov rsp, rbp
     pop rbp
     ret
-.if_end_406:
+.if_end_293:
     mov rax, 8
     push rax
     mov rax, rbp
@@ -12479,10 +11732,10 @@ func_convert_type:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .or_right_409
+    je .or_right_296
     mov rax, 1
-    jmp .or_end_409
-.or_right_409:
+    jmp .or_end_296
+.or_right_296:
     mov rax, 8
     push rax
     mov rax, rbp
@@ -12496,9 +11749,9 @@ func_convert_type:
     movzx rax, al
     cmp rax, 0
     setne al
-.or_end_409:
+.or_end_296:
     cmp rax, 0
-    je .if_end_408
+    je .if_end_295
     mov rax, rbp
     sub rax, -24
     mov rax, [rax]
@@ -12507,7 +11760,7 @@ func_convert_type:
     mov rsp, rbp
     pop rbp
     ret
-.if_end_408:
+.if_end_295:
     mov rax, 10
     push rax
     mov rax, rbp
@@ -12520,10 +11773,10 @@ func_convert_type:
     sete al
     movzx rax, al
     cmp rax, 0
-    jne .and_right_411
+    jne .and_right_298
     mov rax, 0
-    jmp .and_end_411
-.and_right_411:
+    jmp .and_end_298
+.and_right_298:
     mov rax, 10
     push rax
     mov rax, rbp
@@ -12537,9 +11790,9 @@ func_convert_type:
     movzx rax, al
     cmp rax, 0
     setne al
-.and_end_411:
+.and_end_298:
     cmp rax, 0
-    je .if_end_410
+    je .if_end_297
     mov rax, 7
     push rax
     mov rax, rbp
@@ -12554,10 +11807,10 @@ func_convert_type:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .or_right_413
+    je .or_right_300
     mov rax, 1
-    jmp .or_end_413
-.or_right_413:
+    jmp .or_end_300
+.or_right_300:
     mov rax, 7
     push rax
     mov rax, rbp
@@ -12573,9 +11826,9 @@ func_convert_type:
     movzx rax, al
     cmp rax, 0
     setne al
-.or_end_413:
+.or_end_300:
     cmp rax, 0
-    je .if_end_412
+    je .if_end_299
     mov rax, rbp
     sub rax, -24
     mov rax, [rax]
@@ -12584,8 +11837,8 @@ func_convert_type:
     mov rsp, rbp
     pop rbp
     ret
-.if_end_412:
-.if_end_410:
+.if_end_299:
+.if_end_297:
     mov rax, rbp
     sub rax, 8
     mov rax, [rax]
@@ -12593,10 +11846,10 @@ func_convert_type:
     call func_is_int_type
     add rsp, 8
     cmp rax, 0
-    jne .and_right_415
+    jne .and_right_302
     mov rax, 0
-    jmp .and_end_415
-.and_right_415:
+    jmp .and_end_302
+.and_right_302:
     mov rax, rbp
     sub rax, -16
     mov rax, [rax]
@@ -12605,9 +11858,9 @@ func_convert_type:
     add rsp, 8
     cmp rax, 0
     setne al
-.and_end_415:
+.and_end_302:
     cmp rax, 0
-    je .if_end_414
+    je .if_end_301
     mov rax, rbp
     sub rax, -24
     mov rax, [rax]
@@ -12616,7 +11869,7 @@ func_convert_type:
     mov rsp, rbp
     pop rbp
     ret
-.if_end_414:
+.if_end_301:
     mov rax, rbp
     sub rax, -16
     mov rax, [rax]
@@ -12628,7 +11881,7 @@ func_convert_type:
     call func_types_equal
     add rsp, 16
     cmp rax, 0
-    je .if_end_416
+    je .if_end_303
     mov rax, rbp
     sub rax, -24
     mov rax, [rax]
@@ -12637,7 +11890,7 @@ func_convert_type:
     mov rsp, rbp
     pop rbp
     ret
-.if_end_416:
+.if_end_303:
     mov rax, global_vars
     add rax, 0
     mov rax, [rax]
@@ -12667,10 +11920,10 @@ func_compound_push_field:
     setne al
     movzx rax, al
     cmp rax, 0
-    jne .and_right_418
+    jne .and_right_305
     mov rax, 0
-    jmp .and_end_418
-.and_right_418:
+    jmp .and_end_305
+.and_right_305:
     mov rax, 13
     push rax
     mov rax, rbp
@@ -12684,14 +11937,14 @@ func_compound_push_field:
     movzx rax, al
     cmp rax, 0
     setne al
-.and_end_418:
+.and_end_305:
     cmp rax, 0
-    je .if_end_417
-    mov rax, global_string_225
+    je .if_end_304
+    mov rax, global_string_240
     push rax
     call func_die
     add rsp, 8
-.if_end_417:
+.if_end_304:
     mov rax, 13
     push rax
     mov rax, rbp
@@ -12724,10 +11977,10 @@ func_compound_push_field:
     sub rax, 8
     mov rax, [rax]
     cmp rax, 0
-    je .cond_else_419
+    je .cond_else_306
     mov rax, 0
-    jmp .cond_end_419
-.cond_else_419:
+    jmp .cond_end_306
+.cond_else_306:
     mov rax, rbp
     sub rax, 24
     mov rax, [rax]
@@ -12740,7 +11993,7 @@ func_compound_push_field:
     push rax
     call func_align_up
     add rsp, 16
-.cond_end_419:
+.cond_end_306:
     mov [rbp-32], rax
     mov rax, rbp
     sub rax, -16
@@ -12751,7 +12004,7 @@ func_compound_push_field:
     sub rax, 8
     mov rax, [rax]
     cmp rax, 0
-    je .cond_else_420
+    je .cond_else_307
     mov rax, rbp
     sub rax, -16
     mov rax, [rax]
@@ -12764,8 +12017,8 @@ func_compound_push_field:
     push rax
     call func_max
     add rsp, 16
-    jmp .cond_end_420
-.cond_else_420:
+    jmp .cond_end_307
+.cond_else_307:
     mov rax, rbp
     sub rax, 16
     mov rax, [rax]
@@ -12775,7 +12028,7 @@ func_compound_push_field:
     mov rax, [rax]
     pop rcx
     add rax, rcx
-.cond_end_420:
+.cond_end_307:
     pop rcx
     mov [rcx], rax
     mov rax, rbp
@@ -12826,7 +12079,7 @@ func_compound_find_field:
     sub rsp, 16
     mov rax, 0
     mov [rbp-8], rax
-.loop_start_421:
+.loop_start_308:
     mov rax, rbp
     sub rax, -16
     mov rax, [rax]
@@ -12843,7 +12096,7 @@ func_compound_find_field:
     setl al
     movzx rax, al
     cmp rax, 0
-    je .loop_end_421
+    je .loop_end_308
     mov rax, 8
     push rax
     mov rax, rbp
@@ -12876,7 +12129,7 @@ func_compound_find_field:
     call func_streq
     add rsp, 16
     cmp rax, 0
-    je .if_end_422
+    je .if_end_309
     mov rax, rbp
     sub rax, 16
     mov rax, [rax]
@@ -12885,8 +12138,8 @@ func_compound_find_field:
     mov rsp, rbp
     pop rbp
     ret
-.if_end_422:
-    mov rax, global_string_226
+.if_end_309:
+    mov rax, global_string_241
     push rax
     mov rax, rbp
     sub rax, 16
@@ -12897,7 +12150,7 @@ func_compound_find_field:
     call func_streq
     add rsp, 16
     cmp rax, 0
-    je .if_end_423
+    je .if_end_310
     mov rax, rbp
     sub rax, 16
     push rax
@@ -12916,7 +12169,7 @@ func_compound_find_field:
     pop rcx
     mov [rcx], rax
     cmp rax, 0
-    je .if_end_424
+    je .if_end_311
     mov rax, rbp
     sub rax, 16
     mov rax, [rax]
@@ -12925,9 +12178,9 @@ func_compound_find_field:
     mov rsp, rbp
     pop rbp
     ret
-.if_end_424:
-.if_end_423:
-.loop_continue_421:
+.if_end_311:
+.if_end_310:
+.loop_continue_308:
     mov rax, rbp
     sub rax, 8
     push rax
@@ -12940,8 +12193,9 @@ func_compound_find_field:
     add rax, rcx
     pop rcx
     mov [rcx], rax
-    jmp .loop_start_421
-.loop_end_421:
+    jmp .loop_start_308
+.break_308:
+.loop_end_308:
     mov rax, global_vars
     add rax, 0
     mov rax, [rax]
@@ -12961,7 +12215,7 @@ func_compound_find_method:
     sub rsp, 16
     mov rax, 0
     mov [rbp-8], rax
-.loop_start_425:
+.loop_start_312:
     mov rax, rbp
     sub rax, -16
     mov rax, [rax]
@@ -12978,7 +12232,7 @@ func_compound_find_method:
     setl al
     movzx rax, al
     cmp rax, 0
-    je .loop_end_425
+    je .loop_end_312
     mov rax, 8
     push rax
     mov rax, rbp
@@ -13012,7 +12266,7 @@ func_compound_find_method:
     call func_streq
     add rsp, 16
     cmp rax, 0
-    je .if_end_426
+    je .if_end_313
     mov rax, rbp
     sub rax, 16
     mov rax, [rax]
@@ -13021,8 +12275,8 @@ func_compound_find_method:
     mov rsp, rbp
     pop rbp
     ret
-.if_end_426:
-.loop_continue_425:
+.if_end_313:
+.loop_continue_312:
     mov rax, rbp
     sub rax, 8
     push rax
@@ -13035,8 +12289,9 @@ func_compound_find_method:
     add rax, rcx
     pop rcx
     mov [rcx], rax
-    jmp .loop_start_425
-.loop_end_425:
+    jmp .loop_start_312
+.break_312:
+.loop_end_312:
     mov rax, global_vars
     add rax, 0
     mov rax, [rax]
@@ -13054,7 +12309,7 @@ func_builtin_create_syscall:
     push rbp
     mov rbp, rsp
     sub rsp, 16
-    mov rax, 39
+    mov rax, 42
     push rax
     call func_node_new
     add rsp, 8
@@ -13106,7 +12361,7 @@ func_builtin_create_syscall:
     call func_type_new
     add rsp, 8
     push rax
-    mov rax, global_string_227
+    mov rax, global_string_242
     push rax
     call func_variable_new
     add rsp, 24
@@ -13122,7 +12377,7 @@ func_builtin_create_syscall:
     add rsp, 16
     mov rax, 0
     mov [rbp-16], rax
-.loop_start_427:
+.loop_start_314:
     mov rax, rbp
     sub rax, -24
     mov rax, [rax]
@@ -13135,7 +12390,7 @@ func_builtin_create_syscall:
     setl al
     movzx rax, al
     cmp rax, 0
-    je .loop_end_427
+    je .loop_end_314
     mov rax, 0
     push rax
     mov rax, 8
@@ -13143,7 +12398,7 @@ func_builtin_create_syscall:
     call func_type_new
     add rsp, 8
     push rax
-    mov rax, global_string_228
+    mov rax, global_string_243
     push rax
     call func_variable_new
     add rsp, 24
@@ -13157,7 +12412,7 @@ func_builtin_create_syscall:
     push rax
     call _Vector_method_push
     add rsp, 16
-.loop_continue_427:
+.loop_continue_314:
     mov rax, rbp
     sub rax, 16
     push rax
@@ -13170,8 +12425,9 @@ func_builtin_create_syscall:
     add rax, rcx
     pop rcx
     mov [rcx], rax
-    jmp .loop_start_427
-.loop_end_427:
+    jmp .loop_start_314
+.break_314:
+.loop_end_314:
     mov rax, rbp
     sub rax, 8
     mov rax, [rax]
@@ -13193,181 +12449,181 @@ func_builtins_push_posix_constants:
     sub rsp, 0
     mov rax, 33554491
     push rax
-    mov rax, global_string_229
+    mov rax, global_string_244
     push rax
     call func_constant_push
     add rsp, 16
     mov rax, 33554435
     push rax
-    mov rax, global_string_230
+    mov rax, global_string_245
     push rax
     call func_constant_push
     add rsp, 16
     mov rax, 33554436
     push rax
-    mov rax, global_string_231
+    mov rax, global_string_246
     push rax
     call func_constant_push
     add rsp, 16
     mov rax, 33554433
     push rax
-    mov rax, global_string_232
+    mov rax, global_string_247
     push rax
     call func_constant_push
     add rsp, 16
     mov rax, 33554437
     push rax
-    mov rax, global_string_233
+    mov rax, global_string_248
     push rax
     call func_constant_push
     add rsp, 16
     mov rax, 33554631
     push rax
-    mov rax, global_string_234
+    mov rax, global_string_249
     push rax
     call func_constant_push
     add rsp, 16
     mov rax, 33554895
     push rax
-    mov rax, global_string_235
+    mov rax, global_string_250
     push rax
     call func_constant_push
     add rsp, 16
     mov rax, 33554438
     push rax
-    mov rax, global_string_236
+    mov rax, global_string_251
     push rax
     call func_constant_push
     add rsp, 16
     mov rax, 33554434
     push rax
-    mov rax, global_string_237
+    mov rax, global_string_252
     push rax
     call func_constant_push
     add rsp, 16
     mov rax, 33554439
     push rax
-    mov rax, global_string_238
+    mov rax, global_string_253
     push rax
     call func_constant_push
     add rsp, 16
     mov rax, 33554629
     push rax
-    mov rax, global_string_239
-    push rax
-    call func_constant_push
-    add rsp, 16
-    mov rax, 0
-    push rax
-    mov rax, global_string_240
-    push rax
-    call func_constant_push
-    add rsp, 16
-    mov rax, 1
-    push rax
-    mov rax, global_string_241
-    push rax
-    call func_constant_push
-    add rsp, 16
-    mov rax, 2
-    push rax
-    mov rax, global_string_242
-    push rax
-    call func_constant_push
-    add rsp, 16
-    mov rax, 0
-    push rax
-    mov rax, global_string_243
-    push rax
-    call func_constant_push
-    add rsp, 16
-    mov rax, 1
-    push rax
-    mov rax, global_string_244
-    push rax
-    call func_constant_push
-    add rsp, 16
-    mov rax, 2
-    push rax
-    mov rax, global_string_245
-    push rax
-    call func_constant_push
-    add rsp, 16
-    mov rax, 512
-    push rax
-    mov rax, global_string_246
-    push rax
-    call func_constant_push
-    add rsp, 16
-    mov rax, 2048
-    push rax
-    mov rax, global_string_247
-    push rax
-    call func_constant_push
-    add rsp, 16
-    mov rax, 1024
-    push rax
-    mov rax, global_string_248
-    push rax
-    call func_constant_push
-    add rsp, 16
-    mov rax, -2
-    push rax
-    mov rax, global_string_249
-    push rax
-    call func_constant_push
-    add rsp, 16
-    mov rax, 1
-    push rax
-    mov rax, global_string_250
-    push rax
-    call func_constant_push
-    add rsp, 16
-    mov rax, 2
-    push rax
-    mov rax, global_string_251
-    push rax
-    call func_constant_push
-    add rsp, 16
-    mov rax, 4
-    push rax
-    mov rax, global_string_252
-    push rax
-    call func_constant_push
-    add rsp, 16
-    mov rax, 0
-    push rax
-    mov rax, global_string_253
-    push rax
-    call func_constant_push
-    add rsp, 16
-    mov rax, 1
-    push rax
     mov rax, global_string_254
     push rax
     call func_constant_push
     add rsp, 16
-    mov rax, 2
+    mov rax, 0
     push rax
     mov rax, global_string_255
     push rax
     call func_constant_push
     add rsp, 16
-    mov rax, 4096
+    mov rax, 1
     push rax
     mov rax, global_string_256
     push rax
     call func_constant_push
     add rsp, 16
-    mov rax, 16
+    mov rax, 2
     push rax
     mov rax, global_string_257
     push rax
     call func_constant_push
     add rsp, 16
-    mov rax, -1
+    mov rax, 0
     push rax
     mov rax, global_string_258
+    push rax
+    call func_constant_push
+    add rsp, 16
+    mov rax, 1
+    push rax
+    mov rax, global_string_259
+    push rax
+    call func_constant_push
+    add rsp, 16
+    mov rax, 2
+    push rax
+    mov rax, global_string_260
+    push rax
+    call func_constant_push
+    add rsp, 16
+    mov rax, 512
+    push rax
+    mov rax, global_string_261
+    push rax
+    call func_constant_push
+    add rsp, 16
+    mov rax, 2048
+    push rax
+    mov rax, global_string_262
+    push rax
+    call func_constant_push
+    add rsp, 16
+    mov rax, 1024
+    push rax
+    mov rax, global_string_263
+    push rax
+    call func_constant_push
+    add rsp, 16
+    mov rax, -2
+    push rax
+    mov rax, global_string_264
+    push rax
+    call func_constant_push
+    add rsp, 16
+    mov rax, 1
+    push rax
+    mov rax, global_string_265
+    push rax
+    call func_constant_push
+    add rsp, 16
+    mov rax, 2
+    push rax
+    mov rax, global_string_266
+    push rax
+    call func_constant_push
+    add rsp, 16
+    mov rax, 4
+    push rax
+    mov rax, global_string_267
+    push rax
+    call func_constant_push
+    add rsp, 16
+    mov rax, 0
+    push rax
+    mov rax, global_string_268
+    push rax
+    call func_constant_push
+    add rsp, 16
+    mov rax, 1
+    push rax
+    mov rax, global_string_269
+    push rax
+    call func_constant_push
+    add rsp, 16
+    mov rax, 2
+    push rax
+    mov rax, global_string_270
+    push rax
+    call func_constant_push
+    add rsp, 16
+    mov rax, 4096
+    push rax
+    mov rax, global_string_271
+    push rax
+    call func_constant_push
+    add rsp, 16
+    mov rax, 16
+    push rax
+    mov rax, global_string_272
+    push rax
+    call func_constant_push
+    add rsp, 16
+    mov rax, -1
+    push rax
+    mov rax, global_string_273
     push rax
     call func_constant_push
     add rsp, 16
@@ -13384,20 +12640,20 @@ func_initialize_builtins:
     add rsp, 0
     mov rax, 1
     push rax
-    mov rax, global_string_259
+    mov rax, global_string_274
     push rax
     call func_constant_push
     add rsp, 16
     mov rax, 0
     push rax
-    mov rax, global_string_260
+    mov rax, global_string_275
     push rax
     call func_constant_push
     add rsp, 16
     mov rax, rbp
     sub rax, 8
     push rax
-    mov rax, 39
+    mov rax, 42
     push rax
     call func_node_new
     add rsp, 8
@@ -13420,7 +12676,7 @@ func_initialize_builtins:
     add rax, 16
     add rax, 0
     push rax
-    mov rax, global_string_261
+    mov rax, global_string_276
     pop rcx
     mov [rcx], rax
     mov rax, rbp
@@ -13442,7 +12698,7 @@ func_initialize_builtins:
     call func_type_new
     add rsp, 8
     push rax
-    mov rax, global_string_262
+    mov rax, global_string_277
     push rax
     call func_variable_new
     add rsp, 24
@@ -13469,7 +12725,7 @@ func_initialize_builtins:
     mov rax, rbp
     sub rax, 8
     push rax
-    mov rax, 39
+    mov rax, 42
     push rax
     call func_node_new
     add rsp, 8
@@ -13492,7 +12748,7 @@ func_initialize_builtins:
     add rax, 16
     add rax, 0
     push rax
-    mov rax, global_string_263
+    mov rax, global_string_278
     pop rcx
     mov [rcx], rax
     mov rax, rbp
@@ -13514,7 +12770,7 @@ func_initialize_builtins:
     call func_type_new
     add rsp, 8
     push rax
-    mov rax, global_string_264
+    mov rax, global_string_279
     push rax
     call func_variable_new
     add rsp, 24
@@ -13541,7 +12797,7 @@ func_initialize_builtins:
     mov rax, rbp
     sub rax, 8
     push rax
-    mov rax, 39
+    mov rax, 42
     push rax
     call func_node_new
     add rsp, 8
@@ -13564,7 +12820,7 @@ func_initialize_builtins:
     add rax, 16
     add rax, 0
     push rax
-    mov rax, global_string_265
+    mov rax, global_string_280
     pop rcx
     mov [rcx], rax
     mov rax, rbp
@@ -13591,49 +12847,49 @@ func_initialize_builtins:
     add rsp, 16
     mov rax, 0
     push rax
-    mov rax, global_string_266
+    mov rax, global_string_281
     push rax
     call func_builtin_create_syscall
     add rsp, 16
     mov rax, 1
     push rax
-    mov rax, global_string_267
+    mov rax, global_string_282
     push rax
     call func_builtin_create_syscall
     add rsp, 16
     mov rax, 2
     push rax
-    mov rax, global_string_268
+    mov rax, global_string_283
     push rax
     call func_builtin_create_syscall
     add rsp, 16
     mov rax, 3
     push rax
-    mov rax, global_string_269
+    mov rax, global_string_284
     push rax
     call func_builtin_create_syscall
     add rsp, 16
     mov rax, 4
     push rax
-    mov rax, global_string_270
+    mov rax, global_string_285
     push rax
     call func_builtin_create_syscall
     add rsp, 16
     mov rax, 5
     push rax
-    mov rax, global_string_271
+    mov rax, global_string_286
     push rax
     call func_builtin_create_syscall
     add rsp, 16
     mov rax, 6
     push rax
-    mov rax, global_string_272
+    mov rax, global_string_287
     push rax
     call func_builtin_create_syscall
     add rsp, 16
     mov rax, 7
     push rax
-    mov rax, global_string_273
+    mov rax, global_string_288
     push rax
     call func_builtin_create_syscall
     add rsp, 16
@@ -13648,7 +12904,7 @@ func_find_builtin_function:
     sub rsp, 16
     mov rax, 0
     mov [rbp-8], rax
-.loop_start_428:
+.loop_start_315:
     mov rax, global_vars
     add rax, 1073741920
     mov rax, [rax]
@@ -13663,7 +12919,7 @@ func_find_builtin_function:
     setl al
     movzx rax, al
     cmp rax, 0
-    je .loop_end_428
+    je .loop_end_315
     mov rax, 8
     push rax
     mov rax, rbp
@@ -13695,7 +12951,7 @@ func_find_builtin_function:
     call func_streq
     add rsp, 16
     cmp rax, 0
-    je .if_end_429
+    je .if_end_316
     mov rax, rbp
     sub rax, 16
     mov rax, [rax]
@@ -13704,8 +12960,8 @@ func_find_builtin_function:
     mov rsp, rbp
     pop rbp
     ret
-.if_end_429:
-.loop_continue_428:
+.if_end_316:
+.loop_continue_315:
     mov rax, rbp
     sub rax, 8
     push rax
@@ -13718,8 +12974,9 @@ func_find_builtin_function:
     add rax, rcx
     pop rcx
     mov [rcx], rax
-    jmp .loop_start_428
-.loop_end_428:
+    jmp .loop_start_315
+.break_315:
+.loop_end_315:
     mov rax, global_vars
     add rax, 0
     mov rax, [rax]
@@ -13737,66 +12994,6 @@ func_generate_builtins:
     push rbp
     mov rbp, rsp
     sub rsp, 96
-    mov rax, global_string_274
-    push rax
-    call func_emit_asm
-    add rsp, 8
-    mov rax, global_string_275
-    push rax
-    call func_emit_asm
-    add rsp, 8
-    mov rax, global_string_276
-    push rax
-    call func_emit_asm
-    add rsp, 8
-    mov rax, global_string_277
-    push rax
-    call func_emit_asm
-    add rsp, 8
-    mov rax, global_string_278
-    push rax
-    call func_emit_asm
-    add rsp, 8
-    mov rax, global_string_279
-    push rax
-    call func_emit_asm
-    add rsp, 8
-    mov rax, global_string_280
-    push rax
-    call func_emit_asm
-    add rsp, 8
-    mov rax, global_string_281
-    push rax
-    call func_emit_asm
-    add rsp, 8
-    mov rax, global_string_282
-    push rax
-    call func_emit_asm
-    add rsp, 8
-    mov rax, global_string_283
-    push rax
-    call func_emit_asm
-    add rsp, 8
-    mov rax, global_string_284
-    push rax
-    call func_emit_asm
-    add rsp, 8
-    mov rax, global_string_285
-    push rax
-    call func_emit_asm
-    add rsp, 8
-    mov rax, global_string_286
-    push rax
-    call func_emit_asm
-    add rsp, 8
-    mov rax, global_string_287
-    push rax
-    call func_emit_asm
-    add rsp, 8
-    mov rax, global_string_288
-    push rax
-    call func_emit_asm
-    add rsp, 8
     mov rax, global_string_289
     push rax
     call func_emit_asm
@@ -13861,15 +13058,75 @@ func_generate_builtins:
     push rax
     call func_emit_asm
     add rsp, 8
-    mov rax, 33554436
-    push rax
-    call func_generate_syscall
-    add rsp, 8
     mov rax, global_string_305
     push rax
     call func_emit_asm
     add rsp, 8
     mov rax, global_string_306
+    push rax
+    call func_emit_asm
+    add rsp, 8
+    mov rax, global_string_307
+    push rax
+    call func_emit_asm
+    add rsp, 8
+    mov rax, global_string_308
+    push rax
+    call func_emit_asm
+    add rsp, 8
+    mov rax, global_string_309
+    push rax
+    call func_emit_asm
+    add rsp, 8
+    mov rax, global_string_310
+    push rax
+    call func_emit_asm
+    add rsp, 8
+    mov rax, global_string_311
+    push rax
+    call func_emit_asm
+    add rsp, 8
+    mov rax, global_string_312
+    push rax
+    call func_emit_asm
+    add rsp, 8
+    mov rax, global_string_313
+    push rax
+    call func_emit_asm
+    add rsp, 8
+    mov rax, global_string_314
+    push rax
+    call func_emit_asm
+    add rsp, 8
+    mov rax, global_string_315
+    push rax
+    call func_emit_asm
+    add rsp, 8
+    mov rax, global_string_316
+    push rax
+    call func_emit_asm
+    add rsp, 8
+    mov rax, global_string_317
+    push rax
+    call func_emit_asm
+    add rsp, 8
+    mov rax, global_string_318
+    push rax
+    call func_emit_asm
+    add rsp, 8
+    mov rax, global_string_319
+    push rax
+    call func_emit_asm
+    add rsp, 8
+    mov rax, 33554436
+    push rax
+    call func_generate_syscall
+    add rsp, 8
+    mov rax, global_string_320
+    push rax
+    call func_emit_asm
+    add rsp, 8
+    mov rax, global_string_321
     push rax
     call func_emit_asm
     add rsp, 8
@@ -13884,7 +13141,7 @@ func_generate_builtins:
     pop rcx
     add rax, rcx
     push rax
-    mov rax, global_string_307
+    mov rax, global_string_322
     pop rcx
     mov [rcx], rax
     mov rax, 8
@@ -13898,7 +13155,7 @@ func_generate_builtins:
     pop rcx
     add rax, rcx
     push rax
-    mov rax, global_string_308
+    mov rax, global_string_323
     pop rcx
     mov [rcx], rax
     mov rax, 8
@@ -13912,7 +13169,7 @@ func_generate_builtins:
     pop rcx
     add rax, rcx
     push rax
-    mov rax, global_string_309
+    mov rax, global_string_324
     pop rcx
     mov [rcx], rax
     mov rax, 8
@@ -13926,7 +13183,7 @@ func_generate_builtins:
     pop rcx
     add rax, rcx
     push rax
-    mov rax, global_string_310
+    mov rax, global_string_325
     pop rcx
     mov [rcx], rax
     mov rax, 8
@@ -13940,7 +13197,7 @@ func_generate_builtins:
     pop rcx
     add rax, rcx
     push rax
-    mov rax, global_string_311
+    mov rax, global_string_326
     pop rcx
     mov [rcx], rax
     mov rax, 8
@@ -13954,7 +13211,7 @@ func_generate_builtins:
     pop rcx
     add rax, rcx
     push rax
-    mov rax, global_string_312
+    mov rax, global_string_327
     pop rcx
     mov [rcx], rax
     mov rax, 8
@@ -13968,7 +13225,7 @@ func_generate_builtins:
     pop rcx
     add rax, rcx
     push rax
-    mov rax, global_string_313
+    mov rax, global_string_328
     pop rcx
     mov [rcx], rax
     mov rax, 8
@@ -13982,7 +13239,7 @@ func_generate_builtins:
     pop rcx
     add rax, rcx
     push rax
-    mov rax, global_string_314
+    mov rax, global_string_329
     pop rcx
     mov [rcx], rax
     mov rax, 8
@@ -13996,7 +13253,7 @@ func_generate_builtins:
     pop rcx
     add rax, rcx
     push rax
-    mov rax, global_string_315
+    mov rax, global_string_330
     pop rcx
     mov [rcx], rax
     mov rax, 8
@@ -14010,12 +13267,12 @@ func_generate_builtins:
     pop rcx
     add rax, rcx
     push rax
-    mov rax, global_string_316
+    mov rax, global_string_331
     pop rcx
     mov [rcx], rax
     mov rax, 0
     mov [rbp-88], rax
-.loop_start_430:
+.loop_start_317:
     mov rax, 7
     push rax
     mov rax, rbp
@@ -14026,8 +13283,8 @@ func_generate_builtins:
     setl al
     movzx rax, al
     cmp rax, 0
-    je .loop_end_430
-    mov rax, global_string_317
+    je .loop_end_317
+    mov rax, global_string_332
     push rax
     call func_emit_asm
     add rsp, 8
@@ -14037,13 +13294,13 @@ func_generate_builtins:
     push rax
     call func_emit_num
     add rsp, 8
-    mov rax, global_string_318
+    mov rax, global_string_333
     push rax
     call func_emit_asm
     add rsp, 8
     mov rax, 0
     mov [rbp-96], rax
-.loop_start_431:
+.loop_start_318:
     mov rax, 1
     push rax
     mov rax, rbp
@@ -14060,8 +13317,8 @@ func_generate_builtins:
     setl al
     movzx rax, al
     cmp rax, 0
-    je .loop_end_431
-    mov rax, global_string_319
+    je .loop_end_318
+    mov rax, global_string_334
     push rax
     call func_emit_asm
     add rsp, 8
@@ -14081,7 +13338,7 @@ func_generate_builtins:
     push rax
     call func_emit_asm
     add rsp, 8
-    mov rax, global_string_320
+    mov rax, global_string_335
     push rax
     call func_emit_asm
     add rsp, 8
@@ -14099,11 +13356,11 @@ func_generate_builtins:
     push rax
     call func_emit_num
     add rsp, 8
-    mov rax, global_string_321
+    mov rax, global_string_336
     push rax
     call func_emit_asm
     add rsp, 8
-.loop_continue_431:
+.loop_continue_318:
     mov rax, rbp
     sub rax, 96
     push rax
@@ -14116,17 +13373,18 @@ func_generate_builtins:
     add rax, rcx
     pop rcx
     mov [rcx], rax
-    jmp .loop_start_431
-.loop_end_431:
-    mov rax, global_string_322
+    jmp .loop_start_318
+.break_318:
+.loop_end_318:
+    mov rax, global_string_337
     push rax
     call func_emit_asm
     add rsp, 8
-    mov rax, global_string_323
+    mov rax, global_string_338
     push rax
     call func_emit_asm
     add rsp, 8
-.loop_continue_430:
+.loop_continue_317:
     mov rax, rbp
     sub rax, 88
     push rax
@@ -14139,17 +13397,18 @@ func_generate_builtins:
     add rax, rcx
     pop rcx
     mov [rcx], rax
-    jmp .loop_start_430
-.loop_end_430:
-    mov rax, global_string_324
+    jmp .loop_start_317
+.break_317:
+.loop_end_317:
+    mov rax, global_string_339
     push rax
     call func_emit_asm
     add rsp, 8
-    mov rax, global_string_325
+    mov rax, global_string_340
     push rax
     call func_emit_asm
     add rsp, 8
-    mov rax, global_string_326
+    mov rax, global_string_341
     push rax
     call func_emit_asm
     add rsp, 8
@@ -14157,51 +13416,51 @@ func_generate_builtins:
     push rax
     call func_emit_num
     add rsp, 8
-    mov rax, global_string_327
+    mov rax, global_string_342
     push rax
     call func_emit_asm
     add rsp, 8
-    mov rax, global_string_328
+    mov rax, global_string_343
     push rax
     call func_emit_asm
     add rsp, 8
     mov rax, 1
     cmp rax, 0
-    je .if_end_432
-    mov rax, global_string_329
+    je .if_end_319
+    mov rax, global_string_344
     push rax
     call func_emit_asm
     add rsp, 8
-    mov rax, global_string_330
+    mov rax, global_string_345
     push rax
     call func_emit_asm
     add rsp, 8
-    mov rax, global_string_331
+    mov rax, global_string_346
     push rax
     call func_emit_asm
     add rsp, 8
-    mov rax, global_string_332
+    mov rax, global_string_347
     push rax
     call func_emit_asm
     add rsp, 8
-.if_end_432:
-    mov rax, global_string_333
+.if_end_319:
+    mov rax, global_string_348
     push rax
     call func_emit_asm
     add rsp, 8
-    mov rax, global_string_334
+    mov rax, global_string_349
     push rax
     call func_emit_asm
     add rsp, 8
-    mov rax, global_string_335
+    mov rax, global_string_350
     push rax
     call func_emit_asm
     add rsp, 8
-    mov rax, global_string_336
+    mov rax, global_string_351
     push rax
     call func_emit_asm
     add rsp, 8
-    mov rax, global_string_337
+    mov rax, global_string_352
     push rax
     call func_emit_asm
     add rsp, 8
@@ -14372,8 +13631,8 @@ _Lexer_method_skip_whitespace:
     push rbp
     mov rbp, rsp
     sub rsp, 0
-.loop_start_433:
-.loop_continue_433:
+.loop_start_320:
+.loop_continue_320:
     mov rax, rbp
     sub rax, -16
     mov rax, [rax]
@@ -14390,10 +13649,10 @@ _Lexer_method_skip_whitespace:
     setl al
     movzx rax, al
     cmp rax, 0
-    jne .and_right_434
+    jne .and_right_321
     mov rax, 0
-    jmp .and_end_434
-.and_right_434:
+    jmp .and_end_321
+.and_right_321:
     mov rax, rbp
     sub rax, -16
     mov rax, [rax]
@@ -14413,9 +13672,9 @@ _Lexer_method_skip_whitespace:
     add rsp, 8
     cmp rax, 0
     setne al
-.and_end_434:
+.and_end_321:
     cmp rax, 0
-    je .loop_end_433
+    je .loop_end_320
     mov rax, 10
     push rax
     mov rax, rbp
@@ -14437,7 +13696,7 @@ _Lexer_method_skip_whitespace:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_else_435
+    je .if_else_322
     mov rax, rbp
     sub rax, -16
     mov rax, [rax]
@@ -14462,8 +13721,8 @@ _Lexer_method_skip_whitespace:
     mov rax, 0
     pop rcx
     mov [rcx], rax
-    jmp .if_end_435
-.if_else_435:
+    jmp .if_end_322
+.if_else_322:
     mov rax, rbp
     sub rax, -16
     mov rax, [rax]
@@ -14480,7 +13739,7 @@ _Lexer_method_skip_whitespace:
     add rax, rcx
     pop rcx
     mov [rcx], rax
-.if_end_435:
+.if_end_322:
     mov rax, rbp
     sub rax, -16
     mov rax, [rax]
@@ -14497,8 +13756,9 @@ _Lexer_method_skip_whitespace:
     add rax, rcx
     pop rcx
     mov [rcx], rax
-    jmp .loop_start_433
-.loop_end_433:
+    jmp .loop_start_320
+.break_320:
+.loop_end_320:
     mov rsp, rbp
     pop rbp
     mov qword rax, 0
@@ -14537,17 +13797,17 @@ _Lexer_method_starts_with:
     setl al
     movzx rax, al
     cmp rax, 0
-    je .if_end_436
+    je .if_end_323
     mov rax, 0
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_436:
+.if_end_323:
     mov rax, 0
     mov [rbp-16], rax
-.loop_start_437:
+.loop_start_324:
     mov rax, rbp
     sub rax, 8
     mov rax, [rax]
@@ -14560,7 +13820,7 @@ _Lexer_method_starts_with:
     setl al
     movzx rax, al
     cmp rax, 0
-    je .loop_end_437
+    je .loop_end_324
     mov rax, rbp
     sub rax, 16
     mov rax, [rax]
@@ -14597,15 +13857,15 @@ _Lexer_method_starts_with:
     setne al
     movzx rax, al
     cmp rax, 0
-    je .if_end_438
+    je .if_end_325
     mov rax, 0
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_438:
-.loop_continue_437:
+.if_end_325:
+.loop_continue_324:
     mov rax, rbp
     sub rax, 16
     push rax
@@ -14618,8 +13878,9 @@ _Lexer_method_starts_with:
     add rax, rcx
     pop rcx
     mov [rcx], rax
-    jmp .loop_start_437
-.loop_end_437:
+    jmp .loop_start_324
+.break_324:
+.loop_end_324:
     mov rax, rbp
     sub rax, 8
     mov rax, [rax]
@@ -14646,7 +13907,7 @@ _Lexer_method_starts_with:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_end_439
+    je .if_end_326
     mov rax, rbp
     sub rax, 8
     mov rax, [rax]
@@ -14655,7 +13916,7 @@ _Lexer_method_starts_with:
     mov rsp, rbp
     pop rbp
     ret
-.if_end_439:
+.if_end_326:
     mov rax, rbp
     sub rax, 16
     mov rax, [rax]
@@ -14676,10 +13937,10 @@ _Lexer_method_starts_with:
     call func_is_digit
     add rsp, 8
     cmp rax, 0
-    je .or_right_440
+    je .or_right_327
     mov rax, 1
-    jmp .or_end_440
-.or_right_440:
+    jmp .or_end_327
+.or_right_327:
     mov rax, rbp
     sub rax, 24
     movsx rax, byte [rax]
@@ -14688,7 +13949,7 @@ _Lexer_method_starts_with:
     add rsp, 8
     cmp rax, 0
     setne al
-.or_end_440:
+.or_end_327:
     cmp rax, 0
     sete al
     movzx rax, al
@@ -14773,14 +14034,14 @@ _Lexer_method_peek_char:
     setge al
     movzx rax, al
     cmp rax, 0
-    je .if_end_441
+    je .if_end_328
     mov rax, 0
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_441:
+.if_end_328:
     mov rax, rbp
     sub rax, -24
     mov rax, [rax]
@@ -14855,8 +14116,8 @@ _Lexer_method_next:
     push rbp
     mov rbp, rsp
     sub rsp, 72
-.loop_start_442:
-.loop_continue_442:
+.loop_start_329:
+.loop_continue_329:
     mov rax, rbp
     sub rax, -16
     mov rax, [rax]
@@ -14873,7 +14134,7 @@ _Lexer_method_next:
     setl al
     movzx rax, al
     cmp rax, 0
-    je .loop_end_442
+    je .loop_end_329
     mov rax, rbp
     sub rax, -16
     mov rax, [rax]
@@ -14889,17 +14150,79 @@ _Lexer_method_next:
     add rax, rcx
     movsx rax, byte [rax]
     mov [rbp-8], al
-    mov rax, 10
-    push rax
     mov rax, rbp
     sub rax, 8
     movsx rax, byte [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
-    cmp rax, 0
-    je .if_else_443
+    cmp rax, 32
+    je .case_330_0
+    cmp rax, 9
+    je .case_330_1
+    cmp rax, 13
+    je .case_330_2
+    cmp rax, 10
+    je .case_330_3
+    cmp rax, 40
+    je .case_330_4
+    cmp rax, 41
+    je .case_330_5
+    cmp rax, 123
+    je .case_330_6
+    cmp rax, 125
+    je .case_330_7
+    cmp rax, 91
+    je .case_330_8
+    cmp rax, 93
+    je .case_330_9
+    cmp rax, 59
+    je .case_330_10
+    cmp rax, 126
+    je .case_330_11
+    cmp rax, 63
+    je .case_330_12
+    cmp rax, 94
+    je .case_330_13
+    cmp rax, 46
+    je .case_330_14
+    cmp rax, 44
+    je .case_330_15
+    cmp rax, 42
+    je .case_330_16
+    cmp rax, 37
+    je .case_330_17
+    cmp rax, 47
+    je .case_330_18
+    cmp rax, 58
+    je .case_330_19
+    cmp rax, 38
+    je .case_330_20
+    cmp rax, 33
+    je .case_330_21
+    cmp rax, 60
+    je .case_330_22
+    cmp rax, 62
+    je .case_330_23
+    cmp rax, 61
+    je .case_330_24
+    cmp rax, 124
+    je .case_330_25
+    cmp rax, 43
+    je .case_330_26
+    cmp rax, 45
+    je .case_330_27
+    jmp .default_330
+.case_330_0:
+.case_330_1:
+.case_330_2:
+    mov rax, 1
+    push rax
+    mov rax, rbp
+    sub rax, -16
+    mov rax, [rax]
+    push rax
+    call _Lexer_method_advance
+    add rsp, 16
+    jmp .break_330
+.case_330_3:
     mov rax, rbp
     sub rax, -16
     mov rax, [rax]
@@ -14940,37 +14263,8 @@ _Lexer_method_next:
     add rax, rcx
     pop rcx
     mov [rcx], rax
-    jmp .if_end_443
-.if_else_443:
-    mov rax, rbp
-    sub rax, 8
-    movsx rax, byte [rax]
-    push rax
-    call func_is_space
-    add rsp, 8
-    cmp rax, 0
-    je .if_else_444
-    mov rax, 1
-    push rax
-    mov rax, rbp
-    sub rax, -16
-    mov rax, [rax]
-    push rax
-    call _Lexer_method_advance
-    add rsp, 16
-    jmp .if_end_444
-.if_else_444:
-    mov rax, 40
-    push rax
-    mov rax, rbp
-    sub rax, 8
-    movsx rax, byte [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
-    cmp rax, 0
-    je .if_else_445
+    jmp .break_330
+.case_330_4:
     mov rax, 1
     push rax
     mov rax, 30
@@ -14990,19 +14284,7 @@ _Lexer_method_next:
     mov rsp, rbp
     pop rbp
     ret
-    jmp .if_end_445
-.if_else_445:
-    mov rax, 41
-    push rax
-    mov rax, rbp
-    sub rax, 8
-    movsx rax, byte [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
-    cmp rax, 0
-    je .if_else_446
+.case_330_5:
     mov rax, 1
     push rax
     mov rax, 8
@@ -15022,19 +14304,7 @@ _Lexer_method_next:
     mov rsp, rbp
     pop rbp
     ret
-    jmp .if_end_446
-.if_else_446:
-    mov rax, 123
-    push rax
-    mov rax, rbp
-    sub rax, 8
-    movsx rax, byte [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
-    cmp rax, 0
-    je .if_else_447
+.case_330_6:
     mov rax, 1
     push rax
     mov rax, 28
@@ -15054,19 +14324,7 @@ _Lexer_method_next:
     mov rsp, rbp
     pop rbp
     ret
-    jmp .if_end_447
-.if_else_447:
-    mov rax, 125
-    push rax
-    mov rax, rbp
-    sub rax, 8
-    movsx rax, byte [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
-    cmp rax, 0
-    je .if_else_448
+.case_330_7:
     mov rax, 1
     push rax
     mov rax, 6
@@ -15086,19 +14344,7 @@ _Lexer_method_next:
     mov rsp, rbp
     pop rbp
     ret
-    jmp .if_end_448
-.if_else_448:
-    mov rax, 91
-    push rax
-    mov rax, rbp
-    sub rax, 8
-    movsx rax, byte [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
-    cmp rax, 0
-    je .if_else_449
+.case_330_8:
     mov rax, 1
     push rax
     mov rax, 29
@@ -15118,19 +14364,7 @@ _Lexer_method_next:
     mov rsp, rbp
     pop rbp
     ret
-    jmp .if_end_449
-.if_else_449:
-    mov rax, 93
-    push rax
-    mov rax, rbp
-    sub rax, 8
-    movsx rax, byte [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
-    cmp rax, 0
-    je .if_else_450
+.case_330_9:
     mov rax, 1
     push rax
     mov rax, 7
@@ -15150,19 +14384,7 @@ _Lexer_method_next:
     mov rsp, rbp
     pop rbp
     ret
-    jmp .if_end_450
-.if_else_450:
-    mov rax, 59
-    push rax
-    mov rax, rbp
-    sub rax, 8
-    movsx rax, byte [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
-    cmp rax, 0
-    je .if_else_451
+.case_330_10:
     mov rax, 1
     push rax
     mov rax, 38
@@ -15182,19 +14404,7 @@ _Lexer_method_next:
     mov rsp, rbp
     pop rbp
     ret
-    jmp .if_end_451
-.if_else_451:
-    mov rax, 126
-    push rax
-    mov rax, rbp
-    sub rax, 8
-    movsx rax, byte [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
-    cmp rax, 0
-    je .if_else_452
+.case_330_11:
     mov rax, 1
     push rax
     mov rax, 42
@@ -15214,19 +14424,7 @@ _Lexer_method_next:
     mov rsp, rbp
     pop rbp
     ret
-    jmp .if_end_452
-.if_else_452:
-    mov rax, 63
-    push rax
-    mov rax, rbp
-    sub rax, 8
-    movsx rax, byte [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
-    cmp rax, 0
-    je .if_else_453
+.case_330_12:
     mov rax, 1
     push rax
     mov rax, 36
@@ -15246,19 +14444,7 @@ _Lexer_method_next:
     mov rsp, rbp
     pop rbp
     ret
-    jmp .if_end_453
-.if_else_453:
-    mov rax, 94
-    push rax
-    mov rax, rbp
-    sub rax, 8
-    movsx rax, byte [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
-    cmp rax, 0
-    je .if_else_454
+.case_330_13:
     mov rax, 1
     push rax
     mov rax, 4
@@ -15278,19 +14464,7 @@ _Lexer_method_next:
     mov rsp, rbp
     pop rbp
     ret
-    jmp .if_end_454
-.if_else_454:
-    mov rax, 46
-    push rax
-    mov rax, rbp
-    sub rax, 8
-    movsx rax, byte [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
-    cmp rax, 0
-    je .if_else_455
+.case_330_14:
     mov rax, 1
     push rax
     mov rax, 12
@@ -15310,19 +14484,7 @@ _Lexer_method_next:
     mov rsp, rbp
     pop rbp
     ret
-    jmp .if_end_455
-.if_else_455:
-    mov rax, 44
-    push rax
-    mov rax, rbp
-    sub rax, 8
-    movsx rax, byte [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
-    cmp rax, 0
-    je .if_else_456
+.case_330_15:
     mov rax, 1
     push rax
     mov rax, 11
@@ -15342,19 +14504,7 @@ _Lexer_method_next:
     mov rsp, rbp
     pop rbp
     ret
-    jmp .if_end_456
-.if_else_456:
-    mov rax, 42
-    push rax
-    mov rax, rbp
-    sub rax, 8
-    movsx rax, byte [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
-    cmp rax, 0
-    je .if_else_457
+.case_330_16:
     mov rax, 1
     push rax
     mov rax, 40
@@ -15374,19 +14524,7 @@ _Lexer_method_next:
     mov rsp, rbp
     pop rbp
     ret
-    jmp .if_end_457
-.if_else_457:
-    mov rax, 37
-    push rax
-    mov rax, rbp
-    sub rax, 8
-    movsx rax, byte [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
-    cmp rax, 0
-    je .if_else_458
+.case_330_17:
     mov rax, 1
     push rax
     mov rax, 32
@@ -15406,22 +14544,7 @@ _Lexer_method_next:
     mov rsp, rbp
     pop rbp
     ret
-    jmp .if_end_458
-.if_else_458:
-    mov rax, 47
-    push rax
-    mov rax, rbp
-    sub rax, 8
-    movsx rax, byte [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
-    cmp rax, 0
-    jne .and_right_460
-    mov rax, 0
-    jmp .and_end_460
-.and_right_460:
+.case_330_18:
     mov rax, 47
     push rax
     mov rax, 1
@@ -15437,10 +14560,7 @@ _Lexer_method_next:
     sete al
     movzx rax, al
     cmp rax, 0
-    setne al
-.and_end_460:
-    cmp rax, 0
-    je .if_else_459
+    je .if_end_331
     mov rax, rbp
     sub rax, -16
     mov rax, [rax]
@@ -15457,8 +14577,8 @@ _Lexer_method_next:
     add rax, rcx
     pop rcx
     mov [rcx], rax
-.loop_start_461:
-.loop_continue_461:
+.loop_start_332:
+.loop_continue_332:
     mov rax, rbp
     sub rax, -16
     mov rax, [rax]
@@ -15475,10 +14595,10 @@ _Lexer_method_next:
     setl al
     movzx rax, al
     cmp rax, 0
-    jne .and_right_462
+    jne .and_right_333
     mov rax, 0
-    jmp .and_end_462
-.and_right_462:
+    jmp .and_end_333
+.and_right_333:
     mov rax, 10
     push rax
     mov rax, rbp
@@ -15501,9 +14621,9 @@ _Lexer_method_next:
     movzx rax, al
     cmp rax, 0
     setne al
-.and_end_462:
+.and_end_333:
     cmp rax, 0
-    je .loop_end_461
+    je .loop_end_332
     mov rax, rbp
     sub rax, -16
     mov rax, [rax]
@@ -15520,21 +14640,11 @@ _Lexer_method_next:
     add rax, rcx
     pop rcx
     mov [rcx], rax
-    jmp .loop_start_461
-.loop_end_461:
-    jmp .if_end_459
-.if_else_459:
-    mov rax, 47
-    push rax
-    mov rax, rbp
-    sub rax, 8
-    movsx rax, byte [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
-    cmp rax, 0
-    je .if_else_463
+    jmp .loop_start_332
+.break_332:
+.loop_end_332:
+    jmp .break_330
+.if_end_331:
     mov rax, 1
     push rax
     mov rax, 39
@@ -15554,19 +14664,7 @@ _Lexer_method_next:
     mov rsp, rbp
     pop rbp
     ret
-    jmp .if_end_463
-.if_else_463:
-    mov rax, 58
-    push rax
-    mov rax, rbp
-    sub rax, 8
-    movsx rax, byte [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
-    cmp rax, 0
-    je .if_else_464
+.case_330_19:
     mov rax, 58
     push rax
     mov rax, 1
@@ -15582,7 +14680,7 @@ _Lexer_method_next:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_end_465
+    je .if_end_334
     mov rax, 2
     push rax
     mov rax, 10
@@ -15602,7 +14700,7 @@ _Lexer_method_next:
     mov rsp, rbp
     pop rbp
     ret
-.if_end_465:
+.if_end_334:
     mov rax, 1
     push rax
     mov rax, 9
@@ -15622,19 +14720,7 @@ _Lexer_method_next:
     mov rsp, rbp
     pop rbp
     ret
-    jmp .if_end_464
-.if_else_464:
-    mov rax, 38
-    push rax
-    mov rax, rbp
-    sub rax, 8
-    movsx rax, byte [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
-    cmp rax, 0
-    je .if_else_466
+.case_330_20:
     mov rax, 38
     push rax
     mov rax, 1
@@ -15650,7 +14736,7 @@ _Lexer_method_next:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_end_467
+    je .if_end_335
     mov rax, 2
     push rax
     mov rax, 1
@@ -15670,7 +14756,7 @@ _Lexer_method_next:
     mov rsp, rbp
     pop rbp
     ret
-.if_end_467:
+.if_end_335:
     mov rax, 1
     push rax
     mov rax, 0
@@ -15690,19 +14776,7 @@ _Lexer_method_next:
     mov rsp, rbp
     pop rbp
     ret
-    jmp .if_end_466
-.if_else_466:
-    mov rax, 33
-    push rax
-    mov rax, rbp
-    sub rax, 8
-    movsx rax, byte [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
-    cmp rax, 0
-    je .if_else_468
+.case_330_21:
     mov rax, 61
     push rax
     mov rax, 1
@@ -15718,7 +14792,7 @@ _Lexer_method_next:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_end_469
+    je .if_end_336
     mov rax, 2
     push rax
     mov rax, 27
@@ -15738,7 +14812,7 @@ _Lexer_method_next:
     mov rsp, rbp
     pop rbp
     ret
-.if_end_469:
+.if_end_336:
     mov rax, 1
     push rax
     mov rax, 15
@@ -15758,19 +14832,7 @@ _Lexer_method_next:
     mov rsp, rbp
     pop rbp
     ret
-    jmp .if_end_468
-.if_else_468:
-    mov rax, 60
-    push rax
-    mov rax, rbp
-    sub rax, 8
-    movsx rax, byte [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
-    cmp rax, 0
-    je .if_else_470
+.case_330_22:
     mov rax, 60
     push rax
     mov rax, 1
@@ -15786,7 +14848,7 @@ _Lexer_method_next:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_end_471
+    je .if_end_337
     mov rax, 2
     push rax
     mov rax, 22
@@ -15806,7 +14868,7 @@ _Lexer_method_next:
     mov rsp, rbp
     pop rbp
     ret
-.if_end_471:
+.if_end_337:
     mov rax, 61
     push rax
     mov rax, 1
@@ -15822,7 +14884,7 @@ _Lexer_method_next:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_end_472
+    je .if_end_338
     mov rax, 2
     push rax
     mov rax, 21
@@ -15842,7 +14904,7 @@ _Lexer_method_next:
     mov rsp, rbp
     pop rbp
     ret
-.if_end_472:
+.if_end_338:
     mov rax, 1
     push rax
     mov rax, 23
@@ -15862,19 +14924,7 @@ _Lexer_method_next:
     mov rsp, rbp
     pop rbp
     ret
-    jmp .if_end_470
-.if_else_470:
-    mov rax, 62
-    push rax
-    mov rax, rbp
-    sub rax, 8
-    movsx rax, byte [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
-    cmp rax, 0
-    je .if_else_473
+.case_330_23:
     mov rax, 62
     push rax
     mov rax, 1
@@ -15890,7 +14940,7 @@ _Lexer_method_next:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_end_474
+    je .if_end_339
     mov rax, 2
     push rax
     mov rax, 37
@@ -15910,7 +14960,7 @@ _Lexer_method_next:
     mov rsp, rbp
     pop rbp
     ret
-.if_end_474:
+.if_end_339:
     mov rax, 61
     push rax
     mov rax, 1
@@ -15926,7 +14976,7 @@ _Lexer_method_next:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_end_475
+    je .if_end_340
     mov rax, 2
     push rax
     mov rax, 17
@@ -15946,7 +14996,7 @@ _Lexer_method_next:
     mov rsp, rbp
     pop rbp
     ret
-.if_end_475:
+.if_end_340:
     mov rax, 1
     push rax
     mov rax, 18
@@ -15966,19 +15016,7 @@ _Lexer_method_next:
     mov rsp, rbp
     pop rbp
     ret
-    jmp .if_end_473
-.if_else_473:
-    mov rax, 61
-    push rax
-    mov rax, rbp
-    sub rax, 8
-    movsx rax, byte [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
-    cmp rax, 0
-    je .if_else_476
+.case_330_24:
     mov rax, 61
     push rax
     mov rax, 1
@@ -15994,7 +15032,7 @@ _Lexer_method_next:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_end_477
+    je .if_end_341
     mov rax, 2
     push rax
     mov rax, 14
@@ -16014,7 +15052,7 @@ _Lexer_method_next:
     mov rsp, rbp
     pop rbp
     ret
-.if_end_477:
+.if_end_341:
     mov rax, 1
     push rax
     mov rax, 2
@@ -16034,19 +15072,7 @@ _Lexer_method_next:
     mov rsp, rbp
     pop rbp
     ret
-    jmp .if_end_476
-.if_else_476:
-    mov rax, 124
-    push rax
-    mov rax, rbp
-    sub rax, 8
-    movsx rax, byte [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
-    cmp rax, 0
-    je .if_else_478
+.case_330_25:
     mov rax, 124
     push rax
     mov rax, 1
@@ -16062,7 +15088,7 @@ _Lexer_method_next:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_end_479
+    je .if_end_342
     mov rax, 2
     push rax
     mov rax, 31
@@ -16082,7 +15108,7 @@ _Lexer_method_next:
     mov rsp, rbp
     pop rbp
     ret
-.if_end_479:
+.if_end_342:
     mov rax, 1
     push rax
     mov rax, 3
@@ -16102,19 +15128,7 @@ _Lexer_method_next:
     mov rsp, rbp
     pop rbp
     ret
-    jmp .if_end_478
-.if_else_478:
-    mov rax, 43
-    push rax
-    mov rax, rbp
-    sub rax, 8
-    movsx rax, byte [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
-    cmp rax, 0
-    je .if_else_480
+.case_330_26:
     mov rax, 43
     push rax
     mov rax, 1
@@ -16130,7 +15144,7 @@ _Lexer_method_next:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_end_481
+    je .if_end_343
     mov rax, 2
     push rax
     mov rax, 35
@@ -16150,7 +15164,7 @@ _Lexer_method_next:
     mov rsp, rbp
     pop rbp
     ret
-.if_end_481:
+.if_end_343:
     mov rax, 61
     push rax
     mov rax, 1
@@ -16166,7 +15180,7 @@ _Lexer_method_next:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_end_482
+    je .if_end_344
     mov rax, 2
     push rax
     mov rax, 34
@@ -16186,7 +15200,7 @@ _Lexer_method_next:
     mov rsp, rbp
     pop rbp
     ret
-.if_end_482:
+.if_end_344:
     mov rax, 1
     push rax
     mov rax, 33
@@ -16206,19 +15220,7 @@ _Lexer_method_next:
     mov rsp, rbp
     pop rbp
     ret
-    jmp .if_end_480
-.if_else_480:
-    mov rax, 45
-    push rax
-    mov rax, rbp
-    sub rax, 8
-    movsx rax, byte [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
-    cmp rax, 0
-    je .if_else_483
+.case_330_27:
     mov rax, 45
     push rax
     mov rax, 1
@@ -16234,7 +15236,7 @@ _Lexer_method_next:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_end_484
+    je .if_end_345
     mov rax, 2
     push rax
     mov rax, 26
@@ -16254,7 +15256,7 @@ _Lexer_method_next:
     mov rsp, rbp
     pop rbp
     ret
-.if_end_484:
+.if_end_345:
     mov rax, 61
     push rax
     mov rax, 1
@@ -16270,7 +15272,7 @@ _Lexer_method_next:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_end_485
+    je .if_end_346
     mov rax, 2
     push rax
     mov rax, 25
@@ -16290,7 +15292,7 @@ _Lexer_method_next:
     mov rsp, rbp
     pop rbp
     ret
-.if_end_485:
+.if_end_346:
     mov rax, 1
     push rax
     mov rax, 24
@@ -16310,9 +15312,8 @@ _Lexer_method_next:
     mov rsp, rbp
     pop rbp
     ret
-    jmp .if_end_483
-.if_else_483:
-    mov rax, global_string_338
+.default_330:
+    mov rax, global_string_353
     push rax
     mov rax, rbp
     sub rax, -16
@@ -16321,7 +15322,7 @@ _Lexer_method_next:
     call _Lexer_method_starts_with
     add rsp, 16
     cmp rax, 0
-    je .if_end_486
+    je .if_end_347
     mov rax, 128
     push rax
     mov rax, 1
@@ -16343,7 +15344,7 @@ _Lexer_method_next:
     push rax
     call func_strcpy
     add rsp, 16
-    mov rax, global_string_339
+    mov rax, global_string_354
     push rax
     mov rax, rbp
     sub rax, 16
@@ -16375,7 +15376,7 @@ _Lexer_method_next:
     push rax
     call func_strcat
     add rsp, 16
-    mov rax, global_string_340
+    mov rax, global_string_355
     push rax
     mov rax, rbp
     sub rax, 16
@@ -16442,15 +15443,15 @@ _Lexer_method_next:
     mov rsp, rbp
     pop rbp
     ret
-.if_end_486:
+.if_end_347:
     mov rax, 1
     push rax
     mov rax, 44
     pop rcx
     add rax, rcx
     mov [rbp-16], rax
-.loop_start_487:
-    mov rax, 68
+.loop_start_348:
+    mov rax, 72
     push rax
     mov rax, rbp
     sub rax, 16
@@ -16460,7 +15461,7 @@ _Lexer_method_next:
     setl al
     movzx rax, al
     cmp rax, 0
-    je .loop_end_487
+    je .loop_end_348
     mov rax, rbp
     sub rax, 16
     mov rax, [rax]
@@ -16479,7 +15480,7 @@ _Lexer_method_next:
     call _Lexer_method_starts_with
     add rsp, 16
     cmp rax, 0
-    je .if_end_488
+    je .if_end_349
     mov rax, rbp
     sub rax, 24
     mov rax, [rax]
@@ -16506,8 +15507,8 @@ _Lexer_method_next:
     mov rsp, rbp
     pop rbp
     ret
-.if_end_488:
-.loop_continue_487:
+.if_end_349:
+.loop_continue_348:
     mov rax, rbp
     sub rax, 16
     push rax
@@ -16520,8 +15521,9 @@ _Lexer_method_next:
     add rax, rcx
     pop rcx
     mov [rcx], rax
-    jmp .loop_start_487
-.loop_end_487:
+    jmp .loop_start_348
+.break_348:
+.loop_end_348:
     mov rax, rbp
     sub rax, 8
     movsx rax, byte [rax]
@@ -16529,7 +15531,7 @@ _Lexer_method_next:
     call func_is_digit
     add rsp, 8
     cmp rax, 0
-    je .if_end_489
+    je .if_end_350
     mov rax, rbp
     sub rax, -16
     mov rax, [rax]
@@ -16550,10 +15552,10 @@ _Lexer_method_next:
     sete al
     movzx rax, al
     cmp rax, 0
-    jne .and_right_491
+    jne .and_right_352
     mov rax, 0
-    jmp .and_end_491
-.and_right_491:
+    jmp .and_end_352
+.and_right_352:
     mov rax, 120
     push rax
     mov rax, 1
@@ -16570,9 +15572,9 @@ _Lexer_method_next:
     movzx rax, al
     cmp rax, 0
     setne al
-.and_end_491:
+.and_end_352:
     cmp rax, 0
-    je .if_else_490
+    je .if_else_351
     mov rax, rbp
     sub rax, 16
     push rax
@@ -16602,8 +15604,8 @@ _Lexer_method_next:
     movsx rax, byte [rax]
     pop rcx
     mov [rcx], al
-.loop_start_492:
-.loop_continue_492:
+.loop_start_353:
+.loop_continue_353:
     mov rax, rbp
     sub rax, 8
     movsx rax, byte [rax]
@@ -16611,7 +15613,7 @@ _Lexer_method_next:
     call func_is_hex
     add rsp, 8
     cmp rax, 0
-    je .loop_end_492
+    je .loop_end_353
     mov rax, 97
     push rax
     mov rax, rbp
@@ -16622,10 +15624,10 @@ _Lexer_method_next:
     setge al
     movzx rax, al
     cmp rax, 0
-    jne .and_right_494
+    jne .and_right_355
     mov rax, 0
-    jmp .and_end_494
-.and_right_494:
+    jmp .and_end_355
+.and_right_355:
     mov rax, 102
     push rax
     mov rax, rbp
@@ -16637,9 +15639,9 @@ _Lexer_method_next:
     movzx rax, al
     cmp rax, 0
     setne al
-.and_end_494:
+.and_end_355:
     cmp rax, 0
-    je .if_else_493
+    je .if_else_354
     mov rax, rbp
     sub rax, 24
     push rax
@@ -16666,8 +15668,8 @@ _Lexer_method_next:
     add rax, rcx
     pop rcx
     mov [rcx], rax
-    jmp .if_end_493
-.if_else_493:
+    jmp .if_end_354
+.if_else_354:
     mov rax, 65
     push rax
     mov rax, rbp
@@ -16678,10 +15680,10 @@ _Lexer_method_next:
     setge al
     movzx rax, al
     cmp rax, 0
-    jne .and_right_496
+    jne .and_right_357
     mov rax, 0
-    jmp .and_end_496
-.and_right_496:
+    jmp .and_end_357
+.and_right_357:
     mov rax, 70
     push rax
     mov rax, rbp
@@ -16693,9 +15695,9 @@ _Lexer_method_next:
     movzx rax, al
     cmp rax, 0
     setne al
-.and_end_496:
+.and_end_357:
     cmp rax, 0
-    je .if_else_495
+    je .if_else_356
     mov rax, rbp
     sub rax, 24
     push rax
@@ -16722,8 +15724,8 @@ _Lexer_method_next:
     add rax, rcx
     pop rcx
     mov [rcx], rax
-    jmp .if_end_495
-.if_else_495:
+    jmp .if_end_356
+.if_else_356:
     mov rax, rbp
     sub rax, 24
     push rax
@@ -16746,8 +15748,8 @@ _Lexer_method_next:
     add rax, rcx
     pop rcx
     mov [rcx], rax
-.if_end_495:
-.if_end_493:
+.if_end_356:
+.if_end_354:
     mov rax, rbp
     sub rax, 16
     push rax
@@ -16777,10 +15779,11 @@ _Lexer_method_next:
     movsx rax, byte [rax]
     pop rcx
     mov [rcx], al
-    jmp .loop_start_492
-.loop_end_492:
-    jmp .if_end_490
-.if_else_490:
+    jmp .loop_start_353
+.break_353:
+.loop_end_353:
+    jmp .if_end_351
+.if_else_351:
     mov rax, 48
     push rax
     mov rax, rbp
@@ -16791,10 +15794,10 @@ _Lexer_method_next:
     sete al
     movzx rax, al
     cmp rax, 0
-    jne .and_right_498
+    jne .and_right_359
     mov rax, 0
-    jmp .and_end_498
-.and_right_498:
+    jmp .and_end_359
+.and_right_359:
     mov rax, 98
     push rax
     mov rax, 1
@@ -16811,9 +15814,9 @@ _Lexer_method_next:
     movzx rax, al
     cmp rax, 0
     setne al
-.and_end_498:
+.and_end_359:
     cmp rax, 0
-    je .if_else_497
+    je .if_else_358
     mov rax, rbp
     sub rax, 16
     push rax
@@ -16843,8 +15846,8 @@ _Lexer_method_next:
     movsx rax, byte [rax]
     pop rcx
     mov [rcx], al
-.loop_start_499:
-.loop_continue_499:
+.loop_start_360:
+.loop_continue_360:
     mov rax, 48
     push rax
     mov rax, rbp
@@ -16855,10 +15858,10 @@ _Lexer_method_next:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .or_right_500
+    je .or_right_361
     mov rax, 1
-    jmp .or_end_500
-.or_right_500:
+    jmp .or_end_361
+.or_right_361:
     mov rax, 49
     push rax
     mov rax, rbp
@@ -16870,9 +15873,9 @@ _Lexer_method_next:
     movzx rax, al
     cmp rax, 0
     setne al
-.or_end_500:
+.or_end_361:
     cmp rax, 0
-    je .loop_end_499
+    je .loop_end_360
     mov rax, rbp
     sub rax, 24
     push rax
@@ -16924,12 +15927,13 @@ _Lexer_method_next:
     movsx rax, byte [rax]
     pop rcx
     mov [rcx], al
-    jmp .loop_start_499
-.loop_end_499:
-    jmp .if_end_497
-.if_else_497:
-.loop_start_501:
-.loop_continue_501:
+    jmp .loop_start_360
+.break_360:
+.loop_end_360:
+    jmp .if_end_358
+.if_else_358:
+.loop_start_362:
+.loop_continue_362:
     mov rax, rbp
     sub rax, -16
     mov rax, [rax]
@@ -16944,10 +15948,10 @@ _Lexer_method_next:
     setl al
     movzx rax, al
     cmp rax, 0
-    jne .and_right_502
+    jne .and_right_363
     mov rax, 0
-    jmp .and_end_502
-.and_right_502:
+    jmp .and_end_363
+.and_right_363:
     mov rax, rbp
     sub rax, 16
     mov rax, [rax]
@@ -16965,9 +15969,9 @@ _Lexer_method_next:
     add rsp, 8
     cmp rax, 0
     setne al
-.and_end_502:
+.and_end_363:
     cmp rax, 0
-    je .loop_end_501
+    je .loop_end_362
     mov rax, rbp
     sub rax, 16
     push rax
@@ -16980,8 +15984,9 @@ _Lexer_method_next:
     add rax, rcx
     pop rcx
     mov [rcx], rax
-    jmp .loop_start_501
-.loop_end_501:
+    jmp .loop_start_362
+.break_362:
+.loop_end_362:
     mov rax, rbp
     sub rax, -16
     mov rax, [rax]
@@ -16996,10 +16001,10 @@ _Lexer_method_next:
     setl al
     movzx rax, al
     cmp rax, 0
-    jne .and_right_504
+    jne .and_right_365
     mov rax, 0
-    jmp .and_end_504
-.and_right_504:
+    jmp .and_end_365
+.and_right_365:
     mov rax, 46
     push rax
     mov rax, rbp
@@ -17020,9 +16025,9 @@ _Lexer_method_next:
     movzx rax, al
     cmp rax, 0
     setne al
-.and_end_504:
+.and_end_365:
     cmp rax, 0
-    je .if_else_503
+    je .if_else_364
     mov rax, rbp
     sub rax, 16
     push rax
@@ -17035,8 +16040,8 @@ _Lexer_method_next:
     add rax, rcx
     pop rcx
     mov [rcx], rax
-.loop_start_505:
-.loop_continue_505:
+.loop_start_366:
+.loop_continue_366:
     mov rax, rbp
     sub rax, -16
     mov rax, [rax]
@@ -17051,10 +16056,10 @@ _Lexer_method_next:
     setl al
     movzx rax, al
     cmp rax, 0
-    jne .and_right_506
+    jne .and_right_367
     mov rax, 0
-    jmp .and_end_506
-.and_right_506:
+    jmp .and_end_367
+.and_right_367:
     mov rax, rbp
     sub rax, 16
     mov rax, [rax]
@@ -17072,9 +16077,9 @@ _Lexer_method_next:
     add rsp, 8
     cmp rax, 0
     setne al
-.and_end_506:
+.and_end_367:
     cmp rax, 0
-    je .loop_end_505
+    je .loop_end_366
     mov rax, rbp
     sub rax, 16
     push rax
@@ -17087,16 +16092,17 @@ _Lexer_method_next:
     add rax, rcx
     pop rcx
     mov [rcx], rax
-    jmp .loop_start_505
-.loop_end_505:
+    jmp .loop_start_366
+.break_366:
+.loop_end_366:
     mov rax, rbp
     sub rax, 32
     push rax
     mov rax, 1
     pop rcx
     mov [rcx], rax
-    jmp .if_end_503
-.if_else_503:
+    jmp .if_end_364
+.if_else_364:
     mov rax, rbp
     sub rax, 24
     push rax
@@ -17118,9 +16124,9 @@ _Lexer_method_next:
     add rsp, 8
     pop rcx
     mov [rcx], rax
-.if_end_503:
-.if_end_497:
-.if_end_490:
+.if_end_364:
+.if_end_358:
+.if_end_351:
     mov rax, rbp
     sub rax, 56
     push rax
@@ -17137,7 +16143,7 @@ _Lexer_method_next:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_else_507
+    je .if_else_368
     mov rax, rbp
     sub rax, 56
     push rax
@@ -17151,8 +16157,8 @@ _Lexer_method_next:
     push rax
     call func_token_from_int
     add rsp, 24
-    jmp .if_end_507
-.if_else_507:
+    jmp .if_end_368
+.if_else_368:
     mov rax, rbp
     sub rax, -16
     mov rax, [rax]
@@ -17234,7 +16240,7 @@ _Lexer_method_next:
     mov rax, 16
     pop rcx
     mov [rcx], rax
-.if_end_507:
+.if_end_368:
     mov rax, rbp
     sub rax, -16
     mov rax, [rax]
@@ -17259,7 +16265,7 @@ _Lexer_method_next:
     mov rsp, rbp
     pop rbp
     ret
-.if_end_489:
+.if_end_350:
     mov rax, rbp
     sub rax, -16
     mov rax, [rax]
@@ -17278,15 +16284,15 @@ _Lexer_method_next:
     call func_is_alpha
     add rsp, 8
     cmp rax, 0
-    je .if_end_508
+    je .if_end_369
     mov rax, rbp
     sub rax, -16
     mov rax, [rax]
     add rax, 16
     mov rax, [rax]
     mov [rbp-16], rax
-.loop_start_509:
-.loop_continue_509:
+.loop_start_370:
+.loop_continue_370:
     mov rax, rbp
     sub rax, -16
     mov rax, [rax]
@@ -17301,10 +16307,10 @@ _Lexer_method_next:
     setl al
     movzx rax, al
     cmp rax, 0
-    jne .and_right_510
+    jne .and_right_371
     mov rax, 0
-    jmp .and_end_510
-.and_right_510:
+    jmp .and_end_371
+.and_right_371:
     mov rax, rbp
     sub rax, 16
     mov rax, [rax]
@@ -17322,9 +16328,9 @@ _Lexer_method_next:
     add rsp, 8
     cmp rax, 0
     setne al
-.and_end_510:
+.and_end_371:
     cmp rax, 0
-    je .loop_end_509
+    je .loop_end_370
     mov rax, rbp
     sub rax, 16
     push rax
@@ -17337,8 +16343,9 @@ _Lexer_method_next:
     add rax, rcx
     pop rcx
     mov [rcx], rax
-    jmp .loop_start_509
-.loop_end_509:
+    jmp .loop_start_370
+.break_370:
+.loop_end_370:
     mov rax, rbp
     sub rax, -16
     mov rax, [rax]
@@ -17437,7 +16444,7 @@ _Lexer_method_next:
     mov rsp, rbp
     pop rbp
     ret
-.if_end_508:
+.if_end_369:
     mov rax, 34
     push rax
     mov rax, rbp
@@ -17448,7 +16455,7 @@ _Lexer_method_next:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_end_511
+    je .if_end_372
     mov rax, 1
     push rax
     mov rax, rbp
@@ -17459,8 +16466,8 @@ _Lexer_method_next:
     pop rcx
     add rax, rcx
     mov [rbp-16], rax
-.loop_start_512:
-.loop_continue_512:
+.loop_start_373:
+.loop_continue_373:
     mov rax, rbp
     sub rax, -16
     mov rax, [rax]
@@ -17475,10 +16482,10 @@ _Lexer_method_next:
     setl al
     movzx rax, al
     cmp rax, 0
-    jne .and_right_513
+    jne .and_right_374
     mov rax, 0
-    jmp .and_end_513
-.and_right_513:
+    jmp .and_end_374
+.and_right_374:
     mov rax, 34
     push rax
     mov rax, rbp
@@ -17499,9 +16506,9 @@ _Lexer_method_next:
     movzx rax, al
     cmp rax, 0
     setne al
-.and_end_513:
+.and_end_374:
     cmp rax, 0
-    je .loop_end_512
+    je .loop_end_373
     mov rax, rbp
     sub rax, 16
     push rax
@@ -17514,8 +16521,9 @@ _Lexer_method_next:
     add rax, rcx
     pop rcx
     mov [rcx], rax
-    jmp .loop_start_512
-.loop_end_512:
+    jmp .loop_start_373
+.break_373:
+.loop_end_373:
     mov rax, rbp
     sub rax, 40
     push rax
@@ -17539,17 +16547,17 @@ _Lexer_method_next:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_end_514
-    mov rax, global_string_341
+    je .if_end_375
+    mov rax, global_string_356
     push rax
     mov rax, rbp
     sub rax, 40
     push rax
-    mov rax, global_string_342
+    mov rax, global_string_357
     push rax
     call func_die_loc
     add rsp, 24
-.if_end_514:
+.if_end_375:
     mov rax, 1
     push rax
     mov rax, rbp
@@ -17659,7 +16667,7 @@ _Lexer_method_next:
     mov rsp, rbp
     pop rbp
     ret
-.if_end_511:
+.if_end_372:
     mov rax, 39
     push rax
     mov rax, rbp
@@ -17670,7 +16678,7 @@ _Lexer_method_next:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_end_515
+    je .if_end_376
     mov rax, 1
     push rax
     mov rax, rbp
@@ -17708,7 +16716,7 @@ _Lexer_method_next:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_end_516
+    je .if_end_377
     mov rax, rbp
     sub rax, 16
     push rax
@@ -17748,15 +16756,15 @@ _Lexer_method_next:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_else_517
+    je .if_else_378
     mov rax, rbp
     sub rax, 8
     push rax
     mov rax, 10
     pop rcx
     mov [rcx], al
-    jmp .if_end_517
-.if_else_517:
+    jmp .if_end_378
+.if_else_378:
     mov rax, 116
     push rax
     mov rax, rbp
@@ -17767,15 +16775,15 @@ _Lexer_method_next:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_else_518
+    je .if_else_379
     mov rax, rbp
     sub rax, 8
     push rax
     mov rax, 9
     pop rcx
     mov [rcx], al
-    jmp .if_end_518
-.if_else_518:
+    jmp .if_end_379
+.if_else_379:
     mov rax, 110
     push rax
     mov rax, rbp
@@ -17786,15 +16794,15 @@ _Lexer_method_next:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_else_519
+    je .if_else_380
     mov rax, rbp
     sub rax, 8
     push rax
     mov rax, 10
     pop rcx
     mov [rcx], al
-    jmp .if_end_519
-.if_else_519:
+    jmp .if_end_380
+.if_else_380:
     mov rax, 114
     push rax
     mov rax, rbp
@@ -17805,15 +16813,15 @@ _Lexer_method_next:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_else_520
+    je .if_else_381
     mov rax, rbp
     sub rax, 8
     push rax
     mov rax, 13
     pop rcx
     mov [rcx], al
-    jmp .if_end_520
-.if_else_520:
+    jmp .if_end_381
+.if_else_381:
     mov rax, 116
     push rax
     mov rax, rbp
@@ -17824,15 +16832,15 @@ _Lexer_method_next:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_else_521
+    je .if_else_382
     mov rax, rbp
     sub rax, 8
     push rax
     mov rax, 9
     pop rcx
     mov [rcx], al
-    jmp .if_end_521
-.if_else_521:
+    jmp .if_end_382
+.if_else_382:
     mov rax, 48
     push rax
     mov rax, rbp
@@ -17843,22 +16851,22 @@ _Lexer_method_next:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_else_522
+    je .if_else_383
     mov rax, rbp
     sub rax, 8
     push rax
     mov rax, 0
     pop rcx
     mov [rcx], al
-    jmp .if_end_522
-.if_else_522:
-.if_end_522:
-.if_end_521:
-.if_end_520:
-.if_end_519:
-.if_end_518:
-.if_end_517:
-.if_end_516:
+    jmp .if_end_383
+.if_else_383:
+.if_end_383:
+.if_end_382:
+.if_end_381:
+.if_end_380:
+.if_end_379:
+.if_end_378:
+.if_end_377:
     mov rax, rbp
     sub rax, 40
     push rax
@@ -17909,8 +16917,12 @@ _Lexer_method_next:
     mov rsp, rbp
     pop rbp
     ret
-.if_end_515:
-    mov rax, global_string_343
+.if_end_376:
+    mov rax, global_string_358
+    push rax
+    call func_puts
+    add rsp, 8
+    mov rax, global_string_359
     push rax
     call func_puts
     add rsp, 8
@@ -17920,43 +16932,18 @@ _Lexer_method_next:
     push rax
     call func_putc
     add rsp, 8
-    mov rax, global_string_344
+    mov rax, global_string_360
     push rax
     call func_putsln
     add rsp, 8
-    mov rax, global_string_345
+    mov rax, 1
     push rax
-    call func_die
+    call func_exit
     add rsp, 8
-.if_end_483:
-.if_end_480:
-.if_end_478:
-.if_end_476:
-.if_end_473:
-.if_end_470:
-.if_end_468:
-.if_end_466:
-.if_end_464:
-.if_end_463:
-.if_end_459:
-.if_end_458:
-.if_end_457:
-.if_end_456:
-.if_end_455:
-.if_end_454:
-.if_end_453:
-.if_end_452:
-.if_end_451:
-.if_end_450:
-.if_end_449:
-.if_end_448:
-.if_end_447:
-.if_end_446:
-.if_end_445:
-.if_end_444:
-.if_end_443:
-    jmp .loop_start_442
-.loop_end_442:
+    .break_330:
+    jmp .loop_start_329
+.break_329:
+.loop_end_329:
     mov rax, 0
     push rax
     mov rax, 13
@@ -18009,7 +16996,7 @@ _Lexer_method_next_assert:
     setne al
     movzx rax, al
     cmp rax, 0
-    je .if_end_523
+    je .if_end_384
     mov rax, rbp
     sub rax, -24
     mov rax, [rax]
@@ -18017,7 +17004,7 @@ _Lexer_method_next_assert:
     push rax
     call func_location_print
     add rsp, 8
-    mov rax, global_string_346
+    mov rax, global_string_361
     push rax
     call func_puts
     add rsp, 8
@@ -18030,7 +17017,7 @@ _Lexer_method_next_assert:
     push rax
     call func_puts
     add rsp, 8
-    mov rax, global_string_347
+    mov rax, global_string_362
     push rax
     call func_puts
     add rsp, 8
@@ -18053,7 +17040,7 @@ _Lexer_method_next_assert:
     push rax
     call func_exit
     add rsp, 8
-.if_end_523:
+.if_end_384:
     mov rsp, rbp
     pop rbp
     mov qword rax, 0
@@ -18243,7 +17230,7 @@ func_find_local_variable:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_end_524
+    je .if_end_385
     mov rax, global_vars
     add rax, 0
     mov rax, [rax]
@@ -18252,7 +17239,7 @@ func_find_local_variable:
     mov rsp, rbp
     pop rbp
     ret
-.if_end_524:
+.if_end_385:
     mov rax, 1
     push rax
     mov rax, global_vars
@@ -18263,7 +17250,7 @@ func_find_local_variable:
     pop rcx
     sub rax, rcx
     mov [rbp-8], rax
-.loop_start_525:
+.loop_start_386:
     mov rax, 0
     push rax
     mov rax, rbp
@@ -18274,7 +17261,7 @@ func_find_local_variable:
     setge al
     movzx rax, al
     cmp rax, 0
-    je .loop_end_525
+    je .loop_end_386
     mov rax, rbp
     sub rax, 8
     mov rax, [rax]
@@ -18288,7 +17275,7 @@ func_find_local_variable:
     mov [rbp-16], rax
     mov rax, 0
     mov [rbp-24], rax
-.loop_start_526:
+.loop_start_387:
     mov rax, rbp
     sub rax, 16
     mov rax, [rax]
@@ -18306,7 +17293,7 @@ func_find_local_variable:
     setl al
     movzx rax, al
     cmp rax, 0
-    je .loop_end_526
+    je .loop_end_387
     mov rax, rbp
     sub rax, 24
     mov rax, [rax]
@@ -18334,7 +17321,7 @@ func_find_local_variable:
     call func_streq
     add rsp, 16
     cmp rax, 0
-    je .if_end_527
+    je .if_end_388
     mov rax, rbp
     sub rax, 32
     mov rax, [rax]
@@ -18343,8 +17330,8 @@ func_find_local_variable:
     mov rsp, rbp
     pop rbp
     ret
-.if_end_527:
-.loop_continue_526:
+.if_end_388:
+.loop_continue_387:
     mov rax, rbp
     sub rax, 24
     push rax
@@ -18357,9 +17344,10 @@ func_find_local_variable:
     add rax, rcx
     pop rcx
     mov [rcx], rax
-    jmp .loop_start_526
-.loop_end_526:
-.loop_continue_525:
+    jmp .loop_start_387
+.break_387:
+.loop_end_387:
+.loop_continue_386:
     mov rax, rbp
     sub rax, 8
     push rax
@@ -18372,8 +17360,9 @@ func_find_local_variable:
     sub rax, rcx
     pop rcx
     mov [rcx], rax
-    jmp .loop_start_525
-.loop_end_525:
+    jmp .loop_start_386
+.break_386:
+.loop_end_386:
     mov rax, global_vars
     add rax, 1073741936
     mov rax, [rax]
@@ -18383,7 +17372,7 @@ func_find_local_variable:
     mov [rbp-8], rax
     mov rax, 0
     mov [rbp-16], rax
-.loop_start_528:
+.loop_start_389:
     mov rax, rbp
     sub rax, 8
     mov rax, [rax]
@@ -18398,7 +17387,7 @@ func_find_local_variable:
     setl al
     movzx rax, al
     cmp rax, 0
-    je .loop_end_528
+    je .loop_end_389
     mov rax, rbp
     sub rax, 16
     mov rax, [rax]
@@ -18423,7 +17412,7 @@ func_find_local_variable:
     call func_streq
     add rsp, 16
     cmp rax, 0
-    je .if_end_529
+    je .if_end_390
     mov rax, rbp
     sub rax, 24
     mov rax, [rax]
@@ -18432,8 +17421,8 @@ func_find_local_variable:
     mov rsp, rbp
     pop rbp
     ret
-.if_end_529:
-.loop_continue_528:
+.if_end_390:
+.loop_continue_389:
     mov rax, rbp
     sub rax, 16
     push rax
@@ -18446,8 +17435,9 @@ func_find_local_variable:
     add rax, rcx
     pop rcx
     mov [rcx], rax
-    jmp .loop_start_528
-.loop_end_528:
+    jmp .loop_start_389
+.break_389:
+.loop_end_389:
     mov rax, global_vars
     add rax, 0
     mov rax, [rax]
@@ -18475,7 +17465,7 @@ func_find_compound_type:
     pop rcx
     sub rax, rcx
     mov [rbp-8], rax
-.loop_start_530:
+.loop_start_391:
     mov rax, 0
     push rax
     mov rax, rbp
@@ -18486,7 +17476,7 @@ func_find_compound_type:
     setge al
     movzx rax, al
     cmp rax, 0
-    je .loop_end_530
+    je .loop_end_391
     mov rax, rbp
     sub rax, 8
     mov rax, [rax]
@@ -18511,7 +17501,7 @@ func_find_compound_type:
     call func_streq
     add rsp, 16
     cmp rax, 0
-    je .if_end_531
+    je .if_end_392
     mov rax, rbp
     sub rax, 16
     mov rax, [rax]
@@ -18520,8 +17510,8 @@ func_find_compound_type:
     mov rsp, rbp
     pop rbp
     ret
-.if_end_531:
-.loop_continue_530:
+.if_end_392:
+.loop_continue_391:
     mov rax, rbp
     sub rax, 8
     push rax
@@ -18534,8 +17524,9 @@ func_find_compound_type:
     sub rax, rcx
     pop rcx
     mov [rcx], rax
-    jmp .loop_start_530
-.loop_end_530:
+    jmp .loop_start_391
+.break_391:
+.loop_end_391:
     mov rax, global_vars
     add rax, 0
     mov rax, [rax]
@@ -18555,7 +17546,7 @@ func_find_global_variable:
     sub rsp, 16
     mov rax, 0
     mov [rbp-8], rax
-.loop_start_532:
+.loop_start_393:
     mov rax, global_vars
     add rax, 1073741960
     mov rax, [rax]
@@ -18570,7 +17561,7 @@ func_find_global_variable:
     setl al
     movzx rax, al
     cmp rax, 0
-    je .loop_end_532
+    je .loop_end_393
     mov rax, rbp
     sub rax, 8
     mov rax, [rax]
@@ -18595,7 +17586,7 @@ func_find_global_variable:
     call func_streq
     add rsp, 16
     cmp rax, 0
-    je .if_end_533
+    je .if_end_394
     mov rax, rbp
     sub rax, 16
     mov rax, [rax]
@@ -18604,8 +17595,8 @@ func_find_global_variable:
     mov rsp, rbp
     pop rbp
     ret
-.if_end_533:
-.loop_continue_532:
+.if_end_394:
+.loop_continue_393:
     mov rax, rbp
     sub rax, 8
     push rax
@@ -18618,8 +17609,9 @@ func_find_global_variable:
     add rax, rcx
     pop rcx
     mov [rcx], rax
-    jmp .loop_start_532
-.loop_end_532:
+    jmp .loop_start_393
+.break_393:
+.loop_end_393:
     mov rax, global_vars
     add rax, 0
     mov rax, [rax]
@@ -18639,7 +17631,7 @@ func_find_function_definition:
     sub rsp, 16
     mov rax, 0
     mov [rbp-8], rax
-.loop_start_534:
+.loop_start_395:
     mov rax, rbp
     sub rax, -24
     mov rax, [rax]
@@ -18654,7 +17646,7 @@ func_find_function_definition:
     setl al
     movzx rax, al
     cmp rax, 0
-    je .loop_end_534
+    je .loop_end_395
     mov rax, rbp
     sub rax, 8
     mov rax, [rax]
@@ -18680,7 +17672,7 @@ func_find_function_definition:
     call func_streq
     add rsp, 16
     cmp rax, 0
-    je .if_end_535
+    je .if_end_396
     mov rax, rbp
     sub rax, 16
     mov rax, [rax]
@@ -18689,8 +17681,8 @@ func_find_function_definition:
     mov rsp, rbp
     pop rbp
     ret
-.if_end_535:
-.loop_continue_534:
+.if_end_396:
+.loop_continue_395:
     mov rax, rbp
     sub rax, 8
     push rax
@@ -18703,8 +17695,9 @@ func_find_function_definition:
     add rax, rcx
     pop rcx
     mov [rcx], rax
-    jmp .loop_start_534
-.loop_end_534:
+    jmp .loop_start_395
+.break_395:
+.loop_end_395:
     mov rax, global_vars
     add rax, 0
     mov rax, [rax]
@@ -18724,7 +17717,7 @@ func_find_constant:
     sub rsp, 16
     mov rax, 0
     mov [rbp-8], rax
-.loop_start_536:
+.loop_start_397:
     mov rax, global_vars
     add rax, 1073741984
     mov rax, [rax]
@@ -18739,7 +17732,7 @@ func_find_constant:
     setl al
     movzx rax, al
     cmp rax, 0
-    je .loop_end_536
+    je .loop_end_397
     mov rax, rbp
     sub rax, 8
     mov rax, [rax]
@@ -18765,7 +17758,7 @@ func_find_constant:
     call func_streq
     add rsp, 16
     cmp rax, 0
-    je .if_end_537
+    je .if_end_398
     mov rax, rbp
     sub rax, 16
     mov rax, [rax]
@@ -18774,8 +17767,8 @@ func_find_constant:
     mov rsp, rbp
     pop rbp
     ret
-.if_end_537:
-.loop_continue_536:
+.if_end_398:
+.loop_continue_397:
     mov rax, rbp
     sub rax, 8
     push rax
@@ -18788,8 +17781,9 @@ func_find_constant:
     add rax, rcx
     pop rcx
     mov [rcx], rax
-    jmp .loop_start_536
-.loop_end_536:
+    jmp .loop_start_397
+.break_397:
+.loop_end_397:
     mov rax, global_vars
     add rax, 0
     mov rax, [rax]
@@ -18814,14 +17808,14 @@ func_identifier_exists:
     call func_find_local_variable
     add rsp, 8
     cmp rax, 0
-    je .if_end_538
+    je .if_end_399
     mov rax, 1
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_538:
+.if_end_399:
     mov rax, rbp
     sub rax, -16
     mov rax, [rax]
@@ -18829,14 +17823,14 @@ func_identifier_exists:
     call func_find_global_variable
     add rsp, 8
     cmp rax, 0
-    je .if_end_539
+    je .if_end_400
     mov rax, 1
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_539:
+.if_end_400:
     mov rax, global_vars
     add rax, 1073741928
     mov rax, [rax]
@@ -18848,14 +17842,14 @@ func_identifier_exists:
     call func_find_function_definition
     add rsp, 16
     cmp rax, 0
-    je .if_end_540
+    je .if_end_401
     mov rax, 1
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_540:
+.if_end_401:
     mov rax, rbp
     sub rax, -16
     mov rax, [rax]
@@ -18863,14 +17857,14 @@ func_identifier_exists:
     call func_find_builtin_function
     add rsp, 8
     cmp rax, 0
-    je .if_end_541
+    je .if_end_402
     mov rax, 1
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_541:
+.if_end_402:
     mov rax, rbp
     sub rax, -16
     mov rax, [rax]
@@ -18878,14 +17872,14 @@ func_identifier_exists:
     call func_find_compound_type
     add rsp, 8
     cmp rax, 0
-    je .if_end_542
+    je .if_end_403
     mov rax, 1
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_542:
+.if_end_403:
     mov rax, rbp
     sub rax, -16
     mov rax, [rax]
@@ -18893,14 +17887,14 @@ func_identifier_exists:
     call func_find_constant
     add rsp, 8
     cmp rax, 0
-    je .if_end_543
+    je .if_end_404
     mov rax, 1
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_543:
+.if_end_404:
     mov rax, 0
     push rax
     pop rax
@@ -18928,9 +17922,7 @@ func_eval_constexp:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_else_544
-    mov rax, 0
-    push rax
+    je .if_else_405
     mov rax, rbp
     sub rax, -16
     mov rax, [rax]
@@ -18938,17 +17930,12 @@ func_eval_constexp:
     mov rax, [rax]
     add rax, 0
     mov rax, [rax]
-    pop rcx
-    cmp rax, rcx
-    setne al
-    movzx rax, al
     cmp rax, 0
-    je .if_end_545
-    mov rax, global_string_348
-    push rax
-    call func_die
-    add rsp, 8
-.if_end_545:
+    je .case_406_0
+    cmp rax, 1
+    je .case_406_1
+    jmp .default_406
+.case_406_0:
     mov rax, rbp
     sub rax, -16
     mov rax, [rax]
@@ -18960,8 +17947,33 @@ func_eval_constexp:
     mov rsp, rbp
     pop rbp
     ret
-    jmp .if_end_544
-.if_else_544:
+.case_406_1:
+    mov rax, rbp
+    sub rax, -16
+    mov rax, [rax]
+    add rax, 16
+    add rax, 0
+    movsx rax, byte [rax]
+    push rax
+    pop rax
+    mov rsp, rbp
+    pop rbp
+    ret
+.default_406:
+    .break_406:
+    mov rax, global_string_363
+    push rax
+    mov rax, rbp
+    sub rax, -24
+    mov rax, [rax]
+    add rax, 8
+    push rax
+    mov rax, global_string_364
+    push rax
+    call func_die_loc
+    add rsp, 24
+    jmp .if_end_405
+.if_else_405:
     mov rax, rbp
     sub rax, -16
     mov rax, [rax]
@@ -18971,7 +17983,11 @@ func_eval_constexp:
     call func_is_binary_op
     add rsp, 8
     cmp rax, 0
-    je .if_else_546
+    je .if_end_407
+    mov rax, rbp
+    sub rax, -24
+    mov rax, [rax]
+    push rax
     mov rax, rbp
     sub rax, -16
     mov rax, [rax]
@@ -18980,8 +17996,12 @@ func_eval_constexp:
     mov rax, [rax]
     push rax
     call func_eval_constexp
-    add rsp, 8
+    add rsp, 16
     mov [rbp-8], rax
+    mov rax, rbp
+    sub rax, -24
+    mov rax, [rax]
+    push rax
     mov rax, rbp
     sub rax, -16
     mov rax, [rax]
@@ -18990,21 +18010,35 @@ func_eval_constexp:
     mov rax, [rax]
     push rax
     call func_eval_constexp
-    add rsp, 8
+    add rsp, 16
     mov [rbp-16], rax
-    mov rax, 5
-    push rax
     mov rax, rbp
     sub rax, -16
     mov rax, [rax]
     add rax, 0
     mov rax, [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
-    cmp rax, 0
-    je .if_else_547
+    cmp rax, 5
+    je .case_408_0
+    cmp rax, 6
+    je .case_408_1
+    cmp rax, 15
+    je .case_408_2
+    cmp rax, 13
+    je .case_408_3
+    cmp rax, 16
+    je .case_408_4
+    cmp rax, 7
+    je .case_408_5
+    cmp rax, 8
+    je .case_408_6
+    cmp rax, 9
+    je .case_408_7
+    cmp rax, 7
+    je .case_408_8
+    cmp rax, 7
+    je .case_408_9
+    jmp .default_408
+.case_408_0:
     mov rax, rbp
     sub rax, 16
     mov rax, [rax]
@@ -19019,21 +18053,7 @@ func_eval_constexp:
     mov rsp, rbp
     pop rbp
     ret
-    jmp .if_end_547
-.if_else_547:
-    mov rax, 6
-    push rax
-    mov rax, rbp
-    sub rax, -16
-    mov rax, [rax]
-    add rax, 0
-    mov rax, [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
-    cmp rax, 0
-    je .if_else_548
+.case_408_1:
     mov rax, rbp
     sub rax, 16
     mov rax, [rax]
@@ -19048,21 +18068,7 @@ func_eval_constexp:
     mov rsp, rbp
     pop rbp
     ret
-    jmp .if_end_548
-.if_else_548:
-    mov rax, 15
-    push rax
-    mov rax, rbp
-    sub rax, -16
-    mov rax, [rax]
-    add rax, 0
-    mov rax, [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
-    cmp rax, 0
-    je .if_else_549
+.case_408_2:
     mov rax, rbp
     sub rax, 16
     mov rax, [rax]
@@ -19077,21 +18083,7 @@ func_eval_constexp:
     mov rsp, rbp
     pop rbp
     ret
-    jmp .if_end_549
-.if_else_549:
-    mov rax, 13
-    push rax
-    mov rax, rbp
-    sub rax, -16
-    mov rax, [rax]
-    add rax, 0
-    mov rax, [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
-    cmp rax, 0
-    je .if_else_550
+.case_408_3:
     mov rax, rbp
     sub rax, 16
     mov rax, [rax]
@@ -19106,21 +18098,7 @@ func_eval_constexp:
     mov rsp, rbp
     pop rbp
     ret
-    jmp .if_end_550
-.if_else_550:
-    mov rax, 16
-    push rax
-    mov rax, rbp
-    sub rax, -16
-    mov rax, [rax]
-    add rax, 0
-    mov rax, [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
-    cmp rax, 0
-    je .if_else_551
+.case_408_4:
     mov rax, rbp
     sub rax, 16
     mov rax, [rax]
@@ -19135,21 +18113,7 @@ func_eval_constexp:
     mov rsp, rbp
     pop rbp
     ret
-    jmp .if_end_551
-.if_else_551:
-    mov rax, 7
-    push rax
-    mov rax, rbp
-    sub rax, -16
-    mov rax, [rax]
-    add rax, 0
-    mov rax, [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
-    cmp rax, 0
-    je .if_else_552
+.case_408_5:
     mov rax, rbp
     sub rax, 16
     mov rax, [rax]
@@ -19164,21 +18128,7 @@ func_eval_constexp:
     mov rsp, rbp
     pop rbp
     ret
-    jmp .if_end_552
-.if_else_552:
-    mov rax, 8
-    push rax
-    mov rax, rbp
-    sub rax, -16
-    mov rax, [rax]
-    add rax, 0
-    mov rax, [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
-    cmp rax, 0
-    je .if_else_553
+.case_408_6:
     mov rax, rbp
     sub rax, 16
     mov rax, [rax]
@@ -19194,21 +18144,7 @@ func_eval_constexp:
     mov rsp, rbp
     pop rbp
     ret
-    jmp .if_end_553
-.if_else_553:
-    mov rax, 9
-    push rax
-    mov rax, rbp
-    sub rax, -16
-    mov rax, [rax]
-    add rax, 0
-    mov rax, [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
-    cmp rax, 0
-    je .if_else_554
+.case_408_7:
     mov rax, rbp
     sub rax, 16
     mov rax, [rax]
@@ -19225,21 +18161,7 @@ func_eval_constexp:
     mov rsp, rbp
     pop rbp
     ret
-    jmp .if_end_554
-.if_else_554:
-    mov rax, 7
-    push rax
-    mov rax, rbp
-    sub rax, -16
-    mov rax, [rax]
-    add rax, 0
-    mov rax, [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
-    cmp rax, 0
-    je .if_else_555
+.case_408_8:
     mov rax, rbp
     sub rax, 16
     mov rax, [rax]
@@ -19254,21 +18176,7 @@ func_eval_constexp:
     mov rsp, rbp
     pop rbp
     ret
-    jmp .if_end_555
-.if_else_555:
-    mov rax, 7
-    push rax
-    mov rax, rbp
-    sub rax, -16
-    mov rax, [rax]
-    add rax, 0
-    mov rax, [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
-    cmp rax, 0
-    je .if_else_556
+.case_408_9:
     mov rax, rbp
     sub rax, 16
     mov rax, [rax]
@@ -19283,24 +18191,21 @@ func_eval_constexp:
     mov rsp, rbp
     pop rbp
     ret
-    jmp .if_end_556
-.if_else_556:
-    mov rax, global_string_349
+.default_408:
+    .break_408:
+    mov rax, global_string_365
     push rax
-    call func_die
-    add rsp, 8
-.if_end_556:
-.if_end_555:
-.if_end_554:
-.if_end_553:
-.if_end_552:
-.if_end_551:
-.if_end_550:
-.if_end_549:
-.if_end_548:
-.if_end_547:
-    jmp .if_end_546
-.if_else_546:
+    mov rax, rbp
+    sub rax, -24
+    mov rax, [rax]
+    add rax, 8
+    push rax
+    mov rax, global_string_366
+    push rax
+    call func_die_loc
+    add rsp, 24
+.if_end_407:
+.if_end_405:
     mov rax, 0
     push rax
     mov rax, rbp
@@ -19313,7 +18218,11 @@ func_eval_constexp:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_else_557
+    je .if_end_409
+    mov rax, rbp
+    sub rax, -24
+    mov rax, [rax]
+    push rax
     mov rax, rbp
     sub rax, -16
     mov rax, [rax]
@@ -19321,15 +18230,14 @@ func_eval_constexp:
     mov rax, [rax]
     push rax
     call func_eval_constexp
-    add rsp, 8
+    add rsp, 16
     neg rax
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-    jmp .if_end_557
-.if_else_557:
+.if_end_409:
     mov rax, 2
     push rax
     mov rax, rbp
@@ -19342,7 +18250,11 @@ func_eval_constexp:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_else_558
+    je .if_end_410
+    mov rax, rbp
+    sub rax, -24
+    mov rax, [rax]
+    push rax
     mov rax, rbp
     sub rax, -16
     mov rax, [rax]
@@ -19350,15 +18262,14 @@ func_eval_constexp:
     mov rax, [rax]
     push rax
     call func_eval_constexp
-    add rsp, 8
+    add rsp, 16
     not rax
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-    jmp .if_end_558
-.if_else_558:
+.if_end_410:
     mov rax, 1
     push rax
     mov rax, rbp
@@ -19371,7 +18282,11 @@ func_eval_constexp:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_else_559
+    je .if_end_411
+    mov rax, rbp
+    sub rax, -24
+    mov rax, [rax]
+    push rax
     mov rax, rbp
     sub rax, -16
     mov rax, [rax]
@@ -19379,7 +18294,7 @@ func_eval_constexp:
     mov rax, [rax]
     push rax
     call func_eval_constexp
-    add rsp, 8
+    add rsp, 16
     cmp rax, 0
     sete al
     movzx rax, al
@@ -19388,18 +18303,52 @@ func_eval_constexp:
     mov rsp, rbp
     pop rbp
     ret
-    jmp .if_end_559
-.if_else_559:
-    mov rax, global_string_350
+.if_end_411:
+    mov rax, global_string_367
     push rax
-    call func_die
+    mov rax, rbp
+    sub rax, -24
+    mov rax, [rax]
+    add rax, 8
+    push rax
+    mov rax, global_string_368
+    push rax
+    call func_die_loc
+    add rsp, 24
+    mov rsp, rbp
+    pop rbp
+    mov qword rax, 0
+    ret
+global func_parse_constant_expression
+func_parse_constant_expression:
+    push rbp
+    mov rbp, rsp
+    sub rsp, 48
+    mov rax, rbp
+    sub rax, 40
+    push rax
+    mov rax, rbp
+    sub rax, -16
+    mov rax, [rax]
+    push rax
+    call _Lexer_method_peek
+    add rsp, 16
+    mov rax, rbp
+    sub rax, -16
+    mov rax, [rax]
+    push rax
+    call func_parse_expression
     add rsp, 8
-.if_end_559:
-.if_end_558:
-.if_end_557:
-.if_end_546:
-.if_end_544:
-    mov rax, 0
+    mov [rbp-48], rax
+    mov rax, rbp
+    sub rax, 40
+    push rax
+    mov rax, rbp
+    sub rax, 48
+    mov rax, [rax]
+    push rax
+    call func_eval_constexp
+    add rsp, 16
     push rax
     pop rax
     mov rsp, rbp
@@ -19413,8 +18362,8 @@ global func_parse_constant_declaration
 func_parse_constant_declaration:
     push rbp
     mov rbp, rsp
-    sub rsp, 64
-    mov rax, 46
+    sub rsp, 48
+    mov rax, 48
     push rax
     mov rax, rbp
     sub rax, 40
@@ -19445,24 +18394,24 @@ func_parse_constant_declaration:
     call func_identifier_exists
     add rsp, 8
     cmp rax, 0
-    je .if_end_560
+    je .if_end_412
     mov rax, rbp
     sub rax, 40
     add rax, 32
     add rax, 0
     mov rax, [rax]
     push rax
-    mov rax, global_string_351
+    mov rax, global_string_369
     push rax
     mov rax, rbp
     sub rax, 40
     add rax, 8
     push rax
-    mov rax, global_string_352
+    mov rax, global_string_370
     push rax
     call func_die_loc2
     add rsp, 32
-.if_end_560:
+.if_end_412:
     mov rax, rbp
     sub rax, 40
     add rax, 32
@@ -19489,7 +18438,7 @@ func_parse_constant_declaration:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_end_561
+    je .if_end_413
     mov rax, rbp
     sub rax, 40
     push rax
@@ -19499,7 +18448,7 @@ func_parse_constant_declaration:
     push rax
     call _Lexer_method_next
     add rsp, 16
-    mov rax, 54
+    mov rax, 57
     push rax
     mov rax, rbp
     sub rax, 40
@@ -19510,18 +18459,18 @@ func_parse_constant_declaration:
     setne al
     movzx rax, al
     cmp rax, 0
-    je .if_end_562
-    mov rax, global_string_353
+    je .if_end_414
+    mov rax, global_string_371
     push rax
     mov rax, rbp
     sub rax, 40
     add rax, 8
     push rax
-    mov rax, global_string_354
+    mov rax, global_string_372
     push rax
     call func_die_loc
     add rsp, 24
-.if_end_562:
+.if_end_414:
     mov rax, rbp
     sub rax, 40
     push rax
@@ -19531,7 +18480,7 @@ func_parse_constant_declaration:
     push rax
     call _Lexer_method_peek
     add rsp, 16
-.if_end_561:
+.if_end_413:
     mov rax, 2
     push rax
     mov rax, rbp
@@ -19547,19 +18496,8 @@ func_parse_constant_declaration:
     sub rax, -16
     mov rax, [rax]
     push rax
-    call func_parse_expression
+    call func_parse_constant_expression
     add rsp, 8
-    mov [rbp-56], rax
-    mov rax, rbp
-    sub rax, 56
-    mov rax, [rax]
-    push rax
-    call func_eval_constexp
-    add rsp, 8
-    mov [rbp-64], rax
-    mov rax, rbp
-    sub rax, 64
-    mov rax, [rax]
     push rax
     mov rax, rbp
     sub rax, 48
@@ -19601,18 +18539,20 @@ func_parse_literal:
     call func_node_new
     add rsp, 8
     mov [rbp-48], rax
-    mov rax, 20
-    push rax
     mov rax, rbp
     sub rax, 40
     add rax, 0
     mov rax, [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
-    cmp rax, 0
-    je .if_else_563
+    cmp rax, 20
+    je .case_415_0
+    cmp rax, 41
+    je .case_415_1
+    cmp rax, 5
+    je .case_415_2
+    cmp rax, 16
+    je .case_415_3
+    jmp .default_415
+.case_415_0:
     mov rax, rbp
     sub rax, 48
     mov rax, [rax]
@@ -19637,20 +18577,8 @@ func_parse_literal:
     add rsp, 8
     pop rcx
     mov [rcx], rax
-    jmp .if_end_563
-.if_else_563:
-    mov rax, 41
-    push rax
-    mov rax, rbp
-    sub rax, 40
-    add rax, 0
-    mov rax, [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
-    cmp rax, 0
-    je .if_else_564
+    jmp .break_415
+.case_415_1:
     mov rax, rbp
     sub rax, 48
     mov rax, [rax]
@@ -19675,20 +18603,8 @@ func_parse_literal:
     add rsp, 8
     pop rcx
     mov [rcx], rax
-    jmp .if_end_564
-.if_else_564:
-    mov rax, 5
-    push rax
-    mov rax, rbp
-    sub rax, 40
-    add rax, 0
-    mov rax, [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
-    cmp rax, 0
-    je .if_else_565
+    jmp .break_415
+.case_415_2:
     mov rax, rbp
     sub rax, 48
     mov rax, [rax]
@@ -19713,20 +18629,8 @@ func_parse_literal:
     add rsp, 8
     pop rcx
     mov [rcx], rax
-    jmp .if_end_565
-.if_else_565:
-    mov rax, 16
-    push rax
-    mov rax, rbp
-    sub rax, 40
-    add rax, 0
-    mov rax, [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
-    cmp rax, 0
-    je .if_else_566
+    jmp .break_415
+.case_415_3:
     mov rax, rbp
     sub rax, 48
     mov rax, [rax]
@@ -19751,8 +18655,8 @@ func_parse_literal:
     add rsp, 8
     pop rcx
     mov [rcx], rax
-    jmp .if_end_566
-.if_else_566:
+    jmp .break_415
+.default_415:
     mov rax, rbp
     sub rax, 40
     add rax, 0
@@ -19761,20 +18665,17 @@ func_parse_literal:
     call func_token_type_to_string
     add rsp, 8
     push rax
-    mov rax, global_string_355
+    mov rax, global_string_373
     push rax
     mov rax, rbp
     sub rax, 40
     add rax, 8
     push rax
-    mov rax, global_string_356
+    mov rax, global_string_374
     push rax
     call func_die_loc2
     add rsp, 32
-.if_end_566:
-.if_end_565:
-.if_end_564:
-.if_end_563:
+    .break_415:
     mov rax, rbp
     sub rax, 48
     mov rax, [rax]
@@ -19791,7 +18692,7 @@ global func_parse_type
 func_parse_type:
     push rbp
     mov rbp, rsp
-    sub rsp, 80
+    sub rsp, 64
     mov rax, rbp
     sub rax, 40
     push rax
@@ -19801,18 +18702,28 @@ func_parse_type:
     push rax
     call _Lexer_method_next
     add rsp, 16
-    mov rax, 54
-    push rax
     mov rax, rbp
     sub rax, 40
     add rax, 0
     mov rax, [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
-    cmp rax, 0
-    je .if_else_567
+    cmp rax, 57
+    je .case_416_0
+    cmp rax, 58
+    je .case_416_1
+    cmp rax, 59
+    je .case_416_2
+    cmp rax, 60
+    je .case_416_3
+    cmp rax, 61
+    je .case_416_4
+    cmp rax, 53
+    je .case_416_5
+    cmp rax, 47
+    je .case_416_6
+    cmp rax, 69
+    je .case_416_7
+    jmp .default_416
+.case_416_0:
     mov rax, rbp
     sub rax, 48
     push rax
@@ -19822,20 +18733,8 @@ func_parse_type:
     add rsp, 8
     pop rcx
     mov [rcx], rax
-    jmp .if_end_567
-.if_else_567:
-    mov rax, 55
-    push rax
-    mov rax, rbp
-    sub rax, 40
-    add rax, 0
-    mov rax, [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
-    cmp rax, 0
-    je .if_else_568
+    jmp .break_416
+.case_416_1:
     mov rax, rbp
     sub rax, 48
     push rax
@@ -19845,20 +18744,8 @@ func_parse_type:
     add rsp, 8
     pop rcx
     mov [rcx], rax
-    jmp .if_end_568
-.if_else_568:
-    mov rax, 56
-    push rax
-    mov rax, rbp
-    sub rax, 40
-    add rax, 0
-    mov rax, [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
-    cmp rax, 0
-    je .if_else_569
+    jmp .break_416
+.case_416_2:
     mov rax, rbp
     sub rax, 48
     push rax
@@ -19868,20 +18755,8 @@ func_parse_type:
     add rsp, 8
     pop rcx
     mov [rcx], rax
-    jmp .if_end_569
-.if_else_569:
-    mov rax, 57
-    push rax
-    mov rax, rbp
-    sub rax, 40
-    add rax, 0
-    mov rax, [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
-    cmp rax, 0
-    je .if_else_570
+    jmp .break_416
+.case_416_3:
     mov rax, rbp
     sub rax, 48
     push rax
@@ -19891,20 +18766,8 @@ func_parse_type:
     add rsp, 8
     pop rcx
     mov [rcx], rax
-    jmp .if_end_570
-.if_else_570:
-    mov rax, 58
-    push rax
-    mov rax, rbp
-    sub rax, 40
-    add rax, 0
-    mov rax, [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
-    cmp rax, 0
-    je .if_else_571
+    jmp .break_416
+.case_416_4:
     mov rax, rbp
     sub rax, 48
     push rax
@@ -19914,20 +18777,8 @@ func_parse_type:
     add rsp, 8
     pop rcx
     mov [rcx], rax
-    jmp .if_end_571
-.if_else_571:
-    mov rax, 50
-    push rax
-    mov rax, rbp
-    sub rax, 40
-    add rax, 0
-    mov rax, [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
-    cmp rax, 0
-    je .if_else_572
+    jmp .break_416
+.case_416_5:
     mov rax, rbp
     sub rax, 48
     push rax
@@ -19937,20 +18788,8 @@ func_parse_type:
     add rsp, 8
     pop rcx
     mov [rcx], rax
-    jmp .if_end_572
-.if_else_572:
-    mov rax, 45
-    push rax
-    mov rax, rbp
-    sub rax, 40
-    add rax, 0
-    mov rax, [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
-    cmp rax, 0
-    je .if_else_573
+    jmp .break_416
+.case_416_6:
     mov rax, rbp
     sub rax, 48
     push rax
@@ -19960,20 +18799,8 @@ func_parse_type:
     add rsp, 8
     pop rcx
     mov [rcx], rax
-    jmp .if_end_573
-.if_else_573:
-    mov rax, 65
-    push rax
-    mov rax, rbp
-    sub rax, 40
-    add rax, 0
-    mov rax, [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
-    cmp rax, 0
-    je .if_else_574
+    jmp .break_416
+.case_416_7:
     mov rax, rbp
     sub rax, 48
     push rax
@@ -19983,8 +18810,8 @@ func_parse_type:
     add rsp, 8
     pop rcx
     mov [rcx], rax
-    jmp .if_end_574
-.if_else_574:
+    jmp .break_416
+.default_416:
     mov rax, 19
     push rax
     mov rax, rbp
@@ -19996,7 +18823,7 @@ func_parse_type:
     setne al
     movzx rax, al
     cmp rax, 0
-    je .if_end_575
+    je .if_end_417
     mov rax, rbp
     sub rax, 40
     add rax, 0
@@ -20005,17 +18832,17 @@ func_parse_type:
     call func_token_type_to_string
     add rsp, 8
     push rax
-    mov rax, global_string_357
+    mov rax, global_string_375
     push rax
     mov rax, rbp
     sub rax, 40
     add rax, 8
     push rax
-    mov rax, global_string_358
+    mov rax, global_string_376
     push rax
     call func_die_loc2
     add rsp, 32
-.if_end_575:
+.if_end_417:
     mov rax, rbp
     sub rax, 48
     push rax
@@ -20036,41 +18863,34 @@ func_parse_type:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_end_576
+    je .if_end_418
     mov rax, rbp
     sub rax, 40
     add rax, 32
     add rax, 0
     mov rax, [rax]
     push rax
-    mov rax, global_string_359
+    mov rax, global_string_377
     push rax
     mov rax, rbp
     sub rax, 40
     add rax, 8
     push rax
-    mov rax, global_string_360
+    mov rax, global_string_378
     push rax
     call func_die_loc2
     add rsp, 32
-.if_end_576:
-.if_end_574:
-.if_end_573:
-.if_end_572:
-.if_end_571:
-.if_end_570:
-.if_end_569:
-.if_end_568:
-.if_end_567:
+.if_end_418:
+    .break_416:
     mov rax, 1
     mov [rbp-56], rax
-.loop_start_577:
-.loop_continue_577:
+.loop_start_419:
+.loop_continue_419:
     mov rax, rbp
     sub rax, 56
     mov rax, [rax]
     cmp rax, 0
-    je .loop_end_577
+    je .loop_end_419
     mov rax, rbp
     sub rax, 40
     push rax
@@ -20091,7 +18911,7 @@ func_parse_type:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_else_578
+    je .if_else_420
     mov rax, rbp
     sub rax, 40
     push rax
@@ -20124,8 +18944,8 @@ func_parse_type:
     mov rax, [rax]
     pop rcx
     mov [rcx], rax
-    jmp .if_end_578
-.if_else_578:
+    jmp .if_end_420
+.if_else_420:
     mov rax, 29
     push rax
     mov rax, rbp
@@ -20137,7 +18957,7 @@ func_parse_type:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_else_579
+    je .if_else_421
     mov rax, rbp
     sub rax, 40
     push rax
@@ -20163,120 +18983,18 @@ func_parse_type:
     pop rcx
     mov [rcx], rax
     mov rax, rbp
-    sub rax, 40
+    sub rax, 64
+    mov rax, [rax]
+    add rax, 40
     push rax
     mov rax, rbp
     sub rax, -16
     mov rax, [rax]
     push rax
-    call _Lexer_method_next
-    add rsp, 16
-    mov rax, 20
-    push rax
-    mov rax, rbp
-    sub rax, 40
-    add rax, 0
-    mov rax, [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
-    cmp rax, 0
-    je .if_else_580
-    mov rax, rbp
-    sub rax, 64
-    mov rax, [rax]
-    add rax, 40
-    push rax
-    mov rax, rbp
-    sub rax, 40
-    add rax, 32
-    add rax, 0
-    mov rax, [rax]
-    pop rcx
-    mov [rcx], rax
-    jmp .if_end_580
-.if_else_580:
-    mov rax, 19
-    push rax
-    mov rax, rbp
-    sub rax, 40
-    add rax, 0
-    mov rax, [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
-    cmp rax, 0
-    je .if_else_581
-    mov rax, rbp
-    sub rax, 40
-    add rax, 32
-    add rax, 0
-    mov rax, [rax]
-    push rax
-    call func_find_constant
+    call func_parse_constant_expression
     add rsp, 8
-    mov [rbp-72], rax
-    mov rax, rbp
-    sub rax, 72
-    mov rax, [rax]
-    cmp rax, 0
-    sete al
-    movzx rax, al
-    cmp rax, 0
-    je .if_end_582
-    mov rax, rbp
-    sub rax, 40
-    add rax, 32
-    add rax, 0
-    mov rax, [rax]
-    push rax
-    mov rax, global_string_361
-    push rax
-    mov rax, rbp
-    sub rax, 40
-    add rax, 8
-    push rax
-    mov rax, global_string_362
-    push rax
-    call func_die_loc2
-    add rsp, 32
-.if_end_582:
-    mov rax, rbp
-    sub rax, 72
-    mov rax, [rax]
-    add rax, 16
-    add rax, 8
-    mov rax, [rax]
-    mov [rbp-80], rax
-    mov rax, rbp
-    sub rax, 64
-    mov rax, [rax]
-    add rax, 40
-    push rax
-    mov rax, rbp
-    sub rax, 80
-    mov rax, [rax]
-    add rax, 16
-    add rax, 0
-    mov rax, [rax]
     pop rcx
     mov [rcx], rax
-    jmp .if_end_581
-.if_else_581:
-    mov rax, global_string_363
-    push rax
-    mov rax, rbp
-    sub rax, 40
-    add rax, 8
-    push rax
-    mov rax, global_string_364
-    push rax
-    call func_die_loc
-    add rsp, 24
-.if_end_581:
-.if_end_580:
     mov rax, 7
     push rax
     mov rax, rbp
@@ -20296,18 +19014,19 @@ func_parse_type:
     mov rax, [rax]
     pop rcx
     mov [rcx], rax
-    jmp .if_end_579
-.if_else_579:
+    jmp .if_end_421
+.if_else_421:
     mov rax, rbp
     sub rax, 56
     push rax
     mov rax, 0
     pop rcx
     mov [rcx], rax
-.if_end_579:
-.if_end_578:
-    jmp .loop_start_577
-.loop_end_577:
+.if_end_421:
+.if_end_420:
+    jmp .loop_start_419
+.break_419:
+.loop_end_419:
     mov rax, rbp
     sub rax, 48
     mov rax, [rax]
@@ -20387,7 +19106,7 @@ func_parse_function_call_args:
     sub rax, -32
     mov rax, [rax]
     cmp rax, 0
-    je .if_end_583
+    je .if_end_422
     mov rax, rbp
     sub rax, -32
     mov rax, [rax]
@@ -20401,9 +19120,9 @@ func_parse_function_call_args:
     push rax
     call _Vector_method_push
     add rsp, 16
-.if_end_583:
-.loop_start_584:
-.loop_continue_584:
+.if_end_422:
+.loop_start_423:
+.loop_continue_423:
     mov rax, 8
     push rax
     mov rax, rbp
@@ -20415,7 +19134,7 @@ func_parse_function_call_args:
     setne al
     movzx rax, al
     cmp rax, 0
-    je .loop_end_584
+    je .loop_end_423
     mov rax, rbp
     sub rax, -16
     mov rax, [rax]
@@ -20456,7 +19175,7 @@ func_parse_function_call_args:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_end_585
+    je .if_end_424
     mov rax, rbp
     sub rax, 40
     push rax
@@ -20475,9 +19194,10 @@ func_parse_function_call_args:
     push rax
     call _Lexer_method_peek
     add rsp, 16
-.if_end_585:
-    jmp .loop_start_584
-.loop_end_584:
+.if_end_424:
+    jmp .loop_start_423
+.break_423:
+.loop_end_423:
     mov rax, 8
     push rax
     mov rax, rbp
@@ -20511,7 +19231,7 @@ func_parse_function_call_args:
     setne al
     movzx rax, al
     cmp rax, 0
-    je .if_end_586
+    je .if_end_425
     mov rax, rbp
     sub rax, -24
     mov rax, [rax]
@@ -20519,17 +19239,17 @@ func_parse_function_call_args:
     add rax, 0
     mov rax, [rax]
     push rax
-    mov rax, global_string_365
+    mov rax, global_string_379
     push rax
     mov rax, rbp
     sub rax, 40
     add rax, 8
     push rax
-    mov rax, global_string_366
+    mov rax, global_string_380
     push rax
     call func_die_loc2
     add rsp, 32
-.if_end_586:
+.if_end_425:
     mov rax, rbp
     sub rax, -24
     mov rax, [rax]
@@ -20541,7 +19261,7 @@ func_parse_function_call_args:
     mov [rbp-56], rax
     mov rax, 0
     mov [rbp-64], rax
-.loop_start_587:
+.loop_start_426:
     mov rax, rbp
     sub rax, 56
     mov rax, [rax]
@@ -20554,7 +19274,7 @@ func_parse_function_call_args:
     setl al
     movzx rax, al
     cmp rax, 0
-    je .loop_end_587
+    je .loop_end_426
     mov rax, rbp
     sub rax, 64
     mov rax, [rax]
@@ -20603,24 +19323,24 @@ func_parse_function_call_args:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_end_588
+    je .if_end_427
     mov rax, rbp
     sub rax, 80
     mov rax, [rax]
     add rax, 0
     mov rax, [rax]
     push rax
-    mov rax, global_string_367
+    mov rax, global_string_381
     push rax
     mov rax, rbp
     sub rax, 40
     add rax, 8
     push rax
-    mov rax, global_string_368
+    mov rax, global_string_382
     push rax
     call func_die_loc2
     add rsp, 32
-.if_end_588:
+.if_end_427:
     mov rax, 8
     push rax
     mov rax, rbp
@@ -20645,7 +19365,7 @@ func_parse_function_call_args:
     mov rax, [rax]
     pop rcx
     mov [rcx], rax
-.loop_continue_587:
+.loop_continue_426:
     mov rax, rbp
     sub rax, 64
     push rax
@@ -20658,8 +19378,9 @@ func_parse_function_call_args:
     add rax, rcx
     pop rcx
     mov [rcx], rax
-    jmp .loop_start_587
-.loop_end_587:
+    jmp .loop_start_426
+.break_426:
+.loop_end_426:
     mov rax, rbp
     sub rax, 48
     mov rax, [rax]
@@ -20713,11 +19434,11 @@ func_parse_identifier:
     setne al
     movzx rax, al
     cmp rax, 0
-    je .if_end_589
+    je .if_end_428
     mov rax, rbp
     sub rax, 56
     push rax
-    mov rax, 35
+    mov rax, 37
     push rax
     call func_node_new
     add rsp, 8
@@ -20759,7 +19480,7 @@ func_parse_identifier:
     mov rsp, rbp
     pop rbp
     ret
-.if_end_589:
+.if_end_428:
     mov rax, rbp
     sub rax, 64
     push rax
@@ -20783,11 +19504,11 @@ func_parse_identifier:
     setne al
     movzx rax, al
     cmp rax, 0
-    je .if_end_590
+    je .if_end_429
     mov rax, rbp
     sub rax, 56
     push rax
-    mov rax, 36
+    mov rax, 38
     push rax
     call func_node_new
     add rsp, 8
@@ -20829,7 +19550,7 @@ func_parse_identifier:
     mov rsp, rbp
     pop rbp
     ret
-.if_end_590:
+.if_end_429:
     mov rax, global_vars
     add rax, 1073741928
     mov rax, [rax]
@@ -20853,7 +19574,7 @@ func_parse_identifier:
     setne al
     movzx rax, al
     cmp rax, 0
-    je .if_end_591
+    je .if_end_430
     mov rax, global_vars
     add rax, 0
     mov rax, [rax]
@@ -20873,7 +19594,7 @@ func_parse_identifier:
     mov rsp, rbp
     pop rbp
     ret
-.if_end_591:
+.if_end_430:
     mov rax, rbp
     sub rax, 72
     push rax
@@ -20897,7 +19618,7 @@ func_parse_identifier:
     setne al
     movzx rax, al
     cmp rax, 0
-    je .if_end_592
+    je .if_end_431
     mov rax, global_vars
     add rax, 0
     mov rax, [rax]
@@ -20917,7 +19638,7 @@ func_parse_identifier:
     mov rsp, rbp
     pop rbp
     ret
-.if_end_592:
+.if_end_431:
     mov rax, rbp
     sub rax, 48
     mov rax, [rax]
@@ -20937,7 +19658,7 @@ func_parse_identifier:
     setne al
     movzx rax, al
     cmp rax, 0
-    je .if_end_593
+    je .if_end_432
     mov rax, rbp
     sub rax, 80
     mov rax, [rax]
@@ -20949,20 +19670,20 @@ func_parse_identifier:
     mov rsp, rbp
     pop rbp
     ret
-.if_end_593:
+.if_end_432:
     mov rax, rbp
     sub rax, 40
     add rax, 32
     add rax, 0
     mov rax, [rax]
     push rax
-    mov rax, global_string_369
+    mov rax, global_string_383
     push rax
     mov rax, rbp
     sub rax, 40
     add rax, 8
     push rax
-    mov rax, global_string_370
+    mov rax, global_string_384
     push rax
     call func_die_loc2
     add rsp, 32
@@ -21003,7 +19724,7 @@ func_parse_factor:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_else_594
+    je .if_else_433
     mov rax, rbp
     sub rax, 40
     push rax
@@ -21049,8 +19770,8 @@ func_parse_factor:
     add rsp, 16
     pop rcx
     mov [rcx], rax
-    jmp .if_end_594
-.if_else_594:
+    jmp .if_end_433
+.if_else_433:
     mov rax, 42
     push rax
     mov rax, rbp
@@ -21062,7 +19783,7 @@ func_parse_factor:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_else_595
+    je .if_else_434
     mov rax, rbp
     sub rax, 40
     push rax
@@ -21108,8 +19829,8 @@ func_parse_factor:
     add rsp, 16
     pop rcx
     mov [rcx], rax
-    jmp .if_end_595
-.if_else_595:
+    jmp .if_end_434
+.if_else_434:
     mov rax, 35
     push rax
     mov rax, rbp
@@ -21121,7 +19842,7 @@ func_parse_factor:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_else_596
+    je .if_else_435
     mov rax, rbp
     sub rax, 40
     push rax
@@ -21169,18 +19890,18 @@ func_parse_factor:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_end_597
-    mov rax, global_string_371
+    je .if_end_436
+    mov rax, global_string_385
     push rax
     mov rax, rbp
     sub rax, 40
     add rax, 8
     push rax
-    mov rax, global_string_372
+    mov rax, global_string_386
     push rax
     call func_die_loc
     add rsp, 24
-.if_end_597:
+.if_end_436:
     mov rax, 5
     push rax
     call func_node_new
@@ -21244,8 +19965,8 @@ func_parse_factor:
     mov rax, [rax]
     pop rcx
     mov [rcx], rax
-    jmp .if_end_596
-.if_else_596:
+    jmp .if_end_435
+.if_else_435:
     mov rax, 26
     push rax
     mov rax, rbp
@@ -21257,7 +19978,7 @@ func_parse_factor:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_else_598
+    je .if_else_437
     mov rax, rbp
     sub rax, 40
     push rax
@@ -21305,18 +20026,18 @@ func_parse_factor:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_end_599
-    mov rax, global_string_373
+    je .if_end_438
+    mov rax, global_string_387
     push rax
     mov rax, rbp
     sub rax, 40
     add rax, 8
     push rax
-    mov rax, global_string_374
+    mov rax, global_string_388
     push rax
     call func_die_loc
     add rsp, 24
-.if_end_599:
+.if_end_438:
     mov rax, 6
     push rax
     call func_node_new
@@ -21380,9 +20101,9 @@ func_parse_factor:
     mov rax, [rax]
     pop rcx
     mov [rcx], rax
-    jmp .if_end_598
-.if_else_598:
-    mov rax, 62
+    jmp .if_end_437
+.if_else_437:
+    mov rax, 65
     push rax
     mov rax, rbp
     sub rax, 40
@@ -21393,7 +20114,7 @@ func_parse_factor:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_else_600
+    je .if_else_439
     mov rax, rbp
     sub rax, 40
     push rax
@@ -21446,8 +20167,8 @@ func_parse_factor:
     add rsp, 8
     pop rcx
     mov [rcx], rax
-    jmp .if_end_600
-.if_else_600:
+    jmp .if_end_439
+.if_else_439:
     mov rax, 15
     push rax
     mov rax, rbp
@@ -21459,7 +20180,7 @@ func_parse_factor:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_else_601
+    je .if_else_440
     mov rax, rbp
     sub rax, 40
     push rax
@@ -21505,8 +20226,8 @@ func_parse_factor:
     add rsp, 16
     pop rcx
     mov [rcx], rax
-    jmp .if_end_601
-.if_else_601:
+    jmp .if_end_440
+.if_else_440:
     mov rax, 30
     push rax
     mov rax, rbp
@@ -21518,7 +20239,7 @@ func_parse_factor:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_else_602
+    je .if_else_441
     mov rax, rbp
     sub rax, 40
     push rax
@@ -21550,8 +20271,8 @@ func_parse_factor:
     push rax
     call _Lexer_method_next_assert
     add rsp, 24
-    jmp .if_end_602
-.if_else_602:
+    jmp .if_end_441
+.if_else_441:
     mov rax, rbp
     sub rax, 40
     add rax, 0
@@ -21560,7 +20281,7 @@ func_parse_factor:
     call func_is_literal_token
     add rsp, 8
     cmp rax, 0
-    je .if_else_603
+    je .if_else_442
     mov rax, rbp
     sub rax, 48
     push rax
@@ -21572,8 +20293,8 @@ func_parse_factor:
     add rsp, 8
     pop rcx
     mov [rcx], rax
-    jmp .if_end_603
-.if_else_603:
+    jmp .if_end_442
+.if_else_442:
     mov rax, 19
     push rax
     mov rax, rbp
@@ -21585,7 +20306,7 @@ func_parse_factor:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_else_604
+    je .if_else_443
     mov rax, rbp
     sub rax, 48
     push rax
@@ -21597,8 +20318,8 @@ func_parse_factor:
     add rsp, 8
     pop rcx
     mov [rcx], rax
-    jmp .if_end_604
-.if_else_604:
+    jmp .if_end_443
+.if_else_443:
     mov rax, 0
     push rax
     mov rax, rbp
@@ -21610,7 +20331,7 @@ func_parse_factor:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_else_605
+    je .if_else_444
     mov rax, rbp
     sub rax, 40
     push rax
@@ -21656,18 +20377,18 @@ func_parse_factor:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_end_606
-    mov rax, global_string_375
+    je .if_end_445
+    mov rax, global_string_389
     push rax
     mov rax, rbp
     sub rax, 40
     add rax, 8
     push rax
-    mov rax, global_string_376
+    mov rax, global_string_390
     push rax
     call func_die_loc
     add rsp, 24
-.if_end_606:
+.if_end_445:
     mov rax, rbp
     sub rax, 48
     push rax
@@ -21682,8 +20403,8 @@ func_parse_factor:
     add rsp, 16
     pop rcx
     mov [rcx], rax
-    jmp .if_end_605
-.if_else_605:
+    jmp .if_end_444
+.if_else_444:
     mov rax, 40
     push rax
     mov rax, rbp
@@ -21695,7 +20416,7 @@ func_parse_factor:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_else_607
+    je .if_else_446
     mov rax, rbp
     sub rax, 40
     push rax
@@ -21726,18 +20447,18 @@ func_parse_factor:
     setne al
     movzx rax, al
     cmp rax, 0
-    je .if_end_608
-    mov rax, global_string_377
+    je .if_end_447
+    mov rax, global_string_391
     push rax
     mov rax, rbp
     sub rax, 40
     add rax, 8
     push rax
-    mov rax, global_string_378
+    mov rax, global_string_392
     push rax
     call func_die_loc
     add rsp, 24
-.if_end_608:
+.if_end_447:
     mov rax, rbp
     sub rax, 48
     push rax
@@ -21771,8 +20492,8 @@ func_parse_factor:
     add rsp, 16
     pop rcx
     mov [rcx], rax
-    jmp .if_end_607
-.if_else_607:
+    jmp .if_end_446
+.if_else_446:
     mov rax, rbp
     sub rax, 40
     add rax, 0
@@ -21781,36 +20502,36 @@ func_parse_factor:
     call func_token_type_to_string
     add rsp, 8
     push rax
-    mov rax, global_string_379
+    mov rax, global_string_393
     push rax
     mov rax, rbp
     sub rax, 40
     add rax, 8
     push rax
-    mov rax, global_string_380
+    mov rax, global_string_394
     push rax
     call func_die_loc2
     add rsp, 32
-.if_end_607:
-.if_end_605:
-.if_end_604:
-.if_end_603:
-.if_end_602:
-.if_end_601:
-.if_end_600:
-.if_end_598:
-.if_end_596:
-.if_end_595:
-.if_end_594:
+.if_end_446:
+.if_end_444:
+.if_end_443:
+.if_end_442:
+.if_end_441:
+.if_end_440:
+.if_end_439:
+.if_end_437:
+.if_end_435:
+.if_end_434:
+.if_end_433:
     mov rax, 1
     mov [rbp-56], rax
-.loop_start_609:
-.loop_continue_609:
+.loop_start_448:
+.loop_continue_448:
     mov rax, rbp
     sub rax, 56
     mov rax, [rax]
     cmp rax, 0
-    je .loop_end_609
+    je .loop_end_448
     mov rax, rbp
     sub rax, 40
     push rax
@@ -21831,7 +20552,7 @@ func_parse_factor:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_else_610
+    je .if_else_449
     mov rax, 10
     push rax
     mov rax, rbp
@@ -21846,18 +20567,18 @@ func_parse_factor:
     setne al
     movzx rax, al
     cmp rax, 0
-    je .if_end_611
-    mov rax, global_string_381
+    je .if_end_450
+    mov rax, global_string_395
     push rax
     mov rax, rbp
     sub rax, 40
     add rax, 8
     push rax
-    mov rax, global_string_382
+    mov rax, global_string_396
     push rax
     call func_die_loc
     add rsp, 24
-.if_end_611:
+.if_end_450:
     mov rax, rbp
     sub rax, 40
     push rax
@@ -21959,8 +20680,8 @@ func_parse_factor:
     push rax
     call _Lexer_method_next_assert
     add rsp, 24
-    jmp .if_end_610
-.if_else_610:
+    jmp .if_end_449
+.if_else_449:
     mov rax, 12
     push rax
     mov rax, rbp
@@ -21972,7 +20693,7 @@ func_parse_factor:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_else_612
+    je .if_else_451
     mov rax, 12
     push rax
     mov rax, rbp
@@ -21996,7 +20717,7 @@ func_parse_factor:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_end_613
+    je .if_end_452
     mov rax, rbp
     sub rax, 48
     mov rax, [rax]
@@ -22008,17 +20729,17 @@ func_parse_factor:
     push rax
     call func_putsln
     add rsp, 8
-    mov rax, global_string_383
+    mov rax, global_string_397
     push rax
     mov rax, rbp
     sub rax, 40
     add rax, 8
     push rax
-    mov rax, global_string_384
+    mov rax, global_string_398
     push rax
     call func_die_loc
     add rsp, 24
-.if_end_613:
+.if_end_452:
     mov rax, 10
     push rax
     mov rax, rbp
@@ -22037,7 +20758,7 @@ func_parse_factor:
     sub rax, 64
     mov rax, [rax]
     cmp rax, 0
-    je .cond_else_614
+    je .cond_else_453
     mov rax, rbp
     sub rax, 48
     mov rax, [rax]
@@ -22045,14 +20766,14 @@ func_parse_factor:
     mov rax, [rax]
     add rax, 8
     mov rax, [rax]
-    jmp .cond_end_614
-.cond_else_614:
+    jmp .cond_end_453
+.cond_else_453:
     mov rax, rbp
     sub rax, 48
     mov rax, [rax]
     add rax, 8
     mov rax, [rax]
-.cond_end_614:
+.cond_end_453:
     mov [rbp-72], rax
     mov rax, 19
     push rax
@@ -22094,8 +20815,8 @@ func_parse_factor:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_end_615
-    mov rax, global_string_385
+    je .if_end_454
+    mov rax, global_string_399
     push rax
     call func_puts
     add rsp, 8
@@ -22108,7 +20829,7 @@ func_parse_factor:
     push rax
     call func_putsln
     add rsp, 8
-    mov rax, global_string_386
+    mov rax, global_string_400
     push rax
     call func_puts
     add rsp, 8
@@ -22118,17 +20839,17 @@ func_parse_factor:
     push rax
     call func_putsln
     add rsp, 8
-    mov rax, global_string_387
+    mov rax, global_string_401
     push rax
     mov rax, rbp
     sub rax, 40
     add rax, 8
     push rax
-    mov rax, global_string_388
+    mov rax, global_string_402
     push rax
     call func_die_loc
     add rsp, 24
-.if_end_615:
+.if_end_454:
     mov rax, 24
     push rax
     call func_node_new
@@ -22205,8 +20926,8 @@ func_parse_factor:
     add rsp, 16
     pop rcx
     mov [rcx], rax
-    jmp .if_end_612
-.if_else_612:
+    jmp .if_end_451
+.if_else_451:
     mov rax, 10
     push rax
     mov rax, rbp
@@ -22218,7 +20939,7 @@ func_parse_factor:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_else_616
+    je .if_else_455
     mov rax, rbp
     sub rax, 40
     push rax
@@ -22240,18 +20961,18 @@ func_parse_factor:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_end_617
-    mov rax, global_string_389
+    je .if_end_456
+    mov rax, global_string_403
     push rax
     mov rax, rbp
     sub rax, 40
     add rax, 8
     push rax
-    mov rax, global_string_390
+    mov rax, global_string_404
     push rax
     call func_die_loc
     add rsp, 24
-.if_end_617:
+.if_end_456:
     mov rax, rbp
     sub rax, 48
     mov rax, [rax]
@@ -22264,18 +20985,18 @@ func_parse_factor:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_end_618
-    mov rax, global_string_391
+    je .if_end_457
+    mov rax, global_string_405
     push rax
     mov rax, rbp
     sub rax, 40
     add rax, 8
     push rax
-    mov rax, global_string_392
+    mov rax, global_string_406
     push rax
     call func_die_loc
     add rsp, 24
-.if_end_618:
+.if_end_457:
     mov rax, 10
     push rax
     mov rax, rbp
@@ -22290,7 +21011,7 @@ func_parse_factor:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_else_619
+    je .if_else_458
     mov rax, rbp
     sub rax, 64
     push rax
@@ -22311,8 +21032,8 @@ func_parse_factor:
     mov rax, [rax]
     pop rcx
     mov [rcx], rax
-    jmp .if_end_619
-.if_else_619:
+    jmp .if_end_458
+.if_else_458:
     mov rax, rbp
     sub rax, 64
     push rax
@@ -22356,7 +21077,7 @@ func_parse_factor:
     add rsp, 16
     pop rcx
     mov [rcx], rax
-.if_end_619:
+.if_end_458:
     mov rax, 19
     push rax
     mov rax, rbp
@@ -22397,18 +21118,18 @@ func_parse_factor:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_end_620
-    mov rax, global_string_393
+    je .if_end_459
+    mov rax, global_string_407
     push rax
     mov rax, rbp
     sub rax, 40
     add rax, 8
     push rax
-    mov rax, global_string_394
+    mov rax, global_string_408
     push rax
     call func_die_loc
     add rsp, 24
-.if_end_620:
+.if_end_459:
     mov rax, rbp
     sub rax, 48
     push rax
@@ -22428,19 +21149,20 @@ func_parse_factor:
     add rsp, 24
     pop rcx
     mov [rcx], rax
-    jmp .if_end_616
-.if_else_616:
+    jmp .if_end_455
+.if_else_455:
     mov rax, rbp
     sub rax, 56
     push rax
     mov rax, 0
     pop rcx
     mov [rcx], rax
-.if_end_616:
-.if_end_612:
-.if_end_610:
-    jmp .loop_start_609
-.loop_end_609:
+.if_end_455:
+.if_end_451:
+.if_end_449:
+    jmp .loop_start_448
+.break_448:
+.loop_end_448:
     mov rax, rbp
     sub rax, 48
     mov rax, [rax]
@@ -22474,8 +21196,8 @@ func_parse_term:
     push rax
     call _Lexer_method_peek
     add rsp, 16
-.loop_start_621:
-.loop_continue_621:
+.loop_start_460:
+.loop_continue_460:
     mov rax, 40
     push rax
     mov rax, rbp
@@ -22487,10 +21209,10 @@ func_parse_term:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .or_right_623
+    je .or_right_462
     mov rax, 1
-    jmp .or_end_623
-.or_right_623:
+    jmp .or_end_462
+.or_right_462:
     mov rax, 39
     push rax
     mov rax, rbp
@@ -22503,12 +21225,12 @@ func_parse_term:
     movzx rax, al
     cmp rax, 0
     setne al
-.or_end_623:
+.or_end_462:
     cmp rax, 0
-    je .or_right_622
+    je .or_right_461
     mov rax, 1
-    jmp .or_end_622
-.or_right_622:
+    jmp .or_end_461
+.or_right_461:
     mov rax, 32
     push rax
     mov rax, rbp
@@ -22521,9 +21243,9 @@ func_parse_term:
     movzx rax, al
     cmp rax, 0
     setne al
-.or_end_622:
+.or_end_461:
     cmp rax, 0
-    je .loop_end_621
+    je .loop_end_460
     mov rax, rbp
     sub rax, 40
     push rax
@@ -22596,8 +21318,9 @@ func_parse_term:
     push rax
     call _Lexer_method_peek
     add rsp, 16
-    jmp .loop_start_621
-.loop_end_621:
+    jmp .loop_start_460
+.break_460:
+.loop_end_460:
     mov rax, rbp
     sub rax, 48
     mov rax, [rax]
@@ -22631,8 +21354,8 @@ func_parse_additive:
     push rax
     call _Lexer_method_peek
     add rsp, 16
-.loop_start_624:
-.loop_continue_624:
+.loop_start_463:
+.loop_continue_463:
     mov rax, 33
     push rax
     mov rax, rbp
@@ -22644,10 +21367,10 @@ func_parse_additive:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .or_right_627
+    je .or_right_466
     mov rax, 1
-    jmp .or_end_627
-.or_right_627:
+    jmp .or_end_466
+.or_right_466:
     mov rax, 24
     push rax
     mov rax, rbp
@@ -22660,12 +21383,12 @@ func_parse_additive:
     movzx rax, al
     cmp rax, 0
     setne al
-.or_end_627:
+.or_end_466:
     cmp rax, 0
-    je .or_right_626
+    je .or_right_465
     mov rax, 1
-    jmp .or_end_626
-.or_right_626:
+    jmp .or_end_465
+.or_right_465:
     mov rax, 22
     push rax
     mov rax, rbp
@@ -22678,12 +21401,12 @@ func_parse_additive:
     movzx rax, al
     cmp rax, 0
     setne al
-.or_end_626:
+.or_end_465:
     cmp rax, 0
-    je .or_right_625
+    je .or_right_464
     mov rax, 1
-    jmp .or_end_625
-.or_right_625:
+    jmp .or_end_464
+.or_right_464:
     mov rax, 37
     push rax
     mov rax, rbp
@@ -22696,9 +21419,9 @@ func_parse_additive:
     movzx rax, al
     cmp rax, 0
     setne al
-.or_end_625:
+.or_end_464:
     cmp rax, 0
-    je .loop_end_624
+    je .loop_end_463
     mov rax, rbp
     sub rax, 40
     push rax
@@ -22771,8 +21494,9 @@ func_parse_additive:
     push rax
     call _Lexer_method_peek
     add rsp, 16
-    jmp .loop_start_624
-.loop_end_624:
+    jmp .loop_start_463
+.break_463:
+.loop_end_463:
     mov rax, rbp
     sub rax, 48
     mov rax, [rax]
@@ -22806,8 +21530,8 @@ func_parse_relational:
     push rax
     call _Lexer_method_peek
     add rsp, 16
-.loop_start_628:
-.loop_continue_628:
+.loop_start_467:
+.loop_continue_467:
     mov rax, 23
     push rax
     mov rax, rbp
@@ -22819,10 +21543,10 @@ func_parse_relational:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .or_right_631
+    je .or_right_470
     mov rax, 1
-    jmp .or_end_631
-.or_right_631:
+    jmp .or_end_470
+.or_right_470:
     mov rax, 21
     push rax
     mov rax, rbp
@@ -22835,12 +21559,12 @@ func_parse_relational:
     movzx rax, al
     cmp rax, 0
     setne al
-.or_end_631:
+.or_end_470:
     cmp rax, 0
-    je .or_right_630
+    je .or_right_469
     mov rax, 1
-    jmp .or_end_630
-.or_right_630:
+    jmp .or_end_469
+.or_right_469:
     mov rax, 18
     push rax
     mov rax, rbp
@@ -22853,12 +21577,12 @@ func_parse_relational:
     movzx rax, al
     cmp rax, 0
     setne al
-.or_end_630:
+.or_end_469:
     cmp rax, 0
-    je .or_right_629
+    je .or_right_468
     mov rax, 1
-    jmp .or_end_629
-.or_right_629:
+    jmp .or_end_468
+.or_right_468:
     mov rax, 17
     push rax
     mov rax, rbp
@@ -22871,9 +21595,9 @@ func_parse_relational:
     movzx rax, al
     cmp rax, 0
     setne al
-.or_end_629:
+.or_end_468:
     cmp rax, 0
-    je .loop_end_628
+    je .loop_end_467
     mov rax, rbp
     sub rax, 40
     push rax
@@ -22946,8 +21670,9 @@ func_parse_relational:
     push rax
     call _Lexer_method_peek
     add rsp, 16
-    jmp .loop_start_628
-.loop_end_628:
+    jmp .loop_start_467
+.break_467:
+.loop_end_467:
     mov rax, rbp
     sub rax, 48
     mov rax, [rax]
@@ -22981,8 +21706,8 @@ func_parse_equality:
     push rax
     call _Lexer_method_peek
     add rsp, 16
-.loop_start_632:
-.loop_continue_632:
+.loop_start_471:
+.loop_continue_471:
     mov rax, 14
     push rax
     mov rax, rbp
@@ -22994,10 +21719,10 @@ func_parse_equality:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .or_right_633
+    je .or_right_472
     mov rax, 1
-    jmp .or_end_633
-.or_right_633:
+    jmp .or_end_472
+.or_right_472:
     mov rax, 27
     push rax
     mov rax, rbp
@@ -23010,9 +21735,9 @@ func_parse_equality:
     movzx rax, al
     cmp rax, 0
     setne al
-.or_end_633:
+.or_end_472:
     cmp rax, 0
-    je .loop_end_632
+    je .loop_end_471
     mov rax, rbp
     sub rax, 40
     push rax
@@ -23085,8 +21810,9 @@ func_parse_equality:
     push rax
     call _Lexer_method_peek
     add rsp, 16
-    jmp .loop_start_632
-.loop_end_632:
+    jmp .loop_start_471
+.break_471:
+.loop_end_471:
     mov rax, rbp
     sub rax, 48
     mov rax, [rax]
@@ -23120,8 +21846,8 @@ func_parse_and:
     push rax
     call _Lexer_method_peek
     add rsp, 16
-.loop_start_634:
-.loop_continue_634:
+.loop_start_473:
+.loop_continue_473:
     mov rax, 0
     push rax
     mov rax, rbp
@@ -23133,7 +21859,7 @@ func_parse_and:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .loop_end_634
+    je .loop_end_473
     mov rax, rbp
     sub rax, 40
     push rax
@@ -23206,8 +21932,9 @@ func_parse_and:
     push rax
     call _Lexer_method_peek
     add rsp, 16
-    jmp .loop_start_634
-.loop_end_634:
+    jmp .loop_start_473
+.break_473:
+.loop_end_473:
     mov rax, rbp
     sub rax, 48
     mov rax, [rax]
@@ -23241,8 +21968,8 @@ func_parse_exclusive_or:
     push rax
     call _Lexer_method_peek
     add rsp, 16
-.loop_start_635:
-.loop_continue_635:
+.loop_start_474:
+.loop_continue_474:
     mov rax, 4
     push rax
     mov rax, rbp
@@ -23254,7 +21981,7 @@ func_parse_exclusive_or:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .loop_end_635
+    je .loop_end_474
     mov rax, rbp
     sub rax, 40
     push rax
@@ -23327,8 +22054,9 @@ func_parse_exclusive_or:
     push rax
     call _Lexer_method_peek
     add rsp, 16
-    jmp .loop_start_635
-.loop_end_635:
+    jmp .loop_start_474
+.break_474:
+.loop_end_474:
     mov rax, rbp
     sub rax, 48
     mov rax, [rax]
@@ -23362,8 +22090,8 @@ func_parse_inclusive_or:
     push rax
     call _Lexer_method_peek
     add rsp, 16
-.loop_start_636:
-.loop_continue_636:
+.loop_start_475:
+.loop_continue_475:
     mov rax, 3
     push rax
     mov rax, rbp
@@ -23375,7 +22103,7 @@ func_parse_inclusive_or:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .loop_end_636
+    je .loop_end_475
     mov rax, rbp
     sub rax, 40
     push rax
@@ -23448,8 +22176,9 @@ func_parse_inclusive_or:
     push rax
     call _Lexer_method_peek
     add rsp, 16
-    jmp .loop_start_636
-.loop_end_636:
+    jmp .loop_start_475
+.break_475:
+.loop_end_475:
     mov rax, rbp
     sub rax, 48
     mov rax, [rax]
@@ -23483,8 +22212,8 @@ func_parse_logical_and:
     push rax
     call _Lexer_method_peek
     add rsp, 16
-.loop_start_637:
-.loop_continue_637:
+.loop_start_476:
+.loop_continue_476:
     mov rax, 1
     push rax
     mov rax, rbp
@@ -23496,7 +22225,7 @@ func_parse_logical_and:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .loop_end_637
+    je .loop_end_476
     mov rax, rbp
     sub rax, 40
     push rax
@@ -23569,8 +22298,9 @@ func_parse_logical_and:
     push rax
     call _Lexer_method_peek
     add rsp, 16
-    jmp .loop_start_637
-.loop_end_637:
+    jmp .loop_start_476
+.break_476:
+.loop_end_476:
     mov rax, rbp
     sub rax, 48
     mov rax, [rax]
@@ -23604,8 +22334,8 @@ func_parse_logical_or:
     push rax
     call _Lexer_method_peek
     add rsp, 16
-.loop_start_638:
-.loop_continue_638:
+.loop_start_477:
+.loop_continue_477:
     mov rax, 31
     push rax
     mov rax, rbp
@@ -23617,7 +22347,7 @@ func_parse_logical_or:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .loop_end_638
+    je .loop_end_477
     mov rax, rbp
     sub rax, 40
     push rax
@@ -23690,8 +22420,9 @@ func_parse_logical_or:
     push rax
     call _Lexer_method_peek
     add rsp, 16
-    jmp .loop_start_638
-.loop_end_638:
+    jmp .loop_start_477
+.break_477:
+.loop_end_477:
     mov rax, rbp
     sub rax, 48
     mov rax, [rax]
@@ -23736,7 +22467,7 @@ func_parse_conditional_exp:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_end_639
+    je .if_end_478
     mov rax, rbp
     sub rax, 40
     push rax
@@ -23827,18 +22558,18 @@ func_parse_conditional_exp:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_end_640
-    mov rax, global_string_395
+    je .if_end_479
+    mov rax, global_string_409
     push rax
     mov rax, rbp
     sub rax, 40
     add rax, 8
     push rax
-    mov rax, global_string_396
+    mov rax, global_string_410
     push rax
     call func_die_loc
     add rsp, 24
-.if_end_640:
+.if_end_479:
     mov rax, rbp
     sub rax, 48
     push rax
@@ -23859,7 +22590,7 @@ func_parse_conditional_exp:
     mov rax, [rax]
     pop rcx
     mov [rcx], rax
-.if_end_639:
+.if_end_478:
     mov rax, rbp
     sub rax, 48
     mov rax, [rax]
@@ -23893,7 +22624,7 @@ func_parse_expression:
     call func_is_lvalue
     add rsp, 8
     cmp rax, 0
-    je .if_end_641
+    je .if_end_480
     mov rax, rbp
     sub rax, 48
     push rax
@@ -23914,7 +22645,7 @@ func_parse_expression:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_end_642
+    je .if_end_481
     mov rax, rbp
     sub rax, 48
     push rax
@@ -23956,8 +22687,8 @@ func_parse_expression:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_end_643
-    mov rax, global_string_397
+    je .if_end_482
+    mov rax, global_string_411
     push rax
     call func_puts
     add rsp, 8
@@ -23972,7 +22703,7 @@ func_parse_expression:
     push rax
     call func_putsln
     add rsp, 8
-    mov rax, global_string_398
+    mov rax, global_string_412
     push rax
     call func_puts
     add rsp, 8
@@ -23987,17 +22718,17 @@ func_parse_expression:
     push rax
     call func_putsln
     add rsp, 8
-    mov rax, global_string_399
+    mov rax, global_string_413
     push rax
     mov rax, rbp
     sub rax, 48
     add rax, 8
     push rax
-    mov rax, global_string_400
+    mov rax, global_string_414
     push rax
     call func_die_loc
     add rsp, 24
-.if_end_643:
+.if_end_482:
     mov rax, rbp
     sub rax, 56
     mov rax, [rax]
@@ -24040,8 +22771,8 @@ func_parse_expression:
     mov rax, [rax]
     pop rcx
     mov [rcx], rax
-.if_end_642:
-.if_end_641:
+.if_end_481:
+.if_end_480:
     mov rax, rbp
     sub rax, 8
     mov rax, [rax]
@@ -24242,7 +22973,7 @@ func_parse_var_declaration:
     push rbp
     mov rbp, rsp
     sub rsp, 80
-    mov rax, 59
+    mov rax, 62
     push rax
     mov rax, rbp
     sub rax, 40
@@ -24273,24 +23004,24 @@ func_parse_var_declaration:
     call func_identifier_exists
     add rsp, 8
     cmp rax, 0
-    je .if_end_644
+    je .if_end_483
     mov rax, rbp
     sub rax, 40
     add rax, 32
     add rax, 0
     mov rax, [rax]
     push rax
-    mov rax, global_string_401
+    mov rax, global_string_415
     push rax
     mov rax, rbp
     sub rax, 40
     add rax, 8
     push rax
-    mov rax, global_string_402
+    mov rax, global_string_416
     push rax
     call func_die_loc2
     add rsp, 32
-.if_end_644:
+.if_end_483:
     mov rax, global_vars
     add rax, 0
     mov rax, [rax]
@@ -24303,7 +23034,7 @@ func_parse_var_declaration:
     sete al
     movzx rax, al
     mov [rbp-48], rax
-    mov rax, 34
+    mov rax, 36
     push rax
     call func_node_new
     add rsp, 8
@@ -24348,7 +23079,7 @@ func_parse_var_declaration:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_end_645
+    je .if_end_484
     mov rax, rbp
     sub rax, 40
     push rax
@@ -24387,7 +23118,7 @@ func_parse_var_declaration:
     push rax
     call _Lexer_method_peek
     add rsp, 16
-.if_end_645:
+.if_end_484:
     mov rax, 2
     push rax
     mov rax, rbp
@@ -24399,7 +23130,7 @@ func_parse_var_declaration:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_else_646
+    je .if_else_485
     mov rax, rbp
     sub rax, 40
     push rax
@@ -24426,7 +23157,7 @@ func_parse_var_declaration:
     sub rax, 72
     mov rax, [rax]
     cmp rax, 0
-    je .if_else_647
+    je .if_else_486
     mov rax, rbp
     sub rax, 64
     mov rax, [rax]
@@ -24442,8 +23173,8 @@ func_parse_var_declaration:
     mov rax, [rax]
     pop rcx
     mov [rcx], rax
-    jmp .if_end_647
-.if_else_647:
+    jmp .if_end_486
+.if_else_486:
     mov rax, rbp
     sub rax, 64
     mov rax, [rax]
@@ -24467,8 +23198,8 @@ func_parse_var_declaration:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_end_648
-    mov rax, global_string_403
+    je .if_end_487
+    mov rax, global_string_417
     push rax
     call func_puts
     add rsp, 8
@@ -24484,7 +23215,7 @@ func_parse_var_declaration:
     push rax
     call func_putsln
     add rsp, 8
-    mov rax, global_string_404
+    mov rax, global_string_418
     push rax
     call func_puts
     add rsp, 8
@@ -24508,17 +23239,17 @@ func_parse_var_declaration:
     add rax, 0
     mov rax, [rax]
     push rax
-    mov rax, global_string_405
+    mov rax, global_string_419
     push rax
     mov rax, rbp
     sub rax, 40
     add rax, 8
     push rax
-    mov rax, global_string_406
+    mov rax, global_string_420
     push rax
     call func_die_loc2
     add rsp, 32
-.if_end_648:
+.if_end_487:
     mov rax, rbp
     sub rax, 64
     mov rax, [rax]
@@ -24529,7 +23260,7 @@ func_parse_var_declaration:
     mov rax, [rax]
     pop rcx
     mov [rcx], rax
-.if_end_647:
+.if_end_486:
     mov rax, rbp
     sub rax, 56
     mov rax, [rax]
@@ -24544,30 +23275,30 @@ func_parse_var_declaration:
     mov rax, [rax]
     pop rcx
     mov [rcx], rax
-    jmp .if_end_646
-.if_else_646:
+    jmp .if_end_485
+.if_else_485:
     mov rax, rbp
     sub rax, 72
     mov rax, [rax]
     cmp rax, 0
-    je .if_end_649
-    mov rax, global_string_407
+    je .if_end_488
+    mov rax, global_string_421
     push rax
     mov rax, rbp
     sub rax, 40
     add rax, 8
     push rax
-    mov rax, global_string_408
+    mov rax, global_string_422
     push rax
     call func_die_loc
     add rsp, 24
-.if_end_649:
-.if_end_646:
+.if_end_488:
+.if_end_485:
     mov rax, rbp
     sub rax, 48
     mov rax, [rax]
     cmp rax, 0
-    je .if_else_650
+    je .if_else_489
     mov rax, rbp
     sub rax, 64
     mov rax, [rax]
@@ -24575,8 +23306,8 @@ func_parse_var_declaration:
     push rax
     call func_add_global_variable
     add rsp, 8
-    jmp .if_end_650
-.if_else_650:
+    jmp .if_end_489
+.if_else_489:
     mov rax, rbp
     sub rax, 64
     mov rax, [rax]
@@ -24584,7 +23315,7 @@ func_parse_var_declaration:
     push rax
     call func_add_variable_to_current_block
     add rsp, 8
-.if_end_650:
+.if_end_489:
     mov rax, rbp
     sub rax, 56
     mov rax, [rax]
@@ -24621,7 +23352,7 @@ func_parse_function_params:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_end_651
+    je .if_end_490
     mov rax, rbp
     sub rax, -24
     mov rax, [rax]
@@ -24632,9 +23363,9 @@ func_parse_function_params:
     add rsp, 0
     pop rcx
     mov [rcx], rax
-.if_end_651:
-.loop_start_652:
-.loop_continue_652:
+.if_end_490:
+.loop_start_491:
+.loop_continue_491:
     mov rax, 8
     push rax
     mov rax, rbp
@@ -24646,7 +23377,7 @@ func_parse_function_params:
     setne al
     movzx rax, al
     cmp rax, 0
-    je .loop_end_652
+    je .loop_end_491
     mov rax, 19
     push rax
     mov rax, rbp
@@ -24673,22 +23404,22 @@ func_parse_function_params:
     call func_identifier_exists
     add rsp, 8
     cmp rax, 0
-    je .if_end_653
+    je .if_end_492
     mov rax, rbp
     sub rax, 48
     mov rax, [rax]
     push rax
-    mov rax, global_string_409
+    mov rax, global_string_423
     push rax
     mov rax, rbp
     sub rax, 40
     add rax, 8
     push rax
-    mov rax, global_string_410
+    mov rax, global_string_424
     push rax
     call func_die_loc2
     add rsp, 32
-.if_end_653:
+.if_end_492:
     mov rax, 9
     push rax
     mov rax, rbp
@@ -24765,7 +23496,7 @@ func_parse_function_params:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_end_654
+    je .if_end_493
     mov rax, rbp
     sub rax, 40
     push rax
@@ -24784,9 +23515,10 @@ func_parse_function_params:
     push rax
     call _Lexer_method_peek
     add rsp, 16
-.if_end_654:
-    jmp .loop_start_652
-.loop_end_652:
+.if_end_493:
+    jmp .loop_start_491
+.break_491:
+.loop_end_491:
     mov rax, 16
     neg rax
     mov [rbp-48], rax
@@ -24801,7 +23533,7 @@ func_parse_function_params:
     mov [rbp-56], rax
     mov rax, 0
     mov [rbp-64], rax
-.loop_start_655:
+.loop_start_494:
     mov rax, rbp
     sub rax, 56
     mov rax, [rax]
@@ -24814,7 +23546,7 @@ func_parse_function_params:
     setl al
     movzx rax, al
     cmp rax, 0
-    je .loop_end_655
+    je .loop_end_494
     mov rax, rbp
     sub rax, 64
     mov rax, [rax]
@@ -24867,7 +23599,7 @@ func_parse_function_params:
     sub rax, rcx
     pop rcx
     mov [rcx], rax
-.loop_continue_655:
+.loop_continue_494:
     mov rax, rbp
     sub rax, 64
     push rax
@@ -24880,8 +23612,516 @@ func_parse_function_params:
     add rax, rcx
     pop rcx
     mov [rcx], rax
-    jmp .loop_start_655
-.loop_end_655:
+    jmp .loop_start_494
+.break_494:
+.loop_end_494:
+    mov rsp, rbp
+    pop rbp
+    mov qword rax, 0
+    ret
+global func_parse_switch_statement
+func_parse_switch_statement:
+    push rbp
+    mov rbp, rsp
+    sub rsp, 64
+    mov rax, 67
+    push rax
+    mov rax, rbp
+    sub rax, 40
+    push rax
+    mov rax, rbp
+    sub rax, -16
+    mov rax, [rax]
+    push rax
+    call _Lexer_method_next_assert
+    add rsp, 24
+    mov rax, 34
+    push rax
+    call func_node_new
+    add rsp, 8
+    mov [rbp-48], rax
+    mov rax, 30
+    push rax
+    mov rax, rbp
+    sub rax, 40
+    push rax
+    mov rax, rbp
+    sub rax, -16
+    mov rax, [rax]
+    push rax
+    call _Lexer_method_next_assert
+    add rsp, 24
+    mov rax, rbp
+    sub rax, 48
+    mov rax, [rax]
+    add rax, 16
+    add rax, 0
+    push rax
+    mov rax, rbp
+    sub rax, -16
+    mov rax, [rax]
+    push rax
+    call func_parse_expression
+    add rsp, 8
+    pop rcx
+    mov [rcx], rax
+    mov rax, rbp
+    sub rax, 48
+    mov rax, [rax]
+    add rax, 16
+    add rax, 0
+    mov rax, [rax]
+    add rax, 8
+    mov rax, [rax]
+    push rax
+    call func_is_int_type
+    add rsp, 8
+    cmp rax, 0
+    sete al
+    movzx rax, al
+    cmp rax, 0
+    je .if_end_495
+    mov rax, global_string_425
+    push rax
+    mov rax, rbp
+    sub rax, 40
+    add rax, 8
+    push rax
+    mov rax, global_string_426
+    push rax
+    call func_die_loc
+    add rsp, 24
+.if_end_495:
+    mov rax, rbp
+    sub rax, 48
+    mov rax, [rax]
+    add rax, 16
+    add rax, 8
+    push rax
+    call func_vector_new
+    add rsp, 0
+    pop rcx
+    mov [rcx], rax
+    mov rax, rbp
+    sub rax, 48
+    mov rax, [rax]
+    push rax
+    mov rax, global_vars
+    add rax, 1073742000
+    mov rax, [rax]
+    push rax
+    call _Vector_method_push
+    add rsp, 16
+    mov rax, 8
+    push rax
+    mov rax, rbp
+    sub rax, 40
+    push rax
+    mov rax, rbp
+    sub rax, -16
+    mov rax, [rax]
+    push rax
+    call _Lexer_method_next_assert
+    add rsp, 24
+    mov rax, 28
+    push rax
+    mov rax, rbp
+    sub rax, 40
+    push rax
+    mov rax, rbp
+    sub rax, -16
+    mov rax, [rax]
+    push rax
+    call _Lexer_method_next_assert
+    add rsp, 24
+    mov rax, rbp
+    sub rax, 40
+    push rax
+    mov rax, rbp
+    sub rax, -16
+    mov rax, [rax]
+    push rax
+    call _Lexer_method_peek
+    add rsp, 16
+.loop_start_496:
+.loop_continue_496:
+    mov rax, 6
+    push rax
+    mov rax, rbp
+    sub rax, 40
+    add rax, 0
+    mov rax, [rax]
+    pop rcx
+    cmp rax, rcx
+    setne al
+    movzx rax, al
+    cmp rax, 0
+    je .loop_end_496
+    mov rax, 46
+    push rax
+    mov rax, rbp
+    sub rax, 40
+    add rax, 0
+    mov rax, [rax]
+    pop rcx
+    cmp rax, rcx
+    sete al
+    movzx rax, al
+    cmp rax, 0
+    je .if_else_497
+    mov rax, rbp
+    sub rax, 40
+    push rax
+    mov rax, rbp
+    sub rax, -16
+    mov rax, [rax]
+    push rax
+    call _Lexer_method_next
+    add rsp, 16
+    mov rax, 35
+    push rax
+    call func_node_new
+    add rsp, 8
+    mov [rbp-56], rax
+    mov rax, rbp
+    sub rax, 56
+    mov rax, [rax]
+    add rax, 16
+    add rax, 0
+    push rax
+    mov rax, rbp
+    sub rax, -16
+    mov rax, [rax]
+    push rax
+    call func_parse_constant_expression
+    add rsp, 8
+    pop rcx
+    mov [rcx], rax
+    mov rax, rbp
+    sub rax, 56
+    mov rax, [rax]
+    add rax, 16
+    add rax, 8
+    push rax
+    call func_vector_new
+    add rsp, 0
+    pop rcx
+    mov [rcx], rax
+    mov rax, 9
+    push rax
+    mov rax, rbp
+    sub rax, 40
+    push rax
+    mov rax, rbp
+    sub rax, -16
+    mov rax, [rax]
+    push rax
+    call _Lexer_method_next_assert
+    add rsp, 24
+    mov rax, rbp
+    sub rax, 40
+    push rax
+    mov rax, rbp
+    sub rax, -16
+    mov rax, [rax]
+    push rax
+    call _Lexer_method_peek
+    add rsp, 16
+.loop_start_498:
+.loop_continue_498:
+    mov rax, 46
+    push rax
+    mov rax, rbp
+    sub rax, 40
+    add rax, 0
+    mov rax, [rax]
+    pop rcx
+    cmp rax, rcx
+    setne al
+    movzx rax, al
+    cmp rax, 0
+    jne .and_right_500
+    mov rax, 0
+    jmp .and_end_500
+.and_right_500:
+    mov rax, 49
+    push rax
+    mov rax, rbp
+    sub rax, 40
+    add rax, 0
+    mov rax, [rax]
+    pop rcx
+    cmp rax, rcx
+    setne al
+    movzx rax, al
+    cmp rax, 0
+    setne al
+.and_end_500:
+    cmp rax, 0
+    jne .and_right_499
+    mov rax, 0
+    jmp .and_end_499
+.and_right_499:
+    mov rax, 6
+    push rax
+    mov rax, rbp
+    sub rax, 40
+    add rax, 0
+    mov rax, [rax]
+    pop rcx
+    cmp rax, rcx
+    setne al
+    movzx rax, al
+    cmp rax, 0
+    setne al
+.and_end_499:
+    cmp rax, 0
+    je .loop_end_498
+    mov rax, rbp
+    sub rax, -16
+    mov rax, [rax]
+    push rax
+    call func_parse_statement
+    add rsp, 8
+    mov [rbp-64], rax
+    mov rax, rbp
+    sub rax, 64
+    mov rax, [rax]
+    push rax
+    mov rax, rbp
+    sub rax, 56
+    mov rax, [rax]
+    add rax, 16
+    add rax, 8
+    mov rax, [rax]
+    push rax
+    call _Vector_method_push
+    add rsp, 16
+    mov rax, rbp
+    sub rax, 40
+    push rax
+    mov rax, rbp
+    sub rax, -16
+    mov rax, [rax]
+    push rax
+    call _Lexer_method_peek
+    add rsp, 16
+    jmp .loop_start_498
+.break_498:
+.loop_end_498:
+    mov rax, rbp
+    sub rax, 56
+    mov rax, [rax]
+    push rax
+    mov rax, rbp
+    sub rax, 48
+    mov rax, [rax]
+    add rax, 16
+    add rax, 8
+    mov rax, [rax]
+    push rax
+    call _Vector_method_push
+    add rsp, 16
+    jmp .if_end_497
+.if_else_497:
+    mov rax, 49
+    push rax
+    mov rax, rbp
+    sub rax, 40
+    add rax, 0
+    mov rax, [rax]
+    pop rcx
+    cmp rax, rcx
+    sete al
+    movzx rax, al
+    cmp rax, 0
+    je .if_else_501
+    mov rax, rbp
+    sub rax, 48
+    mov rax, [rax]
+    add rax, 16
+    add rax, 16
+    push rax
+    call func_vector_new
+    add rsp, 0
+    pop rcx
+    mov [rcx], rax
+    mov rax, rbp
+    sub rax, 40
+    push rax
+    mov rax, rbp
+    sub rax, -16
+    mov rax, [rax]
+    push rax
+    call _Lexer_method_next
+    add rsp, 16
+    mov rax, 9
+    push rax
+    mov rax, rbp
+    sub rax, 40
+    push rax
+    mov rax, rbp
+    sub rax, -16
+    mov rax, [rax]
+    push rax
+    call _Lexer_method_next_assert
+    add rsp, 24
+    mov rax, rbp
+    sub rax, 40
+    push rax
+    mov rax, rbp
+    sub rax, -16
+    mov rax, [rax]
+    push rax
+    call _Lexer_method_peek
+    add rsp, 16
+.loop_start_502:
+.loop_continue_502:
+    mov rax, 46
+    push rax
+    mov rax, rbp
+    sub rax, 40
+    add rax, 0
+    mov rax, [rax]
+    pop rcx
+    cmp rax, rcx
+    setne al
+    movzx rax, al
+    cmp rax, 0
+    jne .and_right_504
+    mov rax, 0
+    jmp .and_end_504
+.and_right_504:
+    mov rax, 49
+    push rax
+    mov rax, rbp
+    sub rax, 40
+    add rax, 0
+    mov rax, [rax]
+    pop rcx
+    cmp rax, rcx
+    setne al
+    movzx rax, al
+    cmp rax, 0
+    setne al
+.and_end_504:
+    cmp rax, 0
+    jne .and_right_503
+    mov rax, 0
+    jmp .and_end_503
+.and_right_503:
+    mov rax, 6
+    push rax
+    mov rax, rbp
+    sub rax, 40
+    add rax, 0
+    mov rax, [rax]
+    pop rcx
+    cmp rax, rcx
+    setne al
+    movzx rax, al
+    cmp rax, 0
+    setne al
+.and_end_503:
+    cmp rax, 0
+    je .loop_end_502
+    mov rax, rbp
+    sub rax, -16
+    mov rax, [rax]
+    push rax
+    call func_parse_statement
+    add rsp, 8
+    mov [rbp-56], rax
+    mov rax, rbp
+    sub rax, 56
+    mov rax, [rax]
+    push rax
+    mov rax, rbp
+    sub rax, 48
+    mov rax, [rax]
+    add rax, 16
+    add rax, 16
+    mov rax, [rax]
+    push rax
+    call _Vector_method_push
+    add rsp, 16
+    mov rax, rbp
+    sub rax, 40
+    push rax
+    mov rax, rbp
+    sub rax, -16
+    mov rax, [rax]
+    push rax
+    call _Lexer_method_peek
+    add rsp, 16
+    jmp .loop_start_502
+.break_502:
+.loop_end_502:
+    mov rax, 6
+    push rax
+    mov rax, rbp
+    sub rax, 40
+    add rax, 0
+    mov rax, [rax]
+    pop rcx
+    cmp rax, rcx
+    setne al
+    movzx rax, al
+    cmp rax, 0
+    je .if_end_505
+    mov rax, global_string_427
+    push rax
+    mov rax, rbp
+    sub rax, 40
+    add rax, 8
+    push rax
+    mov rax, global_string_428
+    push rax
+    call func_die_loc
+    add rsp, 24
+.if_end_505:
+    jmp .if_end_501
+.if_else_501:
+    mov rax, global_string_429
+    push rax
+    mov rax, rbp
+    sub rax, 40
+    add rax, 8
+    push rax
+    mov rax, global_string_430
+    push rax
+    call func_die_loc
+    add rsp, 24
+.if_end_501:
+.if_end_497:
+    jmp .loop_start_496
+.break_496:
+.loop_end_496:
+    mov rax, global_vars
+    add rax, 1073742000
+    mov rax, [rax]
+    push rax
+    call _Vector_method_pop
+    add rsp, 8
+    mov rax, 6
+    push rax
+    mov rax, rbp
+    sub rax, 40
+    push rax
+    mov rax, rbp
+    sub rax, -16
+    mov rax, [rax]
+    push rax
+    call _Lexer_method_next_assert
+    add rsp, 24
+    mov rax, rbp
+    sub rax, 48
+    mov rax, [rax]
+    push rax
+    pop rax
+    mov rsp, rbp
+    pop rbp
+    ret
     mov rsp, rbp
     pop rbp
     mov qword rax, 0
@@ -24891,7 +24131,7 @@ func_parse_for_loop:
     push rbp
     mov rbp, rsp
     sub rsp, 56
-    mov rax, 52
+    mov rax, 55
     push rax
     mov rax, rbp
     sub rax, 40
@@ -24918,7 +24158,7 @@ func_parse_for_loop:
     push rax
     call _Lexer_method_next_assert
     add rsp, 24
-    mov rax, 41
+    mov rax, 44
     push rax
     call func_node_new
     add rsp, 8
@@ -24972,7 +24212,7 @@ func_parse_for_loop:
     push rax
     call _Lexer_method_peek
     add rsp, 16
-    mov rax, 59
+    mov rax, 62
     push rax
     mov rax, rbp
     sub rax, 40
@@ -24983,7 +24223,7 @@ func_parse_for_loop:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_else_656
+    je .if_else_506
     mov rax, rbp
     sub rax, 48
     mov rax, [rax]
@@ -24998,8 +24238,8 @@ func_parse_for_loop:
     add rsp, 8
     pop rcx
     mov [rcx], rax
-    jmp .if_end_656
-.if_else_656:
+    jmp .if_end_506
+.if_else_506:
     mov rax, 38
     push rax
     mov rax, rbp
@@ -25011,7 +24251,7 @@ func_parse_for_loop:
     setne al
     movzx rax, al
     cmp rax, 0
-    je .if_end_657
+    je .if_end_507
     mov rax, rbp
     sub rax, 48
     mov rax, [rax]
@@ -25026,8 +24266,8 @@ func_parse_for_loop:
     add rsp, 8
     pop rcx
     mov [rcx], rax
-.if_end_657:
-.if_end_656:
+.if_end_507:
+.if_end_506:
     mov rax, 38
     push rax
     mov rax, rbp
@@ -25059,7 +24299,7 @@ func_parse_for_loop:
     setne al
     movzx rax, al
     cmp rax, 0
-    je .if_end_658
+    je .if_end_508
     mov rax, rbp
     sub rax, 48
     mov rax, [rax]
@@ -25074,7 +24314,7 @@ func_parse_for_loop:
     add rsp, 8
     pop rcx
     mov [rcx], rax
-.if_end_658:
+.if_end_508:
     mov rax, 38
     push rax
     mov rax, rbp
@@ -25106,7 +24346,7 @@ func_parse_for_loop:
     setne al
     movzx rax, al
     cmp rax, 0
-    je .if_end_659
+    je .if_end_509
     mov rax, rbp
     sub rax, 48
     mov rax, [rax]
@@ -25121,7 +24361,7 @@ func_parse_for_loop:
     add rsp, 8
     pop rcx
     mov [rcx], rax
-.if_end_659:
+.if_end_509:
     mov rax, 8
     push rax
     mov rax, rbp
@@ -25136,6 +24376,16 @@ func_parse_for_loop:
     mov rax, rbp
     sub rax, 48
     mov rax, [rax]
+    push rax
+    mov rax, global_vars
+    add rax, 1073742000
+    mov rax, [rax]
+    push rax
+    call _Vector_method_push
+    add rsp, 16
+    mov rax, rbp
+    sub rax, 48
+    mov rax, [rax]
     add rax, 16
     add rax, 8
     push rax
@@ -25147,6 +24397,12 @@ func_parse_for_loop:
     add rsp, 8
     pop rcx
     mov [rcx], rax
+    mov rax, global_vars
+    add rax, 1073742000
+    mov rax, [rax]
+    push rax
+    call _Vector_method_pop
+    add rsp, 8
     call func_block_stack_pop
     add rsp, 0
     mov rax, rbp
@@ -25186,7 +24442,7 @@ func_parse_statement:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_else_660
+    je .if_else_510
     mov rax, rbp
     sub rax, 8
     push rax
@@ -25198,9 +24454,16 @@ func_parse_statement:
     add rsp, 8
     pop rcx
     mov [rcx], rax
-    jmp .if_end_660
-.if_else_660:
-    mov rax, 61
+    mov rax, rbp
+    sub rax, 48
+    push rax
+    mov rax, rbp
+    sub rax, -16
+    mov rax, [rax]
+    push rax
+    call _Lexer_method_peek
+    add rsp, 16
+    mov rax, 38
     push rax
     mov rax, rbp
     sub rax, 48
@@ -25211,7 +24474,31 @@ func_parse_statement:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_else_661
+    je .if_end_511
+    mov rax, rbp
+    sub rax, 48
+    push rax
+    mov rax, rbp
+    sub rax, -16
+    mov rax, [rax]
+    push rax
+    call _Lexer_method_next
+    add rsp, 16
+.if_end_511:
+    jmp .if_end_510
+.if_else_510:
+    mov rax, 64
+    push rax
+    mov rax, rbp
+    sub rax, 48
+    add rax, 0
+    mov rax, [rax]
+    pop rcx
+    cmp rax, rcx
+    sete al
+    movzx rax, al
+    cmp rax, 0
+    je .if_else_512
     mov rax, rbp
     sub rax, 48
     push rax
@@ -25224,7 +24511,7 @@ func_parse_statement:
     mov rax, rbp
     sub rax, 8
     push rax
-    mov rax, 37
+    mov rax, 39
     push rax
     call func_node_new
     add rsp, 8
@@ -25250,7 +24537,7 @@ func_parse_statement:
     setne al
     movzx rax, al
     cmp rax, 0
-    je .if_else_662
+    je .if_else_513
     mov rax, rbp
     sub rax, 8
     mov rax, [rax]
@@ -25286,18 +24573,18 @@ func_parse_statement:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_end_663
-    mov rax, global_string_411
+    je .if_end_514
+    mov rax, global_string_431
     push rax
     mov rax, rbp
     sub rax, 48
     add rax, 8
     push rax
-    mov rax, global_string_412
+    mov rax, global_string_432
     push rax
     call func_die_loc
     add rsp, 24
-.if_end_663:
+.if_end_514:
     mov rax, rbp
     sub rax, 8
     mov rax, [rax]
@@ -25308,8 +24595,8 @@ func_parse_statement:
     mov rax, [rax]
     pop rcx
     mov [rcx], rax
-    jmp .if_end_662
-.if_else_662:
+    jmp .if_end_513
+.if_else_513:
     mov rax, rbp
     sub rax, 8
     mov rax, [rax]
@@ -25334,8 +24621,8 @@ func_parse_statement:
     setne al
     movzx rax, al
     cmp rax, 0
-    je .if_end_664
-    mov rax, global_string_413
+    je .if_end_515
+    mov rax, global_string_433
     push rax
     call func_puts
     add rsp, 8
@@ -25350,18 +24637,18 @@ func_parse_statement:
     push rax
     call func_putsln
     add rsp, 8
-    mov rax, global_string_414
+    mov rax, global_string_434
     push rax
     mov rax, rbp
     sub rax, 48
     add rax, 8
     push rax
-    mov rax, global_string_415
+    mov rax, global_string_435
     push rax
     call func_die_loc
     add rsp, 24
-.if_end_664:
-.if_end_662:
+.if_end_515:
+.if_end_513:
     mov rax, rbp
     sub rax, 8
     mov rax, [rax]
@@ -25385,9 +24672,9 @@ func_parse_statement:
     push rax
     call _Lexer_method_next_assert
     add rsp, 24
-    jmp .if_end_661
-.if_else_661:
-    mov rax, 53
+    jmp .if_end_512
+.if_else_512:
+    mov rax, 56
     push rax
     mov rax, rbp
     sub rax, 48
@@ -25398,7 +24685,7 @@ func_parse_statement:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_else_665
+    je .if_else_516
     mov rax, rbp
     sub rax, 48
     push rax
@@ -25476,7 +24763,7 @@ func_parse_statement:
     push rax
     call _Lexer_method_peek
     add rsp, 16
-    mov rax, 48
+    mov rax, 51
     push rax
     mov rax, rbp
     sub rax, 48
@@ -25487,7 +24774,7 @@ func_parse_statement:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_end_666
+    je .if_end_517
     mov rax, rbp
     sub rax, 48
     push rax
@@ -25511,10 +24798,10 @@ func_parse_statement:
     add rsp, 8
     pop rcx
     mov [rcx], rax
-.if_end_666:
-    jmp .if_end_665
-.if_else_665:
-    mov rax, 66
+.if_end_517:
+    jmp .if_end_516
+.if_else_516:
+    mov rax, 70
     push rax
     mov rax, rbp
     sub rax, 48
@@ -25525,7 +24812,7 @@ func_parse_statement:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_else_667
+    je .if_else_518
     mov rax, rbp
     sub rax, 48
     push rax
@@ -25583,6 +24870,16 @@ func_parse_statement:
     mov rax, rbp
     sub rax, 8
     mov rax, [rax]
+    push rax
+    mov rax, global_vars
+    add rax, 1073742000
+    mov rax, [rax]
+    push rax
+    call _Vector_method_push
+    add rsp, 16
+    mov rax, rbp
+    sub rax, 8
+    mov rax, [rax]
     add rax, 16
     add rax, 8
     push rax
@@ -25594,9 +24891,15 @@ func_parse_statement:
     add rsp, 8
     pop rcx
     mov [rcx], rax
-    jmp .if_end_667
-.if_else_667:
-    mov rax, 52
+    mov rax, global_vars
+    add rax, 1073742000
+    mov rax, [rax]
+    push rax
+    call _Vector_method_pop
+    add rsp, 8
+    jmp .if_end_518
+.if_else_518:
+    mov rax, 55
     push rax
     mov rax, rbp
     sub rax, 48
@@ -25607,7 +24910,7 @@ func_parse_statement:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_else_668
+    je .if_else_519
     mov rax, rbp
     sub rax, 8
     push rax
@@ -25619,9 +24922,9 @@ func_parse_statement:
     add rsp, 8
     pop rcx
     mov [rcx], rax
-    jmp .if_end_668
-.if_else_668:
-    mov rax, 49
+    jmp .if_end_519
+.if_else_519:
+    mov rax, 67
     push rax
     mov rax, rbp
     sub rax, 48
@@ -25632,8 +24935,95 @@ func_parse_statement:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_else_669
-    mov rax, 49
+    je .if_else_520
+    mov rax, rbp
+    sub rax, 8
+    push rax
+    mov rax, rbp
+    sub rax, -16
+    mov rax, [rax]
+    push rax
+    call func_parse_switch_statement
+    add rsp, 8
+    pop rcx
+    mov [rcx], rax
+    jmp .if_end_520
+.if_else_520:
+    mov rax, 45
+    push rax
+    mov rax, rbp
+    sub rax, 48
+    add rax, 0
+    mov rax, [rax]
+    pop rcx
+    cmp rax, rcx
+    sete al
+    movzx rax, al
+    cmp rax, 0
+    je .if_else_521
+    mov rax, rbp
+    sub rax, 48
+    push rax
+    mov rax, rbp
+    sub rax, -16
+    mov rax, [rax]
+    push rax
+    call _Lexer_method_next
+    add rsp, 16
+    mov rax, global_vars
+    add rax, 1073742000
+    mov rax, [rax]
+    push rax
+    call _Vector_method_empty
+    add rsp, 8
+    cmp rax, 0
+    je .if_end_522
+    mov rax, global_string_436
+    push rax
+    mov rax, rbp
+    sub rax, 48
+    add rax, 8
+    push rax
+    mov rax, global_string_437
+    push rax
+    call func_die_loc
+    add rsp, 24
+.if_end_522:
+    mov rax, rbp
+    sub rax, 8
+    push rax
+    mov rax, 40
+    push rax
+    call func_node_new
+    add rsp, 8
+    pop rcx
+    mov [rcx], rax
+    mov rax, 38
+    push rax
+    mov rax, rbp
+    sub rax, 48
+    push rax
+    mov rax, rbp
+    sub rax, -16
+    mov rax, [rax]
+    push rax
+    call _Lexer_method_next_assert
+    add rsp, 24
+    jmp .if_end_521
+.if_else_521:
+    mov rax, 52
+    push rax
+    mov rax, rbp
+    sub rax, 48
+    add rax, 0
+    mov rax, [rax]
+    pop rcx
+    cmp rax, rcx
+    sete al
+    movzx rax, al
+    cmp rax, 0
+    je .if_else_523
+    mov rax, 52
     push rax
     mov rax, rbp
     sub rax, 48
@@ -25666,9 +25056,9 @@ func_parse_statement:
     add rsp, 8
     pop rcx
     mov [rcx], rax
-    jmp .if_end_669
-.if_else_669:
-    mov rax, 59
+    jmp .if_end_523
+.if_else_523:
+    mov rax, 62
     push rax
     mov rax, rbp
     sub rax, 48
@@ -25679,7 +25069,7 @@ func_parse_statement:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_else_670
+    je .if_else_524
     mov rax, rbp
     sub rax, 8
     push rax
@@ -25702,8 +25092,8 @@ func_parse_statement:
     push rax
     call _Lexer_method_next_assert
     add rsp, 24
-    jmp .if_end_670
-.if_else_670:
+    jmp .if_end_524
+.if_else_524:
     mov rax, rbp
     sub rax, 8
     push rax
@@ -25726,13 +25116,15 @@ func_parse_statement:
     push rax
     call _Lexer_method_next_assert
     add rsp, 24
-.if_end_670:
-.if_end_669:
-.if_end_668:
-.if_end_667:
-.if_end_665:
-.if_end_661:
-.if_end_660:
+.if_end_524:
+.if_end_523:
+.if_end_521:
+.if_end_520:
+.if_end_519:
+.if_end_518:
+.if_end_516:
+.if_end_512:
+.if_end_510:
     mov rax, rbp
     sub rax, 8
     mov rax, [rax]
@@ -25761,7 +25153,7 @@ func_parse_block:
     push rax
     call _Lexer_method_next_assert
     add rsp, 24
-    mov rax, 41
+    mov rax, 44
     push rax
     call func_node_new
     add rsp, 8
@@ -25801,8 +25193,8 @@ func_parse_block:
     push rax
     call _Lexer_method_peek
     add rsp, 16
-.loop_start_671:
-.loop_continue_671:
+.loop_start_525:
+.loop_continue_525:
     mov rax, 6
     push rax
     mov rax, rbp
@@ -25814,7 +25206,7 @@ func_parse_block:
     setne al
     movzx rax, al
     cmp rax, 0
-    je .loop_end_671
+    je .loop_end_525
     mov rax, rbp
     sub rax, -16
     mov rax, [rax]
@@ -25837,8 +25229,9 @@ func_parse_block:
     push rax
     call _Lexer_method_peek
     add rsp, 16
-    jmp .loop_start_671
-.loop_end_671:
+    jmp .loop_start_525
+.break_525:
+.loop_end_525:
     mov rax, 6
     push rax
     mov rax, rbp
@@ -25869,7 +25262,7 @@ func_parse_enum_declaration:
     push rbp
     mov rbp, rsp
     sub rsp, 48
-    mov rax, 47
+    mov rax, 50
     push rax
     mov rax, rbp
     sub rax, 40
@@ -25913,8 +25306,8 @@ func_parse_enum_declaration:
     push rax
     call _Lexer_method_peek
     add rsp, 16
-.loop_start_672:
-.loop_continue_672:
+.loop_start_526:
+.loop_continue_526:
     mov rax, 6
     push rax
     mov rax, rbp
@@ -25926,7 +25319,7 @@ func_parse_enum_declaration:
     setne al
     movzx rax, al
     cmp rax, 0
-    je .loop_end_672
+    je .loop_end_526
     mov rax, 19
     push rax
     mov rax, rbp
@@ -25947,18 +25340,18 @@ func_parse_enum_declaration:
     call func_identifier_exists
     add rsp, 8
     cmp rax, 0
-    je .if_end_673
-    mov rax, global_string_416
+    je .if_end_527
+    mov rax, global_string_438
     push rax
     mov rax, rbp
     sub rax, 40
     add rax, 8
     push rax
-    mov rax, global_string_417
+    mov rax, global_string_439
     push rax
     call func_die_loc
     add rsp, 24
-.if_end_673:
+.if_end_527:
     mov rax, rbp
     sub rax, 48
     mov rax, [rax]
@@ -26003,7 +25396,7 @@ func_parse_enum_declaration:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_else_674
+    je .if_else_528
     mov rax, rbp
     sub rax, 40
     push rax
@@ -26022,8 +25415,8 @@ func_parse_enum_declaration:
     push rax
     call _Lexer_method_peek
     add rsp, 16
-    jmp .if_end_674
-.if_else_674:
+    jmp .if_end_528
+.if_else_528:
     mov rax, 6
     push rax
     mov rax, rbp
@@ -26035,21 +25428,22 @@ func_parse_enum_declaration:
     setne al
     movzx rax, al
     cmp rax, 0
-    je .if_end_675
-    mov rax, global_string_418
+    je .if_end_529
+    mov rax, global_string_440
     push rax
     mov rax, rbp
     sub rax, 40
     add rax, 8
     push rax
-    mov rax, global_string_419
+    mov rax, global_string_441
     push rax
     call func_die_loc
     add rsp, 24
-.if_end_675:
-.if_end_674:
-    jmp .loop_start_672
-.loop_end_672:
+.if_end_529:
+.if_end_528:
+    jmp .loop_start_526
+.break_526:
+.loop_end_526:
     mov rax, 6
     push rax
     mov rax, rbp
@@ -26079,7 +25473,7 @@ func_parse_struct_union_declaration:
     push rax
     call _Lexer_method_next
     add rsp, 16
-    mov rax, 63
+    mov rax, 66
     push rax
     mov rax, rbp
     sub rax, 40
@@ -26090,11 +25484,11 @@ func_parse_struct_union_declaration:
     setne al
     movzx rax, al
     cmp rax, 0
-    jne .and_right_677
+    jne .and_right_531
     mov rax, 0
-    jmp .and_end_677
-.and_right_677:
-    mov rax, 64
+    jmp .and_end_531
+.and_right_531:
+    mov rax, 68
     push rax
     mov rax, rbp
     sub rax, 40
@@ -26106,21 +25500,21 @@ func_parse_struct_union_declaration:
     movzx rax, al
     cmp rax, 0
     setne al
-.and_end_677:
+.and_end_531:
     cmp rax, 0
-    je .if_end_676
-    mov rax, global_string_420
+    je .if_end_530
+    mov rax, global_string_442
     push rax
     mov rax, rbp
     sub rax, 40
     add rax, 8
     push rax
-    mov rax, global_string_421
+    mov rax, global_string_443
     push rax
     call func_die_loc
     add rsp, 24
-.if_end_676:
-    mov rax, 63
+.if_end_530:
+    mov rax, 66
     push rax
     mov rax, rbp
     sub rax, 40
@@ -26131,12 +25525,12 @@ func_parse_struct_union_declaration:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .cond_else_678
+    je .cond_else_532
     mov rax, 12
-    jmp .cond_end_678
-.cond_else_678:
+    jmp .cond_end_532
+.cond_else_532:
     mov rax, 13
-.cond_end_678:
+.cond_end_532:
     push rax
     call func_type_new
     add rsp, 8
@@ -26179,29 +25573,29 @@ func_parse_struct_union_declaration:
     setne al
     movzx rax, al
     cmp rax, 0
-    jne .and_right_680
+    jne .and_right_534
     mov rax, 0
-    jmp .and_end_680
-.and_right_680:
+    jmp .and_end_534
+.and_right_534:
     mov rax, rbp
     sub rax, -24
     mov rax, [rax]
     cmp rax, 0
     setne al
-.and_end_680:
+.and_end_534:
     cmp rax, 0
-    je .if_end_679
-    mov rax, global_string_422
+    je .if_end_533
+    mov rax, global_string_444
     push rax
     mov rax, rbp
     sub rax, 40
     add rax, 8
     push rax
-    mov rax, global_string_423
+    mov rax, global_string_445
     push rax
     call func_die_loc
     add rsp, 24
-.if_end_679:
+.if_end_533:
     mov rax, 19
     push rax
     mov rax, rbp
@@ -26213,7 +25607,7 @@ func_parse_struct_union_declaration:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_else_681
+    je .if_else_535
     mov rax, rbp
     sub rax, 48
     mov rax, [rax]
@@ -26245,17 +25639,17 @@ func_parse_struct_union_declaration:
     push rax
     call _Lexer_method_next
     add rsp, 16
-    jmp .if_end_681
-.if_else_681:
+    jmp .if_end_535
+.if_else_535:
     mov rax, rbp
     sub rax, 48
     mov rax, [rax]
     add rax, 16
     push rax
-    mov rax, global_string_424
+    mov rax, global_string_446
     pop rcx
     mov [rcx], rax
-.if_end_681:
+.if_end_535:
     mov rax, 28
     push rax
     mov rax, rbp
@@ -26276,8 +25670,8 @@ func_parse_struct_union_declaration:
     push rax
     call _Lexer_method_peek
     add rsp, 16
-.loop_start_682:
-.loop_continue_682:
+.loop_start_536:
+.loop_continue_536:
     mov rax, 6
     push rax
     mov rax, rbp
@@ -26289,7 +25683,7 @@ func_parse_struct_union_declaration:
     setne al
     movzx rax, al
     cmp rax, 0
-    je .loop_end_682
+    je .loop_end_536
     mov rax, rbp
     sub rax, 40
     push rax
@@ -26314,7 +25708,7 @@ func_parse_struct_union_declaration:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_end_683
+    je .if_end_537
     mov rax, rbp
     sub rax, 40
     push rax
@@ -26354,8 +25748,8 @@ func_parse_struct_union_declaration:
     push rax
     call _Lexer_method_peek
     add rsp, 16
-.if_end_683:
-    mov rax, 63
+.if_end_537:
+    mov rax, 66
     push rax
     mov rax, rbp
     sub rax, 40
@@ -26366,11 +25760,11 @@ func_parse_struct_union_declaration:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .or_right_685
+    je .or_right_539
     mov rax, 1
-    jmp .or_end_685
-.or_right_685:
-    mov rax, 64
+    jmp .or_end_539
+.or_right_539:
+    mov rax, 68
     push rax
     mov rax, rbp
     sub rax, 40
@@ -26382,9 +25776,9 @@ func_parse_struct_union_declaration:
     movzx rax, al
     cmp rax, 0
     setne al
-.or_end_685:
+.or_end_539:
     cmp rax, 0
-    je .if_else_684
+    je .if_else_538
     mov rax, global_vars
     add rax, 0
     mov rax, [rax]
@@ -26397,7 +25791,7 @@ func_parse_struct_union_declaration:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .cond_else_686
+    je .cond_else_540
     mov rax, rbp
     sub rax, 48
     mov rax, [rax]
@@ -26409,10 +25803,10 @@ func_parse_struct_union_declaration:
     mov rax, [rax]
     pop rcx
     add rax, rcx
-    jmp .cond_end_686
-.cond_else_686:
+    jmp .cond_end_540
+.cond_else_540:
     mov rax, 0
-.cond_end_686:
+.cond_end_540:
     mov [rbp-72], rax
     mov rax, global_vars
     add rax, 0
@@ -26426,14 +25820,14 @@ func_parse_struct_union_declaration:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_end_687
+    je .if_end_541
     mov rax, rbp
     sub rax, 56
     push rax
-    mov rax, global_string_425
+    mov rax, global_string_447
     pop rcx
     mov [rcx], rax
-.if_end_687:
+.if_end_541:
     mov rax, global_vars
     add rax, 1073741992
     mov rax, [rax]
@@ -26467,8 +25861,8 @@ func_parse_struct_union_declaration:
     mov rax, [rax]
     pop rcx
     mov [rcx], rax
-    jmp .if_end_684
-.if_else_684:
+    jmp .if_end_538
+.if_else_538:
     mov rax, global_vars
     add rax, 0
     mov rax, [rax]
@@ -26481,7 +25875,7 @@ func_parse_struct_union_declaration:
     setne al
     movzx rax, al
     cmp rax, 0
-    je .if_else_688
+    je .if_else_542
     mov rax, rbp
     sub rax, 64
     push rax
@@ -26493,20 +25887,20 @@ func_parse_struct_union_declaration:
     add rsp, 8
     pop rcx
     mov [rcx], rax
-    jmp .if_end_688
-.if_else_688:
-    mov rax, global_string_426
+    jmp .if_end_542
+.if_else_542:
+    mov rax, global_string_448
     push rax
     mov rax, rbp
     sub rax, 40
     add rax, 8
     push rax
-    mov rax, global_string_427
+    mov rax, global_string_449
     push rax
     call func_die_loc
     add rsp, 24
-.if_end_688:
-.if_end_684:
+.if_end_542:
+.if_end_538:
     mov rax, rbp
     sub rax, -32
     mov rax, [rax]
@@ -26545,8 +25939,9 @@ func_parse_struct_union_declaration:
     push rax
     call _Lexer_method_peek
     add rsp, 16
-    jmp .loop_start_682
-.loop_end_682:
+    jmp .loop_start_536
+.break_536:
+.loop_end_536:
     mov rax, 6
     push rax
     mov rax, rbp
@@ -26575,7 +25970,7 @@ func_parse_method:
     push rbp
     mov rbp, rsp
     sub rsp, 80
-    mov rax, 60
+    mov rax, 63
     push rax
     mov rax, rbp
     sub rax, 40
@@ -26618,24 +26013,24 @@ func_parse_method:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_end_689
+    je .if_end_543
     mov rax, rbp
     sub rax, 40
     add rax, 32
     add rax, 0
     mov rax, [rax]
     push rax
-    mov rax, global_string_428
+    mov rax, global_string_450
     push rax
     mov rax, rbp
     sub rax, 40
     add rax, 8
     push rax
-    mov rax, global_string_429
+    mov rax, global_string_451
     push rax
     call func_die_loc2
     add rsp, 32
-.if_end_689:
+.if_end_543:
     mov rax, 10
     push rax
     mov rax, rbp
@@ -26658,7 +26053,7 @@ func_parse_method:
     push rax
     call _Lexer_method_next_assert
     add rsp, 24
-    mov rax, 38
+    mov rax, 41
     push rax
     call func_node_new
     add rsp, 8
@@ -26733,7 +26128,7 @@ func_parse_method:
     setne al
     movzx rax, al
     cmp rax, 0
-    je .if_else_690
+    je .if_else_544
     mov rax, rbp
     sub rax, 64
     mov rax, [rax]
@@ -26741,18 +26136,18 @@ func_parse_method:
     add rax, 32
     mov rax, [rax]
     cmp rax, 0
-    je .if_end_691
-    mov rax, global_string_430
+    je .if_end_545
+    mov rax, global_string_452
     push rax
     mov rax, rbp
     sub rax, 40
     add rax, 8
     push rax
-    mov rax, global_string_431
+    mov rax, global_string_453
     push rax
     call func_die_loc
     add rsp, 24
-.if_end_691:
+.if_end_545:
     mov rax, global_vars
     add rax, 1073741936
     push rax
@@ -26761,8 +26156,8 @@ func_parse_method:
     mov rax, [rax]
     pop rcx
     mov [rcx], rax
-    jmp .if_end_690
-.if_else_690:
+    jmp .if_end_544
+.if_else_544:
     mov rax, rbp
     sub rax, 56
     mov rax, [rax]
@@ -26783,7 +26178,7 @@ func_parse_method:
     mov rax, [rax]
     pop rcx
     mov [rcx], rax
-.if_end_690:
+.if_end_544:
     mov rax, 10
     push rax
     call func_type_new
@@ -26805,7 +26200,7 @@ func_parse_method:
     sub rax, 72
     mov rax, [rax]
     push rax
-    mov rax, global_string_432
+    mov rax, global_string_454
     push rax
     call func_variable_new
     add rsp, 24
@@ -26875,7 +26270,7 @@ func_parse_method:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_else_692
+    je .if_else_546
     mov rax, rbp
     sub rax, 40
     push rax
@@ -26898,8 +26293,8 @@ func_parse_method:
     add rsp, 8
     pop rcx
     mov [rcx], rax
-    jmp .if_end_692
-.if_else_692:
+    jmp .if_end_546
+.if_else_546:
     mov rax, rbp
     sub rax, 56
     mov rax, [rax]
@@ -26911,7 +26306,7 @@ func_parse_method:
     add rsp, 8
     pop rcx
     mov [rcx], rax
-.if_end_692:
+.if_end_546:
     mov rax, rbp
     sub rax, 40
     push rax
@@ -26932,7 +26327,7 @@ func_parse_method:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_else_693
+    je .if_else_547
     mov rax, rbp
     sub rax, 56
     mov rax, [rax]
@@ -26956,8 +26351,8 @@ func_parse_method:
     mov rax, 1
     pop rcx
     mov [rcx], rax
-    jmp .if_end_693
-.if_else_693:
+    jmp .if_end_547
+.if_else_547:
     mov rax, rbp
     sub rax, 56
     mov rax, [rax]
@@ -26967,7 +26362,7 @@ func_parse_method:
     mov rax, 0
     pop rcx
     mov [rcx], rax
-.if_end_693:
+.if_end_547:
     mov rax, global_vars
     add rax, 1073741936
     push rax
@@ -26993,7 +26388,7 @@ func_parse_function:
     push rbp
     mov rbp, rsp
     sub rsp, 56
-    mov rax, 51
+    mov rax, 54
     push rax
     mov rax, rbp
     sub rax, 40
@@ -27015,7 +26410,7 @@ func_parse_function:
     push rax
     call _Lexer_method_next_assert
     add rsp, 24
-    mov rax, 38
+    mov rax, 41
     push rax
     call func_node_new
     add rsp, 8
@@ -27046,7 +26441,7 @@ func_parse_function:
     call func_identifier_exists
     add rsp, 8
     cmp rax, 0
-    je .if_else_694
+    je .if_else_548
     mov rax, rbp
     sub rax, 56
     push rax
@@ -27076,18 +26471,18 @@ func_parse_function:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_end_695
-    mov rax, global_string_433
+    je .if_end_549
+    mov rax, global_string_455
     push rax
     mov rax, rbp
     sub rax, 40
     add rax, 8
     push rax
-    mov rax, global_string_434
+    mov rax, global_string_456
     push rax
     call func_die_loc
     add rsp, 24
-.if_end_695:
+.if_end_549:
     mov rax, rbp
     sub rax, 56
     mov rax, [rax]
@@ -27095,18 +26490,18 @@ func_parse_function:
     add rax, 32
     mov rax, [rax]
     cmp rax, 0
-    je .if_end_696
-    mov rax, global_string_435
+    je .if_end_550
+    mov rax, global_string_457
     push rax
     mov rax, rbp
     sub rax, 40
     add rax, 8
     push rax
-    mov rax, global_string_436
+    mov rax, global_string_458
     push rax
     call func_die_loc
     add rsp, 24
-.if_end_696:
+.if_end_550:
     mov rax, global_vars
     add rax, 1073741936
     push rax
@@ -27115,8 +26510,8 @@ func_parse_function:
     mov rax, [rax]
     pop rcx
     mov [rcx], rax
-    jmp .if_end_694
-.if_else_694:
+    jmp .if_end_548
+.if_else_548:
     mov rax, rbp
     sub rax, 48
     mov rax, [rax]
@@ -27135,7 +26530,7 @@ func_parse_function:
     mov rax, [rax]
     pop rcx
     mov [rcx], rax
-.if_end_694:
+.if_end_548:
     mov rax, 30
     push rax
     mov rax, rbp
@@ -27188,7 +26583,7 @@ func_parse_function:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_else_697
+    je .if_else_551
     mov rax, rbp
     sub rax, 40
     push rax
@@ -27211,8 +26606,8 @@ func_parse_function:
     add rsp, 8
     pop rcx
     mov [rcx], rax
-    jmp .if_end_697
-.if_else_697:
+    jmp .if_end_551
+.if_else_551:
     mov rax, rbp
     sub rax, 48
     mov rax, [rax]
@@ -27224,7 +26619,7 @@ func_parse_function:
     add rsp, 8
     pop rcx
     mov [rcx], rax
-.if_end_697:
+.if_end_551:
     mov rax, rbp
     sub rax, 40
     push rax
@@ -27245,7 +26640,7 @@ func_parse_function:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_else_698
+    je .if_else_552
     mov rax, rbp
     sub rax, 48
     mov rax, [rax]
@@ -27269,8 +26664,8 @@ func_parse_function:
     mov rax, 1
     pop rcx
     mov [rcx], rax
-    jmp .if_end_698
-.if_else_698:
+    jmp .if_end_552
+.if_else_552:
     mov rax, rbp
     sub rax, 48
     mov rax, [rax]
@@ -27280,7 +26675,7 @@ func_parse_function:
     mov rax, 0
     pop rcx
     mov [rcx], rax
-.if_end_698:
+.if_end_552:
     mov rax, global_vars
     add rax, 1073741936
     push rax
@@ -27308,7 +26703,7 @@ func_parser_open_new_file:
     sub rsp, 16
     mov rax, 0
     mov [rbp-8], rax
-.loop_start_699:
+.loop_start_553:
     mov rax, global_vars
     add rax, 1073741976
     mov rax, [rax]
@@ -27323,7 +26718,7 @@ func_parser_open_new_file:
     setl al
     movzx rax, al
     cmp rax, 0
-    je .loop_end_699
+    je .loop_end_553
     mov rax, rbp
     sub rax, 8
     mov rax, [rax]
@@ -27348,8 +26743,8 @@ func_parser_open_new_file:
     call func_streq
     add rsp, 16
     cmp rax, 0
-    je .if_end_700
-    mov rax, global_string_437
+    je .if_end_554
+    mov rax, global_string_459
     push rax
     call func_puts
     add rsp, 8
@@ -27359,7 +26754,7 @@ func_parser_open_new_file:
     push rax
     call func_puts
     add rsp, 8
-    mov rax, global_string_438
+    mov rax, global_string_460
     push rax
     call func_putsln
     add rsp, 8
@@ -27367,8 +26762,8 @@ func_parser_open_new_file:
     push rax
     call func_exit
     add rsp, 8
-.if_end_700:
-.loop_continue_699:
+.if_end_554:
+.loop_continue_553:
     mov rax, rbp
     sub rax, 8
     push rax
@@ -27381,13 +26776,14 @@ func_parser_open_new_file:
     add rax, rcx
     pop rcx
     mov [rcx], rax
-    jmp .loop_start_699
-.loop_end_699:
+    jmp .loop_start_553
+.break_553:
+.loop_end_553:
     mov rax, 0
     mov [rbp-8], rax
-.loop_start_701:
+.loop_start_555:
     mov rax, global_vars
-    add rax, 1073742000
+    add rax, 1073742008
     mov rax, [rax]
     add rax, 0
     mov rax, [rax]
@@ -27400,7 +26796,7 @@ func_parser_open_new_file:
     setl al
     movzx rax, al
     cmp rax, 0
-    je .loop_end_701
+    je .loop_end_555
     mov rax, rbp
     sub rax, -16
     mov rax, [rax]
@@ -27410,7 +26806,7 @@ func_parser_open_new_file:
     mov rax, [rax]
     push rax
     mov rax, global_vars
-    add rax, 1073742000
+    add rax, 1073742008
     mov rax, [rax]
     push rax
     call _Vector_method_at
@@ -27419,15 +26815,15 @@ func_parser_open_new_file:
     call func_streq
     add rsp, 16
     cmp rax, 0
-    je .if_end_702
+    je .if_end_556
     xor rax, rax
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_702:
-.loop_continue_701:
+.if_end_556:
+.loop_continue_555:
     mov rax, rbp
     sub rax, 8
     push rax
@@ -27440,14 +26836,15 @@ func_parser_open_new_file:
     add rax, rcx
     pop rcx
     mov [rcx], rax
-    jmp .loop_start_701
-.loop_end_701:
+    jmp .loop_start_555
+.break_555:
+.loop_end_555:
     mov rax, rbp
     sub rax, -16
     mov rax, [rax]
     push rax
     mov rax, global_vars
-    add rax, 1073742000
+    add rax, 1073742008
     mov rax, [rax]
     push rax
     call _Vector_method_push
@@ -27476,7 +26873,7 @@ func_parse_program:
     sub rsp, 64
     call func_initialize_builtins
     add rsp, 0
-    mov rax, 40
+    mov rax, 43
     push rax
     call func_node_new
     add rsp, 8
@@ -27510,8 +26907,8 @@ func_parse_program:
     push rax
     call _Vector_method_push
     add rsp, 16
-.loop_start_703:
-.loop_continue_703:
+.loop_start_557:
+.loop_continue_557:
     mov rax, 13
     push rax
     mov rax, rbp
@@ -27523,12 +26920,12 @@ func_parse_program:
     setne al
     movzx rax, al
     cmp rax, 0
-    je .loop_end_703
+    je .loop_end_557
     mov rax, global_vars
     add rax, 0
     mov rax, [rax]
     mov [rbp-56], rax
-    mov rax, 51
+    mov rax, 54
     push rax
     mov rax, rbp
     sub rax, 48
@@ -27539,7 +26936,7 @@ func_parse_program:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_else_704
+    je .if_else_558
     mov rax, rbp
     sub rax, 56
     push rax
@@ -27551,9 +26948,9 @@ func_parse_program:
     add rsp, 8
     pop rcx
     mov [rcx], rax
-    jmp .if_end_704
-.if_else_704:
-    mov rax, 60
+    jmp .if_end_558
+.if_else_558:
+    mov rax, 63
     push rax
     mov rax, rbp
     sub rax, 48
@@ -27564,7 +26961,7 @@ func_parse_program:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_else_705
+    je .if_else_559
     mov rax, rbp
     sub rax, 56
     push rax
@@ -27576,9 +26973,9 @@ func_parse_program:
     add rsp, 8
     pop rcx
     mov [rcx], rax
-    jmp .if_end_705
-.if_else_705:
-    mov rax, 59
+    jmp .if_end_559
+.if_else_559:
+    mov rax, 62
     push rax
     mov rax, rbp
     sub rax, 48
@@ -27589,7 +26986,7 @@ func_parse_program:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_else_706
+    je .if_else_560
     mov rax, rbp
     sub rax, 56
     push rax
@@ -27601,8 +26998,8 @@ func_parse_program:
     add rsp, 8
     pop rcx
     mov [rcx], rax
-    jmp .if_end_706
-.if_else_706:
+    jmp .if_end_560
+.if_else_560:
     mov rax, 38
     push rax
     mov rax, rbp
@@ -27614,7 +27011,7 @@ func_parse_program:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_else_707
+    je .if_else_561
     mov rax, rbp
     sub rax, 48
     push rax
@@ -27624,9 +27021,9 @@ func_parse_program:
     push rax
     call _Lexer_method_next
     add rsp, 16
-    jmp .if_end_707
-.if_else_707:
-    mov rax, 46
+    jmp .if_end_561
+.if_else_561:
+    mov rax, 48
     push rax
     mov rax, rbp
     sub rax, 48
@@ -27637,16 +27034,16 @@ func_parse_program:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_else_708
+    je .if_else_562
     mov rax, rbp
     sub rax, -16
     mov rax, [rax]
     push rax
     call func_parse_constant_declaration
     add rsp, 8
-    jmp .if_end_708
-.if_else_708:
-    mov rax, 67
+    jmp .if_end_562
+.if_else_562:
+    mov rax, 71
     push rax
     mov rax, rbp
     sub rax, 48
@@ -27657,7 +27054,7 @@ func_parse_program:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_else_709
+    je .if_else_563
     mov rax, rbp
     sub rax, 48
     push rax
@@ -27701,9 +27098,9 @@ func_parse_program:
     add rsp, 8
     pop rcx
     mov [rcx], rax
-    jmp .if_end_709
-.if_else_709:
-    mov rax, 63
+    jmp .if_end_563
+.if_else_563:
+    mov rax, 66
     push rax
     mov rax, rbp
     sub rax, 48
@@ -27714,11 +27111,11 @@ func_parse_program:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .or_right_711
+    je .or_right_565
     mov rax, 1
-    jmp .or_end_711
-.or_right_711:
-    mov rax, 64
+    jmp .or_end_565
+.or_right_565:
+    mov rax, 68
     push rax
     mov rax, rbp
     sub rax, 48
@@ -27730,9 +27127,9 @@ func_parse_program:
     movzx rax, al
     cmp rax, 0
     setne al
-.or_end_711:
+.or_end_565:
     cmp rax, 0
-    je .if_else_710
+    je .if_else_564
     mov rax, 0
     push rax
     mov rax, 1
@@ -27743,9 +27140,9 @@ func_parse_program:
     push rax
     call func_parse_struct_union_declaration
     add rsp, 24
-    jmp .if_end_710
-.if_else_710:
-    mov rax, 47
+    jmp .if_end_564
+.if_else_564:
+    mov rax, 50
     push rax
     mov rax, rbp
     sub rax, 48
@@ -27756,15 +27153,15 @@ func_parse_program:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_else_712
+    je .if_else_566
     mov rax, rbp
     sub rax, -16
     mov rax, [rax]
     push rax
     call func_parse_enum_declaration
     add rsp, 8
-    jmp .if_end_712
-.if_else_712:
+    jmp .if_end_566
+.if_else_566:
     mov rax, rbp
     sub rax, 48
     add rax, 0
@@ -27773,29 +27170,29 @@ func_parse_program:
     call func_token_type_to_string
     add rsp, 8
     push rax
-    mov rax, global_string_439
+    mov rax, global_string_461
     push rax
     mov rax, rbp
     sub rax, 48
     add rax, 8
     push rax
-    mov rax, global_string_440
+    mov rax, global_string_462
     push rax
     call func_die_loc2
     add rsp, 32
-.if_end_712:
-.if_end_710:
-.if_end_709:
-.if_end_708:
-.if_end_707:
-.if_end_706:
-.if_end_705:
-.if_end_704:
+.if_end_566:
+.if_end_564:
+.if_end_563:
+.if_end_562:
+.if_end_561:
+.if_end_560:
+.if_end_559:
+.if_end_558:
     mov rax, rbp
     sub rax, 56
     mov rax, [rax]
     cmp rax, 0
-    je .if_end_713
+    je .if_end_567
     mov rax, rbp
     sub rax, 56
     mov rax, [rax]
@@ -27806,7 +27203,7 @@ func_parse_program:
     push rax
     call func_block_add_child
     add rsp, 16
-.if_end_713:
+.if_end_567:
     mov rax, rbp
     sub rax, 48
     push rax
@@ -27816,8 +27213,8 @@ func_parse_program:
     push rax
     call _Lexer_method_peek
     add rsp, 16
-.loop_start_714:
-.loop_continue_714:
+.loop_start_568:
+.loop_continue_568:
     mov rax, 13
     push rax
     mov rax, rbp
@@ -27829,10 +27226,10 @@ func_parse_program:
     sete al
     movzx rax, al
     cmp rax, 0
-    jne .and_right_715
+    jne .and_right_569
     mov rax, 0
-    jmp .and_end_715
-.and_right_715:
+    jmp .and_end_569
+.and_right_569:
     mov rax, 1
     push rax
     mov rax, global_vars
@@ -27846,9 +27243,9 @@ func_parse_program:
     movzx rax, al
     cmp rax, 0
     setne al
-.and_end_715:
+.and_end_569:
     cmp rax, 0
-    je .loop_end_714
+    je .loop_end_568
     mov rax, global_vars
     add rax, 1073741976
     mov rax, [rax]
@@ -27875,10 +27272,12 @@ func_parse_program:
     push rax
     call _Lexer_method_peek
     add rsp, 16
-    jmp .loop_start_714
-.loop_end_714:
-    jmp .loop_start_703
-.loop_end_703:
+    jmp .loop_start_568
+.break_568:
+.loop_end_568:
+    jmp .loop_start_557
+.break_557:
+.loop_end_557:
     mov rax, rbp
     sub rax, 8
     mov rax, [rax]
@@ -27908,7 +27307,7 @@ func_emit_asm4:
     mov rax, [rax]
     push rax
     mov rax, global_vars
-    add rax, 1073742008
+    add rax, 1073742016
     mov rax, [rax]
     push rax
     call _File_method_write
@@ -27925,7 +27324,7 @@ func_emit_asm4:
     mov rax, [rax]
     push rax
     mov rax, global_vars
-    add rax, 1073742008
+    add rax, 1073742016
     mov rax, [rax]
     push rax
     call _File_method_write
@@ -27942,7 +27341,7 @@ func_emit_asm4:
     mov rax, [rax]
     push rax
     mov rax, global_vars
-    add rax, 1073742008
+    add rax, 1073742016
     mov rax, [rax]
     push rax
     call _File_method_write
@@ -27959,7 +27358,7 @@ func_emit_asm4:
     mov rax, [rax]
     push rax
     mov rax, global_vars
-    add rax, 1073742008
+    add rax, 1073742016
     mov rax, [rax]
     push rax
     call _File_method_write
@@ -27985,7 +27384,7 @@ func_emit_asm3:
     mov rax, [rax]
     push rax
     mov rax, global_vars
-    add rax, 1073742008
+    add rax, 1073742016
     mov rax, [rax]
     push rax
     call _File_method_write
@@ -28002,7 +27401,7 @@ func_emit_asm3:
     mov rax, [rax]
     push rax
     mov rax, global_vars
-    add rax, 1073742008
+    add rax, 1073742016
     mov rax, [rax]
     push rax
     call _File_method_write
@@ -28019,7 +27418,7 @@ func_emit_asm3:
     mov rax, [rax]
     push rax
     mov rax, global_vars
-    add rax, 1073742008
+    add rax, 1073742016
     mov rax, [rax]
     push rax
     call _File_method_write
@@ -28045,7 +27444,7 @@ func_emit_asm2:
     mov rax, [rax]
     push rax
     mov rax, global_vars
-    add rax, 1073742008
+    add rax, 1073742016
     mov rax, [rax]
     push rax
     call _File_method_write
@@ -28062,7 +27461,7 @@ func_emit_asm2:
     mov rax, [rax]
     push rax
     mov rax, global_vars
-    add rax, 1073742008
+    add rax, 1073742016
     mov rax, [rax]
     push rax
     call _File_method_write
@@ -28088,7 +27487,7 @@ func_emit_asm:
     mov rax, [rax]
     push rax
     mov rax, global_vars
-    add rax, 1073742008
+    add rax, 1073742016
     mov rax, [rax]
     push rax
     call _File_method_write
@@ -28112,8 +27511,8 @@ func_emit_num:
     setl al
     movzx rax, al
     cmp rax, 0
-    je .if_end_716
-    mov rax, global_string_441
+    je .if_end_570
+    mov rax, global_string_463
     push rax
     call func_emit_asm
     add rsp, 8
@@ -28126,13 +27525,13 @@ func_emit_num:
     neg rax
     pop rcx
     mov [rcx], rax
-.if_end_716:
+.if_end_570:
     mov rax, rbp
     sub rax, -16
     mov rax, [rax]
     push rax
     mov rax, global_vars
-    add rax, 1073742008
+    add rax, 1073742016
     mov rax, [rax]
     push rax
     call _File_method_putu
@@ -28146,7 +27545,7 @@ func_generate_syscall:
     push rbp
     mov rbp, rsp
     sub rsp, 0
-    mov rax, global_string_442
+    mov rax, global_string_464
     push rax
     call func_emit_asm
     add rsp, 8
@@ -28156,11 +27555,11 @@ func_generate_syscall:
     push rax
     call func_emit_num
     add rsp, 8
-    mov rax, global_string_443
+    mov rax, global_string_465
     push rax
     call func_emit_asm
     add rsp, 8
-    mov rax, global_string_444
+    mov rax, global_string_466
     push rax
     call func_emit_asm
     add rsp, 8
@@ -28190,14 +27589,14 @@ func_subregister_for_type:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_end_717
-    mov rax, global_string_445
+    je .if_end_571
+    mov rax, global_string_467
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_717:
+.if_end_571:
     mov rax, 2
     push rax
     mov rax, rbp
@@ -28208,14 +27607,14 @@ func_subregister_for_type:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_end_718
-    mov rax, global_string_446
+    je .if_end_572
+    mov rax, global_string_468
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_718:
+.if_end_572:
     mov rax, 4
     push rax
     mov rax, rbp
@@ -28226,14 +27625,14 @@ func_subregister_for_type:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_end_719
-    mov rax, global_string_447
+    je .if_end_573
+    mov rax, global_string_469
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_719:
+.if_end_573:
     mov rax, 8
     push rax
     mov rax, rbp
@@ -28244,17 +27643,17 @@ func_subregister_for_type:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_end_720
-    mov rax, global_string_448
+    je .if_end_574
+    mov rax, global_string_470
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_720:
-    mov rax, global_string_449
+.if_end_574:
+    mov rax, global_string_471
     push rax
-    mov rax, global_string_450
+    mov rax, global_string_472
     push rax
     call func_die2
     add rsp, 16
@@ -28284,14 +27683,14 @@ func_specifier_for_type:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_end_721
-    mov rax, global_string_451
+    je .if_end_575
+    mov rax, global_string_473
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_721:
+.if_end_575:
     mov rax, 2
     push rax
     mov rax, rbp
@@ -28302,14 +27701,14 @@ func_specifier_for_type:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_end_722
-    mov rax, global_string_452
+    je .if_end_576
+    mov rax, global_string_474
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_722:
+.if_end_576:
     mov rax, 4
     push rax
     mov rax, rbp
@@ -28320,14 +27719,14 @@ func_specifier_for_type:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_end_723
-    mov rax, global_string_453
+    je .if_end_577
+    mov rax, global_string_475
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_723:
+.if_end_577:
     mov rax, 8
     push rax
     mov rax, rbp
@@ -28338,14 +27737,14 @@ func_specifier_for_type:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_end_724
-    mov rax, global_string_454
+    je .if_end_578
+    mov rax, global_string_476
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_724:
+.if_end_578:
     mov rax, rbp
     sub rax, -16
     mov rax, [rax]
@@ -28355,9 +27754,9 @@ func_specifier_for_type:
     push rax
     call func_putsln
     add rsp, 8
-    mov rax, global_string_455
+    mov rax, global_string_477
     push rax
-    mov rax, global_string_456
+    mov rax, global_string_478
     push rax
     call func_die2
     add rsp, 16
@@ -28373,7 +27772,7 @@ func_get_func_name:
     mov rax, 0
     push rax
     mov rax, global_vars
-    add rax, 1073742040
+    add rax, 1073742056
     pop rcx
     add rax, rcx
     push rax
@@ -28387,7 +27786,7 @@ func_get_func_name:
     add rax, 40
     mov rax, [rax]
     cmp rax, 0
-    je .if_else_725
+    je .if_else_579
     mov rax, rbp
     sub rax, -16
     mov rax, [rax]
@@ -28395,10 +27794,10 @@ func_get_func_name:
     add rax, 48
     mov rax, [rax]
     mov [rbp-8], rax
-    mov rax, global_string_457
+    mov rax, global_string_479
     push rax
     mov rax, global_vars
-    add rax, 1073742040
+    add rax, 1073742056
     push rax
     call func_strcat
     add rsp, 16
@@ -28409,27 +27808,27 @@ func_get_func_name:
     mov rax, [rax]
     push rax
     mov rax, global_vars
-    add rax, 1073742040
+    add rax, 1073742056
     push rax
     call func_strcat
     add rsp, 16
-    mov rax, global_string_458
+    mov rax, global_string_480
     push rax
     mov rax, global_vars
-    add rax, 1073742040
+    add rax, 1073742056
     push rax
     call func_strcat
     add rsp, 16
-    jmp .if_end_725
-.if_else_725:
-    mov rax, global_string_459
+    jmp .if_end_579
+.if_else_579:
+    mov rax, global_string_481
     push rax
     mov rax, global_vars
-    add rax, 1073742040
+    add rax, 1073742056
     push rax
     call func_strcat
     add rsp, 16
-.if_end_725:
+.if_end_579:
     mov rax, rbp
     sub rax, -16
     mov rax, [rax]
@@ -28438,12 +27837,12 @@ func_get_func_name:
     mov rax, [rax]
     push rax
     mov rax, global_vars
-    add rax, 1073742040
+    add rax, 1073742056
     push rax
     call func_strcat
     add rsp, 16
     mov rax, global_vars
-    add rax, 1073742040
+    add rax, 1073742056
     push rax
     pop rax
     mov rsp, rbp
@@ -28467,7 +27866,7 @@ func_generate_binop_int_arith:
     push rax
     call func_generate_expression
     add rsp, 8
-    mov rax, global_string_460
+    mov rax, global_string_482
     push rax
     call func_emit_asm
     add rsp, 8
@@ -28480,7 +27879,7 @@ func_generate_binop_int_arith:
     push rax
     call func_generate_expression
     add rsp, 8
-    mov rax, global_string_461
+    mov rax, global_string_483
     push rax
     call func_emit_asm
     add rsp, 8
@@ -28500,15 +27899,15 @@ func_generate_binop_int_arith:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_else_726
+    je .if_else_580
     mov rax, rbp
     sub rax, 8
     push rax
-    mov rax, global_string_462
+    mov rax, global_string_484
     pop rcx
     mov [rcx], rax
-    jmp .if_end_726
-.if_else_726:
+    jmp .if_end_580
+.if_else_580:
     mov rax, 6
     push rax
     mov rax, rbp
@@ -28521,15 +27920,15 @@ func_generate_binop_int_arith:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_else_727
+    je .if_else_581
     mov rax, rbp
     sub rax, 8
     push rax
-    mov rax, global_string_463
+    mov rax, global_string_485
     pop rcx
     mov [rcx], rax
-    jmp .if_end_727
-.if_else_727:
+    jmp .if_end_581
+.if_else_581:
     mov rax, 10
     push rax
     mov rax, rbp
@@ -28542,15 +27941,15 @@ func_generate_binop_int_arith:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_else_728
+    je .if_else_582
     mov rax, rbp
     sub rax, 8
     push rax
-    mov rax, global_string_464
+    mov rax, global_string_486
     pop rcx
     mov [rcx], rax
-    jmp .if_end_728
-.if_else_728:
+    jmp .if_end_582
+.if_else_582:
     mov rax, 11
     push rax
     mov rax, rbp
@@ -28563,15 +27962,15 @@ func_generate_binop_int_arith:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_else_729
+    je .if_else_583
     mov rax, rbp
     sub rax, 8
     push rax
-    mov rax, global_string_465
+    mov rax, global_string_487
     pop rcx
     mov [rcx], rax
-    jmp .if_end_729
-.if_else_729:
+    jmp .if_end_583
+.if_else_583:
     mov rax, 13
     push rax
     mov rax, rbp
@@ -28584,15 +27983,15 @@ func_generate_binop_int_arith:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_else_730
+    je .if_else_584
     mov rax, rbp
     sub rax, 8
     push rax
-    mov rax, global_string_466
+    mov rax, global_string_488
     pop rcx
     mov [rcx], rax
-    jmp .if_end_730
-.if_else_730:
+    jmp .if_end_584
+.if_else_584:
     mov rax, 15
     push rax
     mov rax, rbp
@@ -28605,15 +28004,15 @@ func_generate_binop_int_arith:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_else_731
+    je .if_else_585
     mov rax, rbp
     sub rax, 8
     push rax
-    mov rax, global_string_467
+    mov rax, global_string_489
     pop rcx
     mov [rcx], rax
-    jmp .if_end_731
-.if_else_731:
+    jmp .if_end_585
+.if_else_585:
     mov rax, 16
     push rax
     mov rax, rbp
@@ -28626,15 +28025,15 @@ func_generate_binop_int_arith:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_else_732
+    je .if_else_586
     mov rax, rbp
     sub rax, 8
     push rax
-    mov rax, global_string_468
+    mov rax, global_string_490
     pop rcx
     mov [rcx], rax
-    jmp .if_end_732
-.if_else_732:
+    jmp .if_end_586
+.if_else_586:
     mov rax, 7
     push rax
     mov rax, rbp
@@ -28647,15 +28046,15 @@ func_generate_binop_int_arith:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_else_733
+    je .if_else_587
     mov rax, rbp
     sub rax, 8
     push rax
-    mov rax, global_string_469
+    mov rax, global_string_491
     pop rcx
     mov [rcx], rax
-    jmp .if_end_733
-.if_else_733:
+    jmp .if_end_587
+.if_else_587:
     mov rax, 8
     push rax
     mov rax, rbp
@@ -28668,15 +28067,15 @@ func_generate_binop_int_arith:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_else_734
+    je .if_else_588
     mov rax, rbp
     sub rax, 8
     push rax
-    mov rax, global_string_470
+    mov rax, global_string_492
     pop rcx
     mov [rcx], rax
-    jmp .if_end_734
-.if_else_734:
+    jmp .if_end_588
+.if_else_588:
     mov rax, 9
     push rax
     mov rax, rbp
@@ -28689,15 +28088,15 @@ func_generate_binop_int_arith:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_else_735
+    je .if_else_589
     mov rax, rbp
     sub rax, 8
     push rax
-    mov rax, global_string_471
+    mov rax, global_string_493
     pop rcx
     mov [rcx], rax
-    jmp .if_end_735
-.if_else_735:
+    jmp .if_end_589
+.if_else_589:
     mov rax, rbp
     sub rax, -16
     mov rax, [rax]
@@ -28709,22 +28108,22 @@ func_generate_binop_int_arith:
     push rax
     call func_putsln
     add rsp, 8
-    mov rax, global_string_472
+    mov rax, global_string_494
     push rax
-    mov rax, global_string_473
+    mov rax, global_string_495
     push rax
     call func_die2
     add rsp, 16
-.if_end_735:
-.if_end_734:
-.if_end_733:
-.if_end_732:
-.if_end_731:
-.if_end_730:
-.if_end_729:
-.if_end_728:
-.if_end_727:
-.if_end_726:
+.if_end_589:
+.if_end_588:
+.if_end_587:
+.if_end_586:
+.if_end_585:
+.if_end_584:
+.if_end_583:
+.if_end_582:
+.if_end_581:
+.if_end_580:
     mov rax, 8
     push rax
     mov rax, rbp
@@ -28737,10 +28136,10 @@ func_generate_binop_int_arith:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .or_right_737
+    je .or_right_591
     mov rax, 1
-    jmp .or_end_737
-.or_right_737:
+    jmp .or_end_591
+.or_right_591:
     mov rax, 9
     push rax
     mov rax, rbp
@@ -28754,14 +28153,14 @@ func_generate_binop_int_arith:
     movzx rax, al
     cmp rax, 0
     setne al
-.or_end_737:
+.or_end_591:
     cmp rax, 0
-    je .if_else_736
-    mov rax, global_string_474
+    je .if_else_590
+    mov rax, global_string_496
     push rax
     call func_emit_asm
     add rsp, 8
-    mov rax, global_string_475
+    mov rax, global_string_497
     push rax
     call func_emit_asm
     add rsp, 8
@@ -28777,14 +28176,14 @@ func_generate_binop_int_arith:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_end_738
-    mov rax, global_string_476
+    je .if_end_592
+    mov rax, global_string_498
     push rax
     call func_emit_asm
     add rsp, 8
-.if_end_738:
-    jmp .if_end_736
-.if_else_736:
+.if_end_592:
+    jmp .if_end_590
+.if_else_590:
     mov rax, 10
     push rax
     mov rax, rbp
@@ -28797,10 +28196,10 @@ func_generate_binop_int_arith:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .or_right_740
+    je .or_right_594
     mov rax, 1
-    jmp .or_end_740
-.or_right_740:
+    jmp .or_end_594
+.or_right_594:
     mov rax, 11
     push rax
     mov rax, rbp
@@ -28814,33 +28213,33 @@ func_generate_binop_int_arith:
     movzx rax, al
     cmp rax, 0
     setne al
-.or_end_740:
+.or_end_594:
     cmp rax, 0
-    je .if_else_739
-    mov rax, global_string_477
+    je .if_else_593
+    mov rax, global_string_499
     push rax
     mov rax, rbp
     sub rax, 8
     mov rax, [rax]
     push rax
-    mov rax, global_string_478
+    mov rax, global_string_500
     push rax
     call func_emit_asm3
     add rsp, 24
-    jmp .if_end_739
-.if_else_739:
-    mov rax, global_string_479
+    jmp .if_end_593
+.if_else_593:
+    mov rax, global_string_501
     push rax
     mov rax, rbp
     sub rax, 8
     mov rax, [rax]
     push rax
-    mov rax, global_string_480
+    mov rax, global_string_502
     push rax
     call func_emit_asm3
     add rsp, 24
-.if_end_739:
-.if_end_736:
+.if_end_593:
+.if_end_590:
     mov rsp, rbp
     pop rbp
     mov qword rax, 0
@@ -28859,11 +28258,11 @@ func_generate_binop_float_arith:
     push rax
     call func_generate_expression
     add rsp, 8
-    mov rax, global_string_481
+    mov rax, global_string_503
     push rax
     call func_emit_asm
     add rsp, 8
-    mov rax, global_string_482
+    mov rax, global_string_504
     push rax
     call func_emit_asm
     add rsp, 8
@@ -28876,11 +28275,11 @@ func_generate_binop_float_arith:
     push rax
     call func_generate_expression
     add rsp, 8
-    mov rax, global_string_483
+    mov rax, global_string_505
     push rax
     call func_emit_asm
     add rsp, 8
-    mov rax, global_string_484
+    mov rax, global_string_506
     push rax
     call func_emit_asm
     add rsp, 8
@@ -28900,15 +28299,15 @@ func_generate_binop_float_arith:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_else_741
+    je .if_else_595
     mov rax, rbp
     sub rax, 8
     push rax
-    mov rax, global_string_485
+    mov rax, global_string_507
     pop rcx
     mov [rcx], rax
-    jmp .if_end_741
-.if_else_741:
+    jmp .if_end_595
+.if_else_595:
     mov rax, 6
     push rax
     mov rax, rbp
@@ -28921,15 +28320,15 @@ func_generate_binop_float_arith:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_else_742
+    je .if_else_596
     mov rax, rbp
     sub rax, 8
     push rax
-    mov rax, global_string_486
+    mov rax, global_string_508
     pop rcx
     mov [rcx], rax
-    jmp .if_end_742
-.if_else_742:
+    jmp .if_end_596
+.if_else_596:
     mov rax, 7
     push rax
     mov rax, rbp
@@ -28942,15 +28341,15 @@ func_generate_binop_float_arith:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_else_743
+    je .if_else_597
     mov rax, rbp
     sub rax, 8
     push rax
-    mov rax, global_string_487
+    mov rax, global_string_509
     pop rcx
     mov [rcx], rax
-    jmp .if_end_743
-.if_else_743:
+    jmp .if_end_597
+.if_else_597:
     mov rax, 8
     push rax
     mov rax, rbp
@@ -28963,15 +28362,15 @@ func_generate_binop_float_arith:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_else_744
+    je .if_else_598
     mov rax, rbp
     sub rax, 8
     push rax
-    mov rax, global_string_488
+    mov rax, global_string_510
     pop rcx
     mov [rcx], rax
-    jmp .if_end_744
-.if_else_744:
+    jmp .if_end_598
+.if_else_598:
     mov rax, rbp
     sub rax, -16
     mov rax, [rax]
@@ -28983,23 +28382,23 @@ func_generate_binop_float_arith:
     push rax
     call func_putsln
     add rsp, 8
-    mov rax, global_string_489
+    mov rax, global_string_511
     push rax
-    mov rax, global_string_490
+    mov rax, global_string_512
     push rax
     call func_die2
     add rsp, 16
-.if_end_744:
-.if_end_743:
-.if_end_742:
-.if_end_741:
-    mov rax, global_string_491
+.if_end_598:
+.if_end_597:
+.if_end_596:
+.if_end_595:
+    mov rax, global_string_513
     push rax
     mov rax, rbp
     sub rax, 8
     mov rax, [rax]
     push rax
-    mov rax, global_string_492
+    mov rax, global_string_514
     push rax
     call func_emit_asm3
     add rsp, 24
@@ -29021,7 +28420,7 @@ func_generate_cmp_int:
     push rax
     call func_generate_expression
     add rsp, 8
-    mov rax, global_string_493
+    mov rax, global_string_515
     push rax
     call func_emit_asm
     add rsp, 8
@@ -29034,11 +28433,11 @@ func_generate_cmp_int:
     push rax
     call func_generate_expression
     add rsp, 8
-    mov rax, global_string_494
+    mov rax, global_string_516
     push rax
     call func_emit_asm
     add rsp, 8
-    mov rax, global_string_495
+    mov rax, global_string_517
     push rax
     call func_emit_asm
     add rsp, 8
@@ -29060,11 +28459,11 @@ func_generate_cmp_float:
     push rax
     call func_generate_expression
     add rsp, 8
-    mov rax, global_string_496
+    mov rax, global_string_518
     push rax
     call func_emit_asm
     add rsp, 8
-    mov rax, global_string_497
+    mov rax, global_string_519
     push rax
     call func_emit_asm
     add rsp, 8
@@ -29077,15 +28476,15 @@ func_generate_cmp_float:
     push rax
     call func_generate_expression
     add rsp, 8
-    mov rax, global_string_498
+    mov rax, global_string_520
     push rax
     call func_emit_asm
     add rsp, 8
-    mov rax, global_string_499
+    mov rax, global_string_521
     push rax
     call func_emit_asm
     add rsp, 8
-    mov rax, global_string_500
+    mov rax, global_string_522
     push rax
     call func_emit_asm
     add rsp, 8
@@ -29110,21 +28509,21 @@ func_generate_binop:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_else_745
+    je .if_else_599
     mov rax, rbp
     sub rax, 8
     push rax
-    mov rax, global_string_501
+    mov rax, global_string_523
     pop rcx
     mov [rcx], rax
     mov rax, rbp
     sub rax, 16
     push rax
-    mov rax, global_string_502
+    mov rax, global_string_524
     pop rcx
     mov [rcx], rax
-    jmp .if_end_745
-.if_else_745:
+    jmp .if_end_599
+.if_else_599:
     mov rax, 19
     push rax
     mov rax, rbp
@@ -29137,21 +28536,21 @@ func_generate_binop:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_else_746
+    je .if_else_600
     mov rax, rbp
     sub rax, 8
     push rax
-    mov rax, global_string_503
+    mov rax, global_string_525
     pop rcx
     mov [rcx], rax
     mov rax, rbp
     sub rax, 16
     push rax
-    mov rax, global_string_504
+    mov rax, global_string_526
     pop rcx
     mov [rcx], rax
-    jmp .if_end_746
-.if_else_746:
+    jmp .if_end_600
+.if_else_600:
     mov rax, 21
     push rax
     mov rax, rbp
@@ -29164,21 +28563,21 @@ func_generate_binop:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_else_747
+    je .if_else_601
     mov rax, rbp
     sub rax, 8
     push rax
-    mov rax, global_string_505
+    mov rax, global_string_527
     pop rcx
     mov [rcx], rax
     mov rax, rbp
     sub rax, 16
     push rax
-    mov rax, global_string_506
+    mov rax, global_string_528
     pop rcx
     mov [rcx], rax
-    jmp .if_end_747
-.if_else_747:
+    jmp .if_end_601
+.if_else_601:
     mov rax, 18
     push rax
     mov rax, rbp
@@ -29191,21 +28590,21 @@ func_generate_binop:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_else_748
+    je .if_else_602
     mov rax, rbp
     sub rax, 8
     push rax
-    mov rax, global_string_507
+    mov rax, global_string_529
     pop rcx
     mov [rcx], rax
     mov rax, rbp
     sub rax, 16
     push rax
-    mov rax, global_string_508
+    mov rax, global_string_530
     pop rcx
     mov [rcx], rax
-    jmp .if_end_748
-.if_else_748:
+    jmp .if_end_602
+.if_else_602:
     mov rax, 20
     push rax
     mov rax, rbp
@@ -29218,21 +28617,21 @@ func_generate_binop:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_else_749
+    je .if_else_603
     mov rax, rbp
     sub rax, 8
     push rax
-    mov rax, global_string_509
+    mov rax, global_string_531
     pop rcx
     mov [rcx], rax
     mov rax, rbp
     sub rax, 16
     push rax
-    mov rax, global_string_510
+    mov rax, global_string_532
     pop rcx
     mov [rcx], rax
-    jmp .if_end_749
-.if_else_749:
+    jmp .if_end_603
+.if_else_603:
     mov rax, 22
     push rax
     mov rax, rbp
@@ -29245,21 +28644,21 @@ func_generate_binop:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_else_750
+    je .if_else_604
     mov rax, rbp
     sub rax, 8
     push rax
-    mov rax, global_string_511
+    mov rax, global_string_533
     pop rcx
     mov [rcx], rax
     mov rax, rbp
     sub rax, 16
     push rax
-    mov rax, global_string_512
+    mov rax, global_string_534
     pop rcx
     mov [rcx], rax
-    jmp .if_end_750
-.if_else_750:
+    jmp .if_end_604
+.if_else_604:
     mov rax, rbp
     sub rax, -16
     mov rax, [rax]
@@ -29269,7 +28668,7 @@ func_generate_binop:
     call func_is_float_type
     add rsp, 8
     cmp rax, 0
-    je .if_end_751
+    je .if_end_605
     mov rax, rbp
     sub rax, -16
     mov rax, [rax]
@@ -29281,7 +28680,7 @@ func_generate_binop:
     mov rsp, rbp
     pop rbp
     ret
-.if_end_751:
+.if_end_605:
     mov rax, rbp
     sub rax, -16
     mov rax, [rax]
@@ -29293,12 +28692,12 @@ func_generate_binop:
     mov rsp, rbp
     pop rbp
     ret
-.if_end_750:
-.if_end_749:
-.if_end_748:
-.if_end_747:
-.if_end_746:
-.if_end_745:
+.if_end_604:
+.if_end_603:
+.if_end_602:
+.if_end_601:
+.if_end_600:
+.if_end_599:
     mov rax, rbp
     sub rax, -16
     mov rax, [rax]
@@ -29311,43 +28710,43 @@ func_generate_binop:
     call func_is_float_type
     add rsp, 8
     cmp rax, 0
-    je .if_else_752
+    je .if_else_606
     mov rax, rbp
     sub rax, -16
     mov rax, [rax]
     push rax
     call func_generate_cmp_float
     add rsp, 8
-    mov rax, global_string_513
+    mov rax, global_string_535
     push rax
     mov rax, rbp
     sub rax, 16
     mov rax, [rax]
     push rax
-    mov rax, global_string_514
+    mov rax, global_string_536
     push rax
     call func_emit_asm3
     add rsp, 24
-    jmp .if_end_752
-.if_else_752:
+    jmp .if_end_606
+.if_else_606:
     mov rax, rbp
     sub rax, -16
     mov rax, [rax]
     push rax
     call func_generate_cmp_int
     add rsp, 8
-    mov rax, global_string_515
+    mov rax, global_string_537
     push rax
     mov rax, rbp
     sub rax, 8
     mov rax, [rax]
     push rax
-    mov rax, global_string_516
+    mov rax, global_string_538
     push rax
     call func_emit_asm3
     add rsp, 24
-.if_end_752:
-    mov rax, global_string_517
+.if_end_606:
+    mov rax, global_string_539
     push rax
     call func_emit_asm
     add rsp, 8
@@ -29360,7 +28759,7 @@ func_generate_lvalue_into_rax:
     push rbp
     mov rbp, rsp
     sub rsp, 8
-    mov rax, 35
+    mov rax, 37
     push rax
     mov rax, rbp
     sub rax, -16
@@ -29372,7 +28771,7 @@ func_generate_lvalue_into_rax:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_else_753
+    je .if_else_607
     mov rax, rbp
     sub rax, -16
     mov rax, [rax]
@@ -29381,11 +28780,11 @@ func_generate_lvalue_into_rax:
     add rax, 16
     mov rax, [rax]
     mov [rbp-8], rax
-    mov rax, global_string_518
+    mov rax, global_string_540
     push rax
     call func_emit_asm
     add rsp, 8
-    mov rax, global_string_519
+    mov rax, global_string_541
     push rax
     call func_emit_asm
     add rsp, 8
@@ -29395,13 +28794,13 @@ func_generate_lvalue_into_rax:
     push rax
     call func_emit_num
     add rsp, 8
-    mov rax, global_string_520
+    mov rax, global_string_542
     push rax
     call func_emit_asm
     add rsp, 8
-    jmp .if_end_753
-.if_else_753:
-    mov rax, 36
+    jmp .if_end_607
+.if_else_607:
+    mov rax, 38
     push rax
     mov rax, rbp
     sub rax, -16
@@ -29413,7 +28812,7 @@ func_generate_lvalue_into_rax:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_else_754
+    je .if_else_608
     mov rax, rbp
     sub rax, -16
     mov rax, [rax]
@@ -29422,11 +28821,11 @@ func_generate_lvalue_into_rax:
     add rax, 16
     mov rax, [rax]
     mov [rbp-8], rax
-    mov rax, global_string_521
+    mov rax, global_string_543
     push rax
     call func_emit_asm
     add rsp, 8
-    mov rax, global_string_522
+    mov rax, global_string_544
     push rax
     call func_emit_asm
     add rsp, 8
@@ -29436,12 +28835,12 @@ func_generate_lvalue_into_rax:
     push rax
     call func_emit_num
     add rsp, 8
-    mov rax, global_string_523
+    mov rax, global_string_545
     push rax
     call func_emit_asm
     add rsp, 8
-    jmp .if_end_754
-.if_else_754:
+    jmp .if_end_608
+.if_else_608:
     mov rax, 24
     push rax
     mov rax, rbp
@@ -29454,7 +28853,7 @@ func_generate_lvalue_into_rax:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_else_755
+    je .if_else_609
     mov rax, rbp
     sub rax, -16
     mov rax, [rax]
@@ -29469,7 +28868,7 @@ func_generate_lvalue_into_rax:
     add rax, 16
     mov rax, [rax]
     cmp rax, 0
-    je .if_else_756
+    je .if_else_610
     mov rax, rbp
     sub rax, -16
     mov rax, [rax]
@@ -29479,8 +28878,8 @@ func_generate_lvalue_into_rax:
     push rax
     call func_generate_expression
     add rsp, 8
-    jmp .if_end_756
-.if_else_756:
+    jmp .if_end_610
+.if_else_610:
     mov rax, rbp
     sub rax, -16
     mov rax, [rax]
@@ -29490,8 +28889,8 @@ func_generate_lvalue_into_rax:
     push rax
     call func_generate_lvalue_into_rax
     add rsp, 8
-.if_end_756:
-    mov rax, global_string_524
+.if_end_610:
+    mov rax, global_string_546
     push rax
     call func_emit_asm
     add rsp, 8
@@ -29501,12 +28900,12 @@ func_generate_lvalue_into_rax:
     push rax
     call func_emit_num
     add rsp, 8
-    mov rax, global_string_525
+    mov rax, global_string_547
     push rax
     call func_emit_asm
     add rsp, 8
-    jmp .if_end_755
-.if_else_755:
+    jmp .if_end_609
+.if_else_609:
     mov rax, 4
     push rax
     mov rax, rbp
@@ -29519,7 +28918,7 @@ func_generate_lvalue_into_rax:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_else_757
+    je .if_else_611
     mov rax, rbp
     sub rax, -16
     mov rax, [rax]
@@ -29528,8 +28927,8 @@ func_generate_lvalue_into_rax:
     push rax
     call func_generate_expression
     add rsp, 8
-    jmp .if_end_757
-.if_else_757:
+    jmp .if_end_611
+.if_else_611:
     mov rax, rbp
     sub rax, -16
     mov rax, [rax]
@@ -29539,14 +28938,14 @@ func_generate_lvalue_into_rax:
     call func_node_type_to_string
     add rsp, 8
     push rax
-    mov rax, global_string_526
+    mov rax, global_string_548
     push rax
     call func_die2
     add rsp, 16
-.if_end_757:
-.if_end_755:
-.if_end_754:
-.if_end_753:
+.if_end_611:
+.if_end_609:
+.if_end_608:
+.if_end_607:
     mov rsp, rbp
     pop rbp
     mov qword rax, 0
@@ -29575,7 +28974,7 @@ func_generate_function_call:
     pop rcx
     sub rax, rcx
     mov [rbp-24], rax
-.loop_start_758:
+.loop_start_612:
     mov rax, 0
     push rax
     mov rax, rbp
@@ -29586,7 +28985,7 @@ func_generate_function_call:
     setge al
     movzx rax, al
     cmp rax, 0
-    je .loop_end_758
+    je .loop_end_612
     mov rax, rbp
     sub rax, 24
     mov rax, [rax]
@@ -29616,22 +29015,22 @@ func_generate_function_call:
     call func_is_float_type
     add rsp, 8
     cmp rax, 0
-    je .if_else_759
-    mov rax, global_string_527
+    je .if_else_613
+    mov rax, global_string_549
     push rax
     call func_emit_asm
     add rsp, 8
-    mov rax, global_string_528
+    mov rax, global_string_550
     push rax
     call func_emit_asm
     add rsp, 8
-    jmp .if_end_759
-.if_else_759:
-    mov rax, global_string_529
+    jmp .if_end_613
+.if_else_613:
+    mov rax, global_string_551
     push rax
     call func_emit_asm
     add rsp, 8
-.if_end_759:
+.if_end_613:
     mov rax, rbp
     sub rax, 8
     push rax
@@ -29644,7 +29043,7 @@ func_generate_function_call:
     add rax, rcx
     pop rcx
     mov [rcx], rax
-.loop_continue_758:
+.loop_continue_612:
     mov rax, rbp
     sub rax, 24
     push rax
@@ -29657,8 +29056,9 @@ func_generate_function_call:
     sub rax, rcx
     pop rcx
     mov [rcx], rax
-    jmp .loop_start_758
-.loop_end_758:
+    jmp .loop_start_612
+.break_612:
+.loop_end_612:
     mov rax, rbp
     sub rax, -16
     mov rax, [rax]
@@ -29669,17 +29069,17 @@ func_generate_function_call:
     call func_get_func_name
     add rsp, 8
     mov [rbp-24], rax
-    mov rax, global_string_530
+    mov rax, global_string_552
     push rax
     mov rax, rbp
     sub rax, 24
     mov rax, [rax]
     push rax
-    mov rax, global_string_531
+    mov rax, global_string_553
     push rax
     call func_emit_asm3
     add rsp, 24
-    mov rax, global_string_532
+    mov rax, global_string_554
     push rax
     call func_emit_asm
     add rsp, 8
@@ -29689,7 +29089,7 @@ func_generate_function_call:
     push rax
     call func_emit_num
     add rsp, 8
-    mov rax, global_string_533
+    mov rax, global_string_555
     push rax
     call func_emit_asm
     add rsp, 8
@@ -29714,7 +29114,7 @@ func_generate_expression:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_else_760
+    je .if_else_614
     mov rax, 0
     push rax
     mov rax, rbp
@@ -29729,8 +29129,8 @@ func_generate_expression:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_else_761
-    mov rax, global_string_534
+    je .if_else_615
+    mov rax, global_string_556
     push rax
     call func_emit_asm
     add rsp, 8
@@ -29743,12 +29143,12 @@ func_generate_expression:
     push rax
     call func_emit_num
     add rsp, 8
-    mov rax, global_string_535
+    mov rax, global_string_557
     push rax
     call func_emit_asm
     add rsp, 8
-    jmp .if_end_761
-.if_else_761:
+    jmp .if_end_615
+.if_else_615:
     mov rax, 1
     push rax
     mov rax, rbp
@@ -29763,8 +29163,8 @@ func_generate_expression:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_else_762
-    mov rax, global_string_536
+    je .if_else_616
+    mov rax, global_string_558
     push rax
     call func_emit_asm
     add rsp, 8
@@ -29777,12 +29177,12 @@ func_generate_expression:
     push rax
     call func_emit_num
     add rsp, 8
-    mov rax, global_string_537
+    mov rax, global_string_559
     push rax
     call func_emit_asm
     add rsp, 8
-    jmp .if_end_762
-.if_else_762:
+    jmp .if_end_616
+.if_else_616:
     mov rax, 10
     push rax
     mov rax, rbp
@@ -29797,7 +29197,7 @@ func_generate_expression:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_else_763
+    je .if_else_617
     mov rax, rbp
     sub rax, -16
     mov rax, [rax]
@@ -29806,7 +29206,7 @@ func_generate_expression:
     mov rax, [rax]
     mov [rbp-8], rax
     mov rax, global_vars
-    add rax, 1073742024
+    add rax, 1073742032
     mov rax, [rax]
     add rax, 0
     mov rax, [rax]
@@ -29816,12 +29216,12 @@ func_generate_expression:
     mov rax, [rax]
     push rax
     mov rax, global_vars
-    add rax, 1073742024
+    add rax, 1073742032
     mov rax, [rax]
     push rax
     call _Vector_method_push
     add rsp, 16
-    mov rax, global_string_538
+    mov rax, global_string_560
     push rax
     call func_emit_asm
     add rsp, 8
@@ -29831,12 +29231,12 @@ func_generate_expression:
     push rax
     call func_emit_num
     add rsp, 8
-    mov rax, global_string_539
+    mov rax, global_string_561
     push rax
     call func_emit_asm
     add rsp, 8
-    jmp .if_end_763
-.if_else_763:
+    jmp .if_end_617
+.if_else_617:
     mov rax, 6
     push rax
     mov rax, rbp
@@ -29851,7 +29251,7 @@ func_generate_expression:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_else_764
+    je .if_else_618
     mov rax, rbp
     sub rax, -16
     mov rax, [rax]
@@ -29860,7 +29260,7 @@ func_generate_expression:
     mov rax, [rax]
     mov [rbp-8], rax
     mov rax, global_vars
-    add rax, 1073742024
+    add rax, 1073742032
     mov rax, [rax]
     add rax, 0
     mov rax, [rax]
@@ -29870,43 +29270,43 @@ func_generate_expression:
     mov rax, [rax]
     push rax
     mov rax, global_vars
-    add rax, 1073742024
+    add rax, 1073742032
     mov rax, [rax]
     push rax
     call _Vector_method_push
     add rsp, 16
-    mov rax, global_string_540
+    mov rax, global_string_562
     push rax
     mov rax, rbp
     sub rax, 8
     mov rax, [rax]
     push rax
-    mov rax, global_string_541
+    mov rax, global_string_563
     push rax
     call func_emit_asm3
     add rsp, 24
-    mov rax, global_string_542
+    mov rax, global_string_564
     push rax
     call func_emit_asm
     add rsp, 8
-    mov rax, global_string_543
+    mov rax, global_string_565
     push rax
     call func_emit_asm
     add rsp, 8
-    jmp .if_end_764
-.if_else_764:
-    mov rax, global_string_544
+    jmp .if_end_618
+.if_else_618:
+    mov rax, global_string_566
     push rax
-    mov rax, global_string_545
+    mov rax, global_string_567
     push rax
     call func_die2
     add rsp, 16
-.if_end_764:
-.if_end_763:
-.if_end_762:
-.if_end_761:
-    jmp .if_end_760
-.if_else_760:
+.if_end_618:
+.if_end_617:
+.if_end_616:
+.if_end_615:
+    jmp .if_end_614
+.if_else_614:
     mov rax, 3
     push rax
     mov rax, rbp
@@ -29919,7 +29319,7 @@ func_generate_expression:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_else_765
+    je .if_else_619
     mov rax, rbp
     sub rax, -16
     mov rax, [rax]
@@ -29928,8 +29328,8 @@ func_generate_expression:
     push rax
     call func_generate_lvalue_into_rax
     add rsp, 8
-    jmp .if_end_765
-.if_else_765:
+    jmp .if_end_619
+.if_else_619:
     mov rax, 29
     push rax
     mov rax, rbp
@@ -29942,14 +29342,14 @@ func_generate_expression:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_else_766
+    je .if_else_620
     mov rax, global_vars
-    add rax, 1073742016
+    add rax, 1073742024
     push rax
     mov rax, 1
     push rax
     mov rax, global_vars
-    add rax, 1073742016
+    add rax, 1073742024
     mov rax, [rax]
     pop rcx
     add rax, rcx
@@ -29964,261 +29364,33 @@ func_generate_expression:
     mov rax, [rax]
     push rax
     call func_generate_expression
-    add rsp, 8
-    mov rax, global_string_546
-    push rax
-    call func_emit_asm
-    add rsp, 8
-    mov rax, global_string_547
-    push rax
-    call func_emit_asm
-    add rsp, 8
-    mov rax, rbp
-    sub rax, 8
-    mov rax, [rax]
-    push rax
-    call func_emit_num
-    add rsp, 8
-    mov rax, global_string_548
-    push rax
-    call func_emit_asm
-    add rsp, 8
-    mov rax, rbp
-    sub rax, -16
-    mov rax, [rax]
-    add rax, 16
-    add rax, 8
-    mov rax, [rax]
-    push rax
-    call func_generate_expression
-    add rsp, 8
-    mov rax, global_string_549
-    push rax
-    call func_emit_asm
-    add rsp, 8
-    mov rax, rbp
-    sub rax, 8
-    mov rax, [rax]
-    push rax
-    call func_emit_num
-    add rsp, 8
-    mov rax, global_string_550
-    push rax
-    call func_emit_asm
-    add rsp, 8
-    mov rax, global_string_551
-    push rax
-    call func_emit_asm
-    add rsp, 8
-    mov rax, rbp
-    sub rax, 8
-    mov rax, [rax]
-    push rax
-    call func_emit_num
-    add rsp, 8
-    mov rax, global_string_552
-    push rax
-    call func_emit_asm
-    add rsp, 8
-    mov rax, rbp
-    sub rax, -16
-    mov rax, [rax]
-    add rax, 16
-    add rax, 16
-    mov rax, [rax]
-    push rax
-    call func_generate_expression
-    add rsp, 8
-    mov rax, global_string_553
-    push rax
-    call func_emit_asm
-    add rsp, 8
-    mov rax, rbp
-    sub rax, 8
-    mov rax, [rax]
-    push rax
-    call func_emit_num
-    add rsp, 8
-    mov rax, global_string_554
-    push rax
-    call func_emit_asm
-    add rsp, 8
-    jmp .if_end_766
-.if_else_766:
-    mov rax, 14
-    push rax
-    mov rax, rbp
-    sub rax, -16
-    mov rax, [rax]
-    add rax, 0
-    mov rax, [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
-    cmp rax, 0
-    je .if_else_767
-    mov rax, global_vars
-    add rax, 1073742016
-    push rax
-    mov rax, 1
-    push rax
-    mov rax, global_vars
-    add rax, 1073742016
-    mov rax, [rax]
-    pop rcx
-    add rax, rcx
-    pop rcx
-    mov [rcx], rax
-    mov [rbp-8], rax
-    mov rax, rbp
-    sub rax, -16
-    mov rax, [rax]
-    add rax, 16
-    add rax, 0
-    mov rax, [rax]
-    push rax
-    call func_generate_expression
-    add rsp, 8
-    mov rax, global_string_555
-    push rax
-    call func_emit_asm
-    add rsp, 8
-    mov rax, global_string_556
-    push rax
-    call func_emit_asm
-    add rsp, 8
-    mov rax, rbp
-    sub rax, 8
-    mov rax, [rax]
-    push rax
-    call func_emit_num
-    add rsp, 8
-    mov rax, global_string_557
-    push rax
-    call func_emit_asm
-    add rsp, 8
-    mov rax, global_string_558
-    push rax
-    call func_emit_asm
-    add rsp, 8
-    mov rax, global_string_559
-    push rax
-    call func_emit_asm
-    add rsp, 8
-    mov rax, rbp
-    sub rax, 8
-    mov rax, [rax]
-    push rax
-    call func_emit_num
-    add rsp, 8
-    mov rax, global_string_560
-    push rax
-    call func_emit_asm
-    add rsp, 8
-    mov rax, global_string_561
-    push rax
-    call func_emit_asm
-    add rsp, 8
-    mov rax, rbp
-    sub rax, 8
-    mov rax, [rax]
-    push rax
-    call func_emit_num
-    add rsp, 8
-    mov rax, global_string_562
-    push rax
-    call func_emit_asm
-    add rsp, 8
-    mov rax, rbp
-    sub rax, -16
-    mov rax, [rax]
-    add rax, 16
-    add rax, 8
-    mov rax, [rax]
-    push rax
-    call func_generate_expression
-    add rsp, 8
-    mov rax, global_string_563
-    push rax
-    call func_emit_asm
-    add rsp, 8
-    mov rax, global_string_564
-    push rax
-    call func_emit_asm
-    add rsp, 8
-    mov rax, global_string_565
-    push rax
-    call func_emit_asm
-    add rsp, 8
-    mov rax, rbp
-    sub rax, 8
-    mov rax, [rax]
-    push rax
-    call func_emit_num
-    add rsp, 8
-    mov rax, global_string_566
-    push rax
-    call func_emit_asm
-    add rsp, 8
-    jmp .if_end_767
-.if_else_767:
-    mov rax, 12
-    push rax
-    mov rax, rbp
-    sub rax, -16
-    mov rax, [rax]
-    add rax, 0
-    mov rax, [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
-    cmp rax, 0
-    je .if_else_768
-    mov rax, global_vars
-    add rax, 1073742016
-    push rax
-    mov rax, 1
-    push rax
-    mov rax, global_vars
-    add rax, 1073742016
-    mov rax, [rax]
-    pop rcx
-    add rax, rcx
-    pop rcx
-    mov [rcx], rax
-    mov [rbp-8], rax
-    mov rax, rbp
-    sub rax, -16
-    mov rax, [rax]
-    add rax, 16
-    add rax, 0
-    mov rax, [rax]
-    push rax
-    call func_generate_expression
-    add rsp, 8
-    mov rax, global_string_567
-    push rax
-    call func_emit_asm
     add rsp, 8
     mov rax, global_string_568
     push rax
     call func_emit_asm
     add rsp, 8
+    mov rax, global_string_569
+    push rax
+    call func_emit_asm
+    add rsp, 8
     mov rax, rbp
     sub rax, 8
     mov rax, [rax]
     push rax
     call func_emit_num
     add rsp, 8
-    mov rax, global_string_569
-    push rax
-    call func_emit_asm
-    add rsp, 8
     mov rax, global_string_570
     push rax
     call func_emit_asm
+    add rsp, 8
+    mov rax, rbp
+    sub rax, -16
+    mov rax, [rax]
+    add rax, 16
+    add rax, 8
+    mov rax, [rax]
+    push rax
+    call func_generate_expression
     add rsp, 8
     mov rax, global_string_571
     push rax
@@ -30252,20 +29424,12 @@ func_generate_expression:
     sub rax, -16
     mov rax, [rax]
     add rax, 16
-    add rax, 8
+    add rax, 16
     mov rax, [rax]
     push rax
     call func_generate_expression
     add rsp, 8
     mov rax, global_string_575
-    push rax
-    call func_emit_asm
-    add rsp, 8
-    mov rax, global_string_576
-    push rax
-    call func_emit_asm
-    add rsp, 8
-    mov rax, global_string_577
     push rax
     call func_emit_asm
     add rsp, 8
@@ -30275,12 +29439,248 @@ func_generate_expression:
     push rax
     call func_emit_num
     add rsp, 8
+    mov rax, global_string_576
+    push rax
+    call func_emit_asm
+    add rsp, 8
+    jmp .if_end_620
+.if_else_620:
+    mov rax, 14
+    push rax
+    mov rax, rbp
+    sub rax, -16
+    mov rax, [rax]
+    add rax, 0
+    mov rax, [rax]
+    pop rcx
+    cmp rax, rcx
+    sete al
+    movzx rax, al
+    cmp rax, 0
+    je .if_else_621
+    mov rax, global_vars
+    add rax, 1073742024
+    push rax
+    mov rax, 1
+    push rax
+    mov rax, global_vars
+    add rax, 1073742024
+    mov rax, [rax]
+    pop rcx
+    add rax, rcx
+    pop rcx
+    mov [rcx], rax
+    mov [rbp-8], rax
+    mov rax, rbp
+    sub rax, -16
+    mov rax, [rax]
+    add rax, 16
+    add rax, 0
+    mov rax, [rax]
+    push rax
+    call func_generate_expression
+    add rsp, 8
+    mov rax, global_string_577
+    push rax
+    call func_emit_asm
+    add rsp, 8
     mov rax, global_string_578
     push rax
     call func_emit_asm
     add rsp, 8
-    jmp .if_end_768
-.if_else_768:
+    mov rax, rbp
+    sub rax, 8
+    mov rax, [rax]
+    push rax
+    call func_emit_num
+    add rsp, 8
+    mov rax, global_string_579
+    push rax
+    call func_emit_asm
+    add rsp, 8
+    mov rax, global_string_580
+    push rax
+    call func_emit_asm
+    add rsp, 8
+    mov rax, global_string_581
+    push rax
+    call func_emit_asm
+    add rsp, 8
+    mov rax, rbp
+    sub rax, 8
+    mov rax, [rax]
+    push rax
+    call func_emit_num
+    add rsp, 8
+    mov rax, global_string_582
+    push rax
+    call func_emit_asm
+    add rsp, 8
+    mov rax, global_string_583
+    push rax
+    call func_emit_asm
+    add rsp, 8
+    mov rax, rbp
+    sub rax, 8
+    mov rax, [rax]
+    push rax
+    call func_emit_num
+    add rsp, 8
+    mov rax, global_string_584
+    push rax
+    call func_emit_asm
+    add rsp, 8
+    mov rax, rbp
+    sub rax, -16
+    mov rax, [rax]
+    add rax, 16
+    add rax, 8
+    mov rax, [rax]
+    push rax
+    call func_generate_expression
+    add rsp, 8
+    mov rax, global_string_585
+    push rax
+    call func_emit_asm
+    add rsp, 8
+    mov rax, global_string_586
+    push rax
+    call func_emit_asm
+    add rsp, 8
+    mov rax, global_string_587
+    push rax
+    call func_emit_asm
+    add rsp, 8
+    mov rax, rbp
+    sub rax, 8
+    mov rax, [rax]
+    push rax
+    call func_emit_num
+    add rsp, 8
+    mov rax, global_string_588
+    push rax
+    call func_emit_asm
+    add rsp, 8
+    jmp .if_end_621
+.if_else_621:
+    mov rax, 12
+    push rax
+    mov rax, rbp
+    sub rax, -16
+    mov rax, [rax]
+    add rax, 0
+    mov rax, [rax]
+    pop rcx
+    cmp rax, rcx
+    sete al
+    movzx rax, al
+    cmp rax, 0
+    je .if_else_622
+    mov rax, global_vars
+    add rax, 1073742024
+    push rax
+    mov rax, 1
+    push rax
+    mov rax, global_vars
+    add rax, 1073742024
+    mov rax, [rax]
+    pop rcx
+    add rax, rcx
+    pop rcx
+    mov [rcx], rax
+    mov [rbp-8], rax
+    mov rax, rbp
+    sub rax, -16
+    mov rax, [rax]
+    add rax, 16
+    add rax, 0
+    mov rax, [rax]
+    push rax
+    call func_generate_expression
+    add rsp, 8
+    mov rax, global_string_589
+    push rax
+    call func_emit_asm
+    add rsp, 8
+    mov rax, global_string_590
+    push rax
+    call func_emit_asm
+    add rsp, 8
+    mov rax, rbp
+    sub rax, 8
+    mov rax, [rax]
+    push rax
+    call func_emit_num
+    add rsp, 8
+    mov rax, global_string_591
+    push rax
+    call func_emit_asm
+    add rsp, 8
+    mov rax, global_string_592
+    push rax
+    call func_emit_asm
+    add rsp, 8
+    mov rax, global_string_593
+    push rax
+    call func_emit_asm
+    add rsp, 8
+    mov rax, rbp
+    sub rax, 8
+    mov rax, [rax]
+    push rax
+    call func_emit_num
+    add rsp, 8
+    mov rax, global_string_594
+    push rax
+    call func_emit_asm
+    add rsp, 8
+    mov rax, global_string_595
+    push rax
+    call func_emit_asm
+    add rsp, 8
+    mov rax, rbp
+    sub rax, 8
+    mov rax, [rax]
+    push rax
+    call func_emit_num
+    add rsp, 8
+    mov rax, global_string_596
+    push rax
+    call func_emit_asm
+    add rsp, 8
+    mov rax, rbp
+    sub rax, -16
+    mov rax, [rax]
+    add rax, 16
+    add rax, 8
+    mov rax, [rax]
+    push rax
+    call func_generate_expression
+    add rsp, 8
+    mov rax, global_string_597
+    push rax
+    call func_emit_asm
+    add rsp, 8
+    mov rax, global_string_598
+    push rax
+    call func_emit_asm
+    add rsp, 8
+    mov rax, global_string_599
+    push rax
+    call func_emit_asm
+    add rsp, 8
+    mov rax, rbp
+    sub rax, 8
+    mov rax, [rax]
+    push rax
+    call func_emit_num
+    add rsp, 8
+    mov rax, global_string_600
+    push rax
+    call func_emit_asm
+    add rsp, 8
+    jmp .if_end_622
+.if_else_622:
     mov rax, rbp
     sub rax, -16
     mov rax, [rax]
@@ -30290,7 +29690,7 @@ func_generate_expression:
     call func_is_lvalue
     add rsp, 8
     cmp rax, 0
-    je .if_else_769
+    je .if_else_623
     mov rax, rbp
     sub rax, -16
     mov rax, [rax]
@@ -30306,13 +29706,13 @@ func_generate_expression:
     call func_is_float_type
     add rsp, 8
     cmp rax, 0
-    je .if_else_770
-    mov rax, global_string_579
+    je .if_else_624
+    mov rax, global_string_601
     push rax
     call func_emit_asm
     add rsp, 8
-    jmp .if_end_770
-.if_else_770:
+    jmp .if_end_624
+.if_else_624:
     mov rax, 8
     push rax
     mov rax, rbp
@@ -30328,14 +29728,14 @@ func_generate_expression:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_else_771
-    mov rax, global_string_580
+    je .if_else_625
+    mov rax, global_string_602
     push rax
     call func_emit_asm
     add rsp, 8
-    jmp .if_end_771
-.if_else_771:
-    mov rax, global_string_581
+    jmp .if_end_625
+.if_else_625:
+    mov rax, global_string_603
     push rax
     mov rax, rbp
     sub rax, -16
@@ -30346,14 +29746,14 @@ func_generate_expression:
     call func_specifier_for_type
     add rsp, 8
     push rax
-    mov rax, global_string_582
+    mov rax, global_string_604
     push rax
     call func_emit_asm3
     add rsp, 24
-.if_end_771:
-.if_end_770:
-    jmp .if_end_769
-.if_else_769:
+.if_end_625:
+.if_end_624:
+    jmp .if_end_623
+.if_else_623:
     mov rax, rbp
     sub rax, -16
     mov rax, [rax]
@@ -30363,15 +29763,15 @@ func_generate_expression:
     call func_is_binary_op
     add rsp, 8
     cmp rax, 0
-    je .if_else_772
+    je .if_else_626
     mov rax, rbp
     sub rax, -16
     mov rax, [rax]
     push rax
     call func_generate_binop
     add rsp, 8
-    jmp .if_end_772
-.if_else_772:
+    jmp .if_end_626
+.if_else_626:
     mov rax, 2
     push rax
     mov rax, rbp
@@ -30384,7 +29784,7 @@ func_generate_expression:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_else_773
+    je .if_else_627
     mov rax, rbp
     sub rax, -16
     mov rax, [rax]
@@ -30393,12 +29793,12 @@ func_generate_expression:
     push rax
     call func_generate_expression
     add rsp, 8
-    mov rax, global_string_583
+    mov rax, global_string_605
     push rax
     call func_emit_asm
     add rsp, 8
-    jmp .if_end_773
-.if_else_773:
+    jmp .if_end_627
+.if_else_627:
     mov rax, 0
     push rax
     mov rax, rbp
@@ -30411,7 +29811,7 @@ func_generate_expression:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_else_774
+    je .if_else_628
     mov rax, rbp
     sub rax, -16
     mov rax, [rax]
@@ -30431,28 +29831,28 @@ func_generate_expression:
     call func_is_float_type
     add rsp, 8
     cmp rax, 0
-    je .if_else_775
-    mov rax, global_string_584
+    je .if_else_629
+    mov rax, global_string_606
     push rax
     call func_emit_asm
     add rsp, 8
-    mov rax, global_string_585
+    mov rax, global_string_607
     push rax
     call func_emit_asm
     add rsp, 8
-    mov rax, global_string_586
+    mov rax, global_string_608
     push rax
     call func_emit_asm
     add rsp, 8
-    jmp .if_end_775
-.if_else_775:
-    mov rax, global_string_587
+    jmp .if_end_629
+.if_else_629:
+    mov rax, global_string_609
     push rax
     call func_emit_asm
     add rsp, 8
-.if_end_775:
-    jmp .if_end_774
-.if_else_774:
+.if_end_629:
+    jmp .if_end_628
+.if_else_628:
     mov rax, 1
     push rax
     mov rax, rbp
@@ -30465,7 +29865,7 @@ func_generate_expression:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_else_776
+    je .if_else_630
     mov rax, rbp
     sub rax, -16
     mov rax, [rax]
@@ -30474,20 +29874,20 @@ func_generate_expression:
     push rax
     call func_generate_expression
     add rsp, 8
-    mov rax, global_string_588
+    mov rax, global_string_610
     push rax
     call func_emit_asm
     add rsp, 8
-    mov rax, global_string_589
+    mov rax, global_string_611
     push rax
     call func_emit_asm
     add rsp, 8
-    mov rax, global_string_590
+    mov rax, global_string_612
     push rax
     call func_emit_asm
     add rsp, 8
-    jmp .if_end_776
-.if_else_776:
+    jmp .if_end_630
+.if_else_630:
     mov rax, 23
     push rax
     mov rax, rbp
@@ -30500,7 +29900,7 @@ func_generate_expression:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_else_777
+    je .if_else_631
     mov rax, rbp
     sub rax, -16
     mov rax, [rax]
@@ -30514,7 +29914,7 @@ func_generate_expression:
     push rax
     call func_generate_lvalue_into_rax
     add rsp, 8
-    mov rax, global_string_591
+    mov rax, global_string_613
     push rax
     call func_emit_asm
     add rsp, 8
@@ -30527,7 +29927,7 @@ func_generate_expression:
     push rax
     call func_generate_expression
     add rsp, 8
-    mov rax, global_string_592
+    mov rax, global_string_614
     push rax
     call func_emit_asm
     add rsp, 8
@@ -30543,14 +29943,14 @@ func_generate_expression:
     call func_is_float_type
     add rsp, 8
     cmp rax, 0
-    je .if_else_778
-    mov rax, global_string_593
+    je .if_else_632
+    mov rax, global_string_615
     push rax
     call func_emit_asm
     add rsp, 8
-    jmp .if_end_778
-.if_else_778:
-    mov rax, global_string_594
+    jmp .if_end_632
+.if_else_632:
+    mov rax, global_string_616
     push rax
     mov rax, rbp
     sub rax, 8
@@ -30561,13 +29961,13 @@ func_generate_expression:
     call func_subregister_for_type
     add rsp, 8
     push rax
-    mov rax, global_string_595
+    mov rax, global_string_617
     push rax
     call func_emit_asm3
     add rsp, 24
-.if_end_778:
-    jmp .if_end_777
-.if_else_777:
+.if_end_632:
+    jmp .if_end_631
+.if_else_631:
     mov rax, 28
     push rax
     mov rax, rbp
@@ -30580,15 +29980,15 @@ func_generate_expression:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_else_779
+    je .if_else_633
     mov rax, rbp
     sub rax, -16
     mov rax, [rax]
     push rax
     call func_generate_function_call
     add rsp, 8
-    jmp .if_end_779
-.if_else_779:
+    jmp .if_end_633
+.if_else_633:
     mov rax, 27
     push rax
     mov rax, rbp
@@ -30601,7 +30001,7 @@ func_generate_expression:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_else_780
+    je .if_else_634
     mov rax, rbp
     sub rax, -16
     mov rax, [rax]
@@ -30611,10 +30011,10 @@ func_generate_expression:
     call func_is_int_type
     add rsp, 8
     cmp rax, 0
-    jne .and_right_782
+    jne .and_right_636
     mov rax, 0
-    jmp .and_end_782
-.and_right_782:
+    jmp .and_end_636
+.and_right_636:
     mov rax, rbp
     sub rax, -16
     mov rax, [rax]
@@ -30627,9 +30027,9 @@ func_generate_expression:
     add rsp, 8
     cmp rax, 0
     setne al
-.and_end_782:
+.and_end_636:
     cmp rax, 0
-    je .if_else_781
+    je .if_else_635
     mov rax, rbp
     sub rax, -16
     mov rax, [rax]
@@ -30638,12 +30038,12 @@ func_generate_expression:
     push rax
     call func_generate_expression
     add rsp, 8
-    mov rax, global_string_596
+    mov rax, global_string_618
     push rax
     call func_emit_asm
     add rsp, 8
-    jmp .if_end_781
-.if_else_781:
+    jmp .if_end_635
+.if_else_635:
     mov rax, rbp
     sub rax, -16
     mov rax, [rax]
@@ -30653,10 +30053,10 @@ func_generate_expression:
     call func_is_float_type
     add rsp, 8
     cmp rax, 0
-    jne .and_right_784
+    jne .and_right_638
     mov rax, 0
-    jmp .and_end_784
-.and_right_784:
+    jmp .and_end_638
+.and_right_638:
     mov rax, rbp
     sub rax, -16
     mov rax, [rax]
@@ -30669,9 +30069,9 @@ func_generate_expression:
     add rsp, 8
     cmp rax, 0
     setne al
-.and_end_784:
+.and_end_638:
     cmp rax, 0
-    je .if_else_783
+    je .if_else_637
     mov rax, rbp
     sub rax, -16
     mov rax, [rax]
@@ -30680,20 +30080,20 @@ func_generate_expression:
     push rax
     call func_generate_expression
     add rsp, 8
-    mov rax, global_string_597
+    mov rax, global_string_619
     push rax
     call func_emit_asm
     add rsp, 8
-    jmp .if_end_783
-.if_else_783:
-    mov rax, global_string_598
+    jmp .if_end_637
+.if_else_637:
+    mov rax, global_string_620
     push rax
     call func_die
     add rsp, 8
-.if_end_783:
-.if_end_781:
-    jmp .if_end_780
-.if_else_780:
+.if_end_637:
+.if_end_635:
+    jmp .if_end_634
+.if_else_634:
     mov rax, rbp
     sub rax, -16
     mov rax, [rax]
@@ -30703,303 +30103,57 @@ func_generate_expression:
     call func_node_type_to_string
     add rsp, 8
     push rax
-    mov rax, global_string_599
+    mov rax, global_string_621
     push rax
     call func_die2
     add rsp, 16
-.if_end_780:
-.if_end_779:
-.if_end_777:
-.if_end_776:
-.if_end_774:
-.if_end_773:
-.if_end_772:
-.if_end_769:
-.if_end_768:
-.if_end_767:
-.if_end_766:
-.if_end_765:
-.if_end_760:
+.if_end_634:
+.if_end_633:
+.if_end_631:
+.if_end_630:
+.if_end_628:
+.if_end_627:
+.if_end_626:
+.if_end_623:
+.if_end_622:
+.if_end_621:
+.if_end_620:
+.if_end_619:
+.if_end_614:
     mov rsp, rbp
     pop rbp
     mov qword rax, 0
     ret
-global func_generate_statement
-func_generate_statement:
+global func_generate_switch_statement
+func_generate_switch_statement:
     push rbp
     mov rbp, rsp
-    sub rsp, 8
-    mov rax, 37
-    push rax
-    mov rax, rbp
-    sub rax, -16
-    mov rax, [rax]
-    add rax, 0
-    mov rax, [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
-    cmp rax, 0
-    je .if_else_785
-    mov rax, rbp
-    sub rax, -16
-    mov rax, [rax]
-    add rax, 16
-    mov rax, [rax]
-    cmp rax, 0
-    je .if_else_786
-    mov rax, rbp
-    sub rax, -16
-    mov rax, [rax]
-    add rax, 16
-    mov rax, [rax]
-    push rax
-    call func_generate_expression
-    add rsp, 8
-    jmp .if_end_786
-.if_else_786:
-    mov rax, global_string_600
-    push rax
-    call func_emit_asm
-    add rsp, 8
-.if_end_786:
-    mov rax, global_string_601
-    push rax
-    call func_emit_asm
-    add rsp, 8
+    sub rsp, 64
     mov rax, global_vars
-    add rax, 1073742032
-    mov rax, [rax]
-    add rax, 0
-    mov rax, [rax]
-    mov [rbp-8], rax
-.loop_start_787:
-.loop_continue_787:
-    mov rax, 0
-    push rax
-    mov rax, global_vars
-    add rax, 1073742032
-    mov rax, [rax]
-    add rax, 0
-    mov rax, [rax]
-    pop rcx
-    cmp rax, rcx
-    setg al
-    movzx rax, al
-    cmp rax, 0
-    je .loop_end_787
-    mov rax, global_vars
-    add rax, 1073742032
-    mov rax, [rax]
-    push rax
-    call _Vector_method_pop
-    add rsp, 8
-    push rax
-    call func_generate_statement
-    add rsp, 8
-    jmp .loop_start_787
-.loop_end_787:
-    mov rax, global_vars
-    add rax, 1073742032
-    mov rax, [rax]
-    add rax, 0
-    push rax
-    mov rax, rbp
-    sub rax, 8
-    mov rax, [rax]
-    pop rcx
-    mov [rcx], rax
-    mov rax, global_string_602
-    push rax
-    call func_emit_asm
-    add rsp, 8
-    mov rax, global_string_603
-    push rax
-    call func_emit_asm
-    add rsp, 8
-    mov rax, global_string_604
-    push rax
-    call func_emit_asm
-    add rsp, 8
-    mov rax, global_string_605
-    push rax
-    call func_emit_asm
-    add rsp, 8
-    jmp .if_end_785
-.if_else_785:
-    mov rax, 34
-    push rax
-    mov rax, rbp
-    sub rax, -16
-    mov rax, [rax]
-    add rax, 0
-    mov rax, [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
-    cmp rax, 0
-    je .if_else_788
-    mov rax, rbp
-    sub rax, -16
-    mov rax, [rax]
-    add rax, 16
-    add rax, 24
-    mov rax, [rax]
-    cmp rax, 0
-    je .if_end_789
-    mov rax, rbp
-    sub rax, -16
-    mov rax, [rax]
-    add rax, 16
-    add rax, 24
-    mov rax, [rax]
-    push rax
-    call func_generate_expression
-    add rsp, 8
-    mov rax, rbp
-    sub rax, -16
-    mov rax, [rax]
-    add rax, 16
-    add rax, 0
-    add rax, 16
-    mov rax, [rax]
-    mov [rbp-8], rax
-    mov rax, rbp
-    sub rax, -16
-    mov rax, [rax]
-    add rax, 16
-    add rax, 24
-    mov rax, [rax]
-    add rax, 8
-    mov rax, [rax]
-    push rax
-    call func_is_float_type
-    add rsp, 8
-    cmp rax, 0
-    je .if_else_790
-    mov rax, global_string_606
-    push rax
-    call func_emit_asm
-    add rsp, 8
-    mov rax, rbp
-    sub rax, 8
-    mov rax, [rax]
-    push rax
-    call func_emit_num
-    add rsp, 8
-    mov rax, global_string_607
-    push rax
-    call func_emit_asm
-    add rsp, 8
-    jmp .if_end_790
-.if_else_790:
-    mov rax, global_string_608
-    push rax
-    call func_emit_asm
-    add rsp, 8
-    mov rax, rbp
-    sub rax, 8
-    mov rax, [rax]
-    push rax
-    call func_emit_num
-    add rsp, 8
-    mov rax, global_string_609
-    push rax
-    mov rax, rbp
-    sub rax, -16
-    mov rax, [rax]
-    add rax, 16
-    add rax, 0
-    add rax, 8
-    mov rax, [rax]
-    push rax
-    call func_subregister_for_type
-    add rsp, 8
-    push rax
-    mov rax, global_string_610
-    push rax
-    call func_emit_asm3
-    add rsp, 24
-.if_end_790:
-.if_end_789:
-    jmp .if_end_788
-.if_else_788:
-    mov rax, 41
-    push rax
-    mov rax, rbp
-    sub rax, -16
-    mov rax, [rax]
-    add rax, 0
-    mov rax, [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
-    cmp rax, 0
-    je .if_else_791
-    mov rax, rbp
-    sub rax, -16
-    mov rax, [rax]
-    push rax
-    call func_generate_block
-    add rsp, 8
-    jmp .if_end_791
-.if_else_791:
-    mov rax, 32
-    push rax
-    mov rax, rbp
-    sub rax, -16
-    mov rax, [rax]
-    add rax, 0
-    mov rax, [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
-    cmp rax, 0
-    je .if_else_792
-    mov rax, rbp
-    sub rax, -16
-    mov rax, [rax]
-    add rax, 16
-    mov rax, [rax]
-    push rax
-    mov rax, global_vars
-    add rax, 1073742032
-    mov rax, [rax]
-    push rax
-    call _Vector_method_push
-    add rsp, 16
-    jmp .if_end_792
-.if_else_792:
-    mov rax, 30
-    push rax
-    mov rax, rbp
-    sub rax, -16
-    mov rax, [rax]
-    add rax, 0
-    mov rax, [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
-    cmp rax, 0
-    je .if_else_793
-    mov rax, global_vars
-    add rax, 1073742016
+    add rax, 1073742024
     push rax
     mov rax, 1
     push rax
     mov rax, global_vars
-    add rax, 1073742016
+    add rax, 1073742024
     mov rax, [rax]
     pop rcx
     add rax, rcx
     pop rcx
     mov [rcx], rax
     mov [rbp-8], rax
+    mov rax, global_vars
+    add rax, 1073742048
+    mov rax, [rax]
+    mov [rbp-16], rax
+    mov rax, global_vars
+    add rax, 1073742048
+    push rax
+    mov rax, rbp
+    sub rax, 8
+    mov rax, [rax]
+    pop rcx
+    mov [rcx], rax
     mov rax, rbp
     sub rax, -16
     mov rax, [rax]
@@ -31009,130 +30163,64 @@ func_generate_statement:
     push rax
     call func_generate_expression
     add rsp, 8
-    mov rax, global_vars
+    mov rax, rbp
+    sub rax, -16
+    mov rax, [rax]
+    add rax, 16
+    add rax, 8
+    mov rax, [rax]
+    mov [rbp-24], rax
+    mov rax, 0
+    mov [rbp-32], rax
+.loop_start_639:
+    mov rax, rbp
+    sub rax, 24
+    mov rax, [rax]
     add rax, 0
     mov rax, [rax]
     push rax
     mov rax, rbp
-    sub rax, -16
-    mov rax, [rax]
-    add rax, 16
-    add rax, 16
+    sub rax, 32
     mov rax, [rax]
     pop rcx
     cmp rax, rcx
-    sete al
+    setl al
     movzx rax, al
     cmp rax, 0
-    je .if_else_794
-    mov rax, global_string_611
-    push rax
-    call func_emit_asm
-    add rsp, 8
-    mov rax, global_string_612
-    push rax
-    call func_emit_asm
-    add rsp, 8
+    je .loop_end_639
     mov rax, rbp
-    sub rax, 8
+    sub rax, 32
     mov rax, [rax]
     push rax
-    call func_emit_num
-    add rsp, 8
-    mov rax, global_string_613
-    push rax
-    call func_emit_asm
-    add rsp, 8
     mov rax, rbp
-    sub rax, -16
+    sub rax, 24
+    mov rax, [rax]
+    push rax
+    call _Vector_method_at
+    add rsp, 16
+    mov [rbp-40], rax
+    mov rax, rbp
+    sub rax, 40
     mov rax, [rax]
     add rax, 16
-    add rax, 8
+    add rax, 0
     mov rax, [rax]
-    push rax
-    call func_generate_statement
-    add rsp, 8
-    mov rax, global_string_614
-    push rax
-    call func_emit_asm
-    add rsp, 8
-    mov rax, rbp
-    sub rax, 8
-    mov rax, [rax]
-    push rax
-    call func_emit_num
-    add rsp, 8
-    mov rax, global_string_615
-    push rax
-    call func_emit_asm
-    add rsp, 8
-    jmp .if_end_794
-.if_else_794:
-    mov rax, global_string_616
-    push rax
-    call func_emit_asm
-    add rsp, 8
-    mov rax, global_string_617
-    push rax
-    call func_emit_asm
-    add rsp, 8
-    mov rax, rbp
-    sub rax, 8
-    mov rax, [rax]
-    push rax
-    call func_emit_num
-    add rsp, 8
-    mov rax, global_string_618
-    push rax
-    call func_emit_asm
-    add rsp, 8
-    mov rax, rbp
-    sub rax, -16
-    mov rax, [rax]
-    add rax, 16
-    add rax, 8
-    mov rax, [rax]
-    push rax
-    call func_generate_statement
-    add rsp, 8
-    mov rax, global_string_619
-    push rax
-    call func_emit_asm
-    add rsp, 8
-    mov rax, rbp
-    sub rax, 8
-    mov rax, [rax]
-    push rax
-    call func_emit_num
-    add rsp, 8
-    mov rax, global_string_620
-    push rax
-    call func_emit_asm
-    add rsp, 8
-    mov rax, global_string_621
-    push rax
-    call func_emit_asm
-    add rsp, 8
-    mov rax, rbp
-    sub rax, 8
-    mov rax, [rax]
-    push rax
-    call func_emit_num
-    add rsp, 8
+    mov [rbp-48], rax
     mov rax, global_string_622
     push rax
     call func_emit_asm
     add rsp, 8
     mov rax, rbp
-    sub rax, -16
-    mov rax, [rax]
-    add rax, 16
-    add rax, 16
+    sub rax, 48
     mov rax, [rax]
     push rax
-    call func_generate_statement
+    call func_emit_num
     add rsp, 8
     mov rax, global_string_623
+    push rax
+    call func_emit_asm
+    add rsp, 8
+    mov rax, global_string_624
     push rax
     call func_emit_asm
     add rsp, 8
@@ -31142,45 +30230,12 @@ func_generate_statement:
     push rax
     call func_emit_num
     add rsp, 8
-    mov rax, global_string_624
-    push rax
-    call func_emit_asm
-    add rsp, 8
-.if_end_794:
-    jmp .if_end_793
-.if_else_793:
-    mov rax, 31
-    push rax
-    mov rax, rbp
-    sub rax, -16
-    mov rax, [rax]
-    add rax, 0
-    mov rax, [rax]
-    pop rcx
-    cmp rax, rcx
-    sete al
-    movzx rax, al
-    cmp rax, 0
-    je .if_else_795
-    mov rax, global_vars
-    add rax, 1073742016
-    push rax
-    mov rax, 1
-    push rax
-    mov rax, global_vars
-    add rax, 1073742016
-    mov rax, [rax]
-    pop rcx
-    add rax, rcx
-    pop rcx
-    mov [rcx], rax
-    mov [rbp-8], rax
     mov rax, global_string_625
     push rax
     call func_emit_asm
     add rsp, 8
     mov rax, rbp
-    sub rax, 8
+    sub rax, 32
     mov rax, [rax]
     push rax
     call func_emit_num
@@ -31189,6 +30244,22 @@ func_generate_statement:
     push rax
     call func_emit_asm
     add rsp, 8
+.loop_continue_639:
+    mov rax, rbp
+    sub rax, 32
+    push rax
+    mov rax, 1
+    push rax
+    mov rax, rbp
+    sub rax, 32
+    mov rax, [rax]
+    pop rcx
+    add rax, rcx
+    pop rcx
+    mov [rcx], rax
+    jmp .loop_start_639
+.break_639:
+.loop_end_639:
     mov rax, global_string_627
     push rax
     call func_emit_asm
@@ -31203,20 +30274,43 @@ func_generate_statement:
     push rax
     call func_emit_asm
     add rsp, 8
+    mov rax, 0
+    mov [rbp-32], rax
+.loop_start_640:
     mov rax, rbp
-    sub rax, -16
+    sub rax, 24
+    mov rax, [rax]
+    add rax, 0
+    mov rax, [rax]
+    push rax
+    mov rax, rbp
+    sub rax, 32
+    mov rax, [rax]
+    pop rcx
+    cmp rax, rcx
+    setl al
+    movzx rax, al
+    cmp rax, 0
+    je .loop_end_640
+    mov rax, rbp
+    sub rax, 32
+    mov rax, [rax]
+    push rax
+    mov rax, rbp
+    sub rax, 24
+    mov rax, [rax]
+    push rax
+    call _Vector_method_at
+    add rsp, 16
+    mov [rbp-40], rax
+    mov rax, rbp
+    sub rax, 40
     mov rax, [rax]
     add rax, 16
     add rax, 0
     mov rax, [rax]
-    push rax
-    call func_generate_expression
-    add rsp, 8
+    mov [rbp-48], rax
     mov rax, global_string_629
-    push rax
-    call func_emit_asm
-    add rsp, 8
-    mov rax, global_string_630
     push rax
     call func_emit_asm
     add rsp, 8
@@ -31226,19 +30320,90 @@ func_generate_statement:
     push rax
     call func_emit_num
     add rsp, 8
+    mov rax, global_string_630
+    push rax
+    call func_emit_asm
+    add rsp, 8
+    mov rax, rbp
+    sub rax, 32
+    mov rax, [rax]
+    push rax
+    call func_emit_num
+    add rsp, 8
     mov rax, global_string_631
     push rax
     call func_emit_asm
     add rsp, 8
     mov rax, rbp
-    sub rax, -16
+    sub rax, 40
     mov rax, [rax]
     add rax, 16
     add rax, 8
     mov rax, [rax]
+    mov [rbp-56], rax
+    mov rax, 0
+    mov [rbp-64], rax
+.loop_start_641:
+    mov rax, rbp
+    sub rax, 56
+    mov rax, [rax]
+    add rax, 0
+    mov rax, [rax]
+    push rax
+    mov rax, rbp
+    sub rax, 64
+    mov rax, [rax]
+    pop rcx
+    cmp rax, rcx
+    setl al
+    movzx rax, al
+    cmp rax, 0
+    je .loop_end_641
+    mov rax, rbp
+    sub rax, 64
+    mov rax, [rax]
+    push rax
+    mov rax, rbp
+    sub rax, 56
+    mov rax, [rax]
+    push rax
+    call _Vector_method_at
+    add rsp, 16
     push rax
     call func_generate_statement
     add rsp, 8
+.loop_continue_641:
+    mov rax, rbp
+    sub rax, 64
+    push rax
+    mov rax, 1
+    push rax
+    mov rax, rbp
+    sub rax, 64
+    mov rax, [rax]
+    pop rcx
+    add rax, rcx
+    pop rcx
+    mov [rcx], rax
+    jmp .loop_start_641
+.break_641:
+.loop_end_641:
+.loop_continue_640:
+    mov rax, rbp
+    sub rax, 32
+    push rax
+    mov rax, 1
+    push rax
+    mov rax, rbp
+    sub rax, 32
+    mov rax, [rax]
+    pop rcx
+    add rax, rcx
+    pop rcx
+    mov [rcx], rax
+    jmp .loop_start_640
+.break_640:
+.loop_end_640:
     mov rax, global_string_632
     push rax
     call func_emit_asm
@@ -31253,6 +30418,66 @@ func_generate_statement:
     push rax
     call func_emit_asm
     add rsp, 8
+    mov rax, rbp
+    sub rax, -16
+    mov rax, [rax]
+    add rax, 16
+    add rax, 16
+    mov rax, [rax]
+    mov [rbp-32], rax
+    mov rax, rbp
+    sub rax, 32
+    mov rax, [rax]
+    cmp rax, 0
+    je .if_end_642
+    mov rax, 0
+    mov [rbp-40], rax
+.loop_start_643:
+    mov rax, rbp
+    sub rax, 32
+    mov rax, [rax]
+    add rax, 0
+    mov rax, [rax]
+    push rax
+    mov rax, rbp
+    sub rax, 40
+    mov rax, [rax]
+    pop rcx
+    cmp rax, rcx
+    setl al
+    movzx rax, al
+    cmp rax, 0
+    je .loop_end_643
+    mov rax, rbp
+    sub rax, 40
+    mov rax, [rax]
+    push rax
+    mov rax, rbp
+    sub rax, 32
+    mov rax, [rax]
+    push rax
+    call _Vector_method_at
+    add rsp, 16
+    push rax
+    call func_generate_statement
+    add rsp, 8
+.loop_continue_643:
+    mov rax, rbp
+    sub rax, 40
+    push rax
+    mov rax, 1
+    push rax
+    mov rax, rbp
+    sub rax, 40
+    mov rax, [rax]
+    pop rcx
+    add rax, rcx
+    pop rcx
+    mov [rcx], rax
+    jmp .loop_start_643
+.break_643:
+.loop_end_643:
+.if_end_642:
     mov rax, global_string_634
     push rax
     call func_emit_asm
@@ -31267,8 +30492,684 @@ func_generate_statement:
     push rax
     call func_emit_asm
     add rsp, 8
-    jmp .if_end_795
-.if_else_795:
+    mov rax, global_vars
+    add rax, 1073742048
+    push rax
+    mov rax, rbp
+    sub rax, 8
+    mov rax, [rax]
+    pop rcx
+    mov [rcx], rax
+    mov rsp, rbp
+    pop rbp
+    mov qword rax, 0
+    ret
+global func_generate_statement
+func_generate_statement:
+    push rbp
+    mov rbp, rsp
+    sub rsp, 16
+    mov rax, 39
+    push rax
+    mov rax, rbp
+    sub rax, -16
+    mov rax, [rax]
+    add rax, 0
+    mov rax, [rax]
+    pop rcx
+    cmp rax, rcx
+    sete al
+    movzx rax, al
+    cmp rax, 0
+    je .if_else_644
+    mov rax, rbp
+    sub rax, -16
+    mov rax, [rax]
+    add rax, 16
+    mov rax, [rax]
+    cmp rax, 0
+    je .if_else_645
+    mov rax, rbp
+    sub rax, -16
+    mov rax, [rax]
+    add rax, 16
+    mov rax, [rax]
+    push rax
+    call func_generate_expression
+    add rsp, 8
+    jmp .if_end_645
+.if_else_645:
+    mov rax, global_string_636
+    push rax
+    call func_emit_asm
+    add rsp, 8
+.if_end_645:
+    mov rax, global_string_637
+    push rax
+    call func_emit_asm
+    add rsp, 8
+    mov rax, global_vars
+    add rax, 1073742040
+    mov rax, [rax]
+    add rax, 0
+    mov rax, [rax]
+    mov [rbp-8], rax
+.loop_start_646:
+.loop_continue_646:
+    mov rax, 0
+    push rax
+    mov rax, global_vars
+    add rax, 1073742040
+    mov rax, [rax]
+    add rax, 0
+    mov rax, [rax]
+    pop rcx
+    cmp rax, rcx
+    setg al
+    movzx rax, al
+    cmp rax, 0
+    je .loop_end_646
+    mov rax, global_vars
+    add rax, 1073742040
+    mov rax, [rax]
+    push rax
+    call _Vector_method_pop
+    add rsp, 8
+    push rax
+    call func_generate_statement
+    add rsp, 8
+    jmp .loop_start_646
+.break_646:
+.loop_end_646:
+    mov rax, global_vars
+    add rax, 1073742040
+    mov rax, [rax]
+    add rax, 0
+    push rax
+    mov rax, rbp
+    sub rax, 8
+    mov rax, [rax]
+    pop rcx
+    mov [rcx], rax
+    mov rax, global_string_638
+    push rax
+    call func_emit_asm
+    add rsp, 8
+    mov rax, global_string_639
+    push rax
+    call func_emit_asm
+    add rsp, 8
+    mov rax, global_string_640
+    push rax
+    call func_emit_asm
+    add rsp, 8
+    mov rax, global_string_641
+    push rax
+    call func_emit_asm
+    add rsp, 8
+    jmp .if_end_644
+.if_else_644:
+    mov rax, 36
+    push rax
+    mov rax, rbp
+    sub rax, -16
+    mov rax, [rax]
+    add rax, 0
+    mov rax, [rax]
+    pop rcx
+    cmp rax, rcx
+    sete al
+    movzx rax, al
+    cmp rax, 0
+    je .if_else_647
+    mov rax, rbp
+    sub rax, -16
+    mov rax, [rax]
+    add rax, 16
+    add rax, 24
+    mov rax, [rax]
+    cmp rax, 0
+    je .if_end_648
+    mov rax, rbp
+    sub rax, -16
+    mov rax, [rax]
+    add rax, 16
+    add rax, 24
+    mov rax, [rax]
+    push rax
+    call func_generate_expression
+    add rsp, 8
+    mov rax, rbp
+    sub rax, -16
+    mov rax, [rax]
+    add rax, 16
+    add rax, 0
+    add rax, 16
+    mov rax, [rax]
+    mov [rbp-8], rax
+    mov rax, rbp
+    sub rax, -16
+    mov rax, [rax]
+    add rax, 16
+    add rax, 24
+    mov rax, [rax]
+    add rax, 8
+    mov rax, [rax]
+    push rax
+    call func_is_float_type
+    add rsp, 8
+    cmp rax, 0
+    je .if_else_649
+    mov rax, global_string_642
+    push rax
+    call func_emit_asm
+    add rsp, 8
+    mov rax, rbp
+    sub rax, 8
+    mov rax, [rax]
+    push rax
+    call func_emit_num
+    add rsp, 8
+    mov rax, global_string_643
+    push rax
+    call func_emit_asm
+    add rsp, 8
+    jmp .if_end_649
+.if_else_649:
+    mov rax, global_string_644
+    push rax
+    call func_emit_asm
+    add rsp, 8
+    mov rax, rbp
+    sub rax, 8
+    mov rax, [rax]
+    push rax
+    call func_emit_num
+    add rsp, 8
+    mov rax, global_string_645
+    push rax
+    mov rax, rbp
+    sub rax, -16
+    mov rax, [rax]
+    add rax, 16
+    add rax, 0
+    add rax, 8
+    mov rax, [rax]
+    push rax
+    call func_subregister_for_type
+    add rsp, 8
+    push rax
+    mov rax, global_string_646
+    push rax
+    call func_emit_asm3
+    add rsp, 24
+.if_end_649:
+.if_end_648:
+    jmp .if_end_647
+.if_else_647:
+    mov rax, 44
+    push rax
+    mov rax, rbp
+    sub rax, -16
+    mov rax, [rax]
+    add rax, 0
+    mov rax, [rax]
+    pop rcx
+    cmp rax, rcx
+    sete al
+    movzx rax, al
+    cmp rax, 0
+    je .if_else_650
+    mov rax, rbp
+    sub rax, -16
+    mov rax, [rax]
+    push rax
+    call func_generate_block
+    add rsp, 8
+    jmp .if_end_650
+.if_else_650:
+    mov rax, 32
+    push rax
+    mov rax, rbp
+    sub rax, -16
+    mov rax, [rax]
+    add rax, 0
+    mov rax, [rax]
+    pop rcx
+    cmp rax, rcx
+    sete al
+    movzx rax, al
+    cmp rax, 0
+    je .if_else_651
+    mov rax, rbp
+    sub rax, -16
+    mov rax, [rax]
+    add rax, 16
+    mov rax, [rax]
+    push rax
+    mov rax, global_vars
+    add rax, 1073742040
+    mov rax, [rax]
+    push rax
+    call _Vector_method_push
+    add rsp, 16
+    jmp .if_end_651
+.if_else_651:
+    mov rax, 40
+    push rax
+    mov rax, rbp
+    sub rax, -16
+    mov rax, [rax]
+    add rax, 0
+    mov rax, [rax]
+    pop rcx
+    cmp rax, rcx
+    sete al
+    movzx rax, al
+    cmp rax, 0
+    je .if_else_652
+    mov rax, 0
+    push rax
+    mov rax, global_vars
+    add rax, 1073742048
+    mov rax, [rax]
+    pop rcx
+    cmp rax, rcx
+    setl al
+    movzx rax, al
+    cmp rax, 0
+    je .if_end_653
+    mov rax, global_string_647
+    push rax
+    mov rax, global_string_648
+    push rax
+    call func_die2
+    add rsp, 16
+.if_end_653:
+    mov rax, 0
+    push rax
+    mov rax, global_vars
+    add rax, 1073742040
+    mov rax, [rax]
+    add rax, 0
+    mov rax, [rax]
+    pop rcx
+    cmp rax, rcx
+    setg al
+    movzx rax, al
+    cmp rax, 0
+    je .if_end_654
+    mov rax, global_string_649
+    push rax
+    call func_putsln
+    add rsp, 8
+.if_end_654:
+    mov rax, global_string_650
+    push rax
+    call func_emit_asm
+    add rsp, 8
+    mov rax, global_vars
+    add rax, 1073742048
+    mov rax, [rax]
+    push rax
+    call func_emit_num
+    add rsp, 8
+    mov rax, global_string_651
+    push rax
+    call func_emit_asm
+    add rsp, 8
+    jmp .if_end_652
+.if_else_652:
+    mov rax, 30
+    push rax
+    mov rax, rbp
+    sub rax, -16
+    mov rax, [rax]
+    add rax, 0
+    mov rax, [rax]
+    pop rcx
+    cmp rax, rcx
+    sete al
+    movzx rax, al
+    cmp rax, 0
+    je .if_else_655
+    mov rax, global_vars
+    add rax, 1073742024
+    push rax
+    mov rax, 1
+    push rax
+    mov rax, global_vars
+    add rax, 1073742024
+    mov rax, [rax]
+    pop rcx
+    add rax, rcx
+    pop rcx
+    mov [rcx], rax
+    mov [rbp-8], rax
+    mov rax, rbp
+    sub rax, -16
+    mov rax, [rax]
+    add rax, 16
+    add rax, 0
+    mov rax, [rax]
+    push rax
+    call func_generate_expression
+    add rsp, 8
+    mov rax, global_vars
+    add rax, 0
+    mov rax, [rax]
+    push rax
+    mov rax, rbp
+    sub rax, -16
+    mov rax, [rax]
+    add rax, 16
+    add rax, 16
+    mov rax, [rax]
+    pop rcx
+    cmp rax, rcx
+    sete al
+    movzx rax, al
+    cmp rax, 0
+    je .if_else_656
+    mov rax, global_string_652
+    push rax
+    call func_emit_asm
+    add rsp, 8
+    mov rax, global_string_653
+    push rax
+    call func_emit_asm
+    add rsp, 8
+    mov rax, rbp
+    sub rax, 8
+    mov rax, [rax]
+    push rax
+    call func_emit_num
+    add rsp, 8
+    mov rax, global_string_654
+    push rax
+    call func_emit_asm
+    add rsp, 8
+    mov rax, rbp
+    sub rax, -16
+    mov rax, [rax]
+    add rax, 16
+    add rax, 8
+    mov rax, [rax]
+    push rax
+    call func_generate_statement
+    add rsp, 8
+    mov rax, global_string_655
+    push rax
+    call func_emit_asm
+    add rsp, 8
+    mov rax, rbp
+    sub rax, 8
+    mov rax, [rax]
+    push rax
+    call func_emit_num
+    add rsp, 8
+    mov rax, global_string_656
+    push rax
+    call func_emit_asm
+    add rsp, 8
+    jmp .if_end_656
+.if_else_656:
+    mov rax, global_string_657
+    push rax
+    call func_emit_asm
+    add rsp, 8
+    mov rax, global_string_658
+    push rax
+    call func_emit_asm
+    add rsp, 8
+    mov rax, rbp
+    sub rax, 8
+    mov rax, [rax]
+    push rax
+    call func_emit_num
+    add rsp, 8
+    mov rax, global_string_659
+    push rax
+    call func_emit_asm
+    add rsp, 8
+    mov rax, rbp
+    sub rax, -16
+    mov rax, [rax]
+    add rax, 16
+    add rax, 8
+    mov rax, [rax]
+    push rax
+    call func_generate_statement
+    add rsp, 8
+    mov rax, global_string_660
+    push rax
+    call func_emit_asm
+    add rsp, 8
+    mov rax, rbp
+    sub rax, 8
+    mov rax, [rax]
+    push rax
+    call func_emit_num
+    add rsp, 8
+    mov rax, global_string_661
+    push rax
+    call func_emit_asm
+    add rsp, 8
+    mov rax, global_string_662
+    push rax
+    call func_emit_asm
+    add rsp, 8
+    mov rax, rbp
+    sub rax, 8
+    mov rax, [rax]
+    push rax
+    call func_emit_num
+    add rsp, 8
+    mov rax, global_string_663
+    push rax
+    call func_emit_asm
+    add rsp, 8
+    mov rax, rbp
+    sub rax, -16
+    mov rax, [rax]
+    add rax, 16
+    add rax, 16
+    mov rax, [rax]
+    push rax
+    call func_generate_statement
+    add rsp, 8
+    mov rax, global_string_664
+    push rax
+    call func_emit_asm
+    add rsp, 8
+    mov rax, rbp
+    sub rax, 8
+    mov rax, [rax]
+    push rax
+    call func_emit_num
+    add rsp, 8
+    mov rax, global_string_665
+    push rax
+    call func_emit_asm
+    add rsp, 8
+.if_end_656:
+    jmp .if_end_655
+.if_else_655:
+    mov rax, 31
+    push rax
+    mov rax, rbp
+    sub rax, -16
+    mov rax, [rax]
+    add rax, 0
+    mov rax, [rax]
+    pop rcx
+    cmp rax, rcx
+    sete al
+    movzx rax, al
+    cmp rax, 0
+    je .if_else_657
+    mov rax, global_vars
+    add rax, 1073742024
+    push rax
+    mov rax, 1
+    push rax
+    mov rax, global_vars
+    add rax, 1073742024
+    mov rax, [rax]
+    pop rcx
+    add rax, rcx
+    pop rcx
+    mov [rcx], rax
+    mov [rbp-8], rax
+    mov rax, global_vars
+    add rax, 1073742048
+    mov rax, [rax]
+    mov [rbp-16], rax
+    mov rax, global_vars
+    add rax, 1073742048
+    push rax
+    mov rax, rbp
+    sub rax, 8
+    mov rax, [rax]
+    pop rcx
+    mov [rcx], rax
+    mov rax, global_string_666
+    push rax
+    call func_emit_asm
+    add rsp, 8
+    mov rax, rbp
+    sub rax, 8
+    mov rax, [rax]
+    push rax
+    call func_emit_num
+    add rsp, 8
+    mov rax, global_string_667
+    push rax
+    call func_emit_asm
+    add rsp, 8
+    mov rax, global_string_668
+    push rax
+    call func_emit_asm
+    add rsp, 8
+    mov rax, rbp
+    sub rax, 8
+    mov rax, [rax]
+    push rax
+    call func_emit_num
+    add rsp, 8
+    mov rax, global_string_669
+    push rax
+    call func_emit_asm
+    add rsp, 8
+    mov rax, rbp
+    sub rax, -16
+    mov rax, [rax]
+    add rax, 16
+    add rax, 0
+    mov rax, [rax]
+    push rax
+    call func_generate_expression
+    add rsp, 8
+    mov rax, global_string_670
+    push rax
+    call func_emit_asm
+    add rsp, 8
+    mov rax, global_string_671
+    push rax
+    call func_emit_asm
+    add rsp, 8
+    mov rax, rbp
+    sub rax, 8
+    mov rax, [rax]
+    push rax
+    call func_emit_num
+    add rsp, 8
+    mov rax, global_string_672
+    push rax
+    call func_emit_asm
+    add rsp, 8
+    mov rax, rbp
+    sub rax, -16
+    mov rax, [rax]
+    add rax, 16
+    add rax, 8
+    mov rax, [rax]
+    push rax
+    call func_generate_statement
+    add rsp, 8
+    mov rax, global_string_673
+    push rax
+    call func_emit_asm
+    add rsp, 8
+    mov rax, rbp
+    sub rax, 8
+    mov rax, [rax]
+    push rax
+    call func_emit_num
+    add rsp, 8
+    mov rax, global_string_674
+    push rax
+    call func_emit_asm
+    add rsp, 8
+    mov rax, global_string_675
+    push rax
+    call func_emit_asm
+    add rsp, 8
+    mov rax, rbp
+    sub rax, 8
+    mov rax, [rax]
+    push rax
+    call func_emit_num
+    add rsp, 8
+    mov rax, global_string_676
+    push rax
+    call func_emit_asm
+    add rsp, 8
+    mov rax, global_string_677
+    push rax
+    call func_emit_asm
+    add rsp, 8
+    mov rax, rbp
+    sub rax, 8
+    mov rax, [rax]
+    push rax
+    call func_emit_num
+    add rsp, 8
+    mov rax, global_string_678
+    push rax
+    call func_emit_asm
+    add rsp, 8
+    mov rax, global_vars
+    add rax, 1073742048
+    push rax
+    mov rax, rbp
+    sub rax, 16
+    mov rax, [rax]
+    pop rcx
+    mov [rcx], rax
+    jmp .if_end_657
+.if_else_657:
+    mov rax, 34
+    push rax
+    mov rax, rbp
+    sub rax, -16
+    mov rax, [rax]
+    add rax, 0
+    mov rax, [rax]
+    pop rcx
+    cmp rax, rcx
+    sete al
+    movzx rax, al
+    cmp rax, 0
+    je .if_else_658
+    mov rax, rbp
+    sub rax, -16
+    mov rax, [rax]
+    push rax
+    call func_generate_switch_statement
+    add rsp, 8
+    jmp .if_end_658
+.if_else_658:
     mov rax, 33
     push rax
     mov rax, rbp
@@ -31281,20 +31182,32 @@ func_generate_statement:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_else_796
+    je .if_else_659
     mov rax, global_vars
-    add rax, 1073742016
+    add rax, 1073742024
     push rax
     mov rax, 1
     push rax
     mov rax, global_vars
-    add rax, 1073742016
+    add rax, 1073742024
     mov rax, [rax]
     pop rcx
     add rax, rcx
     pop rcx
     mov [rcx], rax
     mov [rbp-8], rax
+    mov rax, global_vars
+    add rax, 1073742048
+    mov rax, [rax]
+    mov [rbp-16], rax
+    mov rax, global_vars
+    add rax, 1073742048
+    push rax
+    mov rax, rbp
+    sub rax, 8
+    mov rax, [rax]
+    pop rcx
+    mov [rcx], rax
     mov rax, rbp
     sub rax, -16
     mov rax, [rax]
@@ -31302,7 +31215,7 @@ func_generate_statement:
     add rax, 16
     mov rax, [rax]
     cmp rax, 0
-    je .if_end_797
+    je .if_end_660
     mov rax, rbp
     sub rax, -16
     mov rax, [rax]
@@ -31312,8 +31225,8 @@ func_generate_statement:
     push rax
     call func_generate_statement
     add rsp, 8
-.if_end_797:
-    mov rax, global_string_636
+.if_end_660:
+    mov rax, global_string_679
     push rax
     call func_emit_asm
     add rsp, 8
@@ -31323,7 +31236,7 @@ func_generate_statement:
     push rax
     call func_emit_num
     add rsp, 8
-    mov rax, global_string_637
+    mov rax, global_string_680
     push rax
     call func_emit_asm
     add rsp, 8
@@ -31334,7 +31247,7 @@ func_generate_statement:
     add rax, 0
     mov rax, [rax]
     cmp rax, 0
-    je .if_end_798
+    je .if_end_661
     mov rax, rbp
     sub rax, -16
     mov rax, [rax]
@@ -31344,11 +31257,11 @@ func_generate_statement:
     push rax
     call func_generate_expression
     add rsp, 8
-    mov rax, global_string_638
+    mov rax, global_string_681
     push rax
     call func_emit_asm
     add rsp, 8
-    mov rax, global_string_639
+    mov rax, global_string_682
     push rax
     call func_emit_asm
     add rsp, 8
@@ -31358,11 +31271,11 @@ func_generate_statement:
     push rax
     call func_emit_num
     add rsp, 8
-    mov rax, global_string_640
+    mov rax, global_string_683
     push rax
     call func_emit_asm
     add rsp, 8
-.if_end_798:
+.if_end_661:
     mov rax, rbp
     sub rax, -16
     mov rax, [rax]
@@ -31372,7 +31285,7 @@ func_generate_statement:
     push rax
     call func_generate_statement
     add rsp, 8
-    mov rax, global_string_641
+    mov rax, global_string_684
     push rax
     call func_emit_asm
     add rsp, 8
@@ -31382,7 +31295,7 @@ func_generate_statement:
     push rax
     call func_emit_num
     add rsp, 8
-    mov rax, global_string_642
+    mov rax, global_string_685
     push rax
     call func_emit_asm
     add rsp, 8
@@ -31393,7 +31306,7 @@ func_generate_statement:
     add rax, 24
     mov rax, [rax]
     cmp rax, 0
-    je .if_end_799
+    je .if_end_662
     mov rax, rbp
     sub rax, -16
     mov rax, [rax]
@@ -31403,8 +31316,8 @@ func_generate_statement:
     push rax
     call func_generate_statement
     add rsp, 8
-.if_end_799:
-    mov rax, global_string_643
+.if_end_662:
+    mov rax, global_string_686
     push rax
     call func_emit_asm
     add rsp, 8
@@ -31414,11 +31327,11 @@ func_generate_statement:
     push rax
     call func_emit_num
     add rsp, 8
-    mov rax, global_string_644
+    mov rax, global_string_687
     push rax
     call func_emit_asm
     add rsp, 8
-    mov rax, global_string_645
+    mov rax, global_string_688
     push rax
     call func_emit_asm
     add rsp, 8
@@ -31428,25 +31341,49 @@ func_generate_statement:
     push rax
     call func_emit_num
     add rsp, 8
-    mov rax, global_string_646
+    mov rax, global_string_689
     push rax
     call func_emit_asm
     add rsp, 8
-    jmp .if_end_796
-.if_else_796:
+    mov rax, global_string_690
+    push rax
+    call func_emit_asm
+    add rsp, 8
+    mov rax, rbp
+    sub rax, 8
+    mov rax, [rax]
+    push rax
+    call func_emit_num
+    add rsp, 8
+    mov rax, global_string_691
+    push rax
+    call func_emit_asm
+    add rsp, 8
+    mov rax, global_vars
+    add rax, 1073742048
+    push rax
+    mov rax, rbp
+    sub rax, 16
+    mov rax, [rax]
+    pop rcx
+    mov [rcx], rax
+    jmp .if_end_659
+.if_else_659:
     mov rax, rbp
     sub rax, -16
     mov rax, [rax]
     push rax
     call func_generate_expression
     add rsp, 8
-.if_end_796:
-.if_end_795:
-.if_end_793:
-.if_end_792:
-.if_end_791:
-.if_end_788:
-.if_end_785:
+.if_end_659:
+.if_end_658:
+.if_end_657:
+.if_end_655:
+.if_end_652:
+.if_end_651:
+.if_end_650:
+.if_end_647:
+.if_end_644:
     mov rsp, rbp
     pop rbp
     mov qword rax, 0
@@ -31457,7 +31394,7 @@ func_generate_block:
     mov rbp, rsp
     sub rsp, 24
     mov rax, global_vars
-    add rax, 1073742032
+    add rax, 1073742040
     mov rax, [rax]
     add rax, 0
     mov rax, [rax]
@@ -31473,7 +31410,7 @@ func_generate_block:
     mov [rbp-16], rax
     mov rax, 0
     mov [rbp-24], rax
-.loop_start_800:
+.loop_start_663:
     mov rax, rbp
     sub rax, 16
     mov rax, [rax]
@@ -31486,7 +31423,7 @@ func_generate_block:
     setl al
     movzx rax, al
     cmp rax, 0
-    je .loop_end_800
+    je .loop_end_663
     mov rax, rbp
     sub rax, 24
     mov rax, [rax]
@@ -31503,7 +31440,7 @@ func_generate_block:
     push rax
     call func_generate_statement
     add rsp, 8
-.loop_continue_800:
+.loop_continue_663:
     mov rax, rbp
     sub rax, 24
     push rax
@@ -31516,16 +31453,17 @@ func_generate_block:
     add rax, rcx
     pop rcx
     mov [rcx], rax
-    jmp .loop_start_800
-.loop_end_800:
-.loop_start_801:
-.loop_continue_801:
+    jmp .loop_start_663
+.break_663:
+.loop_end_663:
+.loop_start_664:
+.loop_continue_664:
     mov rax, rbp
     sub rax, 8
     mov rax, [rax]
     push rax
     mov rax, global_vars
-    add rax, 1073742032
+    add rax, 1073742040
     mov rax, [rax]
     add rax, 0
     mov rax, [rax]
@@ -31534,9 +31472,9 @@ func_generate_block:
     setg al
     movzx rax, al
     cmp rax, 0
-    je .loop_end_801
+    je .loop_end_664
     mov rax, global_vars
-    add rax, 1073742032
+    add rax, 1073742040
     mov rax, [rax]
     push rax
     call _Vector_method_pop
@@ -31544,8 +31482,9 @@ func_generate_block:
     push rax
     call func_generate_statement
     add rsp, 8
-    jmp .loop_start_801
-.loop_end_801:
+    jmp .loop_start_664
+.break_664:
+.loop_end_664:
     mov rsp, rbp
     pop rbp
     mov qword rax, 0
@@ -31570,14 +31509,14 @@ func_generate_function:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_end_802
+    je .if_end_665
     xor rax, rax
     push rax
     pop rax
     mov rsp, rbp
     pop rbp
     ret
-.if_end_802:
+.if_end_665:
     mov rax, rbp
     sub rax, -16
     mov rax, [rax]
@@ -31585,17 +31524,17 @@ func_generate_function:
     call func_get_func_name
     add rsp, 8
     mov [rbp-8], rax
-    mov rax, global_string_647
+    mov rax, global_string_692
     push rax
     mov rax, rbp
     sub rax, 8
     mov rax, [rax]
     push rax
-    mov rax, global_string_648
+    mov rax, global_string_693
     push rax
     call func_emit_asm3
     add rsp, 24
-    mov rax, global_string_649
+    mov rax, global_string_694
     push rax
     mov rax, rbp
     sub rax, 8
@@ -31603,15 +31542,15 @@ func_generate_function:
     push rax
     call func_emit_asm2
     add rsp, 16
-    mov rax, global_string_650
+    mov rax, global_string_695
     push rax
     call func_emit_asm
     add rsp, 8
-    mov rax, global_string_651
+    mov rax, global_string_696
     push rax
     call func_emit_asm
     add rsp, 8
-    mov rax, global_string_652
+    mov rax, global_string_697
     push rax
     call func_emit_asm
     add rsp, 8
@@ -31624,7 +31563,7 @@ func_generate_function:
     push rax
     call func_emit_num
     add rsp, 8
-    mov rax, global_string_653
+    mov rax, global_string_698
     push rax
     call func_emit_asm
     add rsp, 8
@@ -31637,19 +31576,19 @@ func_generate_function:
     push rax
     call func_generate_block
     add rsp, 8
-    mov rax, global_string_654
+    mov rax, global_string_699
     push rax
     call func_emit_asm
     add rsp, 8
-    mov rax, global_string_655
+    mov rax, global_string_700
     push rax
     call func_emit_asm
     add rsp, 8
-    mov rax, global_string_656
+    mov rax, global_string_701
     push rax
     call func_emit_asm
     add rsp, 8
-    mov rax, global_string_657
+    mov rax, global_string_702
     push rax
     call func_emit_asm
     add rsp, 8
@@ -31663,7 +31602,7 @@ func_generate_program:
     mov rbp, rsp
     sub rsp, 40
     mov rax, global_vars
-    add rax, 1073742008
+    add rax, 1073742016
     push rax
     mov rax, rbp
     sub rax, -24
@@ -31681,7 +31620,7 @@ func_generate_program:
     mov [rbp-8], rax
     mov rax, 0
     mov [rbp-16], rax
-.loop_start_803:
+.loop_start_666:
     mov rax, rbp
     sub rax, 8
     mov rax, [rax]
@@ -31694,7 +31633,7 @@ func_generate_program:
     setl al
     movzx rax, al
     cmp rax, 0
-    je .loop_end_803
+    je .loop_end_666
     mov rax, rbp
     sub rax, 16
     mov rax, [rax]
@@ -31709,7 +31648,7 @@ func_generate_program:
     call _Vector_method_at
     add rsp, 16
     mov [rbp-24], rax
-    mov rax, 38
+    mov rax, 41
     push rax
     mov rax, rbp
     sub rax, 24
@@ -31721,16 +31660,16 @@ func_generate_program:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_else_804
+    je .if_else_667
     mov rax, rbp
     sub rax, 24
     mov rax, [rax]
     push rax
     call func_generate_function
     add rsp, 8
-    jmp .if_end_804
-.if_else_804:
-    mov rax, 34
+    jmp .if_end_667
+.if_else_667:
+    mov rax, 36
     push rax
     mov rax, rbp
     sub rax, 24
@@ -31742,16 +31681,16 @@ func_generate_program:
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_else_805
-    jmp .if_end_805
-.if_else_805:
-    mov rax, global_string_658
+    je .if_else_668
+    jmp .if_end_668
+.if_else_668:
+    mov rax, global_string_703
     push rax
     call func_die
     add rsp, 8
-.if_end_805:
-.if_end_804:
-.loop_continue_803:
+.if_end_668:
+.if_end_667:
+.loop_continue_666:
     mov rax, rbp
     sub rax, 16
     push rax
@@ -31764,73 +31703,74 @@ func_generate_program:
     add rax, rcx
     pop rcx
     mov [rcx], rax
-    jmp .loop_start_803
-.loop_end_803:
+    jmp .loop_start_666
+.break_666:
+.loop_end_666:
     mov rax, 1
     cmp rax, 0
-    je .if_else_806
-    mov rax, global_string_659
+    je .if_else_669
+    mov rax, global_string_704
     push rax
     call func_emit_asm
     add rsp, 8
-    mov rax, global_string_660
+    mov rax, global_string_705
     push rax
     call func_emit_asm
     add rsp, 8
-    mov rax, global_string_661
+    mov rax, global_string_706
     push rax
     call func_emit_asm
     add rsp, 8
-    mov rax, global_string_662
+    mov rax, global_string_707
     push rax
     call func_emit_asm
     add rsp, 8
-    mov rax, global_string_663
+    mov rax, global_string_708
     push rax
     call func_emit_asm
     add rsp, 8
-    mov rax, global_string_664
+    mov rax, global_string_709
     push rax
     call func_emit_asm
     add rsp, 8
-    jmp .if_end_806
-.if_else_806:
-    mov rax, global_string_665
+    jmp .if_end_669
+.if_else_669:
+    mov rax, global_string_710
     push rax
     call func_emit_asm
     add rsp, 8
-    mov rax, global_string_666
+    mov rax, global_string_711
     push rax
     call func_emit_asm
     add rsp, 8
-    mov rax, global_string_667
+    mov rax, global_string_712
     push rax
     call func_emit_asm
     add rsp, 8
-    mov rax, global_string_668
+    mov rax, global_string_713
     push rax
     call func_emit_asm
     add rsp, 8
-    mov rax, global_string_669
+    mov rax, global_string_714
     push rax
     call func_emit_asm
     add rsp, 8
-    mov rax, global_string_670
+    mov rax, global_string_715
     push rax
     call func_emit_asm
     add rsp, 8
-    mov rax, global_string_671
+    mov rax, global_string_716
     push rax
     call func_emit_asm
     add rsp, 8
-    mov rax, global_string_672
+    mov rax, global_string_717
     push rax
     call func_emit_asm
     add rsp, 8
-.if_end_806:
+.if_end_669:
     mov rax, 0
     mov [rbp-16], rax
-.loop_start_807:
+.loop_start_670:
     mov rax, rbp
     sub rax, 8
     mov rax, [rax]
@@ -31843,7 +31783,7 @@ func_generate_program:
     setl al
     movzx rax, al
     cmp rax, 0
-    je .loop_end_807
+    je .loop_end_670
     mov rax, rbp
     sub rax, 16
     mov rax, [rax]
@@ -31858,7 +31798,7 @@ func_generate_program:
     call _Vector_method_at
     add rsp, 16
     mov [rbp-24], rax
-    mov rax, 34
+    mov rax, 36
     push rax
     mov rax, rbp
     sub rax, 24
@@ -31870,10 +31810,10 @@ func_generate_program:
     sete al
     movzx rax, al
     cmp rax, 0
-    jne .and_right_809
+    jne .and_right_672
     mov rax, 0
-    jmp .and_end_809
-.and_right_809:
+    jmp .and_end_672
+.and_right_672:
     mov rax, rbp
     sub rax, 24
     mov rax, [rax]
@@ -31882,9 +31822,9 @@ func_generate_program:
     mov rax, [rax]
     cmp rax, 0
     setne al
-.and_end_809:
+.and_end_672:
     cmp rax, 0
-    je .if_end_808
+    je .if_end_671
     mov rax, rbp
     sub rax, 24
     mov rax, [rax]
@@ -31909,11 +31849,11 @@ func_generate_program:
     add rax, 16
     mov rax, [rax]
     mov [rbp-40], rax
-    mov rax, global_string_673
+    mov rax, global_string_718
     push rax
     call func_emit_asm
     add rsp, 8
-    mov rax, global_string_674
+    mov rax, global_string_719
     push rax
     call func_emit_asm
     add rsp, 8
@@ -31923,11 +31863,11 @@ func_generate_program:
     push rax
     call func_emit_num
     add rsp, 8
-    mov rax, global_string_675
+    mov rax, global_string_720
     push rax
     call func_emit_asm
     add rsp, 8
-    mov rax, global_string_676
+    mov rax, global_string_721
     push rax
     mov rax, rbp
     sub rax, 32
@@ -31938,12 +31878,12 @@ func_generate_program:
     call func_subregister_for_type
     add rsp, 8
     push rax
-    mov rax, global_string_677
+    mov rax, global_string_722
     push rax
     call func_emit_asm3
     add rsp, 24
-.if_end_808:
-.loop_continue_807:
+.if_end_671:
+.loop_continue_670:
     mov rax, rbp
     sub rax, 16
     push rax
@@ -31956,13 +31896,14 @@ func_generate_program:
     add rax, rcx
     pop rcx
     mov [rcx], rax
-    jmp .loop_start_807
-.loop_end_807:
-    mov rax, global_string_678
+    jmp .loop_start_670
+.break_670:
+.loop_end_670:
+    mov rax, global_string_723
     push rax
     call func_emit_asm
     add rsp, 8
-    mov rax, global_string_679
+    mov rax, global_string_724
     push rax
     call func_emit_asm
     add rsp, 8
@@ -31972,11 +31913,11 @@ func_generate_program:
     add rsp, 8
     call func_generate_builtins
     add rsp, 0
-    mov rax, global_string_680
+    mov rax, global_string_725
     push rax
     call func_emit_asm
     add rsp, 8
-    mov rax, global_string_681
+    mov rax, global_string_726
     push rax
     call func_emit_asm
     add rsp, 8
@@ -31986,19 +31927,19 @@ func_generate_program:
     push rax
     call func_emit_num
     add rsp, 8
-    mov rax, global_string_682
+    mov rax, global_string_727
     push rax
     call func_emit_asm
     add rsp, 8
-    mov rax, global_string_683
+    mov rax, global_string_728
     push rax
     call func_emit_asm
     add rsp, 8
     mov rax, 0
     mov [rbp-16], rax
-.loop_start_810:
+.loop_start_673:
     mov rax, global_vars
-    add rax, 1073742024
+    add rax, 1073742032
     mov rax, [rax]
     add rax, 0
     mov rax, [rax]
@@ -32011,8 +31952,8 @@ func_generate_program:
     setl al
     movzx rax, al
     cmp rax, 0
-    je .loop_end_810
-    mov rax, global_string_684
+    je .loop_end_673
+    mov rax, global_string_729
     push rax
     call func_emit_asm
     add rsp, 8
@@ -32022,7 +31963,7 @@ func_generate_program:
     push rax
     call func_emit_num
     add rsp, 8
-    mov rax, global_string_685
+    mov rax, global_string_730
     push rax
     call func_emit_asm
     add rsp, 8
@@ -32031,7 +31972,7 @@ func_generate_program:
     mov rax, [rax]
     push rax
     mov rax, global_vars
-    add rax, 1073742024
+    add rax, 1073742032
     mov rax, [rax]
     push rax
     call _Vector_method_at
@@ -32039,11 +31980,11 @@ func_generate_program:
     push rax
     call func_emit_asm
     add rsp, 8
-    mov rax, global_string_686
+    mov rax, global_string_731
     push rax
     call func_emit_asm
     add rsp, 8
-.loop_continue_810:
+.loop_continue_673:
     mov rax, rbp
     sub rax, 16
     push rax
@@ -32056,8 +31997,9 @@ func_generate_program:
     add rax, rcx
     pop rcx
     mov [rcx], rax
-    jmp .loop_start_810
-.loop_end_810:
+    jmp .loop_start_673
+.break_673:
+.loop_end_673:
     mov rsp, rbp
     pop rbp
     mov qword rax, 0
@@ -32067,7 +32009,7 @@ func_print_usage_and_exit:
     push rbp
     mov rbp, rsp
     sub rsp, 0
-    mov rax, global_string_687
+    mov rax, global_string_732
     push rax
     call func_puts
     add rsp, 8
@@ -32077,49 +32019,49 @@ func_print_usage_and_exit:
     push rax
     call func_puts
     add rsp, 8
-    mov rax, global_string_688
+    mov rax, global_string_733
     push rax
     call func_putsln
     add rsp, 8
-    mov rax, global_string_689
+    mov rax, global_string_734
     push rax
     call func_putsln
     add rsp, 8
-    mov rax, global_string_690
+    mov rax, global_string_735
     push rax
     call func_putsln
     add rsp, 8
-    mov rax, global_string_691
+    mov rax, global_string_736
     push rax
     call func_putsln
     add rsp, 8
-    mov rax, global_string_692
+    mov rax, global_string_737
     push rax
     call func_putsln
     add rsp, 8
-    mov rax, global_string_693
+    mov rax, global_string_738
     push rax
     call func_putsln
     add rsp, 8
-    mov rax, global_string_694
+    mov rax, global_string_739
     push rax
     call func_putsln
     add rsp, 8
-    mov rax, global_string_695
+    mov rax, global_string_740
     push rax
     call func_putsln
     add rsp, 8
-    mov rax, global_string_696
+    mov rax, global_string_741
     push rax
     call func_puts
     add rsp, 8
     mov rax, global_vars
-    add rax, 1073742304
+    add rax, 1073742320
     mov rax, [rax]
     push rax
     call func_puts
     add rsp, 8
-    mov rax, global_string_697
+    mov rax, global_string_742
     push rax
     call func_putsln
     add rsp, 8
@@ -32140,7 +32082,7 @@ func_parse_cli_args:
     sub rsp, 16
     mov rax, 1
     mov [rbp-8], rax
-.loop_start_811:
+.loop_start_674:
     mov rax, rbp
     sub rax, -16
     mov rax, [rax]
@@ -32153,8 +32095,8 @@ func_parse_cli_args:
     setl al
     movzx rax, al
     cmp rax, 0
-    je .loop_end_811
-    mov rax, global_string_698
+    je .loop_end_674
+    mov rax, global_string_743
     push rax
     mov rax, 8
     push rax
@@ -32174,9 +32116,9 @@ func_parse_cli_args:
     call func_streq
     add rsp, 16
     cmp rax, 0
-    je .if_else_812
+    je .if_else_675
     mov rax, global_vars
-    add rax, 1073742320
+    add rax, 1073742336
     push rax
     mov rax, 8
     push rax
@@ -32202,49 +32144,49 @@ func_parse_cli_args:
     pop rcx
     mov [rcx], rax
     mov rax, global_vars
+    add rax, 1073742328
+    push rax
+    mov rax, 8
+    push rax
+    mov rax, 1
+    push rax
+    mov rax, rbp
+    sub rax, 8
+    mov rax, [rax]
+    pop rcx
+    add rax, rcx
+    pop rcx
+    imul rax, rcx
+    push rax
+    mov rax, rbp
+    sub rax, -24
+    mov rax, [rax]
+    pop rcx
+    add rax, rcx
+    mov rax, [rax]
+    pop rcx
+    mov [rcx], rax
+    mov rax, rbp
+    sub rax, 8
+    push rax
+    mov rax, 1
+    push rax
+    mov rax, rbp
+    sub rax, 8
+    mov rax, [rax]
+    pop rcx
+    add rax, rcx
+    pop rcx
+    mov [rcx], rax
+    mov rax, global_vars
     add rax, 1073742312
     push rax
-    mov rax, 8
-    push rax
-    mov rax, 1
-    push rax
-    mov rax, rbp
-    sub rax, 8
-    mov rax, [rax]
-    pop rcx
-    add rax, rcx
-    pop rcx
-    imul rax, rcx
-    push rax
-    mov rax, rbp
-    sub rax, -24
-    mov rax, [rax]
-    pop rcx
-    add rax, rcx
-    mov rax, [rax]
+    mov rax, global_string_744
     pop rcx
     mov [rcx], rax
-    mov rax, rbp
-    sub rax, 8
-    push rax
-    mov rax, 1
-    push rax
-    mov rax, rbp
-    sub rax, 8
-    mov rax, [rax]
-    pop rcx
-    add rax, rcx
-    pop rcx
-    mov [rcx], rax
-    mov rax, global_vars
-    add rax, 1073742296
-    push rax
-    mov rax, global_string_699
-    pop rcx
-    mov [rcx], rax
-    jmp .if_end_812
-.if_else_812:
-    mov rax, global_string_700
+    jmp .if_end_675
+.if_else_675:
+    mov rax, global_string_745
     push rax
     mov rax, 8
     push rax
@@ -32264,16 +32206,16 @@ func_parse_cli_args:
     call func_streq
     add rsp, 16
     cmp rax, 0
-    je .if_else_813
+    je .if_else_676
     mov rax, global_vars
-    add rax, 1073742344
+    add rax, 1073742360
     push rax
     mov rax, 1
     pop rcx
     mov [rcx], rax
-    jmp .if_end_813
-.if_else_813:
-    mov rax, global_string_701
+    jmp .if_end_676
+.if_else_676:
+    mov rax, global_string_746
     push rax
     mov rax, 8
     push rax
@@ -32293,16 +32235,16 @@ func_parse_cli_args:
     call func_streq
     add rsp, 16
     cmp rax, 0
-    je .if_else_814
+    je .if_else_677
     mov rax, global_vars
-    add rax, 1073742336
+    add rax, 1073742352
     push rax
     mov rax, 1
     pop rcx
     mov [rcx], rax
-    jmp .if_end_814
-.if_else_814:
-    mov rax, global_string_702
+    jmp .if_end_677
+.if_else_677:
+    mov rax, global_string_747
     push rax
     mov rax, 8
     push rax
@@ -32322,7 +32264,7 @@ func_parse_cli_args:
     call func_streq
     add rsp, 16
     cmp rax, 0
-    je .if_else_815
+    je .if_else_678
     mov rax, 0
     push rax
     mov rax, 8
@@ -32340,9 +32282,9 @@ func_parse_cli_args:
     push rax
     call func_print_usage_and_exit
     add rsp, 16
-    jmp .if_end_815
-.if_else_815:
-    mov rax, global_string_703
+    jmp .if_end_678
+.if_else_678:
+    mov rax, global_string_748
     push rax
     mov rax, 8
     push rax
@@ -32362,16 +32304,16 @@ func_parse_cli_args:
     call func_streq
     add rsp, 16
     cmp rax, 0
-    je .if_else_816
+    je .if_else_679
     mov rax, global_vars
-    add rax, 1073742328
+    add rax, 1073742344
     push rax
     mov rax, 1
     pop rcx
     mov [rcx], rax
-    jmp .if_end_816
-.if_else_816:
-    mov rax, global_string_704
+    jmp .if_end_679
+.if_else_679:
+    mov rax, global_string_749
     push rax
     mov rax, 8
     push rax
@@ -32391,7 +32333,7 @@ func_parse_cli_args:
     call func_streq
     add rsp, 16
     cmp rax, 0
-    je .if_else_817
+    je .if_else_680
     mov rax, rbp
     sub rax, 8
     push rax
@@ -32405,7 +32347,7 @@ func_parse_cli_args:
     pop rcx
     mov [rcx], rax
     mov rax, global_vars
-    add rax, 1073742304
+    add rax, 1073742320
     push rax
     mov rax, 8
     push rax
@@ -32423,22 +32365,22 @@ func_parse_cli_args:
     mov rax, [rax]
     pop rcx
     mov [rcx], rax
-    jmp .if_end_817
-.if_else_817:
+    jmp .if_end_680
+.if_else_680:
     mov rax, global_vars
     add rax, 0
     mov rax, [rax]
     push rax
     mov rax, global_vars
-    add rax, 1073742296
+    add rax, 1073742312
     mov rax, [rax]
     pop rcx
     cmp rax, rcx
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_else_818
-    mov rax, global_string_705
+    je .if_else_681
+    mov rax, global_string_750
     push rax
     mov rax, 8
     push rax
@@ -32458,15 +32400,15 @@ func_parse_cli_args:
     call func_streq
     add rsp, 16
     cmp rax, 0
-    je .if_else_819
+    je .if_else_682
     mov rax, global_vars
-    add rax, 1073742296
+    add rax, 1073742312
     push rax
-    mov rax, global_string_706
+    mov rax, global_string_751
     pop rcx
     mov [rcx], rax
     mov rax, global_vars
-    add rax, 1073742312
+    add rax, 1073742328
     push rax
     mov rax, 4096
     push rax
@@ -32475,12 +32417,12 @@ func_parse_cli_args:
     pop rcx
     mov [rcx], rax
     mov rax, global_vars
-    add rax, 1073742320
+    add rax, 1073742336
     push rax
     mov rax, 4096
     push rax
     mov rax, global_vars
-    add rax, 1073742312
+    add rax, 1073742328
     mov rax, [rax]
     push rax
     mov rax, 0
@@ -32490,11 +32432,11 @@ func_parse_cli_args:
     pop rcx
     mov [rcx], rax
     mov rax, global_vars
-    add rax, 1073742320
+    add rax, 1073742336
     mov rax, [rax]
     push rax
     mov rax, global_vars
-    add rax, 1073742312
+    add rax, 1073742328
     mov rax, [rax]
     pop rcx
     add rax, rcx
@@ -32505,15 +32447,15 @@ func_parse_cli_args:
     mov rax, 4096
     push rax
     mov rax, global_vars
-    add rax, 1073742320
+    add rax, 1073742336
     mov rax, [rax]
     pop rcx
     cmp rax, rcx
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_end_820
-    mov rax, global_string_707
+    je .if_end_683
+    mov rax, global_string_752
     push rax
     call func_putsln
     add rsp, 8
@@ -32521,11 +32463,11 @@ func_parse_cli_args:
     push rax
     call func_exit
     add rsp, 8
-.if_end_820:
-    jmp .if_end_819
-.if_else_819:
+.if_end_683:
+    jmp .if_end_682
+.if_else_682:
     mov rax, global_vars
-    add rax, 1073742296
+    add rax, 1073742312
     push rax
     mov rax, 8
     push rax
@@ -32546,17 +32488,17 @@ func_parse_cli_args:
     mov rax, 114
     push rax
     mov rax, global_vars
-    add rax, 1073742296
+    add rax, 1073742312
     mov rax, [rax]
     push rax
     call func_fopen
     add rsp, 16
     mov [rbp-16], rax
     mov rax, global_vars
-    add rax, 1073742312
+    add rax, 1073742328
     push rax
     mov rax, global_vars
-    add rax, 1073742320
+    add rax, 1073742336
     push rax
     mov rax, rbp
     sub rax, 16
@@ -32572,17 +32514,17 @@ func_parse_cli_args:
     push rax
     call _File_method_close
     add rsp, 8
-.if_end_819:
-    jmp .if_end_818
-.if_else_818:
+.if_end_682:
+    jmp .if_end_681
+.if_else_681:
     mov rax, global_vars
-    add rax, 1073742336
+    add rax, 1073742352
     mov rax, [rax]
     cmp rax, 0
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_else_821
+    je .if_else_684
     mov rax, 1
     push rax
     mov rax, 8
@@ -32600,8 +32542,8 @@ func_parse_cli_args:
     push rax
     call func_print_usage_and_exit
     add rsp, 16
-    jmp .if_end_821
-.if_else_821:
+    jmp .if_end_684
+.if_else_684:
     mov rax, 8
     push rax
     mov rax, rbp
@@ -32620,15 +32562,15 @@ func_parse_cli_args:
     mov rsp, rbp
     pop rbp
     ret
-.if_end_821:
-.if_end_818:
-.if_end_817:
-.if_end_816:
-.if_end_815:
-.if_end_814:
-.if_end_813:
-.if_end_812:
-.loop_continue_811:
+.if_end_684:
+.if_end_681:
+.if_end_680:
+.if_end_679:
+.if_end_678:
+.if_end_677:
+.if_end_676:
+.if_end_675:
+.loop_continue_674:
     mov rax, rbp
     sub rax, 8
     push rax
@@ -32641,21 +32583,22 @@ func_parse_cli_args:
     add rax, rcx
     pop rcx
     mov [rcx], rax
-    jmp .loop_start_811
-.loop_end_811:
+    jmp .loop_start_674
+.break_674:
+.loop_end_674:
     mov rax, global_vars
     add rax, 0
     mov rax, [rax]
     push rax
     mov rax, global_vars
-    add rax, 1073742296
+    add rax, 1073742312
     mov rax, [rax]
     pop rcx
     cmp rax, rcx
     sete al
     movzx rax, al
     cmp rax, 0
-    je .if_end_822
+    je .if_end_685
     mov rax, 1
     push rax
     mov rax, 8
@@ -32673,7 +32616,7 @@ func_parse_cli_args:
     push rax
     call func_print_usage_and_exit
     add rsp, 16
-.if_end_822:
+.if_end_685:
     mov rax, 8
     push rax
     mov rax, rbp
@@ -32713,15 +32656,15 @@ func_main:
     add rsp, 16
     mov [rbp-8], rax
     mov rax, global_vars
-    add rax, 1073742320
+    add rax, 1073742336
+    mov rax, [rax]
+    push rax
+    mov rax, global_vars
+    add rax, 1073742328
     mov rax, [rax]
     push rax
     mov rax, global_vars
     add rax, 1073742312
-    mov rax, [rax]
-    push rax
-    mov rax, global_vars
-    add rax, 1073742296
     mov rax, [rax]
     push rax
     call func_lexer_new
@@ -32735,10 +32678,10 @@ func_main:
     add rsp, 8
     mov [rbp-24], rax
     mov rax, global_vars
-    add rax, 1073742328
+    add rax, 1073742344
     mov rax, [rax]
     cmp rax, 0
-    je .if_end_823
+    je .if_end_686
     mov rax, 0
     push rax
     mov rax, rbp
@@ -32747,9 +32690,9 @@ func_main:
     push rax
     call func_dump_ast
     add rsp, 16
-.if_end_823:
+.if_end_686:
     mov rax, global_vars
-    add rax, 1073742304
+    add rax, 1073742320
     mov rax, [rax]
     push rax
     mov rax, rbp
@@ -32757,7 +32700,7 @@ func_main:
     push rax
     call func_strcpy
     add rsp, 16
-    mov rax, global_string_708
+    mov rax, global_string_753
     push rax
     mov rax, rbp
     sub rax, 280
@@ -32789,7 +32732,7 @@ func_main:
     call _File_method_close
     add rsp, 8
     mov rax, global_vars
-    add rax, 1073742304
+    add rax, 1073742320
     mov rax, [rax]
     push rax
     mov rax, rbp
@@ -32797,7 +32740,7 @@ func_main:
     push rax
     call func_strcpy
     add rsp, 16
-    mov rax, global_string_709
+    mov rax, global_string_754
     push rax
     mov rax, rbp
     sub rax, 544
@@ -32817,12 +32760,12 @@ func_main:
     push rax
     mov rax, 1
     cmp rax, 0
-    je .cond_else_824
-    mov rax, global_string_710
-    jmp .cond_end_824
-.cond_else_824:
-    mov rax, global_string_711
-.cond_end_824:
+    je .cond_else_687
+    mov rax, global_string_755
+    jmp .cond_end_687
+.cond_else_687:
+    mov rax, global_string_756
+.cond_end_687:
     pop rcx
     mov [rcx], rax
     mov rax, 8
@@ -32838,12 +32781,12 @@ func_main:
     push rax
     mov rax, 1
     cmp rax, 0
-    je .cond_else_825
-    mov rax, global_string_712
-    jmp .cond_end_825
-.cond_else_825:
-    mov rax, global_string_713
-.cond_end_825:
+    je .cond_else_688
+    mov rax, global_string_757
+    jmp .cond_end_688
+.cond_else_688:
+    mov rax, global_string_758
+.cond_end_688:
     pop rcx
     mov [rcx], rax
     mov rax, 8
@@ -32857,7 +32800,7 @@ func_main:
     pop rcx
     add rax, rcx
     push rax
-    mov rax, global_string_714
+    mov rax, global_string_759
     pop rcx
     mov [rcx], rax
     mov rax, 8
@@ -32907,7 +32850,7 @@ func_main:
     pop rcx
     mov [rcx], rax
     mov rax, global_vars
-    add rax, 1073742344
+    add rax, 1073742360
     mov rax, [rax]
     cmp rax, 0
     sete al
@@ -32929,7 +32872,7 @@ func_main:
     pop rcx
     add rax, rcx
     push rax
-    mov rax, global_string_715
+    mov rax, global_string_760
     pop rcx
     mov [rcx], rax
     mov rax, 8
@@ -32943,7 +32886,7 @@ func_main:
     pop rcx
     add rax, rcx
     push rax
-    mov rax, global_string_716
+    mov rax, global_string_761
     pop rcx
     mov [rcx], rax
     mov rax, 8
@@ -32958,7 +32901,7 @@ func_main:
     add rax, rcx
     push rax
     mov rax, global_vars
-    add rax, 1073742304
+    add rax, 1073742320
     mov rax, [rax]
     pop rcx
     mov [rcx], rax
@@ -32979,7 +32922,7 @@ func_main:
     mov [rcx], rax
     mov rax, 1
     cmp rax, 0
-    je .if_else_826
+    je .if_else_689
     mov rax, 8
     push rax
     mov rax, 4
@@ -32991,11 +32934,11 @@ func_main:
     pop rcx
     add rax, rcx
     push rax
-    mov rax, global_string_717
+    mov rax, global_string_762
     pop rcx
     mov [rcx], rax
-    jmp .if_end_826
-.if_else_826:
+    jmp .if_end_689
+.if_else_689:
     mov rax, 8
     push rax
     mov rax, 4
@@ -33012,7 +32955,7 @@ func_main:
     mov rax, [rax]
     pop rcx
     mov [rcx], rax
-.if_end_826:
+.if_end_689:
     mov rax, 8
     push rax
     mov rax, 5
@@ -33030,7 +32973,7 @@ func_main:
     pop rcx
     mov [rcx], rax
     mov rax, global_vars
-    add rax, 1073742344
+    add rax, 1073742360
     mov rax, [rax]
     cmp rax, 0
     sete al
@@ -33042,10 +32985,10 @@ func_main:
     call func_run_command
     add rsp, 16
     mov rax, global_vars
-    add rax, 1073742336
+    add rax, 1073742352
     mov rax, [rax]
     cmp rax, 0
-    je .if_end_827
+    je .if_end_690
     mov rax, rbp
     sub rax, 8
     push rax
@@ -33075,12 +33018,12 @@ func_main:
     add rax, rcx
     push rax
     mov rax, global_vars
-    add rax, 1073742304
+    add rax, 1073742320
     mov rax, [rax]
     pop rcx
     mov [rcx], rax
     mov rax, global_vars
-    add rax, 1073742344
+    add rax, 1073742360
     mov rax, [rax]
     cmp rax, 0
     sete al
@@ -33092,7 +33035,7 @@ func_main:
     push rax
     call func_run_command
     add rsp, 16
-.if_end_827:
+.if_end_690:
     mov rsp, rbp
     pop rbp
     mov qword rax, 0
@@ -33219,13 +33162,13 @@ _main:
     mov rcx, global_vars
     add rcx, 1073742000
     mov [rcx], rax
-    mov rax, 1
-    neg rax
-    mov rcx, global_vars
-    add rcx, 1073742016
-    mov [rcx], rax
     call func_vector_new
     add rsp, 0
+    mov rcx, global_vars
+    add rcx, 1073742008
+    mov [rcx], rax
+    mov rax, 1
+    neg rax
     mov rcx, global_vars
     add rcx, 1073742024
     mov [rcx], rax
@@ -33234,17 +33177,19 @@ _main:
     mov rcx, global_vars
     add rcx, 1073742032
     mov [rcx], rax
-    mov rax, global_string_718
+    call func_vector_new
+    add rsp, 0
     mov rcx, global_vars
-    add rcx, 1073742304
+    add rcx, 1073742040
     mov [rcx], rax
-    mov rax, 0
+    mov rax, 2
+    neg rax
+    mov rcx, global_vars
+    add rcx, 1073742048
+    mov [rcx], rax
+    mov rax, global_string_763
     mov rcx, global_vars
     add rcx, 1073742320
-    mov [rcx], rax
-    mov rax, 0
-    mov rcx, global_vars
-    add rcx, 1073742328
     mov [rcx], rax
     mov rax, 0
     mov rcx, global_vars
@@ -33253,6 +33198,14 @@ _main:
     mov rax, 0
     mov rcx, global_vars
     add rcx, 1073742344
+    mov [rcx], rax
+    mov rax, 0
+    mov rcx, global_vars
+    add rcx, 1073742352
+    mov [rcx], rax
+    mov rax, 0
+    mov rcx, global_vars
+    add rcx, 1073742360
     mov [rcx], rax
     call func_main
     mov rdi, rax
@@ -33356,7 +33309,7 @@ func_sqrt:
     sqrtsd xmm0, xmm0
     ret
 section .bss
-    global_vars: resb 1073742352
+    global_vars: resb 1073742368
 section .data
     global_string_0: db `assertion failed`, 0
     global_string_1: db `malloc: out of memory. only 1gb available`, 0
@@ -33421,659 +33374,704 @@ section .data
     global_string_60: db `TOKEN_STRINGLIT`, 0
     global_string_61: db `TOKEN_TILDE`, 0
     global_string_62: db `TOKEN_XOR`, 0
-    global_string_63: db `TOKEN_CHAR`, 0
-    global_string_64: db `TOKEN_CONST`, 0
-    global_string_65: db `TOKEN_ENUM`, 0
-    global_string_66: db `TOKEN_ELSE`, 0
-    global_string_67: db `TOKEN_DEFER`, 0
-    global_string_68: db `TOKEN_F64`, 0
-    global_string_69: db `TOKEN_FN`, 0
-    global_string_70: db `TOKEN_FOR`, 0
-    global_string_71: db `TOKEN_IF`, 0
-    global_string_72: db `TOKEN_INT`, 0
-    global_string_73: db `TOKEN_I8`, 0
-    global_string_74: db `TOKEN_I16`, 0
-    global_string_75: db `TOKEN_I32`, 0
-    global_string_76: db `TOKEN_I64`, 0
-    global_string_77: db `TOKEN_LET`, 0
-    global_string_78: db `TOKEN_METHOD`, 0
-    global_string_79: db `TOKEN_RETURN`, 0
-    global_string_80: db `TOKEN_SIZEOF`, 0
-    global_string_81: db `TOKEN_STRUCT`, 0
-    global_string_82: db `TOKEN_UNION`, 0
-    global_string_83: db `TOKEN_VOID`, 0
-    global_string_84: db `TOKEN_WHILE`, 0
-    global_string_85: db `TOKEN_IMPORT`, 0
-    global_string_86: db `\nUnknown token type in token_type_to_string: `, 0
-    global_string_87: db `char`, 0
-    global_string_88: db `const`, 0
-    global_string_89: db `enum`, 0
-    global_string_90: db `else`, 0
-    global_string_91: db `defer`, 0
-    global_string_92: db `f64`, 0
-    global_string_93: db `fn`, 0
-    global_string_94: db `for`, 0
-    global_string_95: db `if`, 0
-    global_string_96: db `int`, 0
-    global_string_97: db `i8`, 0
-    global_string_98: db `i16`, 0
-    global_string_99: db `i32`, 0
-    global_string_100: db `i64`, 0
-    global_string_101: db `let`, 0
-    global_string_102: db `method`, 0
-    global_string_103: db `return`, 0
-    global_string_104: db `sizeof`, 0
-    global_string_105: db `struct`, 0
-    global_string_106: db `union`, 0
-    global_string_107: db `void`, 0
-    global_string_108: db `while`, 0
-    global_string_109: db `import`, 0
-    global_string_110: db `Unknown keyword in keyword_to_string: `, 0
-    global_string_111: db `: `, 0
-    global_string_112: db `Note: Error happened here: `, 0
-    global_string_113: db ``, 0
-    global_string_114: db `Vector::at: index out of bounds`, 0
-    global_string_115: db `Vector is empty, nothing to pop.`, 0
-    global_string_116: db `Vector is empty, nothing to return.`, 0
-    global_string_117: db `Unknown type in size_for_type`, 0
-    global_string_118: db `*`, 0
-    global_string_119: db `[]`, 0
-    global_string_120: db `int`, 0
-    global_string_121: db `i8`, 0
-    global_string_122: db `i16`, 0
-    global_string_123: db `i32`, 0
-    global_string_124: db `i64`, 0
-    global_string_125: db `f64`, 0
-    global_string_126: db `char`, 0
-    global_string_127: db `void`, 0
-    global_string_128: db `any`, 0
-    global_string_129: db `create_type_string: unknown type`, 0
-    global_string_130: db `Cannot convert non-numeric type to int: `, 0
-    global_string_131: db `AST_NEG`, 0
-    global_string_132: db `AST_NOT`, 0
-    global_string_133: db `AST_BWINV`, 0
-    global_string_134: db `AST_ADDROF`, 0
-    global_string_135: db `AST_DEREF`, 0
-    global_string_136: db `AST_PLUS`, 0
-    global_string_137: db `AST_MINUS`, 0
-    global_string_138: db `AST_MUL`, 0
-    global_string_139: db `AST_DIV`, 0
-    global_string_140: db `AST_MOD`, 0
-    global_string_141: db `AST_LSHIFT`, 0
-    global_string_142: db `AST_RSHIFT`, 0
-    global_string_143: db `AST_AND`, 0
-    global_string_144: db `AST_BWAND`, 0
-    global_string_145: db `AST_OR`, 0
-    global_string_146: db `AST_BWOR`, 0
-    global_string_147: db `AST_XOR`, 0
-    global_string_148: db `AST_EQ`, 0
-    global_string_149: db `AST_NEQ`, 0
-    global_string_150: db `AST_LT`, 0
-    global_string_151: db `AST_LEQ`, 0
-    global_string_152: db `AST_GT`, 0
-    global_string_153: db `AST_GEQ`, 0
-    global_string_154: db `AST_ASSIGN`, 0
-    global_string_155: db `AST_MEMBER`, 0
-    global_string_156: db `AST_LITERAL`, 0
-    global_string_157: db `AST_CONSTANT`, 0
-    global_string_158: db `AST_CONVERT`, 0
-    global_string_159: db `AST_FUNCCALL`, 0
-    global_string_160: db `AST_CONDITIONAL`, 0
-    global_string_161: db `AST_IF`, 0
-    global_string_162: db `AST_WHILE`, 0
-    global_string_163: db `AST_DEFER`, 0
-    global_string_164: db `AST_FOR`, 0
-    global_string_165: db `AST_VARDECL`, 0
-    global_string_166: db `AST_LOCAL_VAR`, 0
-    global_string_167: db `AST_GLOBAL_VAR`, 0
-    global_string_168: db `AST_RETURN`, 0
-    global_string_169: db `AST_FUNC`, 0
-    global_string_170: db `AST_BUILTIN`, 0
-    global_string_171: db `AST_PROGRAM`, 0
-    global_string_172: db `AST_BLOCK`, 0
-    global_string_173: db `Unknown node type in node_type_to_string: `, 0
-    global_string_174: db `Unknown token in binary_token_to_op: `, 0
-    global_string_175: db `Unknown literal type in dump_ast`, 0
-    global_string_176: db `func `, 0
-    global_string_177: db `()\n`, 0
-    global_string_178: db `let `, 0
-    global_string_179: db `: `, 0
-    global_string_180: db ` =\n`, 0
-    global_string_181: db `(`, 0
-    global_string_182: db `)`, 0
-    global_string_183: db `Performing invalid unary operation on struct type`, 0
-    global_string_184: db `compiler/ast.cup:400:17`, 0
-    global_string_185: db `Performing invalid unary operation on float type: `, 0
-    global_string_186: db `compiler/ast.cup:404:22`, 0
-    global_string_187: db `Cannot dereference non-pointer type`, 0
-    global_string_188: db `compiler/ast.cup:416:21`, 0
-    global_string_189: db `Cannot negate non-integer type`, 0
-    global_string_190: db `compiler/ast.cup:423:21`, 0
-    global_string_191: db `Performing invalid binary operation on struct type`, 0
-    global_string_192: db `compiler/ast.cup:437:17`, 0
-    global_string_193: db `Cannot add non-integer to pointer`, 0
-    global_string_194: db `compiler/ast.cup:444:25`, 0
-    global_string_195: db `Cannot add non-integer to pointer`, 0
-    global_string_196: db `compiler/ast.cup:454:25`, 0
-    global_string_197: db `lhs: `, 0
-    global_string_198: db `rhs: `, 0
-    global_string_199: db `Incompatible types for addition`, 0
-    global_string_200: db `compiler/ast.cup:470:21`, 0
-    global_string_201: db `Cannot subtract pointers of different types`, 0
-    global_string_202: db `compiler/ast.cup:492:25`, 0
-    global_string_203: db `Cannot subtract non-integer types`, 0
-    global_string_204: db `compiler/ast.cup:505:21`, 0
-    global_string_205: db `Cannot modulo floats`, 0
-    global_string_206: db `compiler/ast.cup:512:25`, 0
-    global_string_207: db `Cannot do operation non-integer types:`, 0
-    global_string_208: db `compiler/ast.cup:519:22`, 0
-    global_string_209: db `*`, 0
-    global_string_210: db `[]`, 0
-    global_string_211: db `int`, 0
-    global_string_212: db `char`, 0
-    global_string_213: db `void`, 0
-    global_string_214: db `any`, 0
-    global_string_215: db `struct `, 0
-    global_string_216: db `union `, 0
-    global_string_217: db ` {`, 0
-    global_string_218: db `  `, 0
-    global_string_219: db `- `, 0
-    global_string_220: db ` (`, 0
-    global_string_221: db `): `, 0
-    global_string_222: db `\n`, 0
-    global_string_223: db `  `, 0
-    global_string_224: db `}`, 0
-    global_string_225: db `compound_push_field: not a compound type`, 0
-    global_string_226: db `<anon>`, 0
-    global_string_227: db `val`, 0
-    global_string_228: db `arg`, 0
-    global_string_229: db `SYS_execve`, 0
-    global_string_230: db `SYS_read`, 0
-    global_string_231: db `SYS_write`, 0
-    global_string_232: db `SYS_exit`, 0
-    global_string_233: db `SYS_open`, 0
-    global_string_234: db `SYS_lseek`, 0
-    global_string_235: db `SYS_openat`, 0
-    global_string_236: db `SYS_close`, 0
-    global_string_237: db `SYS_fork`, 0
-    global_string_238: db `SYS_wait4`, 0
-    global_string_239: db `SYS_mmap`, 0
-    global_string_240: db `SEEK_SET`, 0
-    global_string_241: db `SEEK_CUR`, 0
-    global_string_242: db `SEEK_END`, 0
-    global_string_243: db `O_RDONLY`, 0
-    global_string_244: db `O_WRONLY`, 0
-    global_string_245: db `O_RDWR`, 0
-    global_string_246: db `O_CREAT`, 0
-    global_string_247: db `O_EXCL`, 0
-    global_string_248: db `O_TRUNC`, 0
-    global_string_249: db `AT_FDCWD`, 0
-    global_string_250: db `PROT_READ`, 0
-    global_string_251: db `PROT_WRITE`, 0
-    global_string_252: db `PROT_EXEC`, 0
-    global_string_253: db `PROT_NONE`, 0
-    global_string_254: db `MAP_SHARED`, 0
-    global_string_255: db `MAP_PRIVATE`, 0
-    global_string_256: db `MAP_ANONYMOUS`, 0
-    global_string_257: db `MAP_FIXED`, 0
-    global_string_258: db `MAP_FAILED`, 0
-    global_string_259: db `OS_IS_MACOS`, 0
-    global_string_260: db `OS_IS_LINUX`, 0
-    global_string_261: db `print`, 0
-    global_string_262: db `val`, 0
-    global_string_263: db `sqrt`, 0
-    global_string_264: db `val`, 0
-    global_string_265: db `fork`, 0
-    global_string_266: db `syscall0`, 0
-    global_string_267: db `syscall1`, 0
-    global_string_268: db `syscall2`, 0
-    global_string_269: db `syscall3`, 0
-    global_string_270: db `syscall4`, 0
-    global_string_271: db `syscall5`, 0
-    global_string_272: db `syscall6`, 0
-    global_string_273: db `syscall7`, 0
-    global_string_274: db `func_print:\n`, 0
-    global_string_275: db `    mov rdi, [rsp+8]\n`, 0
-    global_string_276: db `    mov r9, -3689348814741910323\n`, 0
-    global_string_277: db `    sub rsp, 40\n`, 0
-    global_string_278: db `    mov byte [rsp+31], 10\n`, 0
-    global_string_279: db `    lea rcx, [rsp+30]\n`, 0
-    global_string_280: db `    mov qword rbx, 0\n`, 0
-    global_string_281: db `.L2:\n`, 0
-    global_string_282: db `    mov rax, rdi\n`, 0
-    global_string_283: db `    lea r8, [rsp+32]\n`, 0
-    global_string_284: db `    mul r9\n`, 0
-    global_string_285: db `    mov rax, rdi\n`, 0
-    global_string_286: db `    sub r8, rcx\n`, 0
-    global_string_287: db `    shr rdx, 3\n`, 0
-    global_string_288: db `    lea rsi, [rdx+rdx*4]\n`, 0
-    global_string_289: db `    add rsi, rsi\n`, 0
-    global_string_290: db `    sub rax, rsi\n`, 0
-    global_string_291: db `    add eax, 48\n`, 0
-    global_string_292: db `    mov byte [rcx], al\n`, 0
-    global_string_293: db `    mov rax, rdi\n`, 0
-    global_string_294: db `    mov rdi, rdx\n`, 0
-    global_string_295: db `    mov rdx, rcx\n`, 0
-    global_string_296: db `    sub rcx, 1\n`, 0
-    global_string_297: db `    cmp rax, 9\n`, 0
-    global_string_298: db `    ja .L2\n`, 0
-    global_string_299: db `    lea rax, [rsp+32]\n`, 0
-    global_string_300: db `    mov edi, 1\n`, 0
-    global_string_301: db `    sub rdx, rax\n`, 0
-    global_string_302: db `    xor eax, eax\n`, 0
-    global_string_303: db `    lea rsi, [rsp+32+rdx]\n`, 0
-    global_string_304: db `    mov rdx, r8\n`, 0
-    global_string_305: db `    add rsp, 40\n`, 0
-    global_string_306: db `    ret\n`, 0
-    global_string_307: db `rax`, 0
-    global_string_308: db `rdi`, 0
-    global_string_309: db `rsi`, 0
-    global_string_310: db `rdx`, 0
-    global_string_311: db `rcx`, 0
-    global_string_312: db `r8`, 0
-    global_string_313: db `r9`, 0
-    global_string_314: db `r10`, 0
-    global_string_315: db `r11`, 0
-    global_string_316: db `r12`, 0
-    global_string_317: db `func_syscall`, 0
-    global_string_318: db `:\n`, 0
-    global_string_319: db `    mov `, 0
-    global_string_320: db `, [rsp+`, 0
-    global_string_321: db `]\n`, 0
-    global_string_322: db `    syscall\n`, 0
-    global_string_323: db `    ret\n`, 0
-    global_string_324: db `func_fork:\n`, 0
-    global_string_325: db `    mov rdi, [rsp+8]\n`, 0
-    global_string_326: db `    mov rax, `, 0
-    global_string_327: db `\n`, 0
-    global_string_328: db `    syscall\n`, 0
-    global_string_329: db `    cmp rdx, 0\n`, 0
-    global_string_330: db `    je .L1\n`, 0
-    global_string_331: db `    mov rax, 0\n`, 0
-    global_string_332: db `.L1:\n`, 0
-    global_string_333: db `    ret\n`, 0
-    global_string_334: db `func_sqrt:\n`, 0
-    global_string_335: db `    movsd xmm0, [rsp+8]\n`, 0
-    global_string_336: db `    sqrtsd xmm0, xmm0\n`, 0
-    global_string_337: db `    ret\n`, 0
-    global_string_338: db `here`, 0
-    global_string_339: db `:`, 0
-    global_string_340: db `:`, 0
-    global_string_341: db `EOF while parsing string literal`, 0
-    global_string_342: db `compiler/lexer.cup:285:29`, 0
-    global_string_343: db `Unknown character in lexer_next: '`, 0
-    global_string_344: db `'`, 0
-    global_string_345: db `Exiting`, 0
-    global_string_346: db `: Expected `, 0
-    global_string_347: db ` but got `, 0
-    global_string_348: db `Constant expressions can only contain integer literals/constants.`, 0
-    global_string_349: db `Unsupported binary operator in constant expression.`, 0
-    global_string_350: db `Unsupported constant expression.`, 0
-    global_string_351: db `Identifier already exists: `, 0
-    global_string_352: db `compiler/parser.cup:147:18`, 0
-    global_string_353: db `Expected 'int' type for constant`, 0
-    global_string_354: db `compiler/parser.cup:155:21`, 0
-    global_string_355: db `Unexpected token in parse_literal: `, 0
-    global_string_356: db `compiler/parser.cup:185:18`, 0
-    global_string_357: db `Unexpected token in parse_type: `, 0
-    global_string_358: db `compiler/parser.cup:205:22`, 0
-    global_string_359: db `Unknown token in parse_type: `, 0
-    global_string_360: db `compiler/parser.cup:208:22`, 0
-    global_string_361: db `Could not find constant: `, 0
-    global_string_362: db `compiler/parser.cup:230:30`, 0
-    global_string_363: db `Expected a constant expression for array size`, 0
-    global_string_364: db `compiler/parser.cup:235:25`, 0
-    global_string_365: db `Function call argument count mismatch: `, 0
-    global_string_366: db `compiler/parser.cup:279:18`, 0
-    global_string_367: db `Function argument type mismatch: `, 0
-    global_string_368: db `compiler/parser.cup:288:22`, 0
-    global_string_369: db `Unknown identifier in parse_identifier: `, 0
-    global_string_370: db `compiler/parser.cup:334:14`, 0
-    global_string_371: db `Cannot increment non-lvalue`, 0
-    global_string_372: db `compiler/parser.cup:360:21`, 0
-    global_string_373: db `Cannot decrement non-lvalue`, 0
-    global_string_374: db `compiler/parser.cup:374:21`, 0
-    global_string_375: db `Cannot take address of non-lvalue`, 0
-    global_string_376: db `compiler/parser.cup:412:21`, 0
-    global_string_377: db `Cannot dereference non-pointer type`, 0
-    global_string_378: db `compiler/parser.cup:419:21`, 0
-    global_string_379: db `: Unexpected token found in parse_factor: `, 0
-    global_string_380: db `compiler/parser.cup:426:18`, 0
-    global_string_381: db `Cannot index non-pointer/array type`, 0
-    global_string_382: db `compiler/parser.cup:434:25`, 0
-    global_string_383: db `Cannot access member of non-struct type`, 0
-    global_string_384: db `compiler/parser.cup:454:25`, 0
-    global_string_385: db `Struct type: `, 0
-    global_string_386: db `Field name: `, 0
-    global_string_387: db `Invalid field name for struct`, 0
-    global_string_388: db `compiler/parser.cup:467:25`, 0
-    global_string_389: db `Cannot call method on non-lvalue`, 0
-    global_string_390: db `compiler/parser.cup:482:25`, 0
-    global_string_391: db `Cannot call method on non-struct type`, 0
-    global_string_392: db `compiler/parser.cup:484:25`, 0
-    global_string_393: db `Invalid method name for struct`, 0
-    global_string_394: db `compiler/parser.cup:503:25`, 0
-    global_string_395: db `THEN and ELSE branches of conditional expression have different types`, 0
-    global_string_396: db `compiler/parser.cup:687:21`, 0
-    global_string_397: db `- LHS type: `, 0
-    global_string_398: db `- RHS type: `, 0
-    global_string_399: db `Type mismatch for variable assignment`, 0
-    global_string_400: db `compiler/parser.cup:709:25`, 0
-    global_string_401: db `Identifier already defined: %s`, 0
-    global_string_402: db `compiler/parser.cup:754:18`, 0
-    global_string_403: db `- Variable type: `, 0
-    global_string_404: db `- Value type: `, 0
-    global_string_405: db `Type mismatch for variable declaration: `, 0
-    global_string_406: db `compiler/parser.cup:783:26`, 0
-    global_string_407: db `Expected ':' or '=' after variable declaration`, 0
-    global_string_408: db `compiler/parser.cup:790:17`, 0
-    global_string_409: db `Identifier already defined: `, 0
-    global_string_410: db `compiler/parser.cup:815:22`, 0
-    global_string_411: db `Returned expression cannot be implicitly converted to function's return type.`, 0
-    global_string_412: db `compiler/parser.cup:909:25`, 0
-    global_string_413: db `Expected return type: `, 0
-    global_string_414: db `Can't have an empty return statement in a non-void function`, 0
-    global_string_415: db `compiler/parser.cup:915:25`, 0
-    global_string_416: db `Identifier already exists, enums just behave like numbered constants.`, 0
-    global_string_417: db `compiler/parser.cup:1000:21`, 0
-    global_string_418: db `Expected a comma or a closing brace.`, 0
-    global_string_419: db `compiler/parser.cup:1010:21`, 0
-    global_string_420: db `Expected STRUCT or UNION in parse_struct_union_declaration`, 0
-    global_string_421: db `compiler/parser.cup:1024:17`, 0
-    global_string_422: db `You need to specify a name for the struct defined globally.`, 0
-    global_string_423: db `compiler/parser.cup:1034:17`, 0
-    global_string_424: db `<anon>`, 0
-    global_string_425: db `<anon>`, 0
-    global_string_426: db `Expected a name for a non-compound field in a struct/union.`, 0
-    global_string_427: db `compiler/parser.cup:1085:21`, 0
-    global_string_428: db `Could not find struct/union with name: `, 0
-    global_string_429: db `compiler/parser.cup:1107:18`, 0
-    global_string_430: db `Method already defined earlier`, 0
-    global_string_431: db `compiler/parser.cup:1126:21`, 0
-    global_string_432: db `self`, 0
-    global_string_433: db `Function name already exists as an identifier`, 0
-    global_string_434: db `compiler/parser.cup:1188:21`, 0
-    global_string_435: db `Function already defined earlier`, 0
-    global_string_436: db `compiler/parser.cup:1191:21`, 0
-    global_string_437: db `Found a circular import dependency in: `, 0
-    global_string_438: db `: Exiting.`, 0
-    global_string_439: db `unexpected token in parse_program: `, 0
-    global_string_440: db `compiler/parser.cup:1278:22`, 0
-    global_string_441: db `-`, 0
-    global_string_442: db `    mov rax, `, 0
-    global_string_443: db `\n`, 0
-    global_string_444: db `    syscall\n`, 0
-    global_string_445: db `al`, 0
-    global_string_446: db `ax`, 0
-    global_string_447: db `eax`, 0
-    global_string_448: db `rax`, 0
-    global_string_449: db `Unsupported type size`, 0
-    global_string_450: db `compiler/codegen.cup:54:10`, 0
-    global_string_451: db `byte`, 0
-    global_string_452: db `word`, 0
-    global_string_453: db `dword`, 0
-    global_string_454: db `qword`, 0
-    global_string_455: db `: Unsupported type size`, 0
-    global_string_456: db `compiler/codegen.cup:64:10`, 0
-    global_string_457: db `_`, 0
-    global_string_458: db `_method_`, 0
-    global_string_459: db `func_`, 0
-    global_string_460: db `    push rax\n`, 0
-    global_string_461: db `    pop rcx\n`, 0
-    global_string_462: db `add`, 0
-    global_string_463: db `sub`, 0
-    global_string_464: db `shl`, 0
-    global_string_465: db `shr`, 0
-    global_string_466: db `and`, 0
-    global_string_467: db `or`, 0
-    global_string_468: db `xor`, 0
-    global_string_469: db `imul`, 0
-    global_string_470: db `idiv`, 0
-    global_string_471: db `idiv`, 0
-    global_string_472: db `Unsupported binary op in generate_binop_int_arith`, 0
-    global_string_473: db `compiler/codegen.cup:104:14`, 0
-    global_string_474: db `    cqo\n`, 0
-    global_string_475: db `    idiv rcx\n`, 0
-    global_string_476: db `    mov rax, rdx\n`, 0
-    global_string_477: db ` rax, cl\n`, 0
-    global_string_478: db `    `, 0
-    global_string_479: db ` rax, rcx\n`, 0
-    global_string_480: db `    `, 0
-    global_string_481: db `    sub rsp, 8\n`, 0
-    global_string_482: db `    movsd [rsp], xmm0\n`, 0
-    global_string_483: db `    movsd xmm1, [rsp]\n`, 0
-    global_string_484: db `    add rsp, 8\n`, 0
-    global_string_485: db `addsd`, 0
-    global_string_486: db `subsd`, 0
-    global_string_487: db `mulsd`, 0
-    global_string_488: db `divsd`, 0
-    global_string_489: db `Unsupported binary op in generate_binop_float_arith`, 0
-    global_string_490: db `compiler/codegen.cup:135:14`, 0
-    global_string_491: db ` xmm0, xmm1\n`, 0
-    global_string_492: db `    `, 0
-    global_string_493: db `    push rax\n`, 0
-    global_string_494: db `    pop rcx\n`, 0
-    global_string_495: db `    cmp rax, rcx\n`, 0
-    global_string_496: db `    sub rsp, 8\n`, 0
-    global_string_497: db `    movsd [rsp], xmm0\n`, 0
-    global_string_498: db `    movsd xmm1, [rsp]\n`, 0
-    global_string_499: db `    add rsp, 8\n`, 0
-    global_string_500: db `    ucomisd xmm0, xmm1\n`, 0
-    global_string_501: db `sete`, 0
-    global_string_502: db `sete`, 0
-    global_string_503: db `setl`, 0
-    global_string_504: db `setb`, 0
-    global_string_505: db `setg`, 0
-    global_string_506: db `seta`, 0
-    global_string_507: db `setne`, 0
-    global_string_508: db `setne`, 0
-    global_string_509: db `setle`, 0
-    global_string_510: db `setna`, 0
-    global_string_511: db `setge`, 0
-    global_string_512: db `setnb`, 0
-    global_string_513: db ` al\n`, 0
+    global_string_63: db `TOKEN_BREAK`, 0
+    global_string_64: db `TOKEN_CASE`, 0
+    global_string_65: db `TOKEN_CHAR`, 0
+    global_string_66: db `TOKEN_CONST`, 0
+    global_string_67: db `TOKEN_DEFAULT`, 0
+    global_string_68: db `TOKEN_ENUM`, 0
+    global_string_69: db `TOKEN_ELSE`, 0
+    global_string_70: db `TOKEN_DEFER`, 0
+    global_string_71: db `TOKEN_F64`, 0
+    global_string_72: db `TOKEN_FN`, 0
+    global_string_73: db `TOKEN_FOR`, 0
+    global_string_74: db `TOKEN_IF`, 0
+    global_string_75: db `TOKEN_INT`, 0
+    global_string_76: db `TOKEN_I8`, 0
+    global_string_77: db `TOKEN_I16`, 0
+    global_string_78: db `TOKEN_I32`, 0
+    global_string_79: db `TOKEN_I64`, 0
+    global_string_80: db `TOKEN_LET`, 0
+    global_string_81: db `TOKEN_METHOD`, 0
+    global_string_82: db `TOKEN_RETURN`, 0
+    global_string_83: db `TOKEN_SIZEOF`, 0
+    global_string_84: db `TOKEN_STRUCT`, 0
+    global_string_85: db `TOKEN_SWITCH`, 0
+    global_string_86: db `TOKEN_UNION`, 0
+    global_string_87: db `TOKEN_VOID`, 0
+    global_string_88: db `TOKEN_WHILE`, 0
+    global_string_89: db `TOKEN_IMPORT`, 0
+    global_string_90: db `\nUnknown token type in token_type_to_string: `, 0
+    global_string_91: db `break`, 0
+    global_string_92: db `case`, 0
+    global_string_93: db `char`, 0
+    global_string_94: db `const`, 0
+    global_string_95: db `default`, 0
+    global_string_96: db `enum`, 0
+    global_string_97: db `else`, 0
+    global_string_98: db `defer`, 0
+    global_string_99: db `f64`, 0
+    global_string_100: db `fn`, 0
+    global_string_101: db `for`, 0
+    global_string_102: db `if`, 0
+    global_string_103: db `int`, 0
+    global_string_104: db `i8`, 0
+    global_string_105: db `i16`, 0
+    global_string_106: db `i32`, 0
+    global_string_107: db `i64`, 0
+    global_string_108: db `let`, 0
+    global_string_109: db `method`, 0
+    global_string_110: db `return`, 0
+    global_string_111: db `sizeof`, 0
+    global_string_112: db `struct`, 0
+    global_string_113: db `switch`, 0
+    global_string_114: db `union`, 0
+    global_string_115: db `void`, 0
+    global_string_116: db `while`, 0
+    global_string_117: db `import`, 0
+    global_string_118: db `Unknown keyword in keyword_to_string: `, 0
+    global_string_119: db `: `, 0
+    global_string_120: db `Note: Error happened here: `, 0
+    global_string_121: db ``, 0
+    global_string_122: db `Vector::at: index out of bounds`, 0
+    global_string_123: db `Vector is empty, nothing to pop.`, 0
+    global_string_124: db `Vector is empty, nothing to return.`, 0
+    global_string_125: db `Unknown type in size_for_type`, 0
+    global_string_126: db `*`, 0
+    global_string_127: db `[]`, 0
+    global_string_128: db `int`, 0
+    global_string_129: db `i8`, 0
+    global_string_130: db `i16`, 0
+    global_string_131: db `i32`, 0
+    global_string_132: db `i64`, 0
+    global_string_133: db `f64`, 0
+    global_string_134: db `char`, 0
+    global_string_135: db `void`, 0
+    global_string_136: db `any`, 0
+    global_string_137: db `create_type_string: unknown type`, 0
+    global_string_138: db `Cannot convert non-numeric type to int: `, 0
+    global_string_139: db `AST_NEG`, 0
+    global_string_140: db `AST_NOT`, 0
+    global_string_141: db `AST_BWINV`, 0
+    global_string_142: db `AST_ADDROF`, 0
+    global_string_143: db `AST_DEREF`, 0
+    global_string_144: db `AST_PLUS`, 0
+    global_string_145: db `AST_MINUS`, 0
+    global_string_146: db `AST_MUL`, 0
+    global_string_147: db `AST_DIV`, 0
+    global_string_148: db `AST_MOD`, 0
+    global_string_149: db `AST_LSHIFT`, 0
+    global_string_150: db `AST_RSHIFT`, 0
+    global_string_151: db `AST_AND`, 0
+    global_string_152: db `AST_BWAND`, 0
+    global_string_153: db `AST_OR`, 0
+    global_string_154: db `AST_BWOR`, 0
+    global_string_155: db `AST_XOR`, 0
+    global_string_156: db `AST_EQ`, 0
+    global_string_157: db `AST_NEQ`, 0
+    global_string_158: db `AST_LT`, 0
+    global_string_159: db `AST_LEQ`, 0
+    global_string_160: db `AST_GT`, 0
+    global_string_161: db `AST_GEQ`, 0
+    global_string_162: db `AST_ASSIGN`, 0
+    global_string_163: db `AST_MEMBER`, 0
+    global_string_164: db `AST_LITERAL`, 0
+    global_string_165: db `AST_CONSTANT`, 0
+    global_string_166: db `AST_CONVERT`, 0
+    global_string_167: db `AST_FUNCCALL`, 0
+    global_string_168: db `AST_CONDITIONAL`, 0
+    global_string_169: db `AST_IF`, 0
+    global_string_170: db `AST_WHILE`, 0
+    global_string_171: db `AST_DEFER`, 0
+    global_string_172: db `AST_FOR`, 0
+    global_string_173: db `AST_SWITCH`, 0
+    global_string_174: db `AST_CASE`, 0
+    global_string_175: db `AST_VARDECL`, 0
+    global_string_176: db `AST_LOCAL_VAR`, 0
+    global_string_177: db `AST_GLOBAL_VAR`, 0
+    global_string_178: db `AST_RETURN`, 0
+    global_string_179: db `AST_FUNC`, 0
+    global_string_180: db `AST_BREAK`, 0
+    global_string_181: db `AST_BUILTIN`, 0
+    global_string_182: db `AST_PROGRAM`, 0
+    global_string_183: db `AST_BLOCK`, 0
+    global_string_184: db `Unknown node type in node_type_to_string: `, 0
+    global_string_185: db `Unknown token in binary_token_to_op: `, 0
+    global_string_186: db `Unknown literal type in dump_ast`, 0
+    global_string_187: db `func `, 0
+    global_string_188: db `()\n`, 0
+    global_string_189: db `let `, 0
+    global_string_190: db `: `, 0
+    global_string_191: db ` =\n`, 0
+    global_string_192: db `(`, 0
+    global_string_193: db `)`, 0
+    global_string_194: db `case `, 0
+    global_string_195: db `:`, 0
+    global_string_196: db `SWITCH`, 0
+    global_string_197: db `default:`, 0
+    global_string_198: db `Performing invalid unary operation on struct type`, 0
+    global_string_199: db `compiler/ast.cup:436:17`, 0
+    global_string_200: db `Performing invalid unary operation on float type: `, 0
+    global_string_201: db `compiler/ast.cup:440:22`, 0
+    global_string_202: db `Cannot dereference non-pointer type`, 0
+    global_string_203: db `compiler/ast.cup:452:21`, 0
+    global_string_204: db `Cannot negate non-integer type`, 0
+    global_string_205: db `compiler/ast.cup:459:21`, 0
+    global_string_206: db `Performing invalid binary operation on struct type`, 0
+    global_string_207: db `compiler/ast.cup:473:17`, 0
+    global_string_208: db `Cannot add non-integer to pointer`, 0
+    global_string_209: db `compiler/ast.cup:480:25`, 0
+    global_string_210: db `Cannot add non-integer to pointer`, 0
+    global_string_211: db `compiler/ast.cup:490:25`, 0
+    global_string_212: db `lhs: `, 0
+    global_string_213: db `rhs: `, 0
+    global_string_214: db `Incompatible types for addition`, 0
+    global_string_215: db `compiler/ast.cup:506:21`, 0
+    global_string_216: db `Cannot subtract pointers of different types`, 0
+    global_string_217: db `compiler/ast.cup:528:25`, 0
+    global_string_218: db `Cannot subtract non-integer types`, 0
+    global_string_219: db `compiler/ast.cup:541:21`, 0
+    global_string_220: db `Cannot modulo floats`, 0
+    global_string_221: db `compiler/ast.cup:548:25`, 0
+    global_string_222: db `Cannot do operation non-integer types:`, 0
+    global_string_223: db `compiler/ast.cup:555:22`, 0
+    global_string_224: db `*`, 0
+    global_string_225: db `[]`, 0
+    global_string_226: db `int`, 0
+    global_string_227: db `char`, 0
+    global_string_228: db `void`, 0
+    global_string_229: db `any`, 0
+    global_string_230: db `struct `, 0
+    global_string_231: db `union `, 0
+    global_string_232: db ` {`, 0
+    global_string_233: db `  `, 0
+    global_string_234: db `- `, 0
+    global_string_235: db ` (`, 0
+    global_string_236: db `): `, 0
+    global_string_237: db `\n`, 0
+    global_string_238: db `  `, 0
+    global_string_239: db `}`, 0
+    global_string_240: db `compound_push_field: not a compound type`, 0
+    global_string_241: db `<anon>`, 0
+    global_string_242: db `val`, 0
+    global_string_243: db `arg`, 0
+    global_string_244: db `SYS_execve`, 0
+    global_string_245: db `SYS_read`, 0
+    global_string_246: db `SYS_write`, 0
+    global_string_247: db `SYS_exit`, 0
+    global_string_248: db `SYS_open`, 0
+    global_string_249: db `SYS_lseek`, 0
+    global_string_250: db `SYS_openat`, 0
+    global_string_251: db `SYS_close`, 0
+    global_string_252: db `SYS_fork`, 0
+    global_string_253: db `SYS_wait4`, 0
+    global_string_254: db `SYS_mmap`, 0
+    global_string_255: db `SEEK_SET`, 0
+    global_string_256: db `SEEK_CUR`, 0
+    global_string_257: db `SEEK_END`, 0
+    global_string_258: db `O_RDONLY`, 0
+    global_string_259: db `O_WRONLY`, 0
+    global_string_260: db `O_RDWR`, 0
+    global_string_261: db `O_CREAT`, 0
+    global_string_262: db `O_EXCL`, 0
+    global_string_263: db `O_TRUNC`, 0
+    global_string_264: db `AT_FDCWD`, 0
+    global_string_265: db `PROT_READ`, 0
+    global_string_266: db `PROT_WRITE`, 0
+    global_string_267: db `PROT_EXEC`, 0
+    global_string_268: db `PROT_NONE`, 0
+    global_string_269: db `MAP_SHARED`, 0
+    global_string_270: db `MAP_PRIVATE`, 0
+    global_string_271: db `MAP_ANONYMOUS`, 0
+    global_string_272: db `MAP_FIXED`, 0
+    global_string_273: db `MAP_FAILED`, 0
+    global_string_274: db `OS_IS_MACOS`, 0
+    global_string_275: db `OS_IS_LINUX`, 0
+    global_string_276: db `print`, 0
+    global_string_277: db `val`, 0
+    global_string_278: db `sqrt`, 0
+    global_string_279: db `val`, 0
+    global_string_280: db `fork`, 0
+    global_string_281: db `syscall0`, 0
+    global_string_282: db `syscall1`, 0
+    global_string_283: db `syscall2`, 0
+    global_string_284: db `syscall3`, 0
+    global_string_285: db `syscall4`, 0
+    global_string_286: db `syscall5`, 0
+    global_string_287: db `syscall6`, 0
+    global_string_288: db `syscall7`, 0
+    global_string_289: db `func_print:\n`, 0
+    global_string_290: db `    mov rdi, [rsp+8]\n`, 0
+    global_string_291: db `    mov r9, -3689348814741910323\n`, 0
+    global_string_292: db `    sub rsp, 40\n`, 0
+    global_string_293: db `    mov byte [rsp+31], 10\n`, 0
+    global_string_294: db `    lea rcx, [rsp+30]\n`, 0
+    global_string_295: db `    mov qword rbx, 0\n`, 0
+    global_string_296: db `.L2:\n`, 0
+    global_string_297: db `    mov rax, rdi\n`, 0
+    global_string_298: db `    lea r8, [rsp+32]\n`, 0
+    global_string_299: db `    mul r9\n`, 0
+    global_string_300: db `    mov rax, rdi\n`, 0
+    global_string_301: db `    sub r8, rcx\n`, 0
+    global_string_302: db `    shr rdx, 3\n`, 0
+    global_string_303: db `    lea rsi, [rdx+rdx*4]\n`, 0
+    global_string_304: db `    add rsi, rsi\n`, 0
+    global_string_305: db `    sub rax, rsi\n`, 0
+    global_string_306: db `    add eax, 48\n`, 0
+    global_string_307: db `    mov byte [rcx], al\n`, 0
+    global_string_308: db `    mov rax, rdi\n`, 0
+    global_string_309: db `    mov rdi, rdx\n`, 0
+    global_string_310: db `    mov rdx, rcx\n`, 0
+    global_string_311: db `    sub rcx, 1\n`, 0
+    global_string_312: db `    cmp rax, 9\n`, 0
+    global_string_313: db `    ja .L2\n`, 0
+    global_string_314: db `    lea rax, [rsp+32]\n`, 0
+    global_string_315: db `    mov edi, 1\n`, 0
+    global_string_316: db `    sub rdx, rax\n`, 0
+    global_string_317: db `    xor eax, eax\n`, 0
+    global_string_318: db `    lea rsi, [rsp+32+rdx]\n`, 0
+    global_string_319: db `    mov rdx, r8\n`, 0
+    global_string_320: db `    add rsp, 40\n`, 0
+    global_string_321: db `    ret\n`, 0
+    global_string_322: db `rax`, 0
+    global_string_323: db `rdi`, 0
+    global_string_324: db `rsi`, 0
+    global_string_325: db `rdx`, 0
+    global_string_326: db `rcx`, 0
+    global_string_327: db `r8`, 0
+    global_string_328: db `r9`, 0
+    global_string_329: db `r10`, 0
+    global_string_330: db `r11`, 0
+    global_string_331: db `r12`, 0
+    global_string_332: db `func_syscall`, 0
+    global_string_333: db `:\n`, 0
+    global_string_334: db `    mov `, 0
+    global_string_335: db `, [rsp+`, 0
+    global_string_336: db `]\n`, 0
+    global_string_337: db `    syscall\n`, 0
+    global_string_338: db `    ret\n`, 0
+    global_string_339: db `func_fork:\n`, 0
+    global_string_340: db `    mov rdi, [rsp+8]\n`, 0
+    global_string_341: db `    mov rax, `, 0
+    global_string_342: db `\n`, 0
+    global_string_343: db `    syscall\n`, 0
+    global_string_344: db `    cmp rdx, 0\n`, 0
+    global_string_345: db `    je .L1\n`, 0
+    global_string_346: db `    mov rax, 0\n`, 0
+    global_string_347: db `.L1:\n`, 0
+    global_string_348: db `    ret\n`, 0
+    global_string_349: db `func_sqrt:\n`, 0
+    global_string_350: db `    movsd xmm0, [rsp+8]\n`, 0
+    global_string_351: db `    sqrtsd xmm0, xmm0\n`, 0
+    global_string_352: db `    ret\n`, 0
+    global_string_353: db `here`, 0
+    global_string_354: db `:`, 0
+    global_string_355: db `:`, 0
+    global_string_356: db `EOF while parsing string literal`, 0
+    global_string_357: db `compiler/lexer.cup:288:33`, 0
+    global_string_358: db `compiler/lexer.cup:325:22`, 0
+    global_string_359: db `: Unknown character in lexer_next: '`, 0
+    global_string_360: db `'`, 0
+    global_string_361: db `: Expected `, 0
+    global_string_362: db ` but got `, 0
+    global_string_363: db `Constant expressions can only contain integer literals/constants.`, 0
+    global_string_364: db `compiler/parser.cup:116:17`, 0
+    global_string_365: db `Unsupported binary operator in constant expression.`, 0
+    global_string_366: db `compiler/parser.cup:132:17`, 0
+    global_string_367: db `Unsupported constant expression.`, 0
+    global_string_368: db `compiler/parser.cup:137:13`, 0
+    global_string_369: db `Identifier already exists: `, 0
+    global_string_370: db `compiler/parser.cup:155:18`, 0
+    global_string_371: db `Expected 'int' type for constant`, 0
+    global_string_372: db `compiler/parser.cup:163:21`, 0
+    global_string_373: db `Unexpected token in parse_literal: `, 0
+    global_string_374: db `compiler/parser.cup:196:22`, 0
+    global_string_375: db `Unexpected token in parse_type: `, 0
+    global_string_376: db `compiler/parser.cup:217:26`, 0
+    global_string_377: db `Unknown token in parse_type: `, 0
+    global_string_378: db `compiler/parser.cup:220:26`, 0
+    global_string_379: db `Function call argument count mismatch: `, 0
+    global_string_380: db `compiler/parser.cup:279:18`, 0
+    global_string_381: db `Function argument type mismatch: `, 0
+    global_string_382: db `compiler/parser.cup:288:22`, 0
+    global_string_383: db `Unknown identifier in parse_identifier: `, 0
+    global_string_384: db `compiler/parser.cup:334:14`, 0
+    global_string_385: db `Cannot increment non-lvalue`, 0
+    global_string_386: db `compiler/parser.cup:360:21`, 0
+    global_string_387: db `Cannot decrement non-lvalue`, 0
+    global_string_388: db `compiler/parser.cup:374:21`, 0
+    global_string_389: db `Cannot take address of non-lvalue`, 0
+    global_string_390: db `compiler/parser.cup:412:21`, 0
+    global_string_391: db `Cannot dereference non-pointer type`, 0
+    global_string_392: db `compiler/parser.cup:419:21`, 0
+    global_string_393: db `: Unexpected token found in parse_factor: `, 0
+    global_string_394: db `compiler/parser.cup:426:18`, 0
+    global_string_395: db `Cannot index non-pointer/array type`, 0
+    global_string_396: db `compiler/parser.cup:434:25`, 0
+    global_string_397: db `Cannot access member of non-struct type`, 0
+    global_string_398: db `compiler/parser.cup:454:25`, 0
+    global_string_399: db `Struct type: `, 0
+    global_string_400: db `Field name: `, 0
+    global_string_401: db `Invalid field name for struct`, 0
+    global_string_402: db `compiler/parser.cup:467:25`, 0
+    global_string_403: db `Cannot call method on non-lvalue`, 0
+    global_string_404: db `compiler/parser.cup:482:25`, 0
+    global_string_405: db `Cannot call method on non-struct type`, 0
+    global_string_406: db `compiler/parser.cup:484:25`, 0
+    global_string_407: db `Invalid method name for struct`, 0
+    global_string_408: db `compiler/parser.cup:503:25`, 0
+    global_string_409: db `THEN and ELSE branches of conditional expression have different types`, 0
+    global_string_410: db `compiler/parser.cup:687:21`, 0
+    global_string_411: db `- LHS type: `, 0
+    global_string_412: db `- RHS type: `, 0
+    global_string_413: db `Type mismatch for variable assignment`, 0
+    global_string_414: db `compiler/parser.cup:709:25`, 0
+    global_string_415: db `Identifier already defined: %s`, 0
+    global_string_416: db `compiler/parser.cup:754:18`, 0
+    global_string_417: db `- Variable type: `, 0
+    global_string_418: db `- Value type: `, 0
+    global_string_419: db `Type mismatch for variable declaration: `, 0
+    global_string_420: db `compiler/parser.cup:783:26`, 0
+    global_string_421: db `Expected ':' or '=' after variable declaration`, 0
+    global_string_422: db `compiler/parser.cup:790:17`, 0
+    global_string_423: db `Identifier already defined: `, 0
+    global_string_424: db `compiler/parser.cup:815:22`, 0
+    global_string_425: db `Expected integer-like expression for switch statement`, 0
+    global_string_426: db `compiler/parser.cup:860:17`, 0
+    global_string_427: db `Shouldn't have any more case statments after 'default'. Expected '}'`, 0
+    global_string_428: db `compiler/parser.cup:904:25`, 0
+    global_string_429: db `Expected 'case' or 'default'`, 0
+    global_string_430: db `compiler/parser.cup:907:21`, 0
+    global_string_431: db `Returned expression cannot be implicitly converted to function's return type.`, 0
+    global_string_432: db `compiler/parser.cup:979:25`, 0
+    global_string_433: db `Expected return type: `, 0
+    global_string_434: db `Can't have an empty return statement in a non-void function`, 0
+    global_string_435: db `compiler/parser.cup:985:25`, 0
+    global_string_436: db `Can't break outside of a loop / switch statement`, 0
+    global_string_437: db `compiler/parser.cup:1026:21`, 0
+    global_string_438: db `Identifier already exists, enums just behave like numbered constants.`, 0
+    global_string_439: db `compiler/parser.cup:1084:21`, 0
+    global_string_440: db `Expected a comma or a closing brace.`, 0
+    global_string_441: db `compiler/parser.cup:1094:21`, 0
+    global_string_442: db `Expected STRUCT or UNION in parse_struct_union_declaration`, 0
+    global_string_443: db `compiler/parser.cup:1108:17`, 0
+    global_string_444: db `You need to specify a name for the struct defined globally.`, 0
+    global_string_445: db `compiler/parser.cup:1118:17`, 0
+    global_string_446: db `<anon>`, 0
+    global_string_447: db `<anon>`, 0
+    global_string_448: db `Expected a name for a non-compound field in a struct/union.`, 0
+    global_string_449: db `compiler/parser.cup:1169:21`, 0
+    global_string_450: db `Could not find struct/union with name: `, 0
+    global_string_451: db `compiler/parser.cup:1191:18`, 0
+    global_string_452: db `Method already defined earlier`, 0
+    global_string_453: db `compiler/parser.cup:1210:21`, 0
+    global_string_454: db `self`, 0
+    global_string_455: db `Function name already exists as an identifier`, 0
+    global_string_456: db `compiler/parser.cup:1272:21`, 0
+    global_string_457: db `Function already defined earlier`, 0
+    global_string_458: db `compiler/parser.cup:1275:21`, 0
+    global_string_459: db `Found a circular import dependency in: `, 0
+    global_string_460: db `: Exiting.`, 0
+    global_string_461: db `unexpected token in parse_program: `, 0
+    global_string_462: db `compiler/parser.cup:1362:22`, 0
+    global_string_463: db `-`, 0
+    global_string_464: db `    mov rax, `, 0
+    global_string_465: db `\n`, 0
+    global_string_466: db `    syscall\n`, 0
+    global_string_467: db `al`, 0
+    global_string_468: db `ax`, 0
+    global_string_469: db `eax`, 0
+    global_string_470: db `rax`, 0
+    global_string_471: db `Unsupported type size`, 0
+    global_string_472: db `compiler/codegen.cup:55:10`, 0
+    global_string_473: db `byte`, 0
+    global_string_474: db `word`, 0
+    global_string_475: db `dword`, 0
+    global_string_476: db `qword`, 0
+    global_string_477: db `: Unsupported type size`, 0
+    global_string_478: db `compiler/codegen.cup:65:10`, 0
+    global_string_479: db `_`, 0
+    global_string_480: db `_method_`, 0
+    global_string_481: db `func_`, 0
+    global_string_482: db `    push rax\n`, 0
+    global_string_483: db `    pop rcx\n`, 0
+    global_string_484: db `add`, 0
+    global_string_485: db `sub`, 0
+    global_string_486: db `shl`, 0
+    global_string_487: db `shr`, 0
+    global_string_488: db `and`, 0
+    global_string_489: db `or`, 0
+    global_string_490: db `xor`, 0
+    global_string_491: db `imul`, 0
+    global_string_492: db `idiv`, 0
+    global_string_493: db `idiv`, 0
+    global_string_494: db `Unsupported binary op in generate_binop_int_arith`, 0
+    global_string_495: db `compiler/codegen.cup:105:14`, 0
+    global_string_496: db `    cqo\n`, 0
+    global_string_497: db `    idiv rcx\n`, 0
+    global_string_498: db `    mov rax, rdx\n`, 0
+    global_string_499: db ` rax, cl\n`, 0
+    global_string_500: db `    `, 0
+    global_string_501: db ` rax, rcx\n`, 0
+    global_string_502: db `    `, 0
+    global_string_503: db `    sub rsp, 8\n`, 0
+    global_string_504: db `    movsd [rsp], xmm0\n`, 0
+    global_string_505: db `    movsd xmm1, [rsp]\n`, 0
+    global_string_506: db `    add rsp, 8\n`, 0
+    global_string_507: db `addsd`, 0
+    global_string_508: db `subsd`, 0
+    global_string_509: db `mulsd`, 0
+    global_string_510: db `divsd`, 0
+    global_string_511: db `Unsupported binary op in generate_binop_float_arith`, 0
+    global_string_512: db `compiler/codegen.cup:136:14`, 0
+    global_string_513: db ` xmm0, xmm1\n`, 0
     global_string_514: db `    `, 0
-    global_string_515: db ` al\n`, 0
-    global_string_516: db `    `, 0
-    global_string_517: db `    movzx rax, al\n`, 0
-    global_string_518: db `    mov rax, rbp\n`, 0
-    global_string_519: db `    sub rax, `, 0
-    global_string_520: db `\n`, 0
-    global_string_521: db `    mov rax, global_vars\n`, 0
-    global_string_522: db `    add rax, `, 0
-    global_string_523: db `\n`, 0
-    global_string_524: db `    add rax, `, 0
-    global_string_525: db `\n`, 0
-    global_string_526: db `Unsupported type in generate_lvalue_into_rax: `, 0
-    global_string_527: db `    sub rsp, 8\n`, 0
-    global_string_528: db `    movsd [rsp], xmm0\n`, 0
-    global_string_529: db `    push rax\n`, 0
-    global_string_530: db `\n`, 0
-    global_string_531: db `    call `, 0
-    global_string_532: db `    add rsp, `, 0
-    global_string_533: db `\n`, 0
-    global_string_534: db `    mov rax, `, 0
-    global_string_535: db `\n`, 0
-    global_string_536: db `    mov rax, `, 0
-    global_string_537: db `\n`, 0
-    global_string_538: db `    mov rax, global_string_`, 0
-    global_string_539: db `\n`, 0
-    global_string_540: db `)\n`, 0
-    global_string_541: db `    mov rax, __float64__(`, 0
-    global_string_542: db `    mov [rsp-8], rax\n`, 0
-    global_string_543: db `    movsd xmm0, [rsp-8]\n`, 0
-    global_string_544: db `: Unsupported literal type in generate_expression`, 0
-    global_string_545: db `compiler/codegen.cup:250:18`, 0
-    global_string_546: db `    cmp rax, 0\n`, 0
-    global_string_547: db `    je .cond_else_`, 0
-    global_string_548: db `\n`, 0
-    global_string_549: db `    jmp .cond_end_`, 0
-    global_string_550: db `\n`, 0
-    global_string_551: db `.cond_else_`, 0
-    global_string_552: db `:\n`, 0
-    global_string_553: db `.cond_end_`, 0
-    global_string_554: db `:\n`, 0
-    global_string_555: db `    cmp rax, 0\n`, 0
-    global_string_556: db `    je .or_right_`, 0
+    global_string_515: db `    push rax\n`, 0
+    global_string_516: db `    pop rcx\n`, 0
+    global_string_517: db `    cmp rax, rcx\n`, 0
+    global_string_518: db `    sub rsp, 8\n`, 0
+    global_string_519: db `    movsd [rsp], xmm0\n`, 0
+    global_string_520: db `    movsd xmm1, [rsp]\n`, 0
+    global_string_521: db `    add rsp, 8\n`, 0
+    global_string_522: db `    ucomisd xmm0, xmm1\n`, 0
+    global_string_523: db `sete`, 0
+    global_string_524: db `sete`, 0
+    global_string_525: db `setl`, 0
+    global_string_526: db `setb`, 0
+    global_string_527: db `setg`, 0
+    global_string_528: db `seta`, 0
+    global_string_529: db `setne`, 0
+    global_string_530: db `setne`, 0
+    global_string_531: db `setle`, 0
+    global_string_532: db `setna`, 0
+    global_string_533: db `setge`, 0
+    global_string_534: db `setnb`, 0
+    global_string_535: db ` al\n`, 0
+    global_string_536: db `    `, 0
+    global_string_537: db ` al\n`, 0
+    global_string_538: db `    `, 0
+    global_string_539: db `    movzx rax, al\n`, 0
+    global_string_540: db `    mov rax, rbp\n`, 0
+    global_string_541: db `    sub rax, `, 0
+    global_string_542: db `\n`, 0
+    global_string_543: db `    mov rax, global_vars\n`, 0
+    global_string_544: db `    add rax, `, 0
+    global_string_545: db `\n`, 0
+    global_string_546: db `    add rax, `, 0
+    global_string_547: db `\n`, 0
+    global_string_548: db `Unsupported type in generate_lvalue_into_rax: `, 0
+    global_string_549: db `    sub rsp, 8\n`, 0
+    global_string_550: db `    movsd [rsp], xmm0\n`, 0
+    global_string_551: db `    push rax\n`, 0
+    global_string_552: db `\n`, 0
+    global_string_553: db `    call `, 0
+    global_string_554: db `    add rsp, `, 0
+    global_string_555: db `\n`, 0
+    global_string_556: db `    mov rax, `, 0
     global_string_557: db `\n`, 0
-    global_string_558: db `    mov rax, 1\n`, 0
-    global_string_559: db `    jmp .or_end_`, 0
-    global_string_560: db `\n`, 0
-    global_string_561: db `.or_right_`, 0
-    global_string_562: db `:\n`, 0
-    global_string_563: db `    cmp rax, 0\n`, 0
-    global_string_564: db `    setne al\n`, 0
-    global_string_565: db `.or_end_`, 0
-    global_string_566: db `:\n`, 0
-    global_string_567: db `    cmp rax, 0\n`, 0
-    global_string_568: db `    jne .and_right_`, 0
-    global_string_569: db `\n`, 0
-    global_string_570: db `    mov rax, 0\n`, 0
-    global_string_571: db `    jmp .and_end_`, 0
+    global_string_558: db `    mov rax, `, 0
+    global_string_559: db `\n`, 0
+    global_string_560: db `    mov rax, global_string_`, 0
+    global_string_561: db `\n`, 0
+    global_string_562: db `)\n`, 0
+    global_string_563: db `    mov rax, __float64__(`, 0
+    global_string_564: db `    mov [rsp-8], rax\n`, 0
+    global_string_565: db `    movsd xmm0, [rsp-8]\n`, 0
+    global_string_566: db `: Unsupported literal type in generate_expression`, 0
+    global_string_567: db `compiler/codegen.cup:251:18`, 0
+    global_string_568: db `    cmp rax, 0\n`, 0
+    global_string_569: db `    je .cond_else_`, 0
+    global_string_570: db `\n`, 0
+    global_string_571: db `    jmp .cond_end_`, 0
     global_string_572: db `\n`, 0
-    global_string_573: db `.and_right_`, 0
+    global_string_573: db `.cond_else_`, 0
     global_string_574: db `:\n`, 0
-    global_string_575: db `    cmp rax, 0\n`, 0
-    global_string_576: db `    setne al\n`, 0
-    global_string_577: db `.and_end_`, 0
-    global_string_578: db `:\n`, 0
-    global_string_579: db `    movsd xmm0, [rax]\n`, 0
-    global_string_580: db `    mov rax, [rax]\n`, 0
-    global_string_581: db ` [rax]\n`, 0
-    global_string_582: db `    movsx rax, `, 0
-    global_string_583: db `    not rax\n`, 0
-    global_string_584: db `    xorps xmm1, xmm1\n`, 0
-    global_string_585: db `    subps xmm1, xmm0\n`, 0
-    global_string_586: db `    movsd xmm0, xmm1\n`, 0
-    global_string_587: db `    neg rax\n`, 0
-    global_string_588: db `    cmp rax, 0\n`, 0
-    global_string_589: db `    sete al\n`, 0
-    global_string_590: db `    movzx rax, al\n`, 0
-    global_string_591: db `    push rax\n`, 0
-    global_string_592: db `    pop rcx\n`, 0
-    global_string_593: db `    movsd [rcx], xmm0\n`, 0
+    global_string_575: db `.cond_end_`, 0
+    global_string_576: db `:\n`, 0
+    global_string_577: db `    cmp rax, 0\n`, 0
+    global_string_578: db `    je .or_right_`, 0
+    global_string_579: db `\n`, 0
+    global_string_580: db `    mov rax, 1\n`, 0
+    global_string_581: db `    jmp .or_end_`, 0
+    global_string_582: db `\n`, 0
+    global_string_583: db `.or_right_`, 0
+    global_string_584: db `:\n`, 0
+    global_string_585: db `    cmp rax, 0\n`, 0
+    global_string_586: db `    setne al\n`, 0
+    global_string_587: db `.or_end_`, 0
+    global_string_588: db `:\n`, 0
+    global_string_589: db `    cmp rax, 0\n`, 0
+    global_string_590: db `    jne .and_right_`, 0
+    global_string_591: db `\n`, 0
+    global_string_592: db `    mov rax, 0\n`, 0
+    global_string_593: db `    jmp .and_end_`, 0
     global_string_594: db `\n`, 0
-    global_string_595: db `    mov [rcx], `, 0
-    global_string_596: db `    cvttsd2si rax, xmm0\n`, 0
-    global_string_597: db `    cvtsi2sd xmm0, eax\n`, 0
-    global_string_598: db `Unsupported conversion`, 0
-    global_string_599: db `Unsupported node type in generate_expression: `, 0
-    global_string_600: db `    xor rax, rax\n`, 0
-    global_string_601: db `    push rax\n`, 0
-    global_string_602: db `    pop rax\n`, 0
-    global_string_603: db `    mov rsp, rbp\n`, 0
-    global_string_604: db `    pop rbp\n`, 0
-    global_string_605: db `    ret\n`, 0
-    global_string_606: db `    movsd [rbp-`, 0
-    global_string_607: db `], xmm0\n`, 0
-    global_string_608: db `    mov [rbp-`, 0
-    global_string_609: db `\n`, 0
-    global_string_610: db `], `, 0
-    global_string_611: db `    cmp rax, 0\n`, 0
-    global_string_612: db `    je .if_end_`, 0
-    global_string_613: db `\n`, 0
-    global_string_614: db `.if_end_`, 0
-    global_string_615: db `:\n`, 0
-    global_string_616: db `    cmp rax, 0\n`, 0
-    global_string_617: db `    je .if_else_`, 0
-    global_string_618: db `\n`, 0
-    global_string_619: db `    jmp .if_end_`, 0
-    global_string_620: db `\n`, 0
-    global_string_621: db `.if_else_`, 0
-    global_string_622: db `:\n`, 0
-    global_string_623: db `.if_end_`, 0
-    global_string_624: db `:\n`, 0
-    global_string_625: db `.loop_start_`, 0
-    global_string_626: db `:\n`, 0
-    global_string_627: db `.loop_continue_`, 0
-    global_string_628: db `:\n`, 0
-    global_string_629: db `    cmp rax, 0\n`, 0
-    global_string_630: db `    je .loop_end_`, 0
-    global_string_631: db `\n`, 0
-    global_string_632: db `    jmp .loop_start_`, 0
-    global_string_633: db `\n`, 0
-    global_string_634: db `.loop_end_`, 0
+    global_string_595: db `.and_right_`, 0
+    global_string_596: db `:\n`, 0
+    global_string_597: db `    cmp rax, 0\n`, 0
+    global_string_598: db `    setne al\n`, 0
+    global_string_599: db `.and_end_`, 0
+    global_string_600: db `:\n`, 0
+    global_string_601: db `    movsd xmm0, [rax]\n`, 0
+    global_string_602: db `    mov rax, [rax]\n`, 0
+    global_string_603: db ` [rax]\n`, 0
+    global_string_604: db `    movsx rax, `, 0
+    global_string_605: db `    not rax\n`, 0
+    global_string_606: db `    xorps xmm1, xmm1\n`, 0
+    global_string_607: db `    subps xmm1, xmm0\n`, 0
+    global_string_608: db `    movsd xmm0, xmm1\n`, 0
+    global_string_609: db `    neg rax\n`, 0
+    global_string_610: db `    cmp rax, 0\n`, 0
+    global_string_611: db `    sete al\n`, 0
+    global_string_612: db `    movzx rax, al\n`, 0
+    global_string_613: db `    push rax\n`, 0
+    global_string_614: db `    pop rcx\n`, 0
+    global_string_615: db `    movsd [rcx], xmm0\n`, 0
+    global_string_616: db `\n`, 0
+    global_string_617: db `    mov [rcx], `, 0
+    global_string_618: db `    cvttsd2si rax, xmm0\n`, 0
+    global_string_619: db `    cvtsi2sd xmm0, eax\n`, 0
+    global_string_620: db `Unsupported conversion`, 0
+    global_string_621: db `Unsupported node type in generate_expression: `, 0
+    global_string_622: db `    cmp rax, `, 0
+    global_string_623: db `\n`, 0
+    global_string_624: db `    je .case_`, 0
+    global_string_625: db `_`, 0
+    global_string_626: db `\n`, 0
+    global_string_627: db `    jmp .default_`, 0
+    global_string_628: db `\n`, 0
+    global_string_629: db `.case_`, 0
+    global_string_630: db `_`, 0
+    global_string_631: db `:\n`, 0
+    global_string_632: db `.default_`, 0
+    global_string_633: db `:\n`, 0
+    global_string_634: db `    .break_`, 0
     global_string_635: db `:\n`, 0
-    global_string_636: db `.loop_start_`, 0
-    global_string_637: db `:\n`, 0
-    global_string_638: db `    cmp rax, 0\n`, 0
-    global_string_639: db `    je .loop_end_`, 0
-    global_string_640: db `\n`, 0
-    global_string_641: db `.loop_continue_`, 0
-    global_string_642: db `:\n`, 0
-    global_string_643: db `    jmp .loop_start_`, 0
-    global_string_644: db `\n`, 0
-    global_string_645: db `.loop_end_`, 0
-    global_string_646: db `:\n`, 0
-    global_string_647: db `\n`, 0
-    global_string_648: db `global `, 0
-    global_string_649: db `:\n`, 0
-    global_string_650: db `    push rbp\n`, 0
-    global_string_651: db `    mov rbp, rsp\n`, 0
-    global_string_652: db `    sub rsp, `, 0
-    global_string_653: db `\n`, 0
-    global_string_654: db `    mov rsp, rbp\n`, 0
-    global_string_655: db `    pop rbp\n`, 0
-    global_string_656: db `    mov qword rax, 0\n`, 0
-    global_string_657: db `    ret\n`, 0
-    global_string_658: db `Unknown node type in generate_program`, 0
-    global_string_659: db `global _main\n`, 0
-    global_string_660: db `_main:\n`, 0
-    global_string_661: db `    mov rax, rsi\n`, 0
-    global_string_662: db `    push rax\n`, 0
-    global_string_663: db `    mov rax, rdi\n`, 0
-    global_string_664: db `    push rax\n`, 0
-    global_string_665: db `global _start\n`, 0
-    global_string_666: db `_start:\n`, 0
-    global_string_667: db `    mov rbp, rsp\n`, 0
-    global_string_668: db `    mov rax, rbp\n`, 0
-    global_string_669: db `    add rax, 8\n`, 0
-    global_string_670: db `    push rax\n`, 0
-    global_string_671: db `    mov rax, [rbp]\n`, 0
-    global_string_672: db `    push rax\n`, 0
-    global_string_673: db `    mov rcx, global_vars\n`, 0
-    global_string_674: db `    add rcx, `, 0
-    global_string_675: db `\n`, 0
-    global_string_676: db `\n`, 0
-    global_string_677: db `    mov [rcx], `, 0
-    global_string_678: db `    call func_main\n`, 0
-    global_string_679: db `    mov rdi, rax\n`, 0
-    global_string_680: db `section .bss\n`, 0
-    global_string_681: db `    global_vars: resb `, 0
-    global_string_682: db `\n`, 0
-    global_string_683: db `section .data\n`, 0
-    global_string_684: db `    global_string_`, 0
-    global_string_685: db `: db \``, 0
-    global_string_686: db `\`, 0\n`, 0
-    global_string_687: db `Usage: `, 0
-    global_string_688: db ` [options] <file>`, 0
-    global_string_689: db `Options:`, 0
-    global_string_690: db `  -c <code>  Code to compile`, 0
-    global_string_691: db `  -h         Show this help`, 0
-    global_string_692: db `  -s         Silence debug output`, 0
-    global_string_693: db `  -r         Run the generated executable`, 0
-    global_string_694: db `  -o <file>  Output file`, 0
-    global_string_695: db `  -d         Dump AST to stdout`, 0
-    global_string_696: db `Output file will be named '`, 0
-    global_string_697: db `' by default`, 0
-    global_string_698: db `-c`, 0
-    global_string_699: db `CLI`, 0
-    global_string_700: db `-s`, 0
-    global_string_701: db `-r`, 0
-    global_string_702: db `-h`, 0
-    global_string_703: db `-d`, 0
-    global_string_704: db `-o`, 0
-    global_string_705: db `-`, 0
-    global_string_706: db `stdin`, 0
-    global_string_707: db `Source too long to use through stdin`, 0
-    global_string_708: db `.nasm`, 0
-    global_string_709: db `.o`, 0
-    global_string_710: db `/usr/local/bin/nasm`, 0
-    global_string_711: db `/usr/bin/nasm`, 0
-    global_string_712: db `-fmacho64`, 0
-    global_string_713: db `-felf64`, 0
-    global_string_714: db `-o`, 0
-    global_string_715: db `/usr/bin/ld`, 0
-    global_string_716: db `-o`, 0
-    global_string_717: db `-lSystem`, 0
-    global_string_718: db `build/output`, 0
+    global_string_636: db `    xor rax, rax\n`, 0
+    global_string_637: db `    push rax\n`, 0
+    global_string_638: db `    pop rax\n`, 0
+    global_string_639: db `    mov rsp, rbp\n`, 0
+    global_string_640: db `    pop rbp\n`, 0
+    global_string_641: db `    ret\n`, 0
+    global_string_642: db `    movsd [rbp-`, 0
+    global_string_643: db `], xmm0\n`, 0
+    global_string_644: db `    mov [rbp-`, 0
+    global_string_645: db `\n`, 0
+    global_string_646: db `], `, 0
+    global_string_647: db `Break outside of loop, should have been caught by parser.`, 0
+    global_string_648: db `compiler/codegen.cup:439:18`, 0
+    global_string_649: db `WARNING: 'defer' does not work in loops with break statements, you have been warned.`, 0
+    global_string_650: db `    jmp .break_`, 0
+    global_string_651: db `\n`, 0
+    global_string_652: db `    cmp rax, 0\n`, 0
+    global_string_653: db `    je .if_end_`, 0
+    global_string_654: db `\n`, 0
+    global_string_655: db `.if_end_`, 0
+    global_string_656: db `:\n`, 0
+    global_string_657: db `    cmp rax, 0\n`, 0
+    global_string_658: db `    je .if_else_`, 0
+    global_string_659: db `\n`, 0
+    global_string_660: db `    jmp .if_end_`, 0
+    global_string_661: db `\n`, 0
+    global_string_662: db `.if_else_`, 0
+    global_string_663: db `:\n`, 0
+    global_string_664: db `.if_end_`, 0
+    global_string_665: db `:\n`, 0
+    global_string_666: db `.loop_start_`, 0
+    global_string_667: db `:\n`, 0
+    global_string_668: db `.loop_continue_`, 0
+    global_string_669: db `:\n`, 0
+    global_string_670: db `    cmp rax, 0\n`, 0
+    global_string_671: db `    je .loop_end_`, 0
+    global_string_672: db `\n`, 0
+    global_string_673: db `    jmp .loop_start_`, 0
+    global_string_674: db `\n`, 0
+    global_string_675: db `.break_`, 0
+    global_string_676: db `:\n`, 0
+    global_string_677: db `.loop_end_`, 0
+    global_string_678: db `:\n`, 0
+    global_string_679: db `.loop_start_`, 0
+    global_string_680: db `:\n`, 0
+    global_string_681: db `    cmp rax, 0\n`, 0
+    global_string_682: db `    je .loop_end_`, 0
+    global_string_683: db `\n`, 0
+    global_string_684: db `.loop_continue_`, 0
+    global_string_685: db `:\n`, 0
+    global_string_686: db `    jmp .loop_start_`, 0
+    global_string_687: db `\n`, 0
+    global_string_688: db `.break_`, 0
+    global_string_689: db `:\n`, 0
+    global_string_690: db `.loop_end_`, 0
+    global_string_691: db `:\n`, 0
+    global_string_692: db `\n`, 0
+    global_string_693: db `global `, 0
+    global_string_694: db `:\n`, 0
+    global_string_695: db `    push rbp\n`, 0
+    global_string_696: db `    mov rbp, rsp\n`, 0
+    global_string_697: db `    sub rsp, `, 0
+    global_string_698: db `\n`, 0
+    global_string_699: db `    mov rsp, rbp\n`, 0
+    global_string_700: db `    pop rbp\n`, 0
+    global_string_701: db `    mov qword rax, 0\n`, 0
+    global_string_702: db `    ret\n`, 0
+    global_string_703: db `Unknown node type in generate_program`, 0
+    global_string_704: db `global _main\n`, 0
+    global_string_705: db `_main:\n`, 0
+    global_string_706: db `    mov rax, rsi\n`, 0
+    global_string_707: db `    push rax\n`, 0
+    global_string_708: db `    mov rax, rdi\n`, 0
+    global_string_709: db `    push rax\n`, 0
+    global_string_710: db `global _start\n`, 0
+    global_string_711: db `_start:\n`, 0
+    global_string_712: db `    mov rbp, rsp\n`, 0
+    global_string_713: db `    mov rax, rbp\n`, 0
+    global_string_714: db `    add rax, 8\n`, 0
+    global_string_715: db `    push rax\n`, 0
+    global_string_716: db `    mov rax, [rbp]\n`, 0
+    global_string_717: db `    push rax\n`, 0
+    global_string_718: db `    mov rcx, global_vars\n`, 0
+    global_string_719: db `    add rcx, `, 0
+    global_string_720: db `\n`, 0
+    global_string_721: db `\n`, 0
+    global_string_722: db `    mov [rcx], `, 0
+    global_string_723: db `    call func_main\n`, 0
+    global_string_724: db `    mov rdi, rax\n`, 0
+    global_string_725: db `section .bss\n`, 0
+    global_string_726: db `    global_vars: resb `, 0
+    global_string_727: db `\n`, 0
+    global_string_728: db `section .data\n`, 0
+    global_string_729: db `    global_string_`, 0
+    global_string_730: db `: db \``, 0
+    global_string_731: db `\`, 0\n`, 0
+    global_string_732: db `Usage: `, 0
+    global_string_733: db ` [options] <file>`, 0
+    global_string_734: db `Options:`, 0
+    global_string_735: db `  -c <code>  Code to compile`, 0
+    global_string_736: db `  -h         Show this help`, 0
+    global_string_737: db `  -s         Silence debug output`, 0
+    global_string_738: db `  -r         Run the generated executable`, 0
+    global_string_739: db `  -o <file>  Output file`, 0
+    global_string_740: db `  -d         Dump AST to stdout`, 0
+    global_string_741: db `Output file will be named '`, 0
+    global_string_742: db `' by default`, 0
+    global_string_743: db `-c`, 0
+    global_string_744: db `CLI`, 0
+    global_string_745: db `-s`, 0
+    global_string_746: db `-r`, 0
+    global_string_747: db `-h`, 0
+    global_string_748: db `-d`, 0
+    global_string_749: db `-o`, 0
+    global_string_750: db `-`, 0
+    global_string_751: db `stdin`, 0
+    global_string_752: db `Source too long to use through stdin`, 0
+    global_string_753: db `.nasm`, 0
+    global_string_754: db `.o`, 0
+    global_string_755: db `/usr/local/bin/nasm`, 0
+    global_string_756: db `/usr/bin/nasm`, 0
+    global_string_757: db `-fmacho64`, 0
+    global_string_758: db `-felf64`, 0
+    global_string_759: db `-o`, 0
+    global_string_760: db `/usr/bin/ld`, 0
+    global_string_761: db `-o`, 0
+    global_string_762: db `-lSystem`, 0
+    global_string_763: db `build/output`, 0
