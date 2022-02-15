@@ -478,8 +478,6 @@ fn parse_factor(lexer: Lexer*): Node* {
         } else if (token.typ == TOKEN_COLONCOLON) {
             lexer::next(&token);
 
-            if (!is_lvalue(expr.typ))
-                die_loc(here, &token.loc, "Cannot call method on non-lvalue");
             if (!is_struct_or_structptr(expr.etyp))
                 die_loc(here, &token.loc, "Cannot call method on non-struct type");
 
