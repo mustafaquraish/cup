@@ -21,6 +21,34 @@ fn new_image(width: i32, height: i32): Image* {
     return img;
 }
 
+fn read_image(filename: char*): Image* {
+    let buf: char[64];
+
+    let file = fopen(filename, 'r');
+    defer file::close();
+
+    let n = file::read(buf, 64);
+    if (n < 3 || buf[0] != 'P' || buf[1] != '6')
+        die("Not a valid PPM file");
+
+    // FIXME: This is very hacky.
+    let cur = buf + 3;                        // Skip "P6\n"
+    let width = atoi_end(cur, &cur); ++cur;
+    let height = atoi_end(cur, &cur); ++cur;
+    let max_val = atoi_end(cur, &cur); ++cur;
+    if (max_val != 255)
+        die("Only PPM files with max value 255 are supported");
+
+    // Seek to start of binary data
+    file::seek(cur - buf, SEEK_SET);
+
+    let img = new_image(width, height);
+    n = file::read(img.data, width * height * sizeof(Color8));
+    if (n != width * height * sizeof(Color8))
+        die("Could not read image data");
+    return img;
+}
+
 method Image::set(x: i32, y: i32, color: Color8*) {
     let idx = y * self.width + x;
     self.data[idx].r = color.r;
