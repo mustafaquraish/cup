@@ -83,6 +83,16 @@ fn strcat(dst: char *, src: char *) {
     *dst = '\0';
 }
 
+fn strstartswith(s: char *, prefix: char *): int {
+    while (*prefix) {
+        if (*s != *prefix)
+            return false;
+        ++s;
+        ++prefix;
+    }
+    return true;
+}
+
 fn streq(s1: char *, s2: char *): int {
     while (*s1 != 0 && *s2 != 0) {
         if (*s1 != *s2)
