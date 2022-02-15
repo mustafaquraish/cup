@@ -1,0 +1,8 @@
+import "std/json.cup"
+
+fn main() {
+    let js_text = "{\"object\": {\"title\": [0, \"If you see this string, the JSON was parsed!\"], \"Div\": {\"title\": \"hellooo\", \"item\": {\"val\": {\"ID\": \"#0\", \"Def\": {\"numba\": 100}}}}}, \"list\": [\"Hello\", [\"nested\", \"array\"], {\"nested\": {\"object\": [1, 2, \"Hi\"]}}, null, true, false]}";
+    let json = parse_json_text(js_text);
+
+    putsln(json::get("object")::get("title")::at(1).as_string);
+}

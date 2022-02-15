@@ -1,0 +1,151 @@
+//
+// Super basic support for JSON.
+//
+
+import "std/file.cup"
+import "std/vector.cup"
+
+// This just reuses the lexer from the compiler,
+// since that's already capable of lexing JSON.
+import "compiler/lexer.cup"
+
+enum JsonType {
+    JsonNull,
+    JsonBool,
+    JsonNumber,
+    JsonString,
+    JsonArray,
+    JsonObject
+};
+
+struct JsonValue {
+    typ: int;
+    union {
+        as_bool: int;
+        as_number: int;
+        as_string: char*;
+        as_array: Vector*;
+        as_object: Vector*; // FIXME: Use Map
+    };
+};
+
+struct JsonPair {
+    key: char*;
+    value: JsonValue*;
+};
+
+fn parse_json_object(lexer: Lexer*): JsonValue* {
+    let token: Token;
+    let obj: JsonValue* = malloc(sizeof(JsonValue));
+
+    lexer::next(&token);
+
+    switch (token.typ) {
+        case TOKEN_STRINGLIT: obj.typ = JsonString; obj.as_string = token.value.as_string; break;
+        case TOKEN_INTLIT: obj.typ = JsonNumber; obj.as_number = token.value.as_int; break;
+        case TOKEN_IDENTIFIER: {
+            let iden = token.value.as_string;
+            if (streq(iden, "true")) { obj.typ = JsonBool; obj.as_bool = 1; break; }
+            if (streq(iden, "false")) { obj.typ = JsonBool; obj.as_bool = 0; break; }
+            if (streq(iden, "null")) { obj.typ = JsonNull; break; }
+            die_loc(here, &token.loc, "Invalid keyword");
+        } break;
+
+        case TOKEN_OPEN_BRACKET: {
+            obj.typ = JsonArray;
+            obj.as_array = vector_new();
+            
+            lexer::peek(&token);
+            while (token.typ != TOKEN_CLOSE_BRACKET) {
+                obj.as_array::push(parse_json_object(lexer));
+                lexer::peek(&token);
+                
+                if (token.typ == TOKEN_COMMA) {
+                    lexer::next(&token);
+                    lexer::peek(&token);
+                }
+            }
+            lexer::next_assert(&token, TOKEN_CLOSE_BRACKET);
+        } break;
+
+        case TOKEN_OPEN_BRACE: {
+            obj.typ = JsonObject;
+            obj.as_object = vector_new();
+            lexer::peek(&token);
+            while (token.typ != TOKEN_CLOSE_BRACE) {
+                let pair: JsonPair* = malloc(sizeof(JsonPair));
+                lexer::next_assert(&token, TOKEN_STRINGLIT);
+                pair.key = token.value.as_string;
+                
+                lexer::next_assert(&token, TOKEN_COLON);
+                
+                pair.value = parse_json_object(lexer);
+                obj.as_object::push(pair);
+                lexer::peek(&token);
+                
+                if (token.typ == TOKEN_COMMA) {
+                    lexer::next(&token);
+                    lexer::peek(&token);
+                }
+            }
+            lexer::next_assert(&token, TOKEN_CLOSE_BRACE);
+        } break;
+
+        default: die_loc2(here, &token.loc, "Unexpected token: ", token_type_to_string(token.typ));
+    }
+    return obj;
+} 
+
+fn parse_json_file(filename: char*): JsonValue* {
+    let lexer = lexer_new_open_file(filename);
+    return parse_json_object(lexer);
+}
+
+fn parse_json_text(text: char*): JsonValue* {
+    let lexer = lexer_new("<json>", text, strlen(text));
+    return parse_json_object(lexer);
+}
+
+fn dump_json(obj: JsonValue*) {
+    switch (obj.typ) {
+        case JsonNull: puts("null"); break;
+        case JsonBool: puts(obj.as_bool ? "true" : "false"); break;
+        case JsonNumber: putu(obj.as_number); break;
+        case JsonString: putc('"'); puts(obj.as_string); putc('"'); break;
+        case JsonArray: {
+            puts("[");
+            for (let i = 0; i < obj.as_array.size; ++i) {
+                if (i > 0) { puts(", "); }
+                dump_json(obj.as_array::at(i));
+            }
+            puts("]");
+        } break;
+        case JsonObject: {
+            puts("{");
+            for (let i = 0; i < obj.as_object.size; ++i) {
+                if (i > 0) { puts(", "); }
+                let pair: JsonPair* = obj.as_object::at(i);
+                putc('"'); puts(pair.key); putc('"'); puts(": ");
+                dump_json(pair.value);
+            }
+            puts("}");
+        } break;
+    }
+}
+
+method JsonValue::get(key: char*): JsonValue* {
+    if (self.typ != JsonObject) die("Tried to access a key from a non-object");
+    for (let i = 0; i < self.as_object.size; ++i) {
+        let pair: JsonPair* = self.as_object::at(i);
+        if (streq(pair.key, key)) {
+            return pair.value;
+        }
+    }
+    die("Key not found");
+}
+
+method JsonValue::at(index: int): JsonValue* {
+    if (self.typ != JsonArray) die("Tried to index into a non-list");
+    if (index < 0 || index >= self.as_array.size) die("Index out of bounds");
+    return self.as_array::at(index);
+}
