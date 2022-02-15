@@ -42,8 +42,8 @@ fn emit_num(num: int) {
 }
 
 fn generate_syscall(num: int) {
-    emit_asm("    mov rax, "); emit_num(num); emit_asm("\n");
-    emit_asm("    syscall\n");
+    emit_asm("\tmov rax, "); emit_num(num); emit_asm("\n");
+    emit_asm("\tsyscall\n");
 }
 
 fn subregister_for_type(typ: Type*): char* {
@@ -85,9 +85,9 @@ fn generate_expression(node: Node*);
 
 fn generate_binop_int_arith(node: Node*) {
     generate_expression(node.binary.rhs);
-    emit_asm("    push rax\n");
+    emit_asm("\tpush rax\n");
     generate_expression(node.binary.lhs);
-    emit_asm("    pop rcx\n");
+    emit_asm("\tpop rcx\n");
 
     let op: char* = null;
          if (node.typ == AST_PLUS) op = "add";
@@ -106,10 +106,10 @@ fn generate_binop_int_arith(node: Node*) {
     }
 
     if (node.typ == AST_DIV || node.typ == AST_MOD) {
-        emit_asm("    cqo\n");
-        emit_asm("    idiv rcx\n");
+        emit_asm("\tcqo\n");
+        emit_asm("\tidiv rcx\n");
         if (node.typ == AST_MOD)
-            emit_asm("    mov rax, rdx\n");
+            emit_asm("\tmov rax, rdx\n");
     } else if (node.typ == AST_LSHIFT || node.typ == AST_RSHIFT) {
         emit_asm3("    ", op, " rax, cl\n");
 
@@ -120,11 +120,11 @@ fn generate_binop_int_arith(node: Node*) {
 
 fn generate_binop_float_arith(node: Node*) {
     generate_expression(node.binary.rhs);
-    emit_asm("    sub rsp, 8\n");
-    emit_asm("    movsd [rsp], xmm0\n");
+    emit_asm("\tsub rsp, 8\n");
+    emit_asm("\tmovsd [rsp], xmm0\n");
     generate_expression(node.binary.lhs);
-    emit_asm("    movsd xmm1, [rsp]\n");
-    emit_asm("    add rsp, 8\n");
+    emit_asm("\tmovsd xmm1, [rsp]\n");
+    emit_asm("\tadd rsp, 8\n");
 
     let op: char* = null;
          if (node.typ == AST_PLUS) op = "addsd";
@@ -141,20 +141,20 @@ fn generate_binop_float_arith(node: Node*) {
 
 fn generate_cmp_int(node: Node*) {
     generate_expression(node.binary.rhs);
-    emit_asm("    push rax\n");
+    emit_asm("\tpush rax\n");
     generate_expression(node.binary.lhs);
-    emit_asm("    pop rcx\n");
-    emit_asm("    cmp rax, rcx\n");
+    emit_asm("\tpop rcx\n");
+    emit_asm("\tcmp rax, rcx\n");
 }
 
 fn generate_cmp_float(node: Node*) {
     generate_expression(node.binary.rhs);
-    emit_asm("    sub rsp, 8\n");
-    emit_asm("    movsd [rsp], xmm0\n");
+    emit_asm("\tsub rsp, 8\n");
+    emit_asm("\tmovsd [rsp], xmm0\n");
     generate_expression(node.binary.lhs);
-    emit_asm("    movsd xmm1, [rsp]\n");
-    emit_asm("    add rsp, 8\n");
-    emit_asm("    ucomisd xmm0, xmm1\n");
+    emit_asm("\tmovsd xmm1, [rsp]\n");
+    emit_asm("\tadd rsp, 8\n");
+    emit_asm("\tucomisd xmm0, xmm1\n");
 }
 
 fn generate_binop(node: Node*) {
@@ -181,26 +181,26 @@ fn generate_binop(node: Node*) {
         generate_cmp_int(node);
         emit_asm3("    ", s_op, " al\n");
     }
-    emit_asm("    movzx rax, al\n");
+    emit_asm("\tmovzx rax, al\n");
 }
 
 
 fn generate_lvalue_into_rax(node: Node*) {
     if (node.typ == AST_LOCAL_VAR) {
         let offset = node.variable.offset;
-        emit_asm("    mov rax, rbp\n");
-        emit_asm("    sub rax, "); emit_num(offset); emit_asm("\n");
+        emit_asm("\tmov rax, rbp\n");
+        emit_asm("\tsub rax, "); emit_num(offset); emit_asm("\n");
     } else if (node.typ == AST_GLOBAL_VAR) {
         let offset = node.variable.offset;
-        emit_asm("    mov rax, global_vars\n");
-        emit_asm("    add rax, "); emit_num(offset); emit_asm("\n");
+        emit_asm("\tmov rax, qword gvars\n");
+        emit_asm("\tadd rax, "); emit_num(offset); emit_asm("\n");
     } else if (node.typ == AST_MEMBER) {
         let offset = node.member.offset;
         if (node.member.is_ptr)
             generate_expression(node.member.obj);
         else
             generate_lvalue_into_rax(node.member.obj);
-        emit_asm("    add rax, "); emit_num(offset); emit_asm("\n");
+        emit_asm("\tadd rax, "); emit_num(offset); emit_asm("\n");
     } else if (node.typ == AST_DEREF) {
         generate_expression(node.unary);
     } else {
@@ -215,10 +215,10 @@ fn generate_function_call(node: Node*) {
         let expr: Node* = node.call.args::at(i);
         generate_expression(expr);
         if (is_float_type(expr.etyp)) {
-            emit_asm("    sub rsp, 8\n");
-            emit_asm("    movsd [rsp], xmm0\n");
+            emit_asm("\tsub rsp, 8\n");
+            emit_asm("\tmovsd [rsp], xmm0\n");
         } else {
-            emit_asm("    push rax\n");
+            emit_asm("\tpush rax\n");
         }
 
         // TODO: this might be an issue if we pass structs some day
@@ -226,27 +226,27 @@ fn generate_function_call(node: Node*) {
     }
     let name: char* = get_func_name(node.call.func);
     emit_asm3("    call ", name, "\n");
-    emit_asm("    add rsp, "); emit_num(total_size); emit_asm("\n");
+    emit_asm("\tadd rsp, "); emit_num(total_size); emit_asm("\n");
 }
 
 fn generate_expression(node: Node*) {
     if (node.typ == AST_LITERAL) {
         if (node.etyp.typ == TYPE_INT) {
-            emit_asm("    mov rax, "); emit_num(node.literal.as_int); emit_asm("\n");
+            emit_asm("\tmov rax, "); emit_num(node.literal.as_int); emit_asm("\n");
         } else if (node.etyp.typ == TYPE_CHAR) {
-            emit_asm("    mov rax, "); emit_num(node.literal.as_char); emit_asm("\n");
+            emit_asm("\tmov rax, "); emit_num(node.literal.as_char); emit_asm("\n");
         } else if (node.etyp.typ == TYPE_PTR) {
             let s = node.literal.as_string;
             let idx = gen_string_literals.size;
             gen_string_literals::push(s);
-            emit_asm("    mov rax, global_string_"); emit_num(idx); emit_asm("\n");
+            emit_asm("\tmov rax, qword gs_"); emit_num(idx); emit_asm("\n");
         } else if (node.etyp.typ == TYPE_F64) {
             let s = node.literal.as_string;
             let idx = gen_string_literals.size;
             gen_string_literals::push(s);
             emit_asm3("    mov rax, __float64__(", s,")\n");
-            emit_asm("    mov [rsp-8], rax\n");
-            emit_asm("    movsd xmm0, [rsp-8]\n");
+            emit_asm("\tmov [rsp-8], rax\n");
+            emit_asm("\tmovsd xmm0, [rsp-8]\n");
         } else {
             die2(here, ": Unsupported literal type in generate_expression");
         }
@@ -256,10 +256,10 @@ fn generate_expression(node: Node*) {
     } else if (node.typ == AST_CONDITIONAL) {
         let label = ++gen_label_counter;
         generate_expression(node.conditional.cond);
-        emit_asm("    cmp rax, 0\n");
-        emit_asm("    je .cond_else_"); emit_num(label); emit_asm("\n");
+        emit_asm("\tcmp rax, 0\n");
+        emit_asm("\tje .cond_else_"); emit_num(label); emit_asm("\n");
         generate_expression(node.conditional.then);
-        emit_asm("    jmp .cond_end_"); emit_num(label); emit_asm("\n");
+        emit_asm("\tjmp .cond_end_"); emit_num(label); emit_asm("\n");
         emit_asm(".cond_else_"); emit_num(label); emit_asm(":\n");
         generate_expression(node.conditional.els);
         emit_asm(".cond_end_"); emit_num(label); emit_asm(":\n");
@@ -269,38 +269,38 @@ fn generate_expression(node: Node*) {
         let label = ++gen_label_counter;
         generate_expression(node.binary.lhs,);
         // If left is true, we can short-circuit
-        emit_asm("    cmp rax, 0\n");
-        emit_asm("    je .or_right_"); emit_num(label); emit_asm("\n");
-        emit_asm("    mov rax, 1\n");
-        emit_asm("    jmp .or_end_"); emit_num(label); emit_asm("\n");
+        emit_asm("\tcmp rax, 0\n");
+        emit_asm("\tje .or_right_"); emit_num(label); emit_asm("\n");
+        emit_asm("\tmov rax, 1\n");
+        emit_asm("\tjmp .or_end_"); emit_num(label); emit_asm("\n");
         emit_asm(".or_right_"); emit_num(label); emit_asm(":\n");
         generate_expression(node.binary.rhs);
         // Booleanize the result
-        emit_asm("    cmp rax, 0\n");
-        emit_asm("    setne al\n");
+        emit_asm("\tcmp rax, 0\n");
+        emit_asm("\tsetne al\n");
         emit_asm(".or_end_"); emit_num(label); emit_asm(":\n");
 
     } else if (node.typ == AST_AND) {
         let label = ++gen_label_counter;
         generate_expression(node.binary.lhs);
         // If left is false, we can short-circuit
-        emit_asm("    cmp rax, 0\n");
-        emit_asm("    jne .and_right_"); emit_num(label); emit_asm("\n");
-        emit_asm("    mov rax, 0\n");
-        emit_asm("    jmp .and_end_"); emit_num(label); emit_asm("\n");
+        emit_asm("\tcmp rax, 0\n");
+        emit_asm("\tjne .and_right_"); emit_num(label); emit_asm("\n");
+        emit_asm("\tmov rax, 0\n");
+        emit_asm("\tjmp .and_end_"); emit_num(label); emit_asm("\n");
         emit_asm(".and_right_"); emit_num(label); emit_asm(":\n");
         generate_expression(node.binary.rhs);
         // Booleanize the result
-        emit_asm("    cmp rax, 0\n");
-        emit_asm("    setne al\n");
+        emit_asm("\tcmp rax, 0\n");
+        emit_asm("\tsetne al\n");
         emit_asm(".and_end_"); emit_num(label); emit_asm(":\n");
 
     } else if (is_lvalue(node.typ)) {
         generate_lvalue_into_rax(node);
         if (is_float_type(node.etyp)) {
-            emit_asm("    movsd xmm0, [rax]\n");
+            emit_asm("\tmovsd xmm0, [rax]\n");
         } else if (size_for_type(node.etyp) == 8) {
-            emit_asm("    mov rax, [rax]\n");
+            emit_asm("\tmov rax, [rax]\n");
         } else {
             emit_asm3("    movsx rax, ", specifier_for_type(node.etyp), " [rax]\n");
         }
@@ -310,32 +310,32 @@ fn generate_expression(node: Node*) {
 
     } else if (node.typ == AST_BWINV) {
         generate_expression(node.unary);
-        emit_asm("    not rax\n");
+        emit_asm("\tnot rax\n");
 
     } else if (node.typ == AST_NEG) {
         generate_expression(node.unary);
         if (is_float_type(node.unary.etyp)) {
-            emit_asm("    xorps xmm1, xmm1\n");
-            emit_asm("    subps xmm1, xmm0\n");
-            emit_asm("    movsd xmm0, xmm1\n");
+            emit_asm("\txorps xmm1, xmm1\n");
+            emit_asm("\tsubps xmm1, xmm0\n");
+            emit_asm("\tmovsd xmm0, xmm1\n");
         } else {
-            emit_asm("    neg rax\n");
+            emit_asm("\tneg rax\n");
         }
 
     } else if (node.typ == AST_NOT) {
         generate_expression(node.unary);
-        emit_asm("    cmp rax, 0\n");
-        emit_asm("    sete al\n");
-        emit_asm("    movzx rax, al\n");
+        emit_asm("\tcmp rax, 0\n");
+        emit_asm("\tsete al\n");
+        emit_asm("\tmovzx rax, al\n");
 
     } else if (node.typ == AST_ASSIGN) {
         let var = node.assign.lhs;
         generate_lvalue_into_rax(var);
-        emit_asm("    push rax\n");
+        emit_asm("\tpush rax\n");
         generate_expression(node.assign.rhs);
-        emit_asm("    pop rcx\n");
+        emit_asm("\tpop rcx\n");
         if (is_float_type(node.assign.rhs.etyp)) {
-            emit_asm("    movsd [rcx], xmm0\n");
+            emit_asm("\tmovsd [rcx], xmm0\n");
         } else {
             emit_asm3("    mov [rcx], ", subregister_for_type(var.etyp), "\n");
         }
@@ -346,10 +346,10 @@ fn generate_expression(node: Node*) {
     } else if (node.typ == AST_CONVERT) {
         if (is_int_type(node.etyp) && is_float_type(node.unary.etyp)) {
             generate_expression(node.unary);
-            emit_asm("    cvttsd2si rax, xmm0\n");
+            emit_asm("\tcvttsd2si rax, xmm0\n");
         } else if (is_float_type(node.etyp) && is_int_type(node.unary.etyp)) {
             generate_expression(node.unary);
-            emit_asm("    cvtsi2sd xmm0, eax\n");
+            emit_asm("\tcvtsi2sd xmm0, eax\n");
         } else {
             die("Unsupported conversion");
         }
@@ -371,10 +371,10 @@ fn generate_switch_statement(node: Node*) {
     for (let i = 0; i < all_cases.size; ++i) {
         let cur_case: Node* = all_cases::at(i);
         let case_value = cur_case.case_stmt.val;
-        emit_asm("    cmp rax, "); emit_num(case_value); emit_asm("\n");
-        emit_asm("    je .case_"); emit_num(label); emit_asm("_"); emit_num(i); emit_asm("\n");
+        emit_asm("\tcmp rax, "); emit_num(case_value); emit_asm("\n");
+        emit_asm("\tje .case_"); emit_num(label); emit_asm("_"); emit_num(i); emit_asm("\n");
     }
-    emit_asm("    jmp .default_"); emit_num(label); emit_asm("\n");
+    emit_asm("\tjmp .default_"); emit_num(label); emit_asm("\n");
 
     for (let i = 0; i < all_cases.size; ++i) {
         let cur_case: Node* = all_cases::at(i);
@@ -391,7 +391,7 @@ fn generate_switch_statement(node: Node*) {
         for (let i = 0; i < defolt.size; ++i)
             generate_statement(defolt::at(i));
     }
-    emit_asm("    .break_"); emit_num(label); emit_asm(":\n");
+    emit_asm("\t.break_"); emit_num(label); emit_asm(":\n");
 
     gen_current_break = label;
 } 
@@ -402,10 +402,10 @@ fn generate_statement(node: Node*) {
         if (node.unary) {
             generate_expression(node.unary);
         } else {
-            emit_asm("    xor rax, rax\n"); // Default to 0
+            emit_asm("\txor rax, rax\n"); // Default to 0
         }
 
-        emit_asm("    push rax\n");
+        emit_asm("\tpush rax\n");
         // We want to "pop off" the defer stack so that nested defers don't loop
         // forever, but we'll restore it after the generating these
         let prev_defer_count = gen_defer_stack.size;
@@ -413,19 +413,19 @@ fn generate_statement(node: Node*) {
             generate_statement(gen_defer_stack::pop());
         }
         gen_defer_stack.size = prev_defer_count;
-        emit_asm("    pop rax\n");
+        emit_asm("\tpop rax\n");
 
-        emit_asm("    mov rsp, rbp\n");
-        emit_asm("    pop rbp\n");
-        emit_asm("    ret\n");
+        emit_asm("\tmov rsp, rbp\n");
+        emit_asm("\tpop rbp\n");
+        emit_asm("\tret\n");
     } else if (node.typ == AST_VARDECL) {
         if (node.var_decl.init) {
             generate_expression(node.var_decl.init);
             let offset = node.var_decl.var.offset;
             if (is_float_type(node.var_decl.init.etyp)) {
-                emit_asm("    movsd [rbp-"); emit_num(offset); emit_asm("], xmm0\n");
+                emit_asm("\tmovsd [rbp-"); emit_num(offset); emit_asm("], xmm0\n");
             } else {
-                emit_asm("    mov [rbp-"); emit_num(offset); emit_asm3("], ", subregister_for_type(node.var_decl.var.typ), "\n");
+                emit_asm("\tmov [rbp-"); emit_num(offset); emit_asm3("], ", subregister_for_type(node.var_decl.var.typ), "\n");
             }
         }
     } else if (node.typ == AST_BLOCK) {
@@ -442,22 +442,22 @@ fn generate_statement(node: Node*) {
         if (gen_defer_stack.size > 0)
             putsln("WARNING: 'defer' does not work in loops with break statements, you have been warned.");
 
-        emit_asm("    jmp .break_"); emit_num(gen_current_break); emit_asm("\n");
+        emit_asm("\tjmp .break_"); emit_num(gen_current_break); emit_asm("\n");
 
     } else if (node.typ == AST_IF) {
         let label = ++gen_label_counter;
         generate_expression(node.conditional.cond);
         // If we don't have an `else` clause, we can simplify
         if (node.conditional.els == null) {
-            emit_asm("    cmp rax, 0\n");
-            emit_asm("    je .if_end_"); emit_num(label); emit_asm("\n");
+            emit_asm("\tcmp rax, 0\n");
+            emit_asm("\tje .if_end_"); emit_num(label); emit_asm("\n");
             generate_statement(node.conditional.then);
             emit_asm(".if_end_"); emit_num(label); emit_asm(":\n");
         } else {
-            emit_asm("    cmp rax, 0\n");
-            emit_asm("    je .if_else_"); emit_num(label); emit_asm("\n");
+            emit_asm("\tcmp rax, 0\n");
+            emit_asm("\tje .if_else_"); emit_num(label); emit_asm("\n");
             generate_statement(node.conditional.then);
-            emit_asm("    jmp .if_end_"); emit_num(label); emit_asm("\n");
+            emit_asm("\tjmp .if_end_"); emit_num(label); emit_asm("\n");
             emit_asm(".if_else_"); emit_num(label); emit_asm(":\n");
             generate_statement(node.conditional.els);
             emit_asm(".if_end_"); emit_num(label); emit_asm(":\n");
@@ -469,10 +469,10 @@ fn generate_statement(node: Node*) {
         emit_asm(".loop_start_"); emit_num(label); emit_asm(":\n");
         emit_asm(".loop_continue_"); emit_num(label); emit_asm(":\n");
         generate_expression(node.looop.cond);
-        emit_asm("    cmp rax, 0\n");
-        emit_asm("    je .loop_end_"); emit_num(label); emit_asm("\n");
+        emit_asm("\tcmp rax, 0\n");
+        emit_asm("\tje .loop_end_"); emit_num(label); emit_asm("\n");
         generate_statement(node.looop.body);
-        emit_asm("    jmp .loop_start_"); emit_num(label); emit_asm("\n");
+        emit_asm("\tjmp .loop_start_"); emit_num(label); emit_asm("\n");
         emit_asm(".break_"); emit_num(label); emit_asm(":\n");
         emit_asm(".loop_end_"); emit_num(label); emit_asm(":\n");
         gen_current_break = prev_break;
@@ -489,14 +489,14 @@ fn generate_statement(node: Node*) {
         emit_asm(".loop_start_"); emit_num(label); emit_asm(":\n");
         if (node.looop.cond) {
             generate_expression(node.looop.cond);
-            emit_asm("    cmp rax, 0\n");
-            emit_asm("    je .loop_end_"); emit_num(label); emit_asm("\n");
+            emit_asm("\tcmp rax, 0\n");
+            emit_asm("\tje .loop_end_"); emit_num(label); emit_asm("\n");
         }
         generate_statement(node.looop.body);
         emit_asm(".loop_continue_"); emit_num(label); emit_asm(":\n");
         if (node.looop.step)
             generate_statement(node.looop.step);
-        emit_asm("    jmp .loop_start_"); emit_num(label); emit_asm("\n");
+        emit_asm("\tjmp .loop_start_"); emit_num(label); emit_asm("\n");
         emit_asm(".break_"); emit_num(label); emit_asm(":\n");
         emit_asm(".loop_end_"); emit_num(label); emit_asm(":\n");
         gen_current_break = prev_break;
@@ -527,19 +527,18 @@ fn generate_function(node: Node*) {
         return;
 
     let name: char* = get_func_name(node);
-    emit_asm3("global ", name, "\n");
     emit_asm2(name, ":\n");
-    emit_asm("    push rbp\n");
-    emit_asm("    mov rbp, rsp\n");
-    emit_asm("    sub rsp, "); emit_num(node.func.max_locals_size); emit_asm("\n");
+    emit_asm("\tpush rbp\n");
+    emit_asm("\tmov rbp, rsp\n");
+    emit_asm("\tsub rsp, "); emit_num(node.func.max_locals_size); emit_asm("\n");
 
     generate_block(node.func.body);
 
-    emit_asm("    mov rsp, rbp\n");
-    emit_asm("    pop rbp\n");
+    emit_asm("\tmov rsp, rbp\n");
+    emit_asm("\tpop rbp\n");
     // Return 0 by default if we don't have a return statement
-    emit_asm("    mov qword rax, 0\n");
-    emit_asm("    ret\n");
+    emit_asm("\tmov qword rax, 0\n");
+    emit_asm("\tret\n");
 }
 
 fn generate_program(ast: Node*, file: File*) {
@@ -561,23 +560,23 @@ fn generate_program(ast: Node*, file: File*) {
         emit_asm("global _main\n");
         emit_asm("_main:\n");
         // Push argv
-        emit_asm("    mov rax, rsi\n");
-        emit_asm("    push rax\n");
+        emit_asm("\tmov rax, rsi\n");
+        emit_asm("\tpush rax\n");
         // Push argc
-        emit_asm("    mov rax, rdi\n");
-        emit_asm("    push rax\n");
+        emit_asm("\tmov rax, rdi\n");
+        emit_asm("\tpush rax\n");
     } else {
         emit_asm("global _start\n");
         emit_asm("_start:\n");
 
-        emit_asm("    mov rbp, rsp\n");
+        emit_asm("\tmov rbp, rsp\n");
         // // Push argv
-        emit_asm("    mov rax, rbp\n");
-        emit_asm("    add rax, 8\n");
-        emit_asm("    push rax\n");
+        emit_asm("\tmov rax, rbp\n");
+        emit_asm("\tadd rax, 8\n");
+        emit_asm("\tpush rax\n");
         // Push argc
-        emit_asm("    mov rax, [rbp]\n");
-        emit_asm("    push rax\n");
+        emit_asm("\tmov rax, [rbp]\n");
+        emit_asm("\tpush rax\n");
     }
 
     // Initialize all the global variables
@@ -587,20 +586,20 @@ fn generate_program(ast: Node*, file: File*) {
             let expr = node.var_decl.init;
             generate_expression(node.var_decl.init);
             let offset = node.var_decl.var.offset;
-            emit_asm("    mov rcx, global_vars\n");
-            emit_asm("    add rcx, "); emit_num(offset); emit_asm("\n");
+            emit_asm("\tmov rcx, qword gvars\n");
+            emit_asm("\tadd rcx, "); emit_num(offset); emit_asm("\n");
             emit_asm3("    mov [rcx], ", subregister_for_type(expr.etyp), "\n");
         }
     }
 
-    emit_asm("    call func_main\n");
-    emit_asm("    mov rdi, rax\n");
+    emit_asm("\tcall func_main\n");
+    emit_asm("\tmov rdi, rax\n");
     generate_syscall(SYS_exit);
 
     generate_builtins();
 
     emit_asm("section .bss\n");
-    emit_asm("    global_vars: resb "); emit_num(p_global_offset); emit_asm("\n");
+    emit_asm("\tgvars: resb "); emit_num(p_global_offset); emit_asm("\n");
 
     // Global strings
     emit_asm("section .data\n");
@@ -608,7 +607,7 @@ fn generate_program(ast: Node*, file: File*) {
     //       cause invalid output and break everything. Maybe just output the
     //       byte values.
     for (let i = 0; i < gen_string_literals.size; ++i) {
-        emit_asm("    global_string_"); emit_num(i);
+        emit_asm("    gs_"); emit_num(i);
         emit_asm(": db \`"); emit_asm(gen_string_literals::at(i)); emit_asm("\`, 0\n");
     }
 }
