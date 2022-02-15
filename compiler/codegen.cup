@@ -607,7 +607,7 @@ fn generate_program(ast: Node*, file: File*) {
     //       cause invalid output and break everything. Maybe just output the
     //       byte values.
     for (let i = 0; i < gen_string_literals.size; ++i) {
-        emit_asm("    gs_"); emit_num(i);
+        emit_asm("\tgs_"); emit_num(i);
         emit_asm(": db \`"); emit_asm(gen_string_literals::at(i)); emit_asm("\`, 0\n");
     }
 }
