@@ -72,6 +72,12 @@ method File::putu(n: int) {
     self::write(buf, len);
 }
 
+method File::seek(offset: int, whence: int) {
+    let n = lseek(self.fd, offset, whence);
+    if (n < 0)
+        die("Could not seek in file");
+}
+
 // Resets file position to the beginning of the file
 method File::size(): int {
     let pos = lseek(self.fd, 0, SEEK_CUR);
