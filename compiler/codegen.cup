@@ -111,10 +111,10 @@ fn generate_binop_int_arith(node: Node*) {
         if (node.typ == AST_MOD)
             emit_asm("\tmov rax, rdx\n");
     } else if (node.typ == AST_LSHIFT || node.typ == AST_RSHIFT) {
-        emit_asm3("    ", op, " rax, cl\n");
+        emit_asm3("\t", op, " rax, cl\n");
 
     } else {
-        emit_asm3("    ", op, " rax, rcx\n");
+        emit_asm3("\t", op, " rax, rcx\n");
     }
 }
 
@@ -136,7 +136,7 @@ fn generate_binop_float_arith(node: Node*) {
         die2(here, "Unsupported binary op in generate_binop_float_arith");
     }
 
-    emit_asm3("    ", op, " xmm0, xmm1\n");
+    emit_asm3("\t", op, " xmm0, xmm1\n");
 }
 
 fn generate_cmp_int(node: Node*) {
@@ -176,10 +176,10 @@ fn generate_binop(node: Node*) {
 
     if (is_float_type(node.binary.rhs.etyp)) {
         generate_cmp_float(node);
-        emit_asm3("    ", u_op, " al\n");
+        emit_asm3("\t", u_op, " al\n");
     } else {
         generate_cmp_int(node);
-        emit_asm3("    ", s_op, " al\n");
+        emit_asm3("\t", s_op, " al\n");
     }
     emit_asm("\tmovzx rax, al\n");
 }
@@ -225,7 +225,7 @@ fn generate_function_call(node: Node*) {
         total_size = total_size + 8;
     }
     let name: char* = get_func_name(node.call.func);
-    emit_asm3("    call ", name, "\n");
+    emit_asm3("\tcall ", name, "\n");
     emit_asm("\tadd rsp, "); emit_num(total_size); emit_asm("\n");
 }
 
@@ -244,7 +244,7 @@ fn generate_expression(node: Node*) {
             let s = node.literal.as_string;
             let idx = gen_string_literals.size;
             gen_string_literals::push(s);
-            emit_asm3("    mov rax, __float64__(", s,")\n");
+            emit_asm3("\tmov rax, __float64__(", s,")\n");
             emit_asm("\tmov [rsp-8], rax\n");
             emit_asm("\tmovsd xmm0, [rsp-8]\n");
         } else {
@@ -302,7 +302,7 @@ fn generate_expression(node: Node*) {
         } else if (size_for_type(node.etyp) == 8) {
             emit_asm("\tmov rax, [rax]\n");
         } else {
-            emit_asm3("    movsx rax, ", specifier_for_type(node.etyp), " [rax]\n");
+            emit_asm3("\tmovsx rax, ", specifier_for_type(node.etyp), " [rax]\n");
         }
 
     } else if (is_binary_op(node.typ)) {
@@ -337,7 +337,7 @@ fn generate_expression(node: Node*) {
         if (is_float_type(node.assign.rhs.etyp)) {
             emit_asm("\tmovsd [rcx], xmm0\n");
         } else {
-            emit_asm3("    mov [rcx], ", subregister_for_type(var.etyp), "\n");
+            emit_asm3("\tmov [rcx], ", subregister_for_type(var.etyp), "\n");
         }
 
     } else if (node.typ == AST_FUNCCALL) {
@@ -588,7 +588,7 @@ fn generate_program(ast: Node*, file: File*) {
             let offset = node.var_decl.var.offset;
             emit_asm("\tmov rcx, qword gvars\n");
             emit_asm("\tadd rcx, "); emit_num(offset); emit_asm("\n");
-            emit_asm3("    mov [rcx], ", subregister_for_type(expr.etyp), "\n");
+            emit_asm3("\tmov [rcx], ", subregister_for_type(expr.etyp), "\n");
         }
     }
 
