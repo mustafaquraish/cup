@@ -80,6 +80,7 @@ fn get_escaped_char(c: char): char {
         case 'n': return '\n';
         case 'r': return '\r';
         case 't': return '\t';
+        case '"': return '"';
         case '\\': return '\\';
         case 39: return 39;    // Single quote
         case '0': return 0;
