@@ -88,7 +88,7 @@ fn main(argc: int, argv: char **): int {
 
     let asm_filename: char[256];
     strcpy(asm_filename, m_output_filename);
-    replace_extension(asm_filename, ".nasm");
+    replace_extension(asm_filename, ".yasm");
 
     let out_file = fopen(asm_filename, 'w');
     generate_program(ast, out_file);
@@ -100,7 +100,7 @@ fn main(argc: int, argv: char **): int {
 
     let cmd_args: char*[10];
     // FIXME: Is there a way to do this without hardcoding the exact path?
-    cmd_args[0] = OS_IS_MACOS ? "/usr/local/bin/nasm" : "/usr/bin/nasm";
+    cmd_args[0] = OS_IS_MACOS ? "/usr/local/bin/yasm" : "/usr/bin/yasm";
     cmd_args[1] = OS_IS_MACOS ? "-fmacho64" : "-felf64";
     cmd_args[2] = "-o";
     cmd_args[3] = obj_filename;

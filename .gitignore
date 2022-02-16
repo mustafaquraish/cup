@@ -5,13 +5,13 @@ cupcc
 *.DS_Store
 test/*
 
-*.nasm
+*.yasm
 *.o
 *.out
 
 !bootstrap
-!bootstrap/linux.nasm
-!bootstrap/macos.nasm
+!bootstrap/linux.yasm
+!bootstrap/macos.yasm
 
 build
 

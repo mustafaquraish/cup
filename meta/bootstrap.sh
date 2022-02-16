@@ -7,13 +7,13 @@ set -e
 echo "[+] Compiling the bootstrap compiler..."
 case "$(uname -s)" in
    Darwin)
-        cp bootstrap/macos.nasm bootstrap/cupcc.nasm
-        nasm -f macho64 -o bootstrap/cupcc.o bootstrap/cupcc.nasm
+        cp bootstrap/macos.yasm bootstrap/cupcc.yasm
+        yasm -f macho64 -o bootstrap/cupcc.o bootstrap/cupcc.yasm
         ld -lSystem -o bootstrap/cupcc bootstrap/cupcc.o
         ;;
    Linux)
-        cp bootstrap/linux.nasm bootstrap/cupcc.nasm
-        nasm -f elf64 -o bootstrap/cupcc.o bootstrap/cupcc.nasm
+        cp bootstrap/linux.yasm bootstrap/cupcc.yasm
+        yasm -f elf64 -o bootstrap/cupcc.o bootstrap/cupcc.yasm
         ld -o bootstrap/cupcc bootstrap/cupcc.o
         ;;
 esac

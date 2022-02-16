@@ -2,7 +2,7 @@
 
 A badly named, in-progress programming language just to learn how these things work. Wait, doesn't everyone write a compiler when they're bored?
 
-Currently, the language is comparable to C, with some syntax changes inspired by Rust (that also make it a little easier to parse). The compiler outputs assembly code in `nasm` format, so you will need [nasm](https://www.nasm.us/) and a linker of your choice to compile it. The included Makefile and scripts use `ld`.
+Currently, the language is comparable to C, with some syntax changes inspired by Rust (that also make it a little easier to parse). The compiler outputs assembly code in `yasm` format, so you will need [yasm](https://yasm.tortall.net/) and a linker of your choice to compile it. The included Makefile and scripts use `ld`. (Alternatively, you can use `nasm`, but you will have to change the command being run in `compiler/main.cup` and `meta/bootstrap.sh`)
 
 Only linux and macOS (only on x86_64) are supported.
 
@@ -12,15 +12,15 @@ Only linux and macOS (only on x86_64) are supported.
 
 For now, there's no support for looking at the `PATH`, so it's a bin wonky. Make sure that you have the following tools (with the executables avialable in the correct places, or you might need to modify the paths manually in `main/compiler.cup`):
 
-- `nasm`: The assembler we are using.
-    - On linux, the code expects to find this at `/usr/bin/nasm`.
-    - On macOS, the code expects to find this at `/usr/local/bin/nasm`.
+- `yasm`: The assembler we are using.
+    - On linux, the code expects to find this at `/usr/bin/yasm`.
+    - On macOS, the code expects to find this at `/usr/local/bin/yasm`.
 - `ld`: The linker we are using.
     - On both linux and macOS, the code expects to find this at `/usr/bin/ld`.
 
 ### Compiling
 
-The reference implementation of the compiler is written in CUP, so you'll need to use the pre-compiled NASM files to get the initial executable. You should be able to run the command below to create the `./build/cupcc` compiler:
+The reference implementation of the compiler is written in CUP, so you'll need to use the pre-compiled YASM files to get the initial executable. You should be able to run the command below to create the `./build/cupcc` compiler:
 ```bash
 $ ./meta/bootstrap.sh
 ```
@@ -31,7 +31,7 @@ $ ./prog 1 2 3 4
 # OR
 $ ./build/cupcc /path/to/program.cup -o prog -r 1 2 3 4
 ```
-Make sure to not have the executable name end in `.nasm` or `.o`, since there are some temporary files created during compilation.
+Make sure to not have the executable name end in `.yasm` or `.o`, since there are some temporary files created during compilation.
 
 ---
 
