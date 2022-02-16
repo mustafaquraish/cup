@@ -75,6 +75,21 @@ method Lexer::make_token(token: Token*, typ: int, inc: int) {
     token.typ = typ;
 }
 
+fn get_escaped_char(c: char): char {
+    switch (c) {
+        case 'n': return '\n';
+        case 'r': return '\r';
+        case 't': return '\t';
+        case '\\': return '\\';
+        case 39: return 39;    // Single quote
+        case '0': return 0;
+        default: {
+            puts(here); puts(": Unknown escape char: "); putc(c); puts(" ("); putu(c); putsln(")");
+            die("exiting.");
+        }
+    }
+}
+
 method Lexer::next(token: Token*) {
     while (self.pos < self.len) {
         let c = self.src[self.pos];
@@ -295,6 +310,19 @@ method Lexer::next(token: Token*) {
                     let str: char* = malloc(str_len + 1);
                     memcpy(str, self.src + self.pos + 1, str_len);
                     str[str_len] = '\0';
+
+                    // Loop over the string and handle escaped characters
+                    let opos = 0; // Position in original string
+                    let npos = 0; // Position in new string
+                    while (opos < str_len + 1) {
+                        if (str[opos] == '\\')
+                            str[npos] = get_escaped_char(str[++opos]);
+                        else
+                            str[npos] = str[opos];
+                        ++opos;
+                        ++npos;
+                    }
+
                     token_from_string(token, str, &loc);
                     self::advance(pos - self.pos + 1);
                     return;
@@ -305,19 +333,8 @@ method Lexer::next(token: Token*) {
                     // TODO: Handle malformed / incomplete literals
                     // TODO: Handle escapes
                     c = self.src[pos];
-                    if (c == '\\') {
-                        ++pos;
-                        c = self.src[pos];
-                            if (c == 'n')  { c = '\n'; }
-                        else if (c == 't')  { c = '\t'; }
-                        else if (c == 'n')  { c = '\n'; }
-                        else if (c == 'r')  { c = '\r'; }
-                        else if (c == 't')  { c = '\t'; }
-                        else if (c == '0')  { c = '\0'; }
-                        else { }
-                        // TODO: Handle octal and hex escapes
-                    }
-
+                    if (c == '\\')
+                    c = get_escaped_char(self.src[++pos]);
                     let loc: Location;
                     self::loc(&loc);
                     token_from_char(token, c, &loc);
