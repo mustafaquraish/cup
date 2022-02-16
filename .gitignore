@@ -6,6 +6,7 @@ cupcc
 test/*
 
 *.yasm
+*.nasm
 *.o
 *.out
 
