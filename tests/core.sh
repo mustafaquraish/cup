@@ -10,6 +10,18 @@ assert_exit_status 'fn main(): int { return 1; }' 1
 assert_exit_status 'fn main(): int { return 100; }' 100
 echo " OK"
 
+
+echo -n "- Parsing Literals: "
+assert_exit_status 'fn main(): int { return 123; }' 123
+assert_exit_status 'fn main(): int { return 0xa3; }' 163
+assert_exit_status 'fn main(): int { return 0b110101; }' 53
+assert_exit_status 'fn main(): int { return (1.5 * 2.0); }' 3
+assert_exit_status "fn main(): int { return '\`'; }" 96
+assert_exit_status "fn main(): int { return '\0'; }" 0
+assert_exit_status "fn main(): int { return '\''; }" 39
+assert_exit_status "fn main(): int { return \"hi\\\"there\"[2]; }" 34
+echo " OK"
+
 echo -n "- Unary ops: "
 assert_exit_status 'fn main(): int { return -1; }' 255
 assert_exit_status 'fn main(): int { return -100; }' 156
