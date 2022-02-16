@@ -6,6 +6,7 @@ let gen_out_file: File*;
 let gen_label_counter = -1; // So the labels start at 0
 
 let gen_string_literals = vector_new();
+let gen_float_literals = vector_new();
 let gen_defer_stack = vector_new();
 
 let gen_current_break = -2;
@@ -242,9 +243,9 @@ fn generate_expression(node: Node*) {
             emit_asm("\tmov rax, qword gs_"); emit_num(idx); emit_asm("\n");
         } else if (node.etyp.typ == TYPE_F64) {
             let s = node.literal.as_string;
-            let idx = gen_string_literals.size;
-            gen_string_literals::push(s);
-            emit_asm3("\tmov rax, __float64__(", s,")\n");
+            let idx = gen_float_literals.size;
+            gen_float_literals::push(s);
+            emit_asm("\tmov rax, [qword gf_"); emit_num(idx); emit_asm("]\n");
             emit_asm("\tmov [rsp-8], rax\n");
             emit_asm("\tmovsd xmm0, [rsp-8]\n");
         } else {
@@ -296,11 +297,14 @@ fn generate_expression(node: Node*) {
         emit_asm(".and_end_"); emit_num(label); emit_asm(":\n");
 
     } else if (is_lvalue(node.typ)) {
+        let node_sz = size_for_type(node.etyp);
         generate_lvalue_into_rax(node);
         if (is_float_type(node.etyp)) {
             emit_asm("\tmovsd xmm0, [rax]\n");
-        } else if (size_for_type(node.etyp) == 8) {
+        } else if (node_sz == 8) {
             emit_asm("\tmov rax, [rax]\n");
+        } else if (node_sz == 4) {
+            emit_asm("\tmovsxd rax, dword [rax]\n");
         } else {
             emit_asm3("\tmovsx rax, ", specifier_for_type(node.etyp), " [rax]\n");
         }
@@ -394,7 +398,7 @@ fn generate_switch_statement(node: Node*) {
     emit_asm("\t.break_"); emit_num(label); emit_asm(":\n");
 
     gen_current_break = label;
-} 
+}
 
 
 fn generate_statement(node: Node*) {
@@ -603,13 +607,14 @@ fn generate_program(ast: Node*, file: File*) {
 
     // Global strings
     emit_asm("section .data\n");
-    // TODO: Don't to this here because a string containing a backtick will
-    //       cause invalid output and break everything. Maybe just output the
-    //       byte values.
     for (let i = 0; i < gen_string_literals.size; ++i) {
         emit_asm("\tgs_"); emit_num(i); emit_asm(": db ");
         let s: char* = gen_string_literals::at(i);
         while (*s) { emit_num(*s); emit_asm(","); ++s; }
         emit_asm("0\n");
+    }
+    for (let i = 0; i < gen_float_literals.size; ++i) {
+        emit_asm("\tgf_"); emit_num(i);
+        emit_asm3(": dq ", gen_float_literals::at(i), "\n");
     }
 }
