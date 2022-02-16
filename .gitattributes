@@ -1,3 +1,4 @@
 *.cup linguist-language=Rust
+*.yasm linguist-language=Assembly
 bootstrap/*.yasm binary -text -diff
 bootstrap/* linguist-vendored
