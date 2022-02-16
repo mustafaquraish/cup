@@ -1148,7 +1148,10 @@ fn parse_struct_union_declaration(lexer: Lexer*, top_level: int, base_offset: in
         if (token.typ == TOKEN_STRUCT || token.typ == TOKEN_UNION) {
             // Compute the "base offset" for the nested struct, which is the offset from the start
             // of the struct the last **named** field in the heirarchy above
-            let cur_base_offset = (name == null) ? base_offset + compound.size : 0;
+            let cur_base_offset = 0;
+            if (name == null) {
+                cur_base_offset = base_offset + (compound.typ == TYPE_UNION ? 0 : compound.size);
+            }
 
             // If the field didn't have a name, we can assign one now, since we know it's a
             // temporary struct. This name will never be directly referenced, so it's fine.
