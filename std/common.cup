@@ -318,7 +318,7 @@ fn WEXITSTATUS(status: int): int {
     return (status >> 8) & 127;
 }
 
-fn run_command(args: char**, echo: int) {
+fn run_command_env(args: char**, envp: char**, echo: int) {
     if (echo) {
         puts("[+]");
         for (let c = args; *c; ++c) {
@@ -329,7 +329,7 @@ fn run_command(args: char**, echo: int) {
 
     let pid = fork();
     if (pid == 0) {
-        execve(args[0], args, null);
+        execve(args[0], args, envp);
         die2(here, ": Error in execve()");
     }
     // Parent
@@ -349,3 +349,53 @@ fn run_command(args: char**, echo: int) {
     }
 }
 
+fn run_command(args: char**, echo: int) {
+    run_command_env(args, null, echo);
+}
+
+// FIXME: use the "access" function instead
+fn file_exists(file: char*): int {
+    if (OS_IS_MACOS) die("file_exists not implemented for macos");
+    let fd = open(file, O_RDONLY, 0);
+    if (fd < 0) {
+        return 0;
+    }
+    close(fd);
+    return 1;
+}
+
+fn join_paths(a: char*, a_len: int, b: char*, b_len: int): char* {
+    let buffer: char* = malloc(a_len + 1 + b_len + 1);
+    memcpy(buffer, a, a_len);
+    buffer[a_len] = '/';
+    memcpy(buffer + a_len + 1, b, b_len);
+    buffer[a_len + 1 + b_len] = 0;
+    return buffer;
+}
+
+fn which_helper(path: char*, path_len: int, prog: char*): char* {
+    let prog_path = join_paths(path, path_len, prog, strlen(prog));
+    //puts("which: checking '");puts(prog_path);puts("'\n");
+    if (file_exists(prog_path)) {
+        return prog_path;
+    }
+    free(prog_path);
+    return null;
+}
+
+// find 'prog' in PATH
+fn which(path: char*, prog: char*): char* {
+    let start = 0;
+    let i = 0;
+    while (path[i]) {
+        if (path[i] == ':') {
+            let result = which_helper(path + start, i - start, prog);
+            if (result) return result;
+            start = i + 1;
+            i = start;
+        } else {
+            i = i + 1;
+        }
+    }
+    return which_helper(path + start, i - start, prog);
+}

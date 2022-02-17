@@ -78,6 +78,9 @@ fn parse_cli_args(argc: int, argv: char**): char** {
 }
 
 fn main(argc: int, argv: char **): int {
+    // FIXME: this works on linux/x86_64 but may not work on other OS/arch combos
+    let envp = argv + argc + 1;
+
     let subproc_args = parse_cli_args(argc, argv);
     
     let lexer = lexer_new(m_filename, m_source, m_source_len);
@@ -98,9 +101,22 @@ fn main(argc: int, argv: char **): int {
     strcpy(obj_filename, m_output_filename);
     replace_extension(obj_filename, ".o");
 
+    let path: char* = "";
+    for (let i = 0; envp[i]; ++i) {
+        if (strstartswith(envp[i], "PATH=")) {
+            path = envp[i] + 5;
+            break;
+        }
+    }
+
+    // FIXME: 'which' not working on macos
+    let yasm = OS_IS_MACOS ? "/usr/local/bin/yasm" : which(path, "yasm");
+    if (!yasm) {
+        putsln("Error: yasm not found in PATH");
+        return 1;
+    }
     let cmd_args: char*[10];
-    // FIXME: Is there a way to do this without hardcoding the exact path?
-    cmd_args[0] = OS_IS_MACOS ? "/usr/local/bin/yasm" : "/usr/bin/yasm";
+    cmd_args[0] = yasm;
     cmd_args[1] = OS_IS_MACOS ? "-fmacho64" : "-felf64";
     cmd_args[2] = "-o";
     cmd_args[3] = obj_filename;
@@ -108,7 +124,13 @@ fn main(argc: int, argv: char **): int {
     cmd_args[5] = null;
     run_command(cmd_args, !m_silent);
 
-    cmd_args[0] = "/usr/bin/ld";
+    // FIXME: 'which' not working on macos
+    let ld = OS_IS_MACOS ? "/usr/bin/ld" : which(path, "ld");
+    if (!ld) {
+        putsln("Error: ld not found in PATH");
+        return 1;
+    }
+    cmd_args[0] = ld;
     cmd_args[1] = "-o";
     cmd_args[2] = m_output_filename;
     cmd_args[3] = obj_filename;
@@ -122,7 +144,7 @@ fn main(argc: int, argv: char **): int {
     if (m_run_exec) {
         --subproc_args; // Always valid
         subproc_args[0] = m_output_filename;
-        run_command(subproc_args, !m_silent);
+        run_command_env(subproc_args, envp, !m_silent);
     }
 
     // puts("---------------------------\n");
