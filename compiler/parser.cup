@@ -262,7 +262,6 @@ fn parse_function_call_args(lexer: Lexer*, func: Node*, obj_ptr: Node*): Node* {
         node.call.args::push(obj_ptr);
 
     while (token.typ != TOKEN_CLOSE_PAREN) {
-        // TODO: Check types
         let arg = parse_expression(lexer);
         node.call.args::push(arg);
 
@@ -753,7 +752,6 @@ fn parse_var_declaration(lexer: Lexer*): Node* {
 
     let is_global = (p_current_function == null);
 
-    // TODO: check if identifier is already defined
     let node = node_new(AST_VARDECL);
     let decl = &node.var_decl;
     decl.var.name = token.value.as_string;
@@ -804,7 +802,6 @@ fn parse_function_params(lexer: Lexer*, func: Node*) {
     if (!func.func.args)
         func.func.args = vector_new();
 
-    // TODO: Actually parse params
     while (token.typ != TOKEN_CLOSE_PAREN) {
         lexer::next_assert(&token, TOKEN_IDENTIFIER);
         let name = token.value.as_string;
@@ -1063,12 +1060,11 @@ fn parse_block(lexer: Lexer*): Node* {
     return block;
 }
 
-// FIXME: Make this a real type
 fn parse_enum_declaration(lexer: Lexer*) {
     let token: Token;
-    // TODO: This is all a hack to automatically number
-    //       Some constants. It does not behave like a type,
-    //       and cannot be used as one. Fix this in the future.
+    // FIXME: This is all a hack to automatically number
+    //        Some constants. It does not behave like a type,
+    //        and cannot be used as one. Fix this in the future.
     lexer::next_assert(&token, TOKEN_ENUM);
     lexer::next_assert(&token, TOKEN_IDENTIFIER); // Use this!
     lexer::next_assert(&token, TOKEN_OPEN_BRACE);
@@ -1194,7 +1190,6 @@ fn parse_method(lexer: Lexer*): Node* {
     lexer::next_assert(&token, TOKEN_COLONCOLON);
     lexer::next_assert(&token, TOKEN_IDENTIFIER);
 
-    // TODO: Check if identifier exists
     let func = node_new(AST_FUNC);
     func.func.name = token.value.as_string;
     func.func.is_method = true;
@@ -1257,7 +1252,6 @@ fn parse_function(lexer: Lexer*): Node* {
     lexer::next_assert(&token, TOKEN_FN);
     lexer::next_assert(&token, TOKEN_IDENTIFIER);
 
-    // TODO: Check if identifier exists
     let func = node_new(AST_FUNC);
     let dfunc = func;
     func.func.name = token.value.as_string;

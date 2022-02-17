@@ -607,7 +607,7 @@ fn convert_type(to: Type*, from_node: Node*): Node* {
         if (from.ptr.typ == TYPE_VOID || to.ptr.typ == TYPE_VOID)
             return from_node;
 
-    // TODO: Should we rause a warning if the target type is narrower
+    // TODO: Should we raise a warning if the target type is narrower
     //       than the source type?
     if (is_int_type(from) && is_int_type(to))
         return from_node;

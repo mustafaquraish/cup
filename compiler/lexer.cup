@@ -331,13 +331,14 @@ method Lexer::next(token: Token*) {
 
                 if (c == '\'') {
                     let pos = self.pos + 1;
-                    // TODO: Handle malformed / incomplete literals
-                    // TODO: Handle escapes
+                    // TODO: Handle incomplete literals
                     c = self.src[pos];
                     if (c == '\\')
-                    c = get_escaped_char(self.src[++pos]);
+                        c = get_escaped_char(self.src[++pos]);
                     let loc: Location;
                     self::loc(&loc);
+                    if (self.src[pos+1] != '\'')
+                        die_loc(here, &loc, "Malformed character literal");
                     token_from_char(token, c, &loc);
                     self::advance(pos - self.pos + 2);
                     return;
