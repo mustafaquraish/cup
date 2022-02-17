@@ -563,6 +563,9 @@ fn generate_program(ast: Node*, file: File*) {
     if (OS_IS_MACOS) {
         emit_asm("global _main\n");
         emit_asm("_main:\n");
+        // Push envp
+        emit_asm("\tmov rax, rdx\n");
+        emit_asm("\tpush rax\n");
         // Push argv
         emit_asm("\tmov rax, rsi\n");
         emit_asm("\tpush rax\n");
@@ -574,7 +577,13 @@ fn generate_program(ast: Node*, file: File*) {
         emit_asm("_start:\n");
 
         emit_asm("\tmov rbp, rsp\n");
-        // // Push argv
+        // Push envp
+        emit_asm("\tmov rax, [rbp]\n");
+        emit_asm("\tadd rax, 2\n");
+        emit_asm("\tshl rax, 3\n");
+        emit_asm("\tadd rax, rbp\n");
+        emit_asm("\tpush rax\n");
+        // Push argv
         emit_asm("\tmov rax, rbp\n");
         emit_asm("\tadd rax, 8\n");
         emit_asm("\tpush rax\n");
