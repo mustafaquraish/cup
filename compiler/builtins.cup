@@ -172,6 +172,11 @@ fn generate_builtins() {
             emit_asm(", [rsp+"); emit_num((i+1)*8); emit_asm("]\n");
         }
         emit_asm("    syscall\n");
+        if (OS_IS_MACOS) {
+            emit_asm("    jnc .L2\n");
+            emit_asm("    neg rax\n");
+            emit_asm(".L2:\n");
+        }
         emit_asm("    ret\n");
     }
 
