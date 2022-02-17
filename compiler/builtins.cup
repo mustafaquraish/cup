@@ -20,7 +20,7 @@ fn constant_push(name: char*, val: int);
 
 const MACOS_SYSCALL_OFFSET = 33554432; // 0x2000000;
 fn builtins_push_posix_constants() {
-    
+
     constant_push("SYS_execve", SYS_execve);
     constant_push("SYS_read", SYS_read);
     constant_push("SYS_write", SYS_write);
@@ -43,7 +43,7 @@ fn builtins_push_posix_constants() {
     constant_push("O_CREAT", O_CREAT);
     constant_push("O_EXCL", O_EXCL);
     constant_push("O_TRUNC", O_TRUNC);
-    constant_push("AT_FDCWD", AT_FDCWD);   
+    constant_push("AT_FDCWD", AT_FDCWD);
 
     constant_push("PROT_READ", PROT_READ);
     constant_push("PROT_WRITE", PROT_WRITE);
@@ -118,39 +118,39 @@ fn generate_syscall(num: int);
 
 fn generate_builtins() {
     emit_asm("func_print:\n");
-    emit_asm("    mov rdi, [rsp+8]\n");
-    emit_asm("    mov r9, -3689348814741910323\n");
-    emit_asm("    sub rsp, 40\n");
-    emit_asm("    mov byte [rsp+31], 10\n");
-    emit_asm("    lea rcx, [rsp+30]\n");
-    emit_asm("    mov qword rbx, 0\n");
+    emit_asm("\tmov rdi, [rsp+8]\n");
+    emit_asm("\tmov r9, -3689348814741910323\n");
+    emit_asm("\tsub rsp, 40\n");
+    emit_asm("\tmov byte [rsp+31], 10\n");
+    emit_asm("\tlea rcx, [rsp+30]\n");
+    emit_asm("\tmov qword rbx, 0\n");
     emit_asm(".L2:\n");
-    emit_asm("    mov rax, rdi\n");
-    emit_asm("    lea r8, [rsp+32]\n");
-    emit_asm("    mul r9\n");
-    emit_asm("    mov rax, rdi\n");
-    emit_asm("    sub r8, rcx\n");
-    emit_asm("    shr rdx, 3\n");
-    emit_asm("    lea rsi, [rdx+rdx*4]\n");
-    emit_asm("    add rsi, rsi\n");
-    emit_asm("    sub rax, rsi\n");
-    emit_asm("    add eax, 48\n");
-    emit_asm("    mov byte [rcx], al\n");
-    emit_asm("    mov rax, rdi\n");
-    emit_asm("    mov rdi, rdx\n");
-    emit_asm("    mov rdx, rcx\n");
-    emit_asm("    sub rcx, 1\n");
-    emit_asm("    cmp rax, 9\n");
-    emit_asm("    ja .L2\n");
-    emit_asm("    lea rax, [rsp+32]\n");
-    emit_asm("    mov edi, 1\n");
-    emit_asm("    sub rdx, rax\n");
-    emit_asm("    xor eax, eax\n");
-    emit_asm("    lea rsi, [rsp+32+rdx]\n");
-    emit_asm("    mov rdx, r8\n");
+    emit_asm("\tmov rax, rdi\n");
+    emit_asm("\tlea r8, [rsp+32]\n");
+    emit_asm("\tmul r9\n");
+    emit_asm("\tmov rax, rdi\n");
+    emit_asm("\tsub r8, rcx\n");
+    emit_asm("\tshr rdx, 3\n");
+    emit_asm("\tlea rsi, [rdx+rdx*4]\n");
+    emit_asm("\tadd rsi, rsi\n");
+    emit_asm("\tsub rax, rsi\n");
+    emit_asm("\tadd eax, 48\n");
+    emit_asm("\tmov byte [rcx], al\n");
+    emit_asm("\tmov rax, rdi\n");
+    emit_asm("\tmov rdi, rdx\n");
+    emit_asm("\tmov rdx, rcx\n");
+    emit_asm("\tsub rcx, 1\n");
+    emit_asm("\tcmp rax, 9\n");
+    emit_asm("\tja .L2\n");
+    emit_asm("\tlea rax, [rsp+32]\n");
+    emit_asm("\tmov edi, 1\n");
+    emit_asm("\tsub rdx, rax\n");
+    emit_asm("\txor eax, eax\n");
+    emit_asm("\tlea rsi, [rsp+32+rdx]\n");
+    emit_asm("\tmov rdx, r8\n");
     generate_syscall(SYS_write);
-    emit_asm("    add rsp, 40\n");
-    emit_asm("    ret\n");
+    emit_asm("\tadd rsp, 40\n");
+    emit_asm("\tret\n");
 
     // Syscalls
     let x86_64_sysc_regs: char*[10];
@@ -168,34 +168,34 @@ fn generate_builtins() {
     for (let sysc_args = 0; sysc_args < 7; ++sysc_args) {
         emit_asm("func_syscall"); emit_num(sysc_args); emit_asm(":\n");
         for (let i = 0; i < sysc_args+1; ++i) {
-            emit_asm("    mov "); emit_asm(x86_64_sysc_regs[i]); 
+            emit_asm("\tmov "); emit_asm(x86_64_sysc_regs[i]);
             emit_asm(", [rsp+"); emit_num((i+1)*8); emit_asm("]\n");
         }
-        emit_asm("    syscall\n");
+        emit_asm("\tsyscall\n");
         if (OS_IS_MACOS) {
-            emit_asm("    jnc .L2\n");
-            emit_asm("    neg rax\n");
+            emit_asm("\tjnc .L2\n");
+            emit_asm("\tneg rax\n");
             emit_asm(".L2:\n");
         }
-        emit_asm("    ret\n");
+        emit_asm("\tret\n");
     }
 
     emit_asm("func_fork:\n");
-    emit_asm("    mov rdi, [rsp+8]\n");
-    emit_asm("    mov rax, "); emit_num(SYS_fork); emit_asm("\n");
-    emit_asm("    syscall\n");
+    emit_asm("\tmov rdi, [rsp+8]\n");
+    emit_asm("\tmov rax, "); emit_num(SYS_fork); emit_asm("\n");
+    emit_asm("\tsyscall\n");
     if (OS_IS_MACOS) {
         // If rdx is 0, we are in the child, so set rax to 0 to match Linux
-        emit_asm("    cmp rdx, 0\n");
-        emit_asm("    je .L1\n");
-        emit_asm("    mov rax, 0\n");
+        emit_asm("\tcmp rdx, 0\n");
+        emit_asm("\tje .L1\n");
+        emit_asm("\tmov rax, 0\n");
         emit_asm(".L1:\n");
     }
-    emit_asm("    ret\n");
+    emit_asm("\tret\n");
 
 
     emit_asm("func_sqrt:\n");
-    emit_asm("    movsd xmm0, [rsp+8]\n");
-    emit_asm("    sqrtsd xmm0, xmm0\n");
-    emit_asm("    ret\n");
+    emit_asm("\tmovsd xmm0, [rsp+8]\n");
+    emit_asm("\tsqrtsd xmm0, xmm0\n");
+    emit_asm("\tret\n");
 }
