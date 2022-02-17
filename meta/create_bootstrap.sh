@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # Checkpoint the current state of the system by creating a new bootstrap
 # YASM file for MacOS and Linux to ./bootstrap/

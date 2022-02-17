@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 for f in $(ls tests | grep -v "common")
 do 

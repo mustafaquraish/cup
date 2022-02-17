@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 function assert_exit_status() {
     ./build/cupcc -c "$1" -o ./build/test -s
