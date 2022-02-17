@@ -77,6 +77,14 @@ fn parse_cli_args(argc: int, argv: char**): char** {
     return argv + argc;
 }
 
+fn file_exists(name: char *): int {
+    // FIXME: probably use something like "access" instead of "open"
+    let fd = open(name, O_RDONLY, 0);
+    if (fd == -1) return false;
+    close(fd);
+    return true;
+}
+
 fn main(argc: int, argv: char **): int {
     let subproc_args = parse_cli_args(argc, argv);
     
@@ -98,17 +106,29 @@ fn main(argc: int, argv: char **): int {
     strcpy(obj_filename, m_output_filename);
     replace_extension(obj_filename, ".o");
 
-    let cmd_args: char*[10];
+    let full_cmd_args: char*[10];
+
+    // leverage /usr/bin/env as an easy way to invoke yasm/ld anywhere in PATH
+    // the long term solution should be a method in the std library to
+    // find a program in the PATH
+    let have_bin_env = file_exists("/usr/bin/env");
+
     // FIXME: Is there a way to do this without hardcoding the exact path?
-    cmd_args[0] = OS_IS_MACOS ? "/usr/local/bin/yasm" : "/usr/bin/yasm";
+    if (have_bin_env) {
+        full_cmd_args[0] = "/usr/bin/env";
+    }
+    let yasm_bin = have_bin_env ? "yasm" : (OS_IS_MACOS ? "/usr/local/bin/yasm" : "/usr/bin/yasm");
+    let cmd_args: char** = full_cmd_args + have_bin_env;
+    cmd_args[0] = "yasm";
     cmd_args[1] = OS_IS_MACOS ? "-fmacho64" : "-felf64";
     cmd_args[2] = "-o";
     cmd_args[3] = obj_filename;
     cmd_args[4] = asm_filename;
     cmd_args[5] = null;
-    run_command(cmd_args, !m_silent);
+    run_command(full_cmd_args, !m_silent);
 
-    cmd_args[0] = "/usr/bin/ld";
+    cmd_args = full_cmd_args + have_bin_env;
+    cmd_args[0] = have_bin_env ? "ld" : "/usr/bin/ld";
     cmd_args[1] = "-o";
     cmd_args[2] = m_output_filename;
     cmd_args[3] = obj_filename;
@@ -117,7 +137,7 @@ fn main(argc: int, argv: char **): int {
     else
         cmd_args[4] = null;
     cmd_args[5] = null;
-    run_command(cmd_args, !m_silent);
+    run_command(full_cmd_args, !m_silent);
 
     if (m_run_exec) {
         --subproc_args; // Always valid
