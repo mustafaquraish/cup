@@ -77,7 +77,7 @@ fn parse_cli_args(argc: int, argv: char**): char** {
     return argv + argc;
 }
 
-fn main(argc: int, argv: char **): int {
+fn main(argc: int, argv: char **, envp: char**): int {
     let subproc_args = parse_cli_args(argc, argv);
     
     let lexer = lexer_new(m_filename, m_source, m_source_len);
@@ -99,30 +99,31 @@ fn main(argc: int, argv: char **): int {
     replace_extension(obj_filename, ".o");
 
     let cmd_args: char*[10];
-    // FIXME: Is there a way to do this without hardcoding the exact path?
-    cmd_args[0] = OS_IS_MACOS ? "/usr/local/bin/yasm" : "/usr/bin/yasm";
-    cmd_args[1] = OS_IS_MACOS ? "-fmacho64" : "-felf64";
-    cmd_args[2] = "-o";
-    cmd_args[3] = obj_filename;
-    cmd_args[4] = asm_filename;
-    cmd_args[5] = null;
-    run_command(cmd_args, !m_silent);
+    cmd_args[0] = "/usr/bin/env";
+    cmd_args[1] = "yasm";
+    cmd_args[2] = OS_IS_MACOS ? "-fmacho64" : "-felf64";
+    cmd_args[3] = "-o";
+    cmd_args[4] = obj_filename;
+    cmd_args[5] = asm_filename;
+    cmd_args[6] = null;
+    run_command_env(cmd_args, envp, !m_silent);
 
-    cmd_args[0] = "/usr/bin/ld";
-    cmd_args[1] = "-o";
-    cmd_args[2] = m_output_filename;
-    cmd_args[3] = obj_filename;
+    // cmd_args[0] is already /usr/bin/env
+    cmd_args[1] = "ld";
+    cmd_args[2] = "-o";
+    cmd_args[3] = m_output_filename;
+    cmd_args[4] = obj_filename;
     if (OS_IS_MACOS)
-        cmd_args[4] = "-lSystem";
+        cmd_args[5] = "-lSystem";
     else
-        cmd_args[4] = null;
-    cmd_args[5] = null;
-    run_command(cmd_args, !m_silent);
+        cmd_args[5] = null;
+    cmd_args[6] = null;
+    run_command_env(cmd_args, envp, !m_silent);
 
     if (m_run_exec) {
         --subproc_args; // Always valid
         subproc_args[0] = m_output_filename;
-        run_command(subproc_args, !m_silent);
+        run_command_env(subproc_args, envp, !m_silent);
     }
 
     // puts("---------------------------\n");

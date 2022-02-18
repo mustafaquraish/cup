@@ -323,7 +323,7 @@ fn WEXITSTATUS(status: int): int {
     return (status >> 8) & 127;
 }
 
-fn run_command(args: char**, echo: int) {
+fn run_command_env(args: char**, envp: char**, echo: int) {
     if (echo) {
         puts("[+]");
         for (let c = args; *c; ++c) {
@@ -334,7 +334,7 @@ fn run_command(args: char**, echo: int) {
 
     let pid = fork();
     if (pid == 0) {
-        execve(args[0], args, null);
+        execve(args[0], args, envp);
         die(here, "Error in execve()");
     }
     // Parent
@@ -354,3 +354,6 @@ fn run_command(args: char**, echo: int) {
     }
 }
 
+fn run_command(args: char**, echo: int) {
+    run_command_env(args, null, echo);
+}
