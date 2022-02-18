@@ -61,7 +61,7 @@ fn size_for_type(typ: Type*): int {
     if (typ.typ == TYPE_STRUCT) return typ.size;
     if (typ.typ == TYPE_UNION) return typ.size;
     if (typ.typ == TYPE_PTR) return typ.size;
-    die("Unknown type in size_for_type");
+    die(here, "Unknown type in size_for_type");
 }
 
 // TODO: Probably use an array for these
@@ -138,7 +138,7 @@ fn create_type_string(typ: Type *): char* {
         case TYPE_STRUCT: strcat(buf, typ.struct_name); break;
         case TYPE_UNION:  strcat(buf, typ.struct_name); break;
         default: {
-            die("create_type_string: unknown type");
+            die(here, "create_type_string: unknown type");
         }
     }
 

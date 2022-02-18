@@ -29,7 +29,7 @@ fn read_image(filename: char*): Image* {
 
     let n = file::read(buf, 64);
     if (n < 3 || buf[0] != 'P' || buf[1] != '6')
-        die("Not a valid PPM file");
+        die2(here, "Not a valid PPM file:", filename);
 
     // FIXME: This is very hacky.
     let cur = buf + 3;                        // Skip "P6\n"
@@ -37,7 +37,7 @@ fn read_image(filename: char*): Image* {
     let height = atoi_end(cur, &cur); ++cur;
     let max_val = atoi_end(cur, &cur); ++cur;
     if (max_val != 255)
-        die("Only PPM files with max value 255 are supported");
+        die2(here, "Only PPM files with max value 255 are supported:", filename);
 
     // Seek to start of binary data
     file::seek(cur - buf, SEEK_SET);
@@ -45,7 +45,7 @@ fn read_image(filename: char*): Image* {
     let img = new_image(width, height);
     n = file::read(img.data, width * height * sizeof(Color8));
     if (n != width * height * sizeof(Color8))
-        die("Could not read image data");
+        die2(here, "Could not read image data:", filename);
     return img;
 }
 

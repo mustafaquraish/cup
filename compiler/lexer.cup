@@ -86,7 +86,7 @@ fn get_escaped_char(c: char): char {
         case '0': return 0;
         default: {
             puts(here); puts(": Unknown escape char: "); putc(c); puts(" ("); putu(c); putsln(")");
-            die("exiting.");
+            exit(1);
         }
     }
 }

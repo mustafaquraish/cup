@@ -53,7 +53,7 @@ fn subregister_for_type(typ: Type*): char* {
     if (n == 2) return "ax";
     if (n == 4) return "eax";
     if (n == 8) return "rax";
-    die2(here, "Unsupported type size");
+    die(here, "Unsupported type size");
 }
 
 fn specifier_for_type(typ: Type*): char* {
@@ -63,7 +63,7 @@ fn specifier_for_type(typ: Type*): char* {
     if (n == 4) return "dword";
     if (n == 8) return "qword";
     putsln(create_type_string(typ));
-    die2(here, ": Unsupported type size");
+    die(here, "Unsupported type size");
 }
 
 // Q&D hack to differentiate function/method names
@@ -103,7 +103,7 @@ fn generate_binop_int_arith(node: Node*) {
     else if (node.typ == AST_MOD) op = "idiv";
     else {
         putsln(node_type_to_string(node.typ));
-        die2(here, "Unsupported binary op in generate_binop_int_arith");
+        die(here, "Unsupported binary op in generate_binop_int_arith");
     }
 
     if (node.typ == AST_DIV || node.typ == AST_MOD) {
@@ -134,7 +134,7 @@ fn generate_binop_float_arith(node: Node*) {
     else if (node.typ == AST_DIV) op = "divsd";
     else {
         putsln(node_type_to_string(node.typ));
-        die2(here, "Unsupported binary op in generate_binop_float_arith");
+        die(here, "Unsupported binary op in generate_binop_float_arith");
     }
 
     emit_asm3("\t", op, " xmm0, xmm1\n");
@@ -205,7 +205,7 @@ fn generate_lvalue_into_rax(node: Node*) {
     } else if (node.typ == AST_DEREF) {
         generate_expression(node.unary);
     } else {
-        die2("Unsupported type in generate_lvalue_into_rax: ", node_type_to_string(node.typ));
+        die2(here, "Unsupported type in generate_lvalue_into_rax: ", node_type_to_string(node.typ));
     }
 }
 
@@ -249,7 +249,7 @@ fn generate_expression(node: Node*) {
             emit_asm("\tmov [rsp-8], rax\n");
             emit_asm("\tmovsd xmm0, [rsp-8]\n");
         } else {
-            die2(here, ": Unsupported literal type in generate_expression");
+            die(here, "Unsupported literal type in generate_expression");
         }
     } else if (node.typ == AST_ADDROF) {
         generate_lvalue_into_rax(node.unary);
@@ -355,10 +355,10 @@ fn generate_expression(node: Node*) {
             generate_expression(node.unary);
             emit_asm("\tcvtsi2sd xmm0, eax\n");
         } else {
-            die("Unsupported conversion");
+            die(here, "Unsupported conversion");
         }
     } else {
-        die2("Unsupported node type in generate_expression: ", node_type_to_string(node.typ));
+        die2(here, "Unsupported node type in generate_expression: ", node_type_to_string(node.typ));
     }
 }
 
@@ -440,7 +440,7 @@ fn generate_statement(node: Node*) {
 
     } else if (node.typ == AST_BREAK) {
         if (gen_current_break < 0)
-            die2(here, "Break outside of loop, should have been caught by parser.");
+            die(here, "Break outside of loop, should have been caught by parser.");
 
         // FIXME: Need to run defers here before exiting the scopes.
         if (gen_defer_stack.size > 0)
@@ -556,7 +556,7 @@ fn generate_program(ast: Node*, file: File*) {
         } else if (node.typ == AST_VARDECL) {
             // Do nothing
         } else {
-            die("Unknown node type in generate_program");
+            die(here, "Unknown node type in generate_program");
         }
     }
 

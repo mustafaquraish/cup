@@ -2,7 +2,7 @@ import "std/file.cup"
 
 fn main(argc: int, argv: char**) {
     if (argc != 3)
-        die("Usage cp <input_file> <output_file>");
+        die(here, "Usage cp <input_file> <output_file>");
     
     let input = fopen(argv[1], 'r');
     defer input::close();

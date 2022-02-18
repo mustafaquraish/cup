@@ -14,13 +14,13 @@ fn fopen(name: char*, mode: char): File* {
     let open_mode: int;
          if (mode == 'w') open_mode = O_WRONLY | O_CREAT | O_TRUNC;
     else if (mode == 'r') open_mode = O_RDONLY;
-    else                  die2(here, ": Unknown file open mode");
+    else                  die(here, "Unknown file open mode");
 
     let f: File* = malloc(sizeof(File));
     f.name = name;
     f.fd = open(name, open_mode, 438);  // 438 = 0o666
     if (f.fd < 0)
-        die2(here, ": Could not open file");
+        die2(here, "Could not open file: ", name);
     f.buffer_size = 0;
     return f;
 }
@@ -29,7 +29,7 @@ method File::flush() {
     if (self.buffer_size > 0) {
         let n = write(self.fd, self.buffer, self.buffer_size);
         if (n < 0)
-            die2(here, ": Could not write to file");
+            die2(here, "Could not write to file: ", self.name);
         self.buffer_size = 0;
     }
 }
@@ -48,7 +48,7 @@ method File::write(buf: void*, size: int) {
 method File::read(buf: void*, size: int): int {
     let n = read(self.fd, buf, size);
     if (n < 0)
-        die2(here, ": Could not read from file");
+        die2(here, "Could not read from file: ", self.name);
     return n;
 }
 
@@ -75,7 +75,7 @@ method File::putu(n: int) {
 method File::seek(offset: int, whence: int) {
     let n = lseek(self.fd, offset, whence);
     if (n < 0)
-        die2(here, ": Could not seek in file");
+        die2(here, "Could not seek in file: ", self.name);
 }
 
 // Resets file position to the beginning of the file
@@ -91,7 +91,7 @@ method File::map(sizeptr: int*): char* {
     let size = self::size();
     let ptr = mmap(null, size, PROT_READ, MAP_PRIVATE, self.fd, 0);
     if (ptr == MAP_FAILED)
-        die2(here, ": Could not map file");
+        die2(here, "Could not map file: ", self.name);
     if (sizeptr) *sizeptr = size;
     return ptr;
 }

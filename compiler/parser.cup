@@ -723,7 +723,7 @@ fn add_variable_to_current_block(var: Variable*) {
     // FIXME: Use a map here
     cur_block.block.locals::push(var);
 
-    assert(p_current_function != null);
+    assert(here, p_current_function != null);
     // Update current stack offset (w.r.t function stack frame) and block size
     p_cur_stack_offset = p_cur_stack_offset + var_size;
     cur_block.block.locals_size = cur_block.block.locals_size + var_size;

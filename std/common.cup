@@ -235,21 +235,26 @@ fn putflt(f: f64) {
     }
 }
 
-fn die(msg: char *) {
-    putsln(msg);
+// You want to call these functions with `here` as the first parameter.
+fn die(sloc: char *, msg1: char *) {
+    puts(sloc);
+    puts(": ");
+    putsln(msg1);
     exit(1);
 }
 
-fn die2(msg1: char *, msg2: char *) {
+fn die2(sloc: char *, msg1: char *, msg2: char*) {
+    puts(sloc);
+    puts(": ");
     puts(msg1);
     putsln(msg2);
     exit(1);
 }
 
 // TODO: file/line numbers would be helpful
-fn assert(cond: int) {
+fn assert(sloc: char*, cond: int) {
     if (!cond)
-        die("assertion failed");
+        die(sloc, "assertion failed");
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -299,7 +304,7 @@ let __malloc_buf_pos = 0;
 
 fn malloc(size: int): void* {
     if (__malloc_buf_pos + size > __MALLOC_BUF_SIZE)
-        die("malloc: out of memory. only 1gb available");
+        die(here, "malloc: out of memory. only 1gb available");
     let ptr = &__malloc_buf[__malloc_buf_pos];
     __malloc_buf_pos = __malloc_buf_pos + size;
     return ptr;
@@ -330,15 +335,15 @@ fn run_command(args: char**, echo: int) {
     let pid = fork();
     if (pid == 0) {
         execve(args[0], args, null);
-        die2(here, ": Error in execve()");
+        die(here, "Error in execve()");
     }
     // Parent
     let status: int;
     if (wait(&status) < 0)
-        die2(here, ": Error in wait()");
+        die(here, "Error in wait()");
 
     if (!WIFEXITED(status))
-        die2(here, ": Child did not exit normally");
+        die(here, "Child did not exit normally");
 
     let exit_status = WEXITSTATUS(status);
     if (exit_status != 0) {

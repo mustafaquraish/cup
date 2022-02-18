@@ -191,7 +191,7 @@ fn convert_to_int(node: Node*): Node* {
     if (is_int_type(node.etyp))
         return node;
     if (!is_float_type(node.etyp))
-        die2("Cannot convert non-numeric type to int: ", create_type_string(node.etyp));
+        die2(here, "Cannot convert non-numeric type to int: ", create_type_string(node.etyp));
     let conv = node_new(AST_CONVERT);
     conv.etyp = type_new(TYPE_INT);
     conv.unary = node;
@@ -364,7 +364,7 @@ fn dump_ast(node: Node*, depth: int) {
         } else if (node.etyp.typ == TYPE_F64) {
             putsln(node.literal.as_string);
         } else {
-            die("Unknown literal type in dump_ast");
+            die(here, "Unknown literal type in dump_ast");
         }
     } else if (node.typ == AST_FUNC) {
         puts("func "); puts(node.func.name); puts("()\n");
@@ -622,7 +622,7 @@ fn convert_type(to: Type*, from_node: Node*): Node* {
 //        there and we can't forward-declare types.
 fn compound_push_field(compound: Type*, name: char*, typ: Type*, base_offset: int): int {
     if (compound.typ != TYPE_STRUCT && compound.typ != TYPE_UNION)
-        die("compound_push_field: not a compound type");
+        die(here, "compound_push_field: not a compound type");
 
     let is_union = compound.typ == TYPE_UNION;
 

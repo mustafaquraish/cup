@@ -134,18 +134,18 @@ fn dump_json(obj: JsonValue*) {
 }
 
 method JsonValue::get(key: char*): JsonValue* {
-    if (self.typ != JsonObject) die("Tried to access a key from a non-object");
+    if (self.typ != JsonObject) die2(here, "Tried to access a key from a non-object: ", key);
     for (let i = 0; i < self.as_object.size; ++i) {
         let pair: JsonPair* = self.as_object::at(i);
         if (streq(pair.key, key)) {
             return pair.value;
         }
     }
-    die("Key not found");
+    die2(here, "Key not found: ", key);
 }
 
 method JsonValue::at(index: int): JsonValue* {
-    if (self.typ != JsonArray) die("Tried to index into a non-list");
-    if (index < 0 || index >= self.as_array.size) die("Index out of bounds");
+    if (self.typ != JsonArray) die(here, "Tried to index into a non-list");
+    if (index < 0 || index >= self.as_array.size) die(here, "Index out of bounds");
     return self.as_array::at(index);
 }

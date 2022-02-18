@@ -25,7 +25,7 @@ method Vector::empty(): int {
 
 method Vector::at(index: int): void* {
     if (index < 0 || index >= self.size)
-        die("Vector::at: index out of bounds");
+        die(here, "Vector::at: index out of bounds");
     return self.data[index];
 }
 
@@ -43,7 +43,7 @@ method Vector::push(item: void*) {
 
 method Vector::pop(): void* {
     if (self.size == 0)
-        die("Vector is empty, nothing to pop.");
+        die(here, "Vector is empty, nothing to pop.");
 
     self.size = self.size - 1;
     return self.data[self.size];
@@ -51,7 +51,7 @@ method Vector::pop(): void* {
 
 method Vector::top(): void* {
     if (self.size == 0)
-        die("Vector is empty, nothing to return.");
+        die(here, "Vector is empty, nothing to return.");
 
     return self.data[self.size - 1];
 }
