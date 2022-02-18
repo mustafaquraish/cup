@@ -10,13 +10,7 @@ Only linux and macOS (only on x86_64) are supported.
 
 ### Tools
 
-For now, there's no support for looking at the `PATH`, so it's a bin wonky. Make sure that you have the following tools (with the executables avialable in the correct places, or you might need to modify the paths manually in `main/compiler.cup`):
-
-- `yasm`: The assembler we are using.
-    - On linux, the code expects to find this at `/usr/bin/yasm`.
-    - On macOS, the code expects to find this at `/usr/local/bin/yasm`.
-- `ld`: The linker we are using.
-    - On both linux and macOS, the code expects to find this at `/usr/bin/ld`.
+Make sure you have `yasm` and `ld` installed, and located on your `PATH`.
 
 ### Compiling
 
