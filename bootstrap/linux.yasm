@@ -2331,12 +2331,12 @@ func_WEXITSTATUS:
 	pop rbp
 	mov qword rax, 0
 	ret
-func_run_command:
+func_run_command_env:
 	push rbp
 	mov rbp, rsp
 	sub rsp, 24
 	mov rax, rbp
-	sub rax, -24
+	sub rax, -32
 	mov rax, [rax]
 	cmp rax, 0
 	je .if_end_42
@@ -2405,8 +2405,8 @@ func_run_command:
 	movzx rax, al
 	cmp rax, 0
 	je .if_end_44
-	mov rax, qword gvars
-	add rax, 0
+	mov rax, rbp
+	sub rax, -24
 	mov rax, [rax]
 	push rax
 	mov rax, rbp
@@ -2516,6 +2516,28 @@ func_run_command:
 	call func_exit
 	add rsp, 8
 .if_end_47:
+	mov rsp, rbp
+	pop rbp
+	mov qword rax, 0
+	ret
+func_run_command:
+	push rbp
+	mov rbp, rsp
+	sub rsp, 0
+	mov rax, rbp
+	sub rax, -24
+	mov rax, [rax]
+	push rax
+	mov rax, qword gvars
+	add rax, 0
+	mov rax, [rax]
+	push rax
+	mov rax, rbp
+	sub rax, -16
+	mov rax, [rax]
+	push rax
+	call func_run_command_env
+	add rsp, 24
 	mov rsp, rbp
 	pop rbp
 	mov qword rax, 0
@@ -33098,14 +33120,7 @@ func_main:
 	pop rcx
 	add rax, rcx
 	push rax
-	mov rax, 0
-	cmp rax, 0
-	je .cond_else_693
 	mov rax, qword gs_795
-	jmp .cond_end_693
-.cond_else_693:
-	mov rax, qword gs_796
-.cond_end_693:
 	pop rcx
 	mov [rcx], rax
 	mov rax, 8
@@ -33119,14 +33134,7 @@ func_main:
 	pop rcx
 	add rax, rcx
 	push rax
-	mov rax, 0
-	cmp rax, 0
-	je .cond_else_694
-	mov rax, qword gs_797
-	jmp .cond_end_694
-.cond_else_694:
-	mov rax, qword gs_798
-.cond_end_694:
+	mov rax, qword gs_796
 	pop rcx
 	mov [rcx], rax
 	mov rax, 8
@@ -33140,7 +33148,14 @@ func_main:
 	pop rcx
 	add rax, rcx
 	push rax
-	mov rax, qword gs_799
+	mov rax, 0
+	cmp rax, 0
+	je .cond_else_693
+	mov rax, qword gs_797
+	jmp .cond_end_693
+.cond_else_693:
+	mov rax, qword gs_798
+.cond_end_693:
 	pop rcx
 	mov [rcx], rax
 	mov rax, 8
@@ -33154,8 +33169,7 @@ func_main:
 	pop rcx
 	add rax, rcx
 	push rax
-	mov rax, rbp
-	sub rax, 544
+	mov rax, qword gs_799
 	pop rcx
 	mov [rcx], rax
 	mov rax, 8
@@ -33170,12 +33184,27 @@ func_main:
 	add rax, rcx
 	push rax
 	mov rax, rbp
-	sub rax, 280
+	sub rax, 544
 	pop rcx
 	mov [rcx], rax
 	mov rax, 8
 	push rax
 	mov rax, 5
+	pop rcx
+	imul rax, rcx
+	push rax
+	mov rax, rbp
+	sub rax, 624
+	pop rcx
+	add rax, rcx
+	push rax
+	mov rax, rbp
+	sub rax, 280
+	pop rcx
+	mov [rcx], rax
+	mov rax, 8
+	push rax
+	mov rax, 6
 	pop rcx
 	imul rax, rcx
 	push rax
@@ -33197,24 +33226,14 @@ func_main:
 	movzx rax, al
 	push rax
 	mov rax, rbp
-	sub rax, 624
-	push rax
-	call func_run_command
-	add rsp, 16
-	mov rax, 8
-	push rax
-	mov rax, 0
-	pop rcx
-	imul rax, rcx
+	sub rax, -32
+	mov rax, [rax]
 	push rax
 	mov rax, rbp
 	sub rax, 624
-	pop rcx
-	add rax, rcx
 	push rax
-	mov rax, qword gs_800
-	pop rcx
-	mov [rcx], rax
+	call func_run_command_env
+	add rsp, 24
 	mov rax, 8
 	push rax
 	mov rax, 1
@@ -33226,12 +33245,33 @@ func_main:
 	pop rcx
 	add rax, rcx
 	push rax
+	mov rax, 0
+	cmp rax, 0
+	je .cond_else_694
+	mov rax, qword gs_800
+	jmp .cond_end_694
+.cond_else_694:
 	mov rax, qword gs_801
+.cond_end_694:
 	pop rcx
 	mov [rcx], rax
 	mov rax, 8
 	push rax
 	mov rax, 2
+	pop rcx
+	imul rax, rcx
+	push rax
+	mov rax, rbp
+	sub rax, 624
+	pop rcx
+	add rax, rcx
+	push rax
+	mov rax, qword gs_802
+	pop rcx
+	mov [rcx], rax
+	mov rax, 8
+	push rax
+	mov rax, 3
 	pop rcx
 	imul rax, rcx
 	push rax
@@ -33247,7 +33287,7 @@ func_main:
 	mov [rcx], rax
 	mov rax, 8
 	push rax
-	mov rax, 3
+	mov rax, 4
 	pop rcx
 	imul rax, rcx
 	push rax
@@ -33265,7 +33305,7 @@ func_main:
 	je .if_else_695
 	mov rax, 8
 	push rax
-	mov rax, 4
+	mov rax, 5
 	pop rcx
 	imul rax, rcx
 	push rax
@@ -33274,14 +33314,14 @@ func_main:
 	pop rcx
 	add rax, rcx
 	push rax
-	mov rax, qword gs_802
+	mov rax, qword gs_803
 	pop rcx
 	mov [rcx], rax
 	jmp .if_end_695
 .if_else_695:
 	mov rax, 8
 	push rax
-	mov rax, 4
+	mov rax, 5
 	pop rcx
 	imul rax, rcx
 	push rax
@@ -33298,7 +33338,7 @@ func_main:
 .if_end_695:
 	mov rax, 8
 	push rax
-	mov rax, 5
+	mov rax, 6
 	pop rcx
 	imul rax, rcx
 	push rax
@@ -33320,10 +33360,14 @@ func_main:
 	movzx rax, al
 	push rax
 	mov rax, rbp
+	sub rax, -32
+	mov rax, [rax]
+	push rax
+	mov rax, rbp
 	sub rax, 624
 	push rax
-	call func_run_command
-	add rsp, 16
+	call func_run_command_env
+	add rsp, 24
 	mov rax, qword gvars
 	add rax, 1073742360
 	mov rax, [rax]
@@ -33370,11 +33414,15 @@ func_main:
 	movzx rax, al
 	push rax
 	mov rax, rbp
+	sub rax, -32
+	mov rax, [rax]
+	push rax
+	mov rax, rbp
 	sub rax, 8
 	mov rax, [rax]
 	push rax
-	call func_run_command
-	add rsp, 16
+	call func_run_command_env
+	add rsp, 24
 .if_end_696:
 	mov rsp, rbp
 	pop rbp
@@ -33539,7 +33587,7 @@ _start:
 	mov rcx, qword gvars
 	add rcx, 1073742056
 	mov [rcx], rax
-	mov rax, qword gs_803
+	mov rax, qword gs_804
 	mov rcx, qword gvars
 	add rcx, 1073742328
 	mov [rcx], rax
@@ -34454,12 +34502,13 @@ section .data
 	gs_792: db 83,111,117,114,99,101,32,116,111,111,32,108,111,110,103,32,116,111,32,117,115,101,32,116,104,114,111,117,103,104,32,115,116,100,105,110,0
 	gs_793: db 46,121,97,115,109,0
 	gs_794: db 46,111,0
-	gs_795: db 47,117,115,114,47,108,111,99,97,108,47,98,105,110,47,121,97,115,109,0
-	gs_796: db 47,117,115,114,47,98,105,110,47,121,97,115,109,0
+	gs_795: db 47,117,115,114,47,98,105,110,47,101,110,118,0
+	gs_796: db 121,97,115,109,0
 	gs_797: db 45,102,109,97,99,104,111,54,52,0
 	gs_798: db 45,102,101,108,102,54,52,0
 	gs_799: db 45,111,0
-	gs_800: db 47,117,115,114,47,98,105,110,47,108,100,0
-	gs_801: db 45,111,0
-	gs_802: db 45,108,83,121,115,116,101,109,0
-	gs_803: db 98,117,105,108,100,47,111,117,116,112,117,116,0
+	gs_800: db 99,108,97,110,103,0
+	gs_801: db 108,100,0
+	gs_802: db 45,111,0
+	gs_803: db 45,87,108,44,45,110,111,95,112,105,101,0
+	gs_804: db 98,117,105,108,100,47,111,117,116,112,117,116,0

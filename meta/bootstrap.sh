@@ -9,7 +9,7 @@ case "$(uname -s)" in
    Darwin)
         cp bootstrap/macos.yasm bootstrap/cupcc.yasm
         yasm -f macho64 -o bootstrap/cupcc.o bootstrap/cupcc.yasm
-        ld -lSystem -o bootstrap/cupcc bootstrap/cupcc.o
+        clang -Wl,-no_pie -o bootstrap/cupcc bootstrap/cupcc.o
         ;;
    Linux)
         cp bootstrap/linux.yasm bootstrap/cupcc.yasm

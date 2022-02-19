@@ -22,8 +22,27 @@ jobs:
           ./meta/bootstrap.sh
           ./meta/test.sh
 
-  test_macos:
+  test_macos_10_15:
     runs-on: macos-10.15
+    steps:
+      - uses: actions/checkout@v2
+      - name: "Install MacOS dependencies"
+
+        run: brew install yasm
+
+      - name: Building from bootstrap
+        run: |
+          cd ${{ github.workspace }}
+          ./meta/bootstrap.sh && ./build/cupcc -r compiler/main.cup -r compiler/main.cup -r compiler/main.cup
+
+      - name: Running tests
+        run: |
+          cd ${{ github.workspace }}
+          ./meta/bootstrap.sh
+          ./meta/test.sh
+
+  test_macos_11:
+    runs-on: macos-11
     steps:
       - uses: actions/checkout@v2
       - name: "Install MacOS dependencies"

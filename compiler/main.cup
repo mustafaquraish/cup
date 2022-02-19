@@ -109,12 +109,12 @@ fn main(argc: int, argv: char **, envp: char**): int {
     run_command_env(cmd_args, envp, !m_silent);
 
     // cmd_args[0] is already /usr/bin/env
-    cmd_args[1] = "ld";
+    cmd_args[1] = OS_IS_MACOS ? "clang" : "ld";
     cmd_args[2] = "-o";
     cmd_args[3] = m_output_filename;
     cmd_args[4] = obj_filename;
     if (OS_IS_MACOS)
-        cmd_args[5] = "-lSystem";
+        cmd_args[5] = "-Wl,-no_pie";
     else
         cmd_args[5] = null;
     cmd_args[6] = null;
