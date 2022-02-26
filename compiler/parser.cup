@@ -128,6 +128,12 @@ fn eval_constexp(node: Node*, token: Token*): int {
             case AST_MOD: return left % right;
             case AST_MUL: return left * right;
             case AST_MUL: return left * right;
+            case AST_EQ: return left == right;
+            case AST_NEQ: return left != right;
+            case AST_LT: return left < right;
+            case AST_LEQ: return left <= right;
+            case AST_GT: return left > right;
+            case AST_GEQ: return left >= right;
         }
         die_loc(here, &token.loc, "Unsupported binary operator in constant expression.");
     }
