@@ -1031,6 +1031,29 @@ fn parse_statement(lexer: Lexer*): Node* {
         node = parse_var_declaration(lexer);
         lexer::next_assert(&token, TOKEN_SEMICOLON);
 
+    } else if (token.typ == TOKEN_STATIC_ASSERT) {
+        lexer::next(&token);
+        lexer::next_assert(&token, TOKEN_OPEN_PAREN);
+
+        let res = parse_constant_expression(lexer);
+        lexer::next_assert(&token, TOKEN_COMMA);
+        let message = parse_expression(lexer);
+
+        if (message.typ != AST_LITERAL || message.etyp.typ != TYPE_PTR)
+            die_loc(here, &token.loc, "Assertion message must be a string");
+
+        if (!res) {
+            location_print(&token.loc);
+            puts(": Static assertion failed: \"");
+            puts(message.literal.as_string);
+            putsln("\"");
+            exit(1);
+        }
+
+        lexer::next_assert(&token, TOKEN_CLOSE_PAREN);
+        lexer::next_assert(&token, TOKEN_SEMICOLON);
+        node = null;
+
     } else {
         // Default to expression statement
         node = parse_expression(lexer);
@@ -1051,7 +1074,9 @@ fn parse_block(lexer: Lexer*): Node* {
 
     lexer::peek(&token);
     while (token.typ != TOKEN_CLOSE_BRACE) {
-        block_add_child(block, parse_statement(lexer));
+        let child = parse_statement(lexer);
+        if (child)
+            block_add_child(block, child);
         lexer::peek(&token);
     }
     lexer::next_assert(&token, TOKEN_CLOSE_BRACE);

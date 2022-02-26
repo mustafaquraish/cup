@@ -69,6 +69,7 @@ enum TokenType {
     TOKEN_METHOD,
     TOKEN_RETURN,
     TOKEN_SIZEOF,
+    TOKEN_STATIC_ASSERT,
     TOKEN_STRUCT,
     TOKEN_SWITCH,
     TOKEN_UNION,
@@ -143,33 +144,34 @@ fn token_type_to_string(typ: int): char* {
         case TOKEN_XOR:           return "TOKEN_XOR";
 
         // Keywords just grouped separately
-        case TOKEN_BREAK:   return "TOKEN_BREAK";
-        case TOKEN_CASE:    return "TOKEN_CASE";
-        case TOKEN_CHAR:    return "TOKEN_CHAR";
-        case TOKEN_CONST:   return "TOKEN_CONST";
-        case TOKEN_DEFAULT: return "TOKEN_DEFAULT";
-        case TOKEN_ENUM:    return "TOKEN_ENUM";
-        case TOKEN_ELSE:    return "TOKEN_ELSE";
-        case TOKEN_DEFER:   return "TOKEN_DEFER";
-        case TOKEN_F64:     return "TOKEN_F64";
-        case TOKEN_FN:      return "TOKEN_FN";
-        case TOKEN_FOR:     return "TOKEN_FOR";
-        case TOKEN_IF:      return "TOKEN_IF";
-        case TOKEN_INT:     return "TOKEN_INT";
-        case TOKEN_I8:      return "TOKEN_I8";
-        case TOKEN_I16:     return "TOKEN_I16";
-        case TOKEN_I32:     return "TOKEN_I32";
-        case TOKEN_I64:     return "TOKEN_I64";
-        case TOKEN_LET:     return "TOKEN_LET";
-        case TOKEN_METHOD:  return "TOKEN_METHOD";
-        case TOKEN_RETURN:  return "TOKEN_RETURN";
-        case TOKEN_SIZEOF:  return "TOKEN_SIZEOF";
-        case TOKEN_STRUCT:  return "TOKEN_STRUCT";
-        case TOKEN_SWITCH:  return "TOKEN_SWITCH";
-        case TOKEN_UNION:   return "TOKEN_UNION";
-        case TOKEN_VOID:    return "TOKEN_VOID";
-        case TOKEN_WHILE:   return "TOKEN_WHILE";
-        case TOKEN_IMPORT:  return "TOKEN_IMPORT";
+        case TOKEN_BREAK:         return "TOKEN_BREAK";
+        case TOKEN_CASE:          return "TOKEN_CASE";
+        case TOKEN_CHAR:          return "TOKEN_CHAR";
+        case TOKEN_CONST:         return "TOKEN_CONST";
+        case TOKEN_DEFAULT:       return "TOKEN_DEFAULT";
+        case TOKEN_ENUM:          return "TOKEN_ENUM";
+        case TOKEN_ELSE:          return "TOKEN_ELSE";
+        case TOKEN_DEFER:         return "TOKEN_DEFER";
+        case TOKEN_F64:           return "TOKEN_F64";
+        case TOKEN_FN:            return "TOKEN_FN";
+        case TOKEN_FOR:           return "TOKEN_FOR";
+        case TOKEN_IF:            return "TOKEN_IF";
+        case TOKEN_INT:           return "TOKEN_INT";
+        case TOKEN_I8:            return "TOKEN_I8";
+        case TOKEN_I16:           return "TOKEN_I16";
+        case TOKEN_I32:           return "TOKEN_I32";
+        case TOKEN_I64:           return "TOKEN_I64";
+        case TOKEN_LET:           return "TOKEN_LET";
+        case TOKEN_METHOD:        return "TOKEN_METHOD";
+        case TOKEN_RETURN:        return "TOKEN_RETURN";
+        case TOKEN_SIZEOF:        return "TOKEN_SIZEOF";
+        case TOKEN_STATIC_ASSERT: return "TOKEN_STATIC_ASSERT";
+        case TOKEN_STRUCT:        return "TOKEN_STRUCT";
+        case TOKEN_SWITCH:        return "TOKEN_SWITCH";
+        case TOKEN_UNION:         return "TOKEN_UNION";
+        case TOKEN_VOID:          return "TOKEN_VOID";
+        case TOKEN_WHILE:         return "TOKEN_WHILE";
+        case TOKEN_IMPORT:        return "TOKEN_IMPORT";
     }
 
     putsln("\nUnknown token type in token_type_to_string: "); print(typ);
@@ -199,6 +201,7 @@ fn keyword_to_string(typ: int): char* {
         case TOKEN_METHOD: return "method";
         case TOKEN_RETURN: return "return";
         case TOKEN_SIZEOF: return "sizeof";
+        case TOKEN_STATIC_ASSERT: return "static_assert";
         case TOKEN_STRUCT: return "struct";
         case TOKEN_SWITCH: return "switch";
         case TOKEN_UNION: return "union";
