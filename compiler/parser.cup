@@ -134,6 +134,8 @@ fn eval_constexp(node: Node*, token: Token*): int {
             case AST_LEQ: return left <= right;
             case AST_GT: return left > right;
             case AST_GEQ: return left >= right;
+            case AST_LSHIFT: return left << right;
+            case AST_RSHIFT: return left >> right;
         }
         die_loc(here, &token.loc, "Unsupported binary operator in constant expression.");
     }

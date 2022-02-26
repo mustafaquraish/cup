@@ -222,7 +222,7 @@ fn main() {
     let origin: Vec; origin::init(0, 0, 0);
     let horizontal: Vec; horizontal::init(viewport_width, 0, 0);
     let vertical: Vec; vertical::init(0, viewport_height, 0);
-    
+
     let ll_corner: Vec; 
     ll_corner.x = origin.x - horizontal.x/2 - vertical.x/2 - 0;
     ll_corner.y = origin.y - horizontal.y/2 - vertical.y/2 - 0;
