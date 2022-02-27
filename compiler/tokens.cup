@@ -1,6 +1,38 @@
 import "std/common.cup"
 
 enum TokenType {
+    // Keywords go below:
+    TOKEN_BREAK,
+    TOKEN_CASE,
+    TOKEN_CHAR,
+    TOKEN_CONST,
+    TOKEN_DEFAULT,
+    TOKEN_ENUM,
+    TOKEN_ELSE,
+    TOKEN_DEFER,
+    TOKEN_F64,
+    TOKEN_FN,
+    TOKEN_FOR,
+    TOKEN_IF,
+    TOKEN_INT,
+    TOKEN_I8,
+    TOKEN_I16,
+    TOKEN_I32,
+    TOKEN_I64,
+    TOKEN_LET,
+    TOKEN_METHOD,
+    TOKEN_RETURN,
+    TOKEN_SIZEOF,
+    TOKEN_STATIC_ASSERT,
+    TOKEN_STRUCT,
+    TOKEN_SWITCH,
+    TOKEN_UNION,
+    TOKEN_VOID,
+    TOKEN_WHILE,
+    TOKEN_IMPORT,
+
+    NUM_KEYWORDS, // End of keywords
+
     TOKEN_AMPERSAND,
     TOKEN_AND,
     TOKEN_ASSIGN,
@@ -46,37 +78,7 @@ enum TokenType {
     TOKEN_TILDE,
     TOKEN_XOR,
 
-    // Keywords go below:
-    TOKEN__KEYWORD_BEGIN,
-    TOKEN_BREAK,
-    TOKEN_CASE,
-    TOKEN_CHAR,
-    TOKEN_CONST,
-    TOKEN_DEFAULT,
-    TOKEN_ENUM,
-    TOKEN_ELSE,
-    TOKEN_DEFER,
-    TOKEN_F64,
-    TOKEN_FN,
-    TOKEN_FOR,
-    TOKEN_IF,
-    TOKEN_INT,
-    TOKEN_I8,
-    TOKEN_I16,
-    TOKEN_I32,
-    TOKEN_I64,
-    TOKEN_LET,
-    TOKEN_METHOD,
-    TOKEN_RETURN,
-    TOKEN_SIZEOF,
-    TOKEN_STATIC_ASSERT,
-    TOKEN_STRUCT,
-    TOKEN_SWITCH,
-    TOKEN_UNION,
-    TOKEN_VOID,
-    TOKEN_WHILE,
-    TOKEN_IMPORT,
-    TOKEN__KEYWORD_END,
+    NUM_TOKEN_TYPES,
 };
 
 struct Location {
@@ -97,6 +99,7 @@ struct Token {
 };
 
 fn token_type_to_string(typ: int): char* {
+    static_assert(NUM_TOKEN_TYPES == 73, "Exhaustive match in token_type_to_string");
     switch (typ) {
         case TOKEN_AMPERSAND:     return "TOKEN_AMPERSAND";
         case TOKEN_AND:           return "TOKEN_AND";
@@ -179,6 +182,7 @@ fn token_type_to_string(typ: int): char* {
 }
 
 fn keyword_to_string(typ: int): char* {
+    static_assert(NUM_KEYWORDS == 28, "Exhaustive match in keyword_to_string");
     switch (typ) {
         case TOKEN_BREAK: return "break";
         case TOKEN_CASE: return "case";

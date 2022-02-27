@@ -53,6 +53,8 @@ enum NodeType {
     AST_BUILTIN,
     AST_PROGRAM,
     AST_BLOCK,
+
+    NUM_NODE_TYPES,
 };
 
 struct Variable {
@@ -214,6 +216,7 @@ fn block_add_child(block: Node*, child: Node*) {
 
 // TODO: Careful here, the input type here is the same as `type_to_string`
 fn node_type_to_string(typ: int): char* {
+    static_assert(NUM_NODE_TYPES == 45, "Exhaustive match in node_type_to_string");
     if (typ == AST_NEG) return "AST_NEG";
     if (typ == AST_NOT) return "AST_NOT";
     if (typ == AST_BWINV) return "AST_BWINV";
@@ -266,6 +269,7 @@ fn node_type_to_string(typ: int): char* {
 }
 
 fn is_binary_op(typ: int): int {
+    static_assert(NUM_NODE_TYPES == 45, "Exhaustive match in is_binary_op");
     if (typ == AST_PLUS) return true;
     if (typ == AST_MINUS) return true;
     if (typ == AST_MUL) return true;
@@ -288,6 +292,7 @@ fn is_binary_op(typ: int): int {
 }
 
 fn is_unary_op(typ: int): int {
+    static_assert(NUM_NODE_TYPES == 45, "Exhaustive match in is_unary_op");
     if (typ == AST_NEG) return true;
     if (typ == AST_NOT) return true;
     if (typ == AST_BWINV) return true;
@@ -297,6 +302,7 @@ fn is_unary_op(typ: int): int {
 }
 
 fn is_lvalue(typ: int): int {
+    static_assert(NUM_NODE_TYPES == 45, "Exhaustive match in is_lvalue");
     if (typ == AST_LOCAL_VAR) return true;
     if (typ == AST_GLOBAL_VAR) return true;
     if (typ == AST_MEMBER) return true;
@@ -304,8 +310,8 @@ fn is_lvalue(typ: int): int {
     return false;
 }
 
-fn binary_token_to_op(token_typ: int): int
-{
+fn binary_token_to_op(token_typ: int): int {
+    static_assert(NUM_TOKEN_TYPES == 73, "Exhaustive match in binary_token_to_op");
     if (token_typ == TOKEN_PLUS)      return AST_PLUS;
     if (token_typ == TOKEN_MINUS)     return AST_MINUS;
     if (token_typ == TOKEN_STAR)      return AST_MUL;
@@ -397,7 +403,7 @@ fn dump_ast(node: Node*, depth: int) {
             dump_ast(node.case_stmt.children.data[i], depth + 1);
         }
     } else if (node.typ == AST_SWITCH) {
-        putsln("SWITCH"); 
+        putsln("SWITCH");
         dump_ast(node.switch_stmt.expr, depth + 1);
         for (let i = 0; i < node.switch_stmt.cases.size; ++i) {
             dump_ast(node.switch_stmt.cases.data[i], depth + 2);
@@ -430,6 +436,8 @@ fn decay_array_to_pointer(node: Node*, token: Token*): Node* {
 }
 
 fn type_check_unary(node: Node*, token: Token*): Node* {
+    static_assert(NUM_NODE_TYPES == 45, "Exhaustive match in type_check_unary");
+
     let old_type = node.unary.etyp;
 
     if (node.typ != AST_ADDROF && old_type.typ == TYPE_STRUCT)
@@ -466,6 +474,8 @@ fn type_check_unary(node: Node*, token: Token*): Node* {
 }
 
 fn type_check_binary(node: Node*, token: Token*): Node* {
+    static_assert(NUM_NODE_TYPES == 45, "Exhaustive match in type_check_binary");
+
     let lhs = node.binary.lhs.etyp;
     let rhs = node.binary.rhs.etyp;
 

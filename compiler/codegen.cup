@@ -402,6 +402,8 @@ fn generate_switch_statement(node: Node*) {
 
 
 fn generate_statement(node: Node*) {
+    static_assert(NUM_NODE_TYPES == 45, "Exhaustive match for node types in code generation.");
+
     if (node.typ == AST_RETURN) {
         if (node.unary) {
             generate_expression(node.unary);

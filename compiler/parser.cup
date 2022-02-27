@@ -211,6 +211,7 @@ fn parse_type(lexer: Lexer*): Type* {
     let typ: Type *;
     lexer::next(&token);
 
+    static_assert(NUM_BASE_TYPES == 9, "Exhaustive handling of base types in parse_type");
     switch (token.typ) {
         case TOKEN_INT:  typ = type_new(TYPE_INT);  break;
         case TOKEN_I8:   typ = type_new(TYPE_I8);   break;

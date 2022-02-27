@@ -15,12 +15,14 @@ enum BaseType {
     TYPE_VOID,
     TYPE_ANY,
 
-    TYPE__BASE_COUNT, // Just to denote the end of "base" types
+    NUM_BASE_TYPES, // Just to denote the end of "base" types
 
     TYPE_PTR,
     TYPE_ARRAY,
     TYPE_STRUCT,
     TYPE_UNION,
+
+    NUM_TYPES,
 };
 
 struct Type {
@@ -36,6 +38,7 @@ struct Type {
 };
 
 fn size_for_base_type(typ: int): int {
+    static_assert(NUM_BASE_TYPES == 9, "Exhaustive match in size_for_base_type");
     switch (typ) {
         case TYPE_INT:
         case TYPE_PTR:
@@ -45,7 +48,7 @@ fn size_for_base_type(typ: int): int {
             return 8;
 
         case TYPE_CHAR:
-        case TYPE_I8: 
+        case TYPE_I8:
             return 1;
 
         case TYPE_I32: return 4;
@@ -55,7 +58,9 @@ fn size_for_base_type(typ: int): int {
 }
 
 fn size_for_type(typ: Type*): int {
-    if (typ.typ < TYPE__BASE_COUNT)
+    static_assert(NUM_BASE_TYPES == 9, "Exhaustive match in size_for_type");
+
+    if (typ.typ < NUM_BASE_TYPES)
         return typ.size;
     if (typ.typ == TYPE_ARRAY) return typ.array_size * size_for_type(typ.ptr);
     if (typ.typ == TYPE_STRUCT) return typ.size;
@@ -83,6 +88,8 @@ fn create_new_base_type(typ: int): Type* {
 }
 
 fn type_new(typ: int): Type* {
+    static_assert(NUM_BASE_TYPES == 9, "Exhaustive match in type_new");
+
     if (_type_int == null) { _type_int = create_new_base_type(TYPE_INT); }
     if (_type_i8 == null) { _type_i8 = create_new_base_type(TYPE_I8); }
     if (_type_i16 == null) { _type_i16 = create_new_base_type(TYPE_I16); }
@@ -125,6 +132,8 @@ fn create_type_string(typ: Type *): char* {
         typ = typ.ptr;
     }
 
+    static_assert(NUM_BASE_TYPES == 9, "Exhaustive match in create_type_string");
+
     switch (typ.typ) {
         case TYPE_INT:    strcat(buf, "int");           break;
         case TYPE_I8:     strcat(buf, "i8");            break;
@@ -146,6 +155,8 @@ fn create_type_string(typ: Type *): char* {
 }
 
 fn is_int_type(typ: Type*): int {
+    static_assert(NUM_BASE_TYPES == 9, "Exhaustive match in is_int_type");
+
     switch (typ.typ) {
         case TYPE_INT:
         case TYPE_I8:

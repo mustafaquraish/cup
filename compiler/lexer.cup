@@ -208,7 +208,9 @@ method Lexer::next(token: Token*) {
                 }
 
                 // Parse the keywords...
-                for (let i = TOKEN__KEYWORD_BEGIN+1; i < TOKEN__KEYWORD_END; ++i) {
+                // NOTE: This assumes that the keywords are defined at the beginning of the
+                //       TokenType enum.
+                for (let i = 0; i < NUM_KEYWORDS; ++i) {
                     let str = keyword_to_string(i);
                     if (self::starts_with(str)) {
                         return self::make_token(token, i, strlen(str));
