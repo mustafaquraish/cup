@@ -18,7 +18,7 @@ fn fopen(name: char*, mode: char): File* {
 
     let f: File* = malloc(sizeof(File));
     f.name = name;
-    f.fd = open(name, open_mode, 438);  // 438 = 0o666
+    f.fd = open(name, open_mode, 0o666);
     if (f.fd < 0)
         die2(here, "Could not open file: ", name);
     f.buffer_size = 0;

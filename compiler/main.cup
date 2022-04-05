@@ -79,7 +79,7 @@ fn parse_cli_args(argc: int, argv: char**): char** {
 
 fn main(argc: int, argv: char **, envp: char**): int {
     let subproc_args = parse_cli_args(argc, argv);
-    
+
     let lexer = lexer_new(m_filename, m_source, m_source_len);
     let ast = parse_program(lexer);
 

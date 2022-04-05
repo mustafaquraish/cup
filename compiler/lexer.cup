@@ -228,9 +228,19 @@ method Lexer::next(token: Token*) {
                         pos = pos + 2;
                         c = self.src[pos];
                         while (is_hex(c)) {
-                                if (c >= 'a' && c <= 'f') val = val * 16 + (c - 'a' + 10);
+                                 if (c >= 'a' && c <= 'f') val = val * 16 + (c - 'a' + 10);
                             else if (c >= 'A' && c <= 'F') val = val * 16 + (c - 'A' + 10);
                             else                           val = val * 16 + (c - '0');
+                            ++pos;
+                            c = self.src[pos];
+                        }
+
+                    // Octal
+                    } else if (c == '0' && self::peek_char(1) == 'o') {
+                        pos = pos + 2;
+                        c = self.src[pos];
+                        while (is_octal(c)) {
+                            val = val * 8 + (c - '0');
                             ++pos;
                             c = self.src[pos];
                         }
