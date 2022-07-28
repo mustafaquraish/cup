@@ -17,6 +17,15 @@ let p_compound_type_stack = vector_new();
 
 let p_breakable_stack = vector_new();
 
+// This prefix is added to functions which are constructors
+fn add_prefix_new(s: char*): char*{
+	let new_name: char* = malloc(sizeof(char)*5+sizeof(char)*strlen(s));
+	let new_ = "new_";
+	strcpy(new_name, new_);
+	strcat(new_name, s);
+	return new_name;
+}
+
 fn block_stack_push(block: Node*) {
     p_block_stack::push(block);
 }
@@ -430,7 +439,31 @@ fn parse_factor(lexer: Lexer*): Node* {
         expr.unary = subexp;
         expr = type_check_unary(expr, &token);
 
-    } else {
+    } else if (token.typ == TOKEN_NEW){
+		lexer::next(&token);
+		lexer::next_assert(&token, TOKEN_IDENTIFIER);
+		let struct_name: Token*;
+		struct_name = &token;
+		
+		// Check whether that struct even exists in the first place
+		let struct_constructed = find_compound_type(struct_name.value.as_string);
+			if (struct_constructed == null)
+				die_loc2(here, &struct_name.loc, "Could not find struct/union with name: ", struct_name.value.as_string);
+		
+		// All constructors have that prefix
+		let full_name: char* = add_prefix_new(struct_name.value.as_string);
+		let func = find_function_definition(full_name, p_all_functions);
+		free(full_name);
+		if (func != null){
+			if (!func.func.is_constructor){
+				die_loc2(here, &struct_name.loc, "Could not find constructor for struct: ", struct_name.value.as_string);
+			}
+			expr = parse_function_call_args(lexer, func, null);
+		} else{
+			die_loc2(here, &struct_name.loc, "Could not find constructor for struct: ", struct_name.value.as_string);
+		}
+	}
+	else {
         die_loc2(here, &token.loc, ": Unexpected token found in parse_factor: ", token_type_to_string(token.typ));
     }
 
@@ -1285,6 +1318,57 @@ fn parse_method(lexer: Lexer*): Node* {
     return func;
 }
 
+// FIXME: Combine with parse_function
+fn parse_constructor(lexer: Lexer*): Node* {
+    let token: Token;
+
+    lexer::next_assert(&token, TOKEN_IDENTIFIER);
+	
+	let struct_constructed = find_compound_type(token.value.as_string);
+			if (struct_constructed == null)
+				die_loc2(here, &token.loc, "Could not find struct/union with name: ", token.value.as_string);
+
+    let func = node_new(AST_FUNC);
+    func.func.name = token.value.as_string;
+	func.func.name = add_prefix_new(token.value.as_string);
+	func.func.is_constructor = true;
+
+    // Check if function with that name already have been defined
+	let dfunc = find_function_definition(func.func.name, p_all_functions);
+    if (dfunc != null) {
+        // Function was already defined
+        if (dfunc.func.is_defined)
+            die_loc(here, &token.loc, "Function already defined earlier");
+
+        // It wasn't so we put our own definition
+        p_current_function = func;
+    } else {
+        // We don't have a declaration yet, push this.
+        p_all_functions::push(func);
+        p_current_function = func;
+    }
+
+    lexer::next_assert(&token, TOKEN_OPEN_PAREN);
+    parse_function_params(lexer, func);
+    lexer::next_assert(&token, TOKEN_CLOSE_PAREN);
+
+	// Instead of trying to search for return type we simply set it to struct pointer we are constructing 
+	let ptr_type = type_new(TYPE_PTR);
+	ptr_type.ptr = struct_constructed;
+	func.etyp = ptr_type;
+
+    lexer::peek(&token);
+    if (token.typ == TOKEN_OPEN_BRACE) {
+        func.func.body = parse_block(lexer);
+        func.func.is_defined = true;
+    } else {
+        func.func.is_defined = false;
+    }
+
+    p_current_function = null;
+    return func;
+}
+
 fn parse_function(lexer: Lexer*): Node* {
     let token: Token;
 
@@ -1376,7 +1460,9 @@ fn parse_program(lexer: Lexer*): Node* {
             child = parse_function(lexer);
         } else if (token.typ == TOKEN_METHOD) {
             child = parse_method(lexer);
-        } else if (token.typ == TOKEN_LET) {
+        } else if (token.typ == TOKEN_IDENTIFIER){
+			child = parse_constructor(lexer);
+		} else if (token.typ == TOKEN_LET) {
             child = parse_var_declaration(lexer);
         } else if (token.typ == TOKEN_SEMICOLON) {
             lexer::next(&token);
