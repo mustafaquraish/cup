@@ -4,6 +4,7 @@
 
 import "std/file.cup"
 import "std/vector.cup"
+import "std/memory.cup"
 
 // This just reuses the lexer from the compiler,
 // since that's already capable of lexing JSON.

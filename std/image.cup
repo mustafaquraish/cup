@@ -1,5 +1,6 @@
 import "std/common.cup"
 import "std/file.cup"
+import "std/memory.cup"
 
 struct Color8 {
     r: i8;

@@ -1,4 +1,5 @@
 import "std/common.cup"
+import "std/memory.cup"
 
 struct Vector {
     size: int;
