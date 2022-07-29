@@ -32,7 +32,7 @@ enum TokenType {
     TOKEN_IMPORT,
     TOKEN_NEW,
     TOKEN_CDEFAULT,
-    TOKEN_INIT,
+    TOKEN_INITIALIZE,
 
     NUM_KEYWORDS, // End of keywords
 
@@ -180,7 +180,7 @@ fn token_type_to_string(typ: int): char* {
         case TOKEN_IMPORT:        return "TOKEN_IMPORT";
         case TOKEN_NEW:           return "TOKEN_NEW";
         case TOKEN_CDEFAULT:      return "TOKEN_CDEFAULT";
-		case TOKEN_INIT:          return "TOKEN_INIT";
+		case TOKEN_INITIALIZE:   return "TOKEN_INITIALIZE";
     }
 
     putsln("\nUnknown token type in token_type_to_string: "); print(typ);
@@ -220,7 +220,7 @@ fn keyword_to_string(typ: int): char* {
         case TOKEN_IMPORT: return "import";
         case TOKEN_NEW: return "new";
 		case TOKEN_CDEFAULT: return "cdefault";
-		case TOKEN_INIT: return "_init";
+		case TOKEN_INITIALIZE: return "initialize";
     }
 
     puts("Unknown keyword in keyword_to_string: ");

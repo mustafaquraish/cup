@@ -1356,7 +1356,7 @@ fn parse_method(lexer: Lexer*): Node* {
 fn parse_constructor(lexer: Lexer*): Node* {
     let token: Token;
 	
-    lexer::next_assert(&token, TOKEN_INIT);
+    lexer::next_assert(&token, TOKEN_INITIALIZE);
     lexer::next_assert(&token, TOKEN_IDENTIFIER);
 	
 	let struct_constructed = find_compound_type(token.value.as_string);
@@ -1542,7 +1542,7 @@ fn parse_program(lexer: Lexer*): Node* {
             child = parse_function(lexer);
         } else if (token.typ == TOKEN_METHOD) {
             child = parse_method(lexer);
-        } else if (token.typ == TOKEN_INIT){
+        } else if (token.typ == TOKEN_INITIALIZE){
 			child = parse_constructor(lexer);
 		} else if (token.typ == TOKEN_LET) {
             child = parse_var_declaration(lexer);
