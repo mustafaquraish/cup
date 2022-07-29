@@ -32,6 +32,7 @@ enum TokenType {
     TOKEN_IMPORT,
     TOKEN_NEW,
     TOKEN_CDEFAULT,
+    TOKEN_INIT,
 
     NUM_KEYWORDS, // End of keywords
 
@@ -101,7 +102,7 @@ struct Token {
 };
 
 fn token_type_to_string(typ: int): char* {
-    static_assert(NUM_TOKEN_TYPES == 75, "Exhaustive match in token_type_to_string");
+    static_assert(NUM_TOKEN_TYPES == 76, "Exhaustive match in token_type_to_string");
     switch (typ) {
         case TOKEN_AMPERSAND:     return "TOKEN_AMPERSAND";
         case TOKEN_AND:           return "TOKEN_AND";
@@ -179,6 +180,7 @@ fn token_type_to_string(typ: int): char* {
         case TOKEN_IMPORT:        return "TOKEN_IMPORT";
         case TOKEN_NEW:           return "TOKEN_NEW";
         case TOKEN_CDEFAULT:      return "TOKEN_CDEFAULT";
+		case TOKEN_INIT:          return "TOKEN_INIT";
     }
 
     putsln("\nUnknown token type in token_type_to_string: "); print(typ);
@@ -186,7 +188,7 @@ fn token_type_to_string(typ: int): char* {
 }
 
 fn keyword_to_string(typ: int): char* {
-    static_assert(NUM_KEYWORDS == 30, "Exhaustive match in keyword_to_string");
+    static_assert(NUM_KEYWORDS == 31, "Exhaustive match in keyword_to_string");
     switch (typ) {
         case TOKEN_BREAK: return "break";
         case TOKEN_CASE: return "case";
@@ -218,6 +220,7 @@ fn keyword_to_string(typ: int): char* {
         case TOKEN_IMPORT: return "import";
         case TOKEN_NEW: return "new";
 		case TOKEN_CDEFAULT: return "cdefault";
+		case TOKEN_INIT: return "_init";
     }
 
     puts("Unknown keyword in keyword_to_string: ");
