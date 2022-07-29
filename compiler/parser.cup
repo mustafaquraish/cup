@@ -18,7 +18,7 @@ let p_compound_type_stack = vector_new();
 let p_breakable_stack = vector_new();
 
 // Default memory allocator for new
-let p_default_allocator: char*;
+let p_default_allocator: char* = "malloc";
 
 fn block_stack_push(block: Node*) {
     p_block_stack::push(block);
@@ -461,27 +461,31 @@ fn parse_factor(lexer: Lexer*): Node* {
 		if (func != null){	
 			// Getting default allocator
 			if (p_default_allocator == null){
-				die_loc(here, &struct_name.loc, "Default memory allocator hasn't been defined. Import std/memory.cup for a default allocator.");
+				die_loc(here, &struct_name.loc, "Memory allocator hasn't been defined.");
 			}
 			
 			let allocator_func = find_function_definition(p_default_allocator, p_all_functions);
 			
+			if (allocator_func == null){
+				die_loc(here, &struct_name.loc, "Allocator not found. Import std/memory.cup if you're using default one.");
+			}
+			
 			if (allocator_func.func.args::empty()){
-				die_loc(here, &struct_name.loc, "Default allocator doesn't have a correct signature");
+				die_loc(here, &struct_name.loc, "Allocator doesn't have a correct signature");
 			}
 			let var_arg: Variable* = allocator_func.func.args::at(0);
 			
 			// Checking whether allocator has a correct signature
 			if (var_arg.typ.typ != TYPE_I32 && var_arg.typ.typ != TYPE_INT){
-				die_loc(here, &struct_name.loc, "Default allocator doesn't have a correct signature. It should take an i32 as a first arg and return a void pointer.");
+				die_loc(here, &struct_name.loc, "Allocator doesn't have a correct signature. It should take an i32 as a first arg and return a void pointer.");
 			}
 			
 			if (allocator_func.etyp.typ != TYPE_PTR){
-				die_loc(here, &struct_name.loc, "Default allocator doesn't have a correct signature. It should take an i32 as a first arg and return a void pointer.");
+				die_loc(here, &struct_name.loc, "Allocator doesn't have a correct signature. It should take an i32 as a first arg and return a void pointer.");
 			}
 			
 			if (allocator_func.etyp.ptr.typ != TYPE_VOID){
-				die_loc(here, &struct_name.loc, "Default allocator doesn't have a correct signature. It should take an i32 as a first arg and return a void pointer.");
+				die_loc(here, &struct_name.loc, "Allocator doesn't have a correct signature. It should take an i32 as a first arg and return a void pointer.");
 			}
 			
 			expr = parse_function_call_args(lexer, func, call_allocator(allocator_func, struct_constructed.size));
@@ -1479,33 +1483,6 @@ fn parse_function(lexer: Lexer*): Node* {
     return func;
 }
 
-// Parses cdefault statement which essentially sets some parameters for compilation
-fn parse_cdefault(lexer: Lexer*): Node*{
-	let token: Token;
-	
-	lexer::next_assert(&token, TOKEN_CDEFAULT);
-	lexer::next_assert(&token, TOKEN_IDENTIFIER);
-	
-	// Sets default allocator for new
-	if (streq(token.value.as_string, "allocator")){
-		lexer::next_assert(&token, TOKEN_IDENTIFIER);
-		let dfunc = find_function_definition(token.value.as_string, p_all_functions);
-		if (dfunc == null){
-			die_loc(here, &token.loc, "This allocator function doesn't exist!");
-		} else {
-			p_default_allocator = token.value.as_string;
-		}
-	}
-	else {
-		die_loc(here, &token.loc, "This cdefault paramater doesn't exist!");
-	}
-	
-	lexer::next_assert(&token, TOKEN_SEMICOLON);
-	
-	// This doesn't really generate a node so
-	return null;
-}
-
 let p_opened_files = vector_new();
 
 fn parser_open_new_file(path: char*) {
@@ -1562,10 +1539,7 @@ fn parse_program(lexer: Lexer*): Node* {
             parse_struct_union_declaration(lexer, true, 0);
         } else if (token.typ == TOKEN_ENUM) {
             parse_enum_declaration(lexer);
-        } else if (token.typ == TOKEN_CDEFAULT){
-			child = parse_cdefault(lexer);
-		}
-		else {
+        } else {
             die_loc2(here, &token.loc, "unexpected token in parse_program: ", token_type_to_string(token.typ));
         }
 
