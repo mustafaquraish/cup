@@ -34,8 +34,7 @@ fn __malloc_init_proc(){
 	}
 }
 
-fn transmute(ptr: char*): void*{
-	let a: void* = ptr;
+fn transmute(ptr: void*): void*{
 	return ptr;
 }
 
