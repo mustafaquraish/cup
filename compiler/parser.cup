@@ -1061,6 +1061,9 @@ fn parse_statement(lexer: Lexer*): Node* {
 
         lexer::peek(&token);
         if (token.typ != TOKEN_SEMICOLON) {
+			if (p_current_function.func.is_constructor){
+				die_loc(here, &token.loc, "Constructor can't return additional expressions");
+			}
             node.unary = parse_expression(lexer);
             let conv = convert_type(p_current_function.etyp, node.unary);
             if (!conv)
@@ -1068,10 +1071,15 @@ fn parse_statement(lexer: Lexer*): Node* {
             node.unary = conv;
         } else {
             node.unary = null; // empty return statment
-            if (p_current_function.etyp.typ != TYPE_VOID) {
+            if (p_current_function.etyp.typ != TYPE_VOID && !p_current_function.func.is_constructor) {
                 puts("Expected return type: "); putsln(create_type_string(p_current_function.etyp));
                 die_loc(here, &token.loc, "Can't have an empty return statement in a non-void function");
-            }
+            } else if (p_current_function.func.is_constructor){
+				node.unary = node_new(AST_LOCAL_VAR);
+				node.unary.variable = find_local_variable("self");
+				node.unary.etyp = node.unary.variable.typ;
+				node.etyp = p_current_function.etyp;
+			}
         }
         node.etyp = p_current_function.etyp;
         lexer::next_assert(&token, TOKEN_SEMICOLON);
