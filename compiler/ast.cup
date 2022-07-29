@@ -84,8 +84,8 @@ struct Node {
 
             is_method: int;
             method_of: Type*;
-	    
-	    is_constructor: int;
+
+            is_constructor: int;
         };
 
         block: struct {

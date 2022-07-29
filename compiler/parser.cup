@@ -313,6 +313,19 @@ fn parse_function_call_args(lexer: Lexer*, func: Node*, obj_ptr: Node*): Node* {
     return node;
 }
 
+// Returns a node with allocator call
+fn call_allocator(allocator: Node*, size: i32): Node*{
+	let node = node_new(AST_FUNCCALL);
+    node.call.func = allocator;
+    node.call.args = vector_new();
+    node.etyp = allocator.etyp;
+	
+	let size_node: Node* = node_from_int_literal(size);
+	node.call.args::push(size_node);
+	
+	return node;
+}
+
 fn parse_identifier(lexer: Lexer*): Node* {
     let token: Token;
     lexer::next_assert(&token, TOKEN_IDENTIFIER);
@@ -461,7 +474,35 @@ fn parse_factor(lexer: Lexer*): Node* {
 			if (!func.func.is_constructor){
 				die_loc2(here, &struct_name.loc, "Could not find constructor for struct: ", struct_name.value.as_string);
 			}
-			expr = parse_function_call_args(lexer, func, null);
+			
+			// Getting default allocator
+			
+			if (p_default_allocator == null){
+				die_loc(here, &struct_name.loc, "Default memory allocator hasn't been defined. Import std/memory.cup for a default allocator.");
+			}
+			
+			let allocator_func = find_function_definition(p_default_allocator, p_all_functions);
+			
+			if (allocator_func.func.args::empty()){
+				die_loc(here, &struct_name.loc, "Default allocator doesn't have a correct signature");
+			}
+			let var_arg: Variable* = allocator_func.func.args::at(0);
+			
+			// Checking whether allocator has a correct signature
+			
+			if (var_arg.typ.typ != TYPE_I32 && var_arg.typ.typ != TYPE_INT){
+				die_loc(here, &struct_name.loc, "Default allocator doesn't have a correct signature. It should take an i32 as a first arg and return a void pointer.");
+			}
+			
+			if (allocator_func.etyp.typ != TYPE_PTR){
+				die_loc(here, &struct_name.loc, "Default allocator doesn't have a correct signature. It should take an i32 as a first arg and return a void pointer.");
+			}
+			
+			if (allocator_func.etyp.ptr.typ != TYPE_VOID){
+				die_loc(here, &struct_name.loc, "Default allocator doesn't have a correct signature. It should take an i32 as a first arg and return a void pointer.");
+			}
+			
+			expr = parse_function_call_args(lexer, func, call_allocator(allocator_func, struct_constructed.size));
 		} else{
 			die_loc2(here, &struct_name.loc, "Could not find constructor for struct: ", struct_name.value.as_string);
 		}
@@ -756,6 +797,7 @@ fn parse_expression(lexer: Lexer*): Node* {
             lhs = node;
         }
     }
+	
     return lhs;
 }
 
@@ -1351,14 +1393,23 @@ fn parse_constructor(lexer: Lexer*): Node* {
         p_current_function = func;
     }
 
-    lexer::next_assert(&token, TOKEN_OPEN_PAREN);
-    parse_function_params(lexer, func);
-    lexer::next_assert(&token, TOKEN_CLOSE_PAREN);
-
 	// Instead of trying to search for return type we simply set it to struct pointer we are constructing 
 	let ptr_type = type_new(TYPE_PTR);
 	ptr_type.ptr = struct_constructed;
 	func.etyp = ptr_type;
+	
+	let ptr_typ = type_new(TYPE_PTR);
+    ptr_typ.ptr = struct_constructed;
+
+	func.func.args = vector_new();
+
+	// Like methods constructor takes self
+    let self_var = variable_new("self", ptr_typ, 0);
+    func.func.args::push(self_var);
+	
+	lexer::next_assert(&token, TOKEN_OPEN_PAREN);
+    parse_function_params(lexer, func);
+    lexer::next_assert(&token, TOKEN_CLOSE_PAREN);
 
     lexer::peek(&token);
     if (token.typ == TOKEN_OPEN_BRACE) {
@@ -1367,6 +1418,18 @@ fn parse_constructor(lexer: Lexer*): Node* {
     } else {
         func.func.is_defined = false;
     }
+	
+	// Add an implicit return
+	block_stack_push(func.func.body);
+	
+	let ret = node_new(AST_RETURN);
+	ret.unary = node_new(AST_LOCAL_VAR);
+	ret.unary.variable = find_local_variable("self");
+	ret.unary.etyp = ret.unary.variable.typ;
+	ret.etyp = p_current_function.etyp;
+	
+	block_add_child(func.func.body, ret);
+	block_stack_pop();
 
     p_current_function = null;
     return func;
