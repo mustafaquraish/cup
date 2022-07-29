@@ -20,15 +20,6 @@ let p_breakable_stack = vector_new();
 // Default memory allocator for new
 let p_default_allocator: char*;
 
-// This prefix is added to functions which are constructors
-fn add_prefix_new(s: char*): char*{
-	let new_name: char* = malloc(sizeof(char)*5+sizeof(char)*strlen(s));
-	let new_ = "new_";
-	strcpy(new_name, new_);
-	strcat(new_name, s);
-	return new_name;
-}
-
 fn block_stack_push(block: Node*) {
     p_block_stack::push(block);
 }
@@ -466,17 +457,9 @@ fn parse_factor(lexer: Lexer*): Node* {
 			if (struct_constructed == null)
 				die_loc2(here, &struct_name.loc, "Could not find struct/union with name: ", struct_name.value.as_string);
 		
-		// All constructors have that prefix
-		let full_name: char* = add_prefix_new(struct_name.value.as_string);
-		let func = find_function_definition(full_name, p_all_functions);
-		free(full_name);
-		if (func != null){
-			if (!func.func.is_constructor){
-				die_loc2(here, &struct_name.loc, "Could not find constructor for struct: ", struct_name.value.as_string);
-			}
-			
+		let func: Node* = struct_constructed.constructor;
+		if (func != null){	
 			// Getting default allocator
-			
 			if (p_default_allocator == null){
 				die_loc(here, &struct_name.loc, "Default memory allocator hasn't been defined. Import std/memory.cup for a default allocator.");
 			}
@@ -489,7 +472,6 @@ fn parse_factor(lexer: Lexer*): Node* {
 			let var_arg: Variable* = allocator_func.func.args::at(0);
 			
 			// Checking whether allocator has a correct signature
-			
 			if (var_arg.typ.typ != TYPE_I32 && var_arg.typ.typ != TYPE_INT){
 				die_loc(here, &struct_name.loc, "Default allocator doesn't have a correct signature. It should take an i32 as a first arg and return a void pointer.");
 			}
@@ -1324,14 +1306,13 @@ fn parse_method(lexer: Lexer*): Node* {
 
         // TODO: Check if the method signature matches
         // Case 2 (No error, just set the current function correctly)
-        p_current_function = func;
     } else {
         // We don't want to add this to `all_functions`, since we only want it to be accessible
         // for the struct/union that it is a method of. We'll add it to the struct/union's
         // `methods` vector instead.
         ctyp.methods::push(func);
-        p_current_function = func;
     }
+	p_current_function = func;
 
     let ptr_typ = type_new(TYPE_PTR);
     ptr_typ.ptr = ctyp;
@@ -1375,23 +1356,22 @@ fn parse_constructor(lexer: Lexer*): Node* {
 
     let func = node_new(AST_FUNC);
     func.func.name = token.value.as_string;
-	func.func.name = add_prefix_new(token.value.as_string);
 	func.func.is_constructor = true;
+	// We're gonna use this field for ease of usage 
+	func.func.method_of = struct_constructed;
 
-    // Check if function with that name already have been defined
-	let dfunc = find_function_definition(func.func.name, p_all_functions);
-    if (dfunc != null) {
-        // Function was already defined
-        if (dfunc.func.is_defined)
-            die_loc(here, &token.loc, "Function already defined earlier");
-
-        // It wasn't so we put our own definition
-        p_current_function = func;
-    } else {
-        // We don't have a declaration yet, push this.
-        p_all_functions::push(func);
-        p_current_function = func;
-    }
+	// If constructor wasn't even declared we put our own there
+    if (struct_constructed.constructor == null){
+		struct_constructed.constructor = func;
+	} else if (struct_constructed.constructor != null){
+		// Check if constructor has been defined
+		let constructor: Node* = struct_constructed.constructor;
+		if (constructor.func.is_defined){
+			die_loc(here, &token.loc, "Constructor for struct has already been defined");
+		}
+		// OK
+	}
+	p_current_function = func;
 
 	// Instead of trying to search for return type we simply set it to struct pointer we are constructing 
 	let ptr_type = type_new(TYPE_PTR);
@@ -1414,22 +1394,23 @@ fn parse_constructor(lexer: Lexer*): Node* {
     lexer::peek(&token);
     if (token.typ == TOKEN_OPEN_BRACE) {
         func.func.body = parse_block(lexer);
+		
+		// Add an implicit return
+		block_stack_push(func.func.body);
+	
+		let ret = node_new(AST_RETURN);
+		ret.unary = node_new(AST_LOCAL_VAR);
+		ret.unary.variable = find_local_variable("self");
+		ret.unary.etyp = ret.unary.variable.typ;
+		ret.etyp = p_current_function.etyp;
+	
+		block_add_child(func.func.body, ret);
+		block_stack_pop();
+		
         func.func.is_defined = true;
     } else {
         func.func.is_defined = false;
     }
-	
-	// Add an implicit return
-	block_stack_push(func.func.body);
-	
-	let ret = node_new(AST_RETURN);
-	ret.unary = node_new(AST_LOCAL_VAR);
-	ret.unary.variable = find_local_variable("self");
-	ret.unary.etyp = ret.unary.variable.typ;
-	ret.etyp = p_current_function.etyp;
-	
-	block_add_child(func.func.body, ret);
-	block_stack_pop();
 
     p_current_function = null;
     return func;
@@ -1459,12 +1440,11 @@ fn parse_function(lexer: Lexer*): Node* {
             die_loc(here, &token.loc, "Function already defined earlier");
 
         // Case 3 (No error, just set the current function correctly)
-        p_current_function = func;
     } else {
         // We don't have a declaration yet, push this.
         p_all_functions::push(func);
-        p_current_function = func;
     }
+	p_current_function = func;
 
     lexer::next_assert(&token, TOKEN_OPEN_PAREN);
     parse_function_params(lexer, func);

@@ -75,7 +75,14 @@ fn get_func_name(func: Node*): char* {
         strcat(__func_name_buf, "_");
         strcat(__func_name_buf, typ.struct_name);
         strcat(__func_name_buf, "_method_");
-    } else {
+    }
+	else if (func.func.is_constructor) {
+		let typ: Type* = func.func.method_of;
+        strcat(__func_name_buf, "new_");
+		strcat(__func_name_buf, typ.struct_name);
+		strcat(__func_name_buf, "_constructor_");
+    }
+	else {
         strcat(__func_name_buf, "func_");
     }
     strcat(__func_name_buf, func.func.name);
