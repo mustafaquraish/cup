@@ -203,3 +203,106 @@ fn main(): int {
 EOF
 
 echo " OK"
+echo -n "- Constructors: "
+
+assert_exit_status_stdin 5 <<EOF
+import "std/memory.cup"
+
+struct A{
+	x: i32;
+}
+
+initialize A(i: i32){
+	self.x = i;
+}
+
+fn main(): int { 
+    let a: A* = new A(5);
+	return a.x;
+}
+EOF
+
+assert_exit_status_stdin 5 <<EOF
+import "std/memory.cup"
+
+union A{
+	x: i32;
+}
+
+initialize A(i: i32){
+	self.x = i;
+}
+
+fn main(): int { 
+    let a: A* = new A(5);
+	return a.x;
+}
+EOF
+
+assert_exit_status_stdin 10 <<EOF
+import "std/memory.cup"
+
+struct A{
+	x: i32;
+}
+
+initialize A(i: i32){
+	self.x = i;
+}
+
+struct B{
+	x: i32;
+}
+
+initialize B(i: i32){
+	self.x = i;
+}
+
+fn main(): int { 
+    let a: A* = new A(5);
+	let b: B* = new B(10);
+	return b.x;
+}
+EOF
+
+assert_exit_status_stdin 5 <<EOF
+import "std/memory.cup"
+
+struct A{
+	x: i32;
+}
+
+initialize A(i: i32){
+	self.x = i;
+	return;
+}
+
+fn main(): int { 
+    let a: A* = new A(5);
+	return a.x;
+}
+EOF
+
+assert_exit_status_stdin 2 <<EOF
+import "std/memory.cup"
+
+struct A{
+	x: i32;
+}
+
+initialize A(i: i32){
+	self.x = 2;
+	while (1){
+		return;
+	}
+	self.x = i;
+}
+
+fn main(): int { 
+    let a: A* = new A(5);
+	return a.x;
+}
+EOF
+
+
+echo " OK"

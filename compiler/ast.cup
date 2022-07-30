@@ -84,6 +84,8 @@ struct Node {
 
             is_method: int;
             method_of: Type*;
+
+            is_constructor: int;
         };
 
         block: struct {
@@ -313,7 +315,7 @@ fn is_lvalue(typ: int): int {
 }
 
 fn binary_token_to_op(token_typ: int): int {
-    static_assert(NUM_TOKEN_TYPES == 73, "Exhaustive match in binary_token_to_op");
+    static_assert(NUM_TOKEN_TYPES == 75, "Exhaustive match in binary_token_to_op");
     if (token_typ == TOKEN_PLUS)      return AST_PLUS;
     if (token_typ == TOKEN_MINUS)     return AST_MINUS;
     if (token_typ == TOKEN_STAR)      return AST_MUL;

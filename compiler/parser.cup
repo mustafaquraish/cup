@@ -17,6 +17,9 @@ let p_compound_type_stack = vector_new();
 
 let p_breakable_stack = vector_new();
 
+// Default memory allocator for new
+let p_default_allocator: char* = "malloc";
+
 fn block_stack_push(block: Node*) {
     p_block_stack::push(block);
 }
@@ -301,6 +304,19 @@ fn parse_function_call_args(lexer: Lexer*, func: Node*, obj_ptr: Node*): Node* {
     return node;
 }
 
+// Returns a node with allocator call
+fn call_allocator(allocator: Node*, size: i32): Node*{
+    let node = node_new(AST_FUNCCALL);
+    node.call.func = allocator;
+    node.call.args = vector_new();
+    node.etyp = allocator.etyp;
+    
+    let size_node: Node* = node_from_int_literal(size);
+    node.call.args::push(size_node);
+    
+    return node;
+}
+
 fn parse_identifier(lexer: Lexer*): Node* {
     let token: Token;
     lexer::next_assert(&token, TOKEN_IDENTIFIER);
@@ -430,7 +446,48 @@ fn parse_factor(lexer: Lexer*): Node* {
         expr.unary = subexp;
         expr = type_check_unary(expr, &token);
 
-    } else {
+    } else if (token.typ == TOKEN_NEW){
+        lexer::next(&token);
+        lexer::next_assert(&token, TOKEN_IDENTIFIER);
+        let struct_name: Token*;
+        struct_name = &token;
+        
+        // Check whether that struct even exists in the first place
+        let struct_constructed = find_compound_type(struct_name.value.as_string);
+            if (struct_constructed == null)
+                die_loc2(here, &struct_name.loc, "Could not find struct/union with name: ", struct_name.value.as_string);
+        
+        let func: Node* = struct_constructed.constructor;
+        if (func != null){  
+            // Getting default allocator
+            let allocator_func = find_function_definition(p_default_allocator, p_all_functions);
+            
+            if (allocator_func == null){
+                die_loc(here, &struct_name.loc, "Allocator not found. Import std/memory.cup if you're using default one.");
+            }
+            
+            let signature_msg: char* = "Allocator doesn't have a correct signature. It should take an i32 as a first arg and return a void pointer.";
+            
+            if (allocator_func.func.args::empty()){
+                die_loc(here, &struct_name.loc, signature_msg);
+            }
+            let var_arg: Variable* = allocator_func.func.args::at(0);
+            
+            // Checking whether allocator has a correct signature
+            if ((var_arg.typ.typ != TYPE_I32 && var_arg.typ.typ != TYPE_INT) || allocator_func.etyp.typ != TYPE_PTR){
+                die_loc(here, &struct_name.loc, signature_msg);
+            }
+            
+            if (allocator_func.etyp.ptr.typ != TYPE_VOID){
+                die_loc(here, &struct_name.loc, signature_msg);
+            }
+            
+            expr = parse_function_call_args(lexer, func, call_allocator(allocator_func, struct_constructed.size));
+        } else{
+            die_loc2(here, &struct_name.loc, "Could not find constructor for struct: ", struct_name.value.as_string);
+        }
+    }
+    else {
         die_loc2(here, &token.loc, ": Unexpected token found in parse_factor: ", token_type_to_string(token.typ));
     }
 
@@ -720,6 +777,7 @@ fn parse_expression(lexer: Lexer*): Node* {
             lhs = node;
         }
     }
+    
     return lhs;
 }
 
@@ -1001,6 +1059,9 @@ fn parse_statement(lexer: Lexer*): Node* {
 
         lexer::peek(&token);
         if (token.typ != TOKEN_SEMICOLON) {
+            if (p_current_function.func.is_constructor){
+                die_loc(here, &token.loc, "Constructor can't return additional expressions");
+            }
             node.unary = parse_expression(lexer);
             let conv = convert_type(p_current_function.etyp, node.unary);
             if (!conv)
@@ -1008,9 +1069,14 @@ fn parse_statement(lexer: Lexer*): Node* {
             node.unary = conv;
         } else {
             node.unary = null; // empty return statment
-            if (p_current_function.etyp.typ != TYPE_VOID) {
+            if (p_current_function.etyp.typ != TYPE_VOID && !p_current_function.func.is_constructor) {
                 puts("Expected return type: "); putsln(create_type_string(p_current_function.etyp));
                 die_loc(here, &token.loc, "Can't have an empty return statement in a non-void function");
+            } else if (p_current_function.func.is_constructor){
+                node.unary = node_new(AST_LOCAL_VAR);
+                node.unary.variable = find_local_variable("self");
+                node.unary.etyp = node.unary.variable.typ;
+                node.etyp = p_current_function.etyp;
             }
         }
         node.etyp = p_current_function.etyp;
@@ -1246,14 +1312,13 @@ fn parse_method(lexer: Lexer*): Node* {
 
         // TODO: Check if the method signature matches
         // Case 2 (No error, just set the current function correctly)
-        p_current_function = func;
     } else {
         // We don't want to add this to `all_functions`, since we only want it to be accessible
         // for the struct/union that it is a method of. We'll add it to the struct/union's
         // `methods` vector instead.
         ctyp.methods::push(func);
-        p_current_function = func;
     }
+    p_current_function = func;
 
     let ptr_typ = type_new(TYPE_PTR);
     ptr_typ.ptr = ctyp;
@@ -1276,6 +1341,79 @@ fn parse_method(lexer: Lexer*): Node* {
     lexer::peek(&token);
     if (token.typ == TOKEN_OPEN_BRACE) {
         func.func.body = parse_block(lexer);
+        func.func.is_defined = true;
+    } else {
+        func.func.is_defined = false;
+    }
+
+    p_current_function = null;
+    return func;
+}
+
+// FIXME: Combine with parse_function
+fn parse_constructor(lexer: Lexer*): Node* {
+    let token: Token;
+    
+    lexer::next_assert(&token, TOKEN_INITIALIZE);
+    lexer::next_assert(&token, TOKEN_IDENTIFIER);
+    
+    let struct_constructed = find_compound_type(token.value.as_string);
+            if (struct_constructed == null)
+                die_loc2(here, &token.loc, "Could not find struct/union with name: ", token.value.as_string);
+
+    let func = node_new(AST_FUNC);
+    func.func.name = token.value.as_string;
+    func.func.is_constructor = true;
+    // We're gonna use this field for ease of usage 
+    func.func.method_of = struct_constructed;
+
+    // If constructor wasn't even declared we put our own there
+    if (struct_constructed.constructor == null){
+        struct_constructed.constructor = func;
+    } else if (struct_constructed.constructor != null){
+        // Check if constructor has been defined
+        let constructor: Node* = struct_constructed.constructor;
+        if (constructor.func.is_defined){
+            die_loc(here, &token.loc, "Constructor for struct has already been defined");
+        }
+        // OK
+    }
+    p_current_function = func;
+
+    // Instead of trying to search for return type we simply set it to struct pointer we are constructing 
+    let ptr_type = type_new(TYPE_PTR);
+    ptr_type.ptr = struct_constructed;
+    func.etyp = ptr_type;
+    
+    let ptr_typ = type_new(TYPE_PTR);
+    ptr_typ.ptr = struct_constructed;
+
+    func.func.args = vector_new();
+
+    // Like methods constructor takes self
+    let self_var = variable_new("self", ptr_typ, 0);
+    func.func.args::push(self_var);
+    
+    lexer::next_assert(&token, TOKEN_OPEN_PAREN);
+    parse_function_params(lexer, func);
+    lexer::next_assert(&token, TOKEN_CLOSE_PAREN);
+
+    lexer::peek(&token);
+    if (token.typ == TOKEN_OPEN_BRACE) {
+        func.func.body = parse_block(lexer);
+        
+        // Add an implicit return
+        block_stack_push(func.func.body);
+    
+        let ret = node_new(AST_RETURN);
+        ret.unary = node_new(AST_LOCAL_VAR);
+        ret.unary.variable = find_local_variable("self");
+        ret.unary.etyp = ret.unary.variable.typ;
+        ret.etyp = p_current_function.etyp;
+    
+        block_add_child(func.func.body, ret);
+        block_stack_pop();
+        
         func.func.is_defined = true;
     } else {
         func.func.is_defined = false;
@@ -1309,12 +1447,11 @@ fn parse_function(lexer: Lexer*): Node* {
             die_loc(here, &token.loc, "Function already defined earlier");
 
         // Case 3 (No error, just set the current function correctly)
-        p_current_function = func;
     } else {
         // We don't have a declaration yet, push this.
         p_all_functions::push(func);
-        p_current_function = func;
     }
+    p_current_function = func;
 
     lexer::next_assert(&token, TOKEN_OPEN_PAREN);
     parse_function_params(lexer, func);
@@ -1376,6 +1513,8 @@ fn parse_program(lexer: Lexer*): Node* {
             child = parse_function(lexer);
         } else if (token.typ == TOKEN_METHOD) {
             child = parse_method(lexer);
+        } else if (token.typ == TOKEN_INITIALIZE){
+            child = parse_constructor(lexer);
         } else if (token.typ == TOKEN_LET) {
             child = parse_var_declaration(lexer);
         } else if (token.typ == TOKEN_SEMICOLON) {
