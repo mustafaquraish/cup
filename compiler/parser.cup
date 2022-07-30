@@ -460,32 +460,26 @@ fn parse_factor(lexer: Lexer*): Node* {
         let func: Node* = struct_constructed.constructor;
         if (func != null){  
             // Getting default allocator
-            if (p_default_allocator == null){
-                die_loc(here, &struct_name.loc, "Memory allocator hasn't been defined.");
-            }
-            
             let allocator_func = find_function_definition(p_default_allocator, p_all_functions);
             
             if (allocator_func == null){
                 die_loc(here, &struct_name.loc, "Allocator not found. Import std/memory.cup if you're using default one.");
             }
             
+            let signature_msg: char* = "Allocator doesn't have a correct signature. It should take an i32 as a first arg and return a void pointer.";
+            
             if (allocator_func.func.args::empty()){
-                die_loc(here, &struct_name.loc, "Allocator doesn't have a correct signature");
+                die_loc(here, &struct_name.loc, signature_msg);
             }
             let var_arg: Variable* = allocator_func.func.args::at(0);
             
             // Checking whether allocator has a correct signature
-            if (var_arg.typ.typ != TYPE_I32 && var_arg.typ.typ != TYPE_INT){
-                die_loc(here, &struct_name.loc, "Allocator doesn't have a correct signature. It should take an i32 as a first arg and return a void pointer.");
-            }
-            
-            if (allocator_func.etyp.typ != TYPE_PTR){
-                die_loc(here, &struct_name.loc, "Allocator doesn't have a correct signature. It should take an i32 as a first arg and return a void pointer.");
+            if ((var_arg.typ.typ != TYPE_I32 && var_arg.typ.typ != TYPE_INT) || allocator_func.etyp.typ != TYPE_PTR){
+                die_loc(here, &struct_name.loc, signature_msg);
             }
             
             if (allocator_func.etyp.ptr.typ != TYPE_VOID){
-                die_loc(here, &struct_name.loc, "Allocator doesn't have a correct signature. It should take an i32 as a first arg and return a void pointer.");
+                die_loc(here, &struct_name.loc, signature_msg);
             }
             
             expr = parse_function_call_args(lexer, func, call_allocator(allocator_func, struct_constructed.size));

@@ -51,8 +51,7 @@ fn parse_cli_args(argc: int, argv: char**): char** {
             m_output_filename = argv[i];
         } else if (streq(argv[i], "--alloc")){
             ++i;
-            p_default_allocator = malloc(strlen(argv[i])*sizeof(char));
-            strcpy(p_default_allocator, argv[i]);
+            p_default_allocator = argv[i];
         } else if (m_filename == null) {
             if (streq(argv[i], "-")) {
                 m_filename = "stdin";
