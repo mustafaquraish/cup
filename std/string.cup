@@ -102,10 +102,6 @@ method str::push_slice(sl: slice*){
     self.chars[self.len] = '\0';
 }
 
-method str::len(): i32{
-    return self.len;
-}
-
 method str::clone(): str*{
     let clone: str* = new str(self.chars);
     return clone;
@@ -204,27 +200,22 @@ method str::contains_idx(other: str*): i32{
 }
 
 method str::contains(other: str*): i32{
-    let result = self::contains_idx(other);
-    
-    if (result == -1){
-        return false;
-    }
-    else 
-        return true;
+    return self::contains_idx(other) != -1;
 }
 
-method str::drop();
+// Implicit destructor
+// You should call this before freeing str itself, if you don't do this you will get a memory leak.
+method str::drop(){
+    free(self.chars);
+    free(self);
+}
+
 
 method str::contains_cstr(other: char*): i32{
     let temp_str: str* = new str(other);
     let result = self::contains(temp_str);
     temp_str::drop();
-    free(temp_str);
-    if (result == -1){
-        return false;
-    }
-    else 
-        return true;
+    return result != -1;
 }
 
 // Removes first occurance of other and creates a new string from resulting string 
@@ -258,11 +249,4 @@ method str::remove(other: str*): str*{
     }
     
     return self;
-}
-
-// Implicit destructor
-// You should call this before freeing str itself, if you don't do this you will get a memory leak.
-method str::drop(){
-    free(self.chars);
-    self.isdropped = true;
 }
