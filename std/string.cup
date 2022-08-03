@@ -6,7 +6,6 @@ let __SLICE_LIFETIME_PROTECTION: int = false;
 struct str{
     chars: char*;
     len: i32;
-    isdropped: i32;
 }
 
 // Has the same lifetime as the string it was created from
@@ -32,12 +31,6 @@ method slice::is_str_alive(){
         is_out_living = true;
     } else {
         if (!str_segment.istaken){
-            is_out_living = true;
-        }
-    }
-    
-    if (!is_out_living){
-        if (self.string_ptr.isdropped){
             is_out_living = true;
         }
     }
@@ -204,12 +197,10 @@ method str::contains(other: str*): i32{
 }
 
 // Implicit destructor
-// You should call this before freeing str itself, if you don't do this you will get a memory leak.
 method str::drop(){
     free(self.chars);
     free(self);
 }
-
 
 method str::contains_cstr(other: char*): i32{
     let temp_str: str* = new str(other);
