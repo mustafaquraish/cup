@@ -1,0 +1,243 @@
+import "std/vector.cup"
+
+// If you need to debug stuff enable this
+let __SLICE_LIFETIME_PROTECTION: int = false;
+
+struct str{
+    chars: char*;
+    len: i32;
+}
+
+// Has the same lifetime as the string it was created from
+// If you drop a string and still use slices you will probably get undefined behaviour
+struct slice{
+    start: char*;
+    len: i32;
+    string_ptr: str*;
+}
+
+// Only to be used internally
+initialize slice(start: char*, len: i32, str_ptr: str*){
+    self.start = start;
+    self.len = len;
+    self.string_ptr = str_ptr;
+}
+
+// Partial lifetime protection
+method slice::is_str_alive(){
+    let str_segment: __MEM_SEGMENT* = __find_segment_by_ptr(self.string_ptr);
+    let is_out_living = false;
+    if (str_segment == null){
+        is_out_living = true;
+    } else {
+        if (!str_segment.istaken){
+            is_out_living = true;
+        }
+    }
+    
+    if (is_out_living)
+        die(here, "slice: slice outlives string it was made from");
+}
+
+method slice::get(idx: i32): char{
+    if (__SLICE_LIFETIME_PROTECTION)
+        self::is_str_alive();
+    
+    if (idx < self.len){
+        return self.start[idx];
+    } else {
+        die(here, "slice::get: index out of bounds");
+    }
+}
+
+initialize str(chars: char*){
+    self.chars = malloc(sizeof(char)*strlen(chars)+1);
+    self.len = strlen(chars);
+    strcpy(self.chars, chars);
+}
+
+// Creates a str out of slice
+method slice::to_str(): str*{
+    if (__SLICE_LIFETIME_PROTECTION)
+        self::is_str_alive();
+    
+    let chars: char* = malloc(sizeof(char)*self.len+1);
+    
+    for (let i = 0; i < self.len; ++i){
+        chars[i] = self::get(i);
+    }
+    
+    chars[self.len] = '\0';
+    let str_created = new str(chars);
+    free(chars);
+    return str_created;
+}
+
+method str::push_cstr(chars: char*){
+    self.chars = realloc(self.chars,(sizeof(char)*self.len)+(sizeof(char)*strlen(chars))+1);
+    self.len = self.len + strlen(chars);
+    strcat(self.chars, chars);
+}
+
+method str::push(string: str*){
+    self::push_cstr(string.chars);
+}
+
+method str::push_slice(sl: slice*){
+    self.chars = realloc(self.chars,(sizeof(char)*self.len)+(sizeof(char)*sl.len)+1);
+    let first = self.len;
+    self.len = self.len + sl.len;
+    
+    for (let i = first; i < self.len; ++i){
+        self.chars[i] = sl::get(i-first);
+    }
+    
+    self.chars[self.len] = '\0';
+}
+
+method str::clone(): str*{
+    let clone: str* = new str(self.chars);
+    return clone;
+}
+
+method str::get(idx: i32): char{
+    if (idx < self.len){
+        return self.chars[idx];
+    } else {
+        die(here, "str::get: index out of bounds");
+    }
+}
+
+method str::slice(from: i32, to: i32): slice*{
+    if (to > self.len){
+        die(here, "str::slice: index out of bounds");
+    }
+    if (to < 0 || from < 0){
+        die(here, "str::slice: indexes cannot be negative nums");
+    }
+    
+    // contains index "to" too
+    let s: slice* = new slice(&self.chars[from], (to+1)-from, self); 
+    return s;
+    
+}
+
+method str::split(splitter: char): Vector*{
+    let start_slice = 0;
+    let slices: Vector* = vector_new();
+    for (let i = 0; i < self.len; ++i){
+        if (self::get(i) == splitter){
+            if (!(i == start_slice)){
+                let slice_: slice* = self::slice(start_slice, i-1);
+                slices::push(slice_);
+                start_slice = i + 1;
+            }
+        }
+    }
+    
+    if (start_slice < self.len){
+        let slice_: slice* = self::slice(start_slice, self.len-1);
+        slices::push(slice_);
+    }
+    
+    return slices;
+}
+
+method str::startswith_cstr(prefix: char*): i32{
+    return strstartswith(self.chars, prefix);
+}
+
+method str::startswith(prefix: str*): i32{
+    return self::startswith_cstr(prefix.chars);
+}
+
+method str::equals_cstr(other: char*): i32{
+    return streq(self.chars, other);
+}
+
+method str::equals(other: str*): i32{
+    return self::equals_cstr(other.chars);
+}
+
+// Checks whether self contains other and returns index of start of the other in self if it contains other.
+method str::contains_idx(other: str*): i32{
+    if (other.len == 0){
+        die(here, "str::contains: other has to have length greater than 0");
+    }
+    
+    for (let i = 0; i < self.len; ++i){
+        if (self::get(i) == other::get(0)){
+            let to = i+other.len-1;
+            if (to >= self.len){
+                break;
+            }
+            let slice_: slice* = self::slice(i, to);
+            
+            let contains = true;
+            for (let i_ = 0; i_ < slice_.len; ++i_){
+                if (slice_::get(i_) != other::get(i_)){
+                    contains = false;
+                    break;
+                }
+            }
+            
+            if (contains){
+                return i;
+            }
+            
+            free(slice_);
+        }
+    }
+    
+    return -1;
+}
+
+method str::contains(other: str*): i32{
+    return self::contains_idx(other) != -1;
+}
+
+// Implicit destructor
+method str::drop(){
+    free(self.chars);
+    free(self);
+}
+
+method str::contains_cstr(other: char*): i32{
+    let temp_str: str* = new str(other);
+    let result = self::contains(temp_str);
+    temp_str::drop();
+    return result != -1;
+}
+
+// Removes first occurance of other and creates a new string from resulting string 
+method str::remove(other: str*): str*{
+    let idx = self::contains_idx(other);
+    
+    if (idx != -1){
+        if (idx-1 < 0){
+            if (idx+other.len < self.len){
+                let second = self::slice(idx+other.len, self.len);
+                let new_str = second::to_str();
+                return new_str;
+            } else{
+                return new str("");
+            }
+        }
+        else{
+            let first = self::slice(0, idx-1);
+            if (idx+other.len < self.len){
+                let second = self::slice(idx+other.len, self.len);
+                let new_str = first::to_str();
+                new_str::push_slice(second);
+                free(second);
+                free(first);
+                return new_str;
+            }
+            else{
+                return first::to_str();
+            }
+        }
+    }
+    
+    return self;
+}
